@@ -1,20 +1,24 @@
-import type { Menu, MenuModule } from '/@/router/types';
-import type { RouteRecordNormalized } from 'vue-router';
+import type { Menu, MenuModule } from "/@/router/types";
+import type { RouteRecordNormalized } from "vue-router";
 
-import { useAppStoreWithOut } from '/@/store/modules/app';
-import { usePermissionStore } from '/@/store/modules/permission';
-import { transformMenuModule, getAllParentPath } from '/@/router/helper/menuHelper';
-import { filter } from '/@/utils/helper/treeHelper';
-import { isUrl } from '/@/utils/is';
-import { router } from '/@/router';
-import { PermissionModeEnum } from '/@/enums/appEnum';
-import { pathToRegexp } from 'path-to-regexp';
+import { useAppStoreWithOut } from "/@/store/modules/app";
+import { usePermissionStore } from "/@/store/modules/permission";
+import {
+  transformMenuModule,
+  getAllParentPath,
+} from "/@/router/helper/menuHelper";
+import { filter } from "/@/utils/helper/treeHelper";
+import { isUrl } from "/@/utils/is";
+import { router } from "/@/router";
+import { PermissionModeEnum } from "/@/enums/appEnum";
+import { pathToRegexp } from "path-to-regexp";
 
-const modules = import.meta.globEager('./modules/**/*.ts');
+const modules = import.meta.globEager("./modules/**/*.ts");
 
 const menuModules: MenuModule[] = [];
 
 Object.keys(modules).forEach((key) => {
+  //@ts-ignore
   const mod = modules[key].default || {};
   const modList = Array.isArray(mod) ? [...mod] : [mod];
   menuModules.push(...modList);
@@ -90,7 +94,10 @@ export async function getCurrentParentPath(currentPath: string) {
 // Get the level 1 menu, delete children
 export async function getShallowMenus(): Promise<Menu[]> {
   const menus = await getAsyncMenus();
-  const shallowMenuList = menus.map((item) => ({ ...item, children: undefined }));
+  const shallowMenuList = menus.map((item) => ({
+    ...item,
+    children: undefined,
+  }));
   if (isRoleMode()) {
     const routes = router.getRoutes();
     return shallowMenuList.filter(basicFilter(routes));
