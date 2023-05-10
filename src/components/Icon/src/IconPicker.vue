@@ -174,7 +174,7 @@
       currentList.value = icons;
       return;
     }
-    currentList.value = icons.filter((item) => item.includes(value));
+    currentList.value = icons.filter((item: string | any[]) => item.includes(value));
   }
 </script>
 <style lang="less">

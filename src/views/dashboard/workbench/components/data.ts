@@ -1,4 +1,4 @@
-interface GroupItem {
+export interface GroupItem {
   title: string;
   icon: string;
   color: string;

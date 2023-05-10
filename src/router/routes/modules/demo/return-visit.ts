@@ -9,7 +9,7 @@ const returnVisit: AppRouteModule = {
   component: LAYOUT,
   redirect: '/return-visit/search',
   meta: {
-    orderNo: 20,
+    orderNo: 200,
     icon: 'ion:aperture-outline',
     title: t('routes.demo.return-visit.index'),
   },

@@ -9,7 +9,7 @@ const customer: AppRouteModule = {
   component: LAYOUT,
   redirect: '/feat/icon',
   meta: {
-    orderNo: 19,
+    orderNo: 100,
     icon: 'ion:git-compare-outline',
     title: t('routes.demo.customer.init'),
   },

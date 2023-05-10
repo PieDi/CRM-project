@@ -34,6 +34,7 @@
       </span>
       <SimpleMenuTag :item="item" :collapseParent="!!collapse && !!parent" />
     </template>
+
     <template
       v-for="childrenItem in item.children || []"
       :key="childrenItem.paramPath || childrenItem.path"

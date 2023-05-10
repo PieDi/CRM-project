@@ -121,6 +121,24 @@ export default {
     docExternal: '项目文档(外链)',
   },
   level: { level: '多级菜单' },
+  'customer-server': {
+    init: '客服管理',
+    search: '客服查询',
+    add: '客服新增',
+    edit: '客服编辑',
+    delete: '客服删除',
+  },
+  'store-serve': {
+    init: '产品出入库管理',
+    in: '入库管理',
+    out: '出库管理',
+  },
+  'datum-share': {
+    init: '共享资料管理',
+    classify: '资料分类',
+    upload: '资料上传',
+    download: '资料下载',
+  },
   page: {
     page: '页面',
 

@@ -135,8 +135,6 @@
       function renderMenu() {
         const { menus, ...menuProps } = unref(getCommonProps);
         if (!menus || !menus.length) return null;
-        console.log('🚀 ~ file: index.vue:137 ~ renderMenu ~ menus:', menus, props.isHorizontal);
-
         return !props.isHorizontal ? (
           <SimpleMenu {...menuProps} isSplitMenu={unref(getSplit)} items={menus} />
         ) : (
