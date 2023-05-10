@@ -141,7 +141,7 @@
         return routes.indexOf(route) !== routes.length - 1;
       }
 
-      function getIcon(route) {
+      function getIcon(route: { icon: any; meta: { icon: any } }) {
         return route.icon || route.meta?.icon;
       }
 
