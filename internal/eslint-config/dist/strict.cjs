@@ -1,1 +1,0 @@
-module.exports = require("/Users/yongchao.liang/Desktop/CRM-project/node_modules/.pnpm/jiti@1.18.2/node_modules/jiti/lib/index.js")(null, { interopDefault: true, esmResolve: true })("/Users/yongchao.liang/Desktop/CRM-project/internal/eslint-config/src/strict.ts")

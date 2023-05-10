@@ -3,6 +3,12 @@ node_modules
 dist
 .cache
 .turbo
+apps/test-server/node_modules
+internal/eslint-config/node_modules
+internal/ts-config/node_modules
+internal/vite-config/node_modules
+internal/eslint-config/dist
+internal/stylelint-config/dist
 
 tests/server/static
 tests/server/static/upload
@@ -32,3 +38,4 @@ package-lock.json
 pnpm-lock.yaml
 
 .history
+

@@ -52,9 +52,7 @@ export default defineComponent({
       getSplit,
     } = useMenuSetting();
     const { getShowLogo } = useRootSetting();
-
     const { prefixCls } = useDesign("layout-menu");
-
     const { menusRef } = useSplitMenu(toRef(props, "splitType"));
 
     const { getIsMobile } = useAppInject();
