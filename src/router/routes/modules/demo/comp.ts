@@ -111,8 +111,8 @@ const comp: AppRouteModule = {
     {
       path: 'table',
       name: 'TableDemo',
-      redirect: '/comp/table/basic',
-      component: getParentLayout('TableDemo'),
+      // redirect: '/comp/table/basic',
+      // component: getParentLayout('TableDemo'),
       meta: {
         // icon: 'carbon:table-split',
         title: t('routes.demo.table.table'),

@@ -91,8 +91,19 @@ export default {
   },
   customer: {
     init: '客户管理',
-    search: '综合查询-图标',
-    info: '客户信息管理-登录过期',
+    search: {
+      init: '综合查询',
+      info: '客户信息查询',
+      mHistory: '客户病史查询',
+      order: '客户订单查询',
+      contact: '客户合同查询',
+      invoice: '客户发票查询',
+    },
+    info: {
+      init: '客户信息管理',
+      group: '客户分组',
+      info: '客户基本信息',
+    },
     mHistory: '客户病史管理-标签页操作',
     order: '客户订单管理-打印',
     contact: '客户合同管理-右键菜单',

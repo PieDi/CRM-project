@@ -1,5 +1,4 @@
 import type { AppRouteModule } from '/@/router/types';
-
 import { LAYOUT } from '/@/router/constant';
 import { t } from '/@/hooks/web/useI18n';
 
@@ -17,18 +16,77 @@ const customer: AppRouteModule = {
     {
       path: 'search',
       name: 'Search',
-      component: () => import('/@/views/demo/feat/icon/index.vue'),
       meta: {
-        title: t('routes.demo.customer.search'),
+        title: t('routes.demo.customer.search.init'),
       },
+      children: [
+        {
+          path: 'info',
+          name: 'SearchInfo',
+          component: () => import('/@/views/demo/customer/search/info.vue'),
+          meta: {
+            title: t('routes.demo.customer.search.info'),
+          },
+        },
+        {
+          path: 'mHistory',
+          name: 'SearchMHistory',
+          component: () => import('/@/views/demo/customer/search/m-history.vue'),
+          meta: {
+            title: t('routes.demo.customer.search.mHistory'),
+          },
+        },
+        {
+          path: 'order',
+          name: 'SearchOrder',
+          component: () => import('/@/views/demo/customer/search/order.vue'),
+          meta: {
+            title: t('routes.demo.customer.search.order'),
+          },
+        },
+        {
+          path: 'contact',
+          name: 'SearchContact',
+          component: () => import('/@/views/demo/customer/search/contact.vue'),
+          meta: {
+            title: t('routes.demo.customer.search.contact'),
+          },
+        },
+        {
+          path: 'invoice',
+          name: 'SearchInvoice',
+          component: () => import('/@/views/demo/customer/search/invoice.vue'),
+          meta: {
+            title: t('routes.demo.customer.search.invoice'),
+          },
+        },
+      ],
     },
+
     {
       path: 'info',
       name: 'Info',
-      component: () => import('/@/views/demo/feat/ws/index.vue'),
       meta: {
-        title: t('routes.demo.customer.info'),
+        title: t('routes.demo.customer.info.init'),
       },
+      children: [
+        {
+          path: 'group',
+          name: 'InfoGroup',
+          component: () => import('/@/views/demo/customer/search/info.vue'),
+          meta: {
+            title: t('routes.demo.customer.info.group'),
+          },
+        },
+        {
+          path: 'info',
+          name: 'InfoInfo',
+          component: () => import('/@/views/demo/customer/search/info.vue'),
+          meta: {
+            title: t('routes.demo.customer.info.info'),
+          },
+        },
+      ],
     },
     {
       path: 'mHistory',
