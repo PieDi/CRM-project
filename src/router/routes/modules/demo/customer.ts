@@ -28,22 +28,14 @@ const customer: AppRouteModule = {
             title: t('routes.demo.customer.info.search'),
           },
         },
-        // {
-        //   path: 'group',
-        //   name: 'InfoGroup',
-        //   component: () => import('/@/views/demo/customer/search/info.vue'),
-        //   meta: {
-        //     title: t('routes.demo.customer.info.group'),
-        //   },
-        // },
-        // {
-        //   path: 'info',
-        //   name: 'InfoInfo',
-        //   component: () => import('/@/views/demo/customer/search/info.vue'),
-        //   meta: {
-        //     title: t('routes.demo.customer.info.info'),
-        //   },
-        // },
+        {
+          path: 'group',
+          name: 'InfoGroup',
+          component: () => import('/@/views/demo/customer/info/group.vue'),
+          meta: {
+            title: t('routes.demo.customer.info.group'),
+          },
+        },
       ],
     },
     {
