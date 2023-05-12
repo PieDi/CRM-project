@@ -91,23 +91,29 @@ export default {
   },
   customer: {
     init: '客户管理',
-    search: {
-      init: '综合查询',
-      info: '客户信息查询',
-      mHistory: '客户病史查询',
-      order: '客户订单查询',
-      contact: '客户合同查询',
-      invoice: '客户发票查询',
-    },
     info: {
       init: '客户信息管理',
+      search: '客户信息查询',
       group: '客户分组',
       info: '客户基本信息',
     },
-    mHistory: '客户病史管理-标签页操作',
-    order: '客户订单管理-打印',
-    contact: '客户合同管理-右键菜单',
-    invoice: '客户发票管理-文件下载',
+    mHistory: {
+      init: '客户病史管理',
+      search: '客户病史查询',
+    },
+    order: {
+      init: '客户订单管理',
+      search: '客户订单查询',
+    },
+    contact: {
+      init: '客户合同管理',
+      search: '客户合同查询',
+    },
+
+    invoice: {
+      init: '客户发票管理',
+      search: '客户发票查询',
+    },
   },
   flow: {
     name: '图形编辑器',

@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="综合查询">
+  <PageWrapper title="客户订单查询">
     <div style="display: flex">
       <FormItem label="客户名称">
         <Input placeholder="请输入" allowClear />
