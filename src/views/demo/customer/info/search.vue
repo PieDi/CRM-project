@@ -42,8 +42,8 @@
             "
             >删除</Button
           >
-        </template></template
-      >
+        </template>
+      </template>
     </Table>
     <Drawer
       :destroy-on-close="true"
@@ -240,7 +240,4 @@
   });
 </script>
 <style lang="less" scoped>
-  .a {
-    justify-content: space-between;
-  }
 </style>
