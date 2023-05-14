@@ -1,16 +1,16 @@
 <template>
-  <PageWrapper title="回访信息查询">
+  <PageWrapper title="出库管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
-        ><FormItem label="客户名称">
+        ><FormItem label="产品名称">
           <Input placeholder="请输入" allowClear />
         </FormItem>
-        <FormItem label="客户标签" style="margin-left: 10px">
+        <!-- <FormItem label="客户标签" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear />
-        </FormItem>
+        </FormItem> -->
         <Button type="primary" style="margin-left: 10px">搜索</Button></div
       >
-      <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增回访</Button>
+      <Button type="primary" style="margin-left: 10px" @click="addStoreOut">新增出库</Button>
     </div>
 
     <Table
@@ -28,7 +28,7 @@
             type="link"
             @click="
               () => {
-                editCustomer(record);
+                editStoreOut(record);
               }
             "
             >编辑</Button
@@ -37,7 +37,7 @@
             type="link"
             @click="
               () => {
-                deleteCustomer(record);
+                deleteStoreOut(record);
               }
             "
             >删除</Button
@@ -57,78 +57,36 @@
       </template>
 
       <Form :labelCol="{ span: 6 }">
-        <FormItem label="客户姓名">
+        <FormItem label="出库时间">
           <Input placeholder="请输入" allowClear :value="cInfo.name" />
         </FormItem>
-        <FormItem label="客户电话">
+        <FormItem label="出库批次">
           <Input placeholder="请输入" allowClear :value="cInfo.name" />
         </FormItem>
-        <FormItem label="性别">
-          <Select placeholder="请选择">
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
-          </Select>
-        </FormItem>
-
-        <FormItem label="证件类型">
-          <Select placeholder="请选择">
-            <SelectOption key="1">身份证</SelectOption>
-            <SelectOption key="2">护照</SelectOption>
-            <SelectOption key="3">军官证</SelectOption>
-            <SelectOption key="4">港澳通行证</SelectOption>
-            <SelectOption key="5">台湾通行证</SelectOption>
-          </Select>
-        </FormItem>
-
-        <FormItem label="证件号码">
+        <FormItem label="购买人员">
           <Input placeholder="请输入" allowClear :value="cInfo.name" />
         </FormItem>
-
-        <FormItem label="出生日期">
+        <FormItem label="产品编号">
           <Input placeholder="请输入" allowClear :value="cInfo.name" />
         </FormItem>
-        <FormItem label="年龄">
-          <InputNumber placeholder="请输入" allowClear min="1" :precision="0" />
-        </FormItem>
-        <FormItem label="客户等级">
+        <FormItem label="产品名称">
           <Input placeholder="请输入" allowClear :value="cInfo.name" />
         </FormItem>
-        <FormItem label="客户来源">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
-        </FormItem>
-        <FormItem label="联系地址">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
-        </FormItem>
-        <FormItem label="标签">
-          <Select placeholder="请输入" mode="tags">
-            <!-- <SelectOption key="1">身份证</SelectOption>
-            <SelectOption key="2">护照</SelectOption>
-            <SelectOption key="3">军官证</SelectOption>
-            <SelectOption key="4">港澳通行证</SelectOption>
-            <SelectOption key="5">台湾通行证</SelectOption> -->
-          </Select>
-        </FormItem>
-        <FormItem label="所属分组">
-          <Select placeholder="请选择">
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
-          </Select>
+        <FormItem label="其他">
+          <TextArea placeholder="请输入" allowClear :value="cInfo.name" />
         </FormItem>
       </Form>
-      <!-- <FormItem label="客户电话">
-        <TextArea placeholder="请输入" allowClear :value="cInfo.des" />
-      </FormItem> -->
     </Drawer>
   </PageWrapper>
 </template>
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Drawer, Select, InputNumber } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Drawer } from 'ant-design-vue';
   import { getBasicData } from '../../table/tableData';
 
   const FormItem = Form.Item;
-  const SelectOption = Select.Option;
+  const TextArea = Input.TextArea;
   export default defineComponent({
     components: {
       PageWrapper,
@@ -138,9 +96,7 @@
       Input,
       Button,
       Drawer,
-      Select,
-      SelectOption,
-      InputNumber,
+      TextArea,
     },
     setup() {
       const drawerInfo = ref({ visible: false, title: '' });
@@ -164,46 +120,28 @@
 
       const columns: any = [
         {
-          title: '姓名',
+          title: '出库时间',
           dataIndex: 'name',
           key: 'name',
         },
         {
-          title: '电话',
+          title: '出库批次',
           dataIndex: 'address',
         },
         {
-          title: '性别',
+          title: '产品编号',
           dataIndex: 'no',
         },
         {
-          title: '证件类型',
-          width: 150,
+          title: '购买人员',
+          dataIndex: 'no',
+        },
+        {
+          title: '产品名称',
           dataIndex: 'beginTime',
         },
         {
-          title: '证件号码',
-          width: 150,
-          dataIndex: 'endTime',
-        },
-        {
-          title: '年龄',
-          width: 150,
-          dataIndex: 'endTime',
-        },
-        {
-          title: '联系地址',
-          width: 150,
-          dataIndex: 'endTime',
-        },
-        {
-          title: '标签',
-          width: 150,
-          dataIndex: 'endTime',
-        },
-        {
-          title: '所属分组',
-          width: 150,
+          title: '其他',
           dataIndex: 'endTime',
         },
         {
@@ -211,15 +149,15 @@
           dataIndex: 'operation',
         },
       ];
-      const addCustomer = () => {
+      const addStoreOut = () => {
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '新增客户';
+        drawerInfo.value.title = '新增出库';
       };
-      const editCustomer = (item) => {
+      const editStoreOut = (item) => {
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '编辑客户';
+        drawerInfo.value.title = '编辑出库';
       };
-      const deleteCustomer = (item) => {};
+      const deleteStoreOut = (item) => {};
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
@@ -231,9 +169,9 @@
         pagination,
         drawerInfo,
         cInfo,
-        addCustomer,
-        editCustomer,
-        deleteCustomer,
+        addStoreOut,
+        editStoreOut,
+        deleteStoreOut,
         drawerOnClose,
       };
     },

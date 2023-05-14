@@ -15,7 +15,7 @@ const customerServe: AppRouteModule = {
   },
   children: [
     {
-      path: '/search',
+      path: 'search',
       name: 'Search',
       component: () => import('/@/views/demo/customer-serve/search.vue'),
       meta: {

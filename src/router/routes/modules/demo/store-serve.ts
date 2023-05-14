@@ -7,7 +7,6 @@ const storeServe: AppRouteModule = {
   path: '/store-serve',
   name: 'StoreServe',
   component: LAYOUT,
-  redirect: '/level/menu1/menu1-1/menu1-1-1',
   meta: {
     orderNo: 400,
     icon: 'gg:loadbar-doc',
@@ -15,17 +14,17 @@ const storeServe: AppRouteModule = {
   },
   children: [
     {
-      path: '/in',
-      name: 'In',
+      path: 'in',
+      name: 'StoreIn',
       component: () => import('/@/views/demo/store-serve/in/search.vue'),
       meta: {
         title: t('routes.demo.store-serve.in'),
       },
     },
     {
-      path: '/out',
-      name: 'Out',
-      component: () => import('/@/views/demo/store-serve/in/search.vue'),
+      path: 'out',
+      name: 'StoreOut',
+      component: () => import('/@/views/demo/store-serve/out/search.vue'),
       meta: {
         title: t('routes.demo.store-serve.out'),
       },

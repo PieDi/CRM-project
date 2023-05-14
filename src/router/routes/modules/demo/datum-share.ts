@@ -15,27 +15,20 @@ const datumShare: AppRouteModule = {
   },
   children: [
     {
-      path: '/classify',
-      name: 'Classify',
-      component: () => import('/@/views/demo/level/Menu111.vue'),
+      path: 'index',
+      name: 'DatumShareClassify',
+      component: () => import('/@/views/demo/datum-share/index.vue'),
       meta: {
         title: t('routes.demo.datum-share.classify'),
       },
     },
     {
-      path: '/upload',
-      name: 'Upload',
-      component: () => import('/@/views/demo/level/Menu111.vue'),
+      path: 'file-group',
+      name: 'DatumShareFileGroup',
+      component: () => import('/@/views/demo/datum-share/file-group.vue'),
       meta: {
-        title: t('routes.demo.datum-share.upload'),
-      },
-    },
-    {
-      path: '/download',
-      name: 'Download',
-      component: () => import('/@/views/demo/level/Menu111.vue'),
-      meta: {
-        title: t('routes.demo.datum-share.download'),
+        title: '共享资料',
+        hideMenu: true,
       },
     },
   ],
