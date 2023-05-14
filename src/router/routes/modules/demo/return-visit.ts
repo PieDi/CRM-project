@@ -17,7 +17,7 @@ const returnVisit: AppRouteModule = {
     {
       path: 'search',
       name: 'ReturnVisitSearch',
-      component: () => import('/@/views/demo/visit-return/search.vue'),
+      component: () => import('/@/views/demo/visit-return/index.vue'),
       meta: {
         title: t('routes.demo.return-visit.search'),
       },

@@ -25,7 +25,7 @@ const customer: AppRouteModule = {
           name: 'InfoSearch',
           component: () => import('/@/views/demo/customer/info/search.vue'),
           meta: {
-            title: t('routes.demo.customer.info.search'),
+            title: t('routes.demo.customer.info.init'),
           },
         },
         {
@@ -50,7 +50,7 @@ const customer: AppRouteModule = {
           name: 'MHistorySearch',
           component: () => import('/@/views/demo/customer/m-history/search.vue'),
           meta: {
-            title: t('routes.demo.customer.mHistory.search'),
+            title: t('routes.demo.customer.mHistory.init'),
           },
         },
       ],
