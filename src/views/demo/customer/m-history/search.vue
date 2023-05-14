@@ -5,7 +5,9 @@
         ><FormItem label="客户名称">
           <Input placeholder="请输入" allowClear />
         </FormItem>
-
+        <FormItem label="证件号码" style="margin-left: 10px">
+          <Input placeholder="请输入" allowClear />
+        </FormItem>
         <Button type="primary" style="margin-left: 10px">搜索</Button></div
       >
       <Button type="primary" style="margin-left: 10px" @click="addMHistory">新增客户病史</Button>

@@ -5,6 +5,9 @@
         ><FormItem label="客户名称">
           <Input placeholder="请输入" allowClear />
         </FormItem>
+        <FormItem label="证件号码" style="margin-left: 10px">
+          <Input placeholder="请输入" allowClear />
+        </FormItem>
         <FormItem label="客户标签" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear />
         </FormItem>
@@ -239,5 +242,4 @@
     },
   });
 </script>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>
