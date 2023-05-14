@@ -8,22 +8,30 @@
     :visible="drawerInfo.visible"
   >
     <template #extra>
-      <Button type="primary" @click="submit">提交</Button>
+      <!-- <Button type="primary" @click="submit">提交</Button> -->
+      <Button v-if="drawerInfo.type === 'scan'" type="link" @click="edit">编辑</Button>
+
+      <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
     </template>
 
     <Form :labelCol="{ span: 6 }">
       <FormItem label="客户姓名">
-        <Input placeholder="请输入" allowClear :value="mInfo.name" />
+        <Input
+          :disabled="drawerInfo.type !== 'add'"
+          placeholder="请输入"
+          allowClear
+          :value="mInfo.name"
+        />
       </FormItem>
       <FormItem label="性别">
-        <Select placeholder="请选择">
+        <Select placeholder="请选择" disabled>
           <SelectOption key="1">男</SelectOption>
           <SelectOption key="2">女</SelectOption>
         </Select>
       </FormItem>
 
       <FormItem label="证件类型">
-        <Select placeholder="请选择">
+        <Select placeholder="请选择" disabled>
           <SelectOption key="1">身份证</SelectOption>
           <SelectOption key="2">护照</SelectOption>
           <SelectOption key="3">军官证</SelectOption>
@@ -33,20 +41,41 @@
       </FormItem>
 
       <FormItem label="证件号码">
-        <Input placeholder="请输入" allowClear :value="mInfo.name" />
+        <Input placeholder="请输入" allowClear :value="mInfo.name" disabled />
       </FormItem>
 
       <FormItem label="就诊医院">
-        <Input placeholder="请输入" allowClear :value="mInfo.name" />
+        <Input
+          placeholder="请输入"
+          allowClear
+          :value="mInfo.name"
+          :disabled="drawerInfo.type === 'scan' || drawerInfo.type !== 'add'"
+        />
       </FormItem>
       <FormItem label="科室">
-        <InputNumber placeholder="请输入" allowClear min="1" :precision="0" />
+        <Input
+          placeholder="请输入"
+          allowClear
+          min="1"
+          :precision="0"
+          :disabled="drawerInfo.type === 'scan' || drawerInfo.type !== 'add'"
+        />
       </FormItem>
       <FormItem label="疾病名称">
-        <Input placeholder="请输入" allowClear :value="mInfo.name" />
+        <Input
+          placeholder="请输入"
+          allowClear
+          :value="mInfo.name"
+          :disabled="drawerInfo.type === 'scan'"
+        />
       </FormItem>
       <FormItem label="附件">
-        <Input placeholder="请输入" allowClear :value="mInfo.name" />
+        <Input
+          placeholder="请输入"
+          allowClear
+          :value="mInfo.name"
+          :disabled="drawerInfo.type === 'scan'"
+        />
       </FormItem>
     </Form>
   </Drawer>
@@ -54,6 +83,7 @@
 <script lang="ts">
   import { defineComponent, ref, PropType } from 'vue';
   import { Table, Form, Input, Button, Drawer, Select, InputNumber } from 'ant-design-vue';
+  import { DrawerItemType } from '../type';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -71,7 +101,7 @@
     },
     props: {
       drawerInfo: {
-        type: Object as PropType<{ visible: boolean; title: string; item?: any }>,
+        type: Object as PropType<DrawerItemType>,
         default: () => ({ visible: false, title: '' }),
       },
     },
@@ -90,6 +120,9 @@
       const submit = () => {
         emit('submit', mInfo.value);
       };
+      const edit = () => {
+        emit('edit');
+      };
 
       return {
         loading,
@@ -100,6 +133,7 @@
         // deleteCustomer,
         drawerOnClose,
         submit,
+        edit,
       };
     },
   });

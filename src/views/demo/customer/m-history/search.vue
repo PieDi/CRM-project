@@ -23,17 +23,27 @@
       :pagination="pagination"
     >
       <template #bodyCell="{ column, _text, record }">
-        <template v-if="column.dataIndex === 'mHistory'">
+        <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
             @click="
               () => {
-                mRecordClick(record);
+                scanMRecord(record);
               }
             "
-            >病史记录</Button
+            >查看</Button
+          >
+          <Button
+            type="link"
+            @click="
+              () => {
+                deleteMRecord(record);
+              }
+            "
+            >删除</Button
           >
         </template>
+
         <template v-if="column.dataIndex === 'drug'">
           <Button
             type="link"
@@ -82,7 +92,11 @@
       </template>
     </Table>
     <template v-if="mRecordDrawerInfo.visible">
-      <m-record :drawer-info="mRecordDrawerInfo" @drawerOnClose="mRecordClose"></m-record
+      <m-record
+        :drawer-info="mRecordDrawerInfo"
+        @drawerOnClose="mRecordClose"
+        @edit="mRecordEdit"
+      ></m-record
     ></template>
 
     <template v-if="dRecordDrawerInfo.visible">
@@ -112,11 +126,7 @@
   import eRecord from './e-record.vue';
   import iRecord from './i-record.vue';
   import oRecord from './o-record.vue';
-  type DrawerItemType = {
-    visible: boolean;
-    title: string;
-    item?: any;
-  };
+  import { DrawerItemType } from '../type';
   const FormItem = Form.Item;
   export default defineComponent({
     components: {
@@ -184,10 +194,6 @@
           dataIndex: 'endTime',
         },
         {
-          title: '病史记录',
-          dataIndex: 'mHistory',
-        },
-        {
           title: '用药记录',
           width: 80,
           dataIndex: 'drug',
@@ -207,19 +213,31 @@
           width: 80,
           dataIndex: 'other',
         },
+        {
+          title: '操作',
+          dataIndex: 'operation',
+        },
       ];
 
-      const mRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '', item: undefined });
+      const mRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '' });
       const mRecordClose = () => {
         mRecordDrawerInfo.value.title = '';
         mRecordDrawerInfo.value.visible = false;
         mRecordDrawerInfo.value.item = undefined;
+        mRecordDrawerInfo.value.type = undefined;
       };
-      const mRecordClick = (item: any) => {
-        mRecordDrawerInfo.value.title = '客户病史';
+      const mRecordEdit = (item: any) => {
+        mRecordDrawerInfo.value.title = '编辑客户病史';
+        mRecordDrawerInfo.value.type = 'edit';
+      };
+      const scanMRecord = (item: any) => {
+        mRecordDrawerInfo.value.title = '查看客户病史';
         mRecordDrawerInfo.value.visible = true;
         mRecordDrawerInfo.value.item = item;
+        mRecordDrawerInfo.value.type = 'scan';
       };
+
+      const deleteMRecord = (item: any) => {};
 
       const dRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '', item: undefined });
       const dRecordClose = () => {
@@ -277,7 +295,10 @@
         addMHistory,
         mRecordDrawerInfo,
         mRecordClose,
-        mRecordClick,
+        mRecordEdit,
+        scanMRecord,
+        deleteMRecord,
+
         dRecordDrawerInfo,
         dRecordClose,
         dRecordClick,

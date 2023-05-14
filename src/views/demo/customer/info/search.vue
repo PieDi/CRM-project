@@ -31,10 +31,10 @@
             type="link"
             @click="
               () => {
-                editCustomer(record);
+                scanCustomer(record);
               }
             "
-            >编辑</Button
+            >查看</Button
           >
           <Button
             type="link"
@@ -56,25 +56,37 @@
       :visible="drawerInfo.visible"
     >
       <template #extra>
-        <Button type="primary">提交</Button>
+        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
+
+        <Button v-if="drawerInfo.type !== 'scan'" type="primary">提交</Button>
       </template>
 
       <Form :labelCol="{ span: 6 }">
         <FormItem label="客户姓名">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+          />
         </FormItem>
         <FormItem label="客户电话">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+          />
         </FormItem>
         <FormItem label="性别">
-          <Select placeholder="请选择">
+          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
             <SelectOption key="1">男</SelectOption>
             <SelectOption key="2">女</SelectOption>
           </Select>
         </FormItem>
 
         <FormItem label="证件类型">
-          <Select placeholder="请选择">
+          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
             <SelectOption key="1">身份证</SelectOption>
             <SelectOption key="2">护照</SelectOption>
             <SelectOption key="3">军官证</SelectOption>
@@ -84,26 +96,57 @@
         </FormItem>
 
         <FormItem label="证件号码">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+          />
         </FormItem>
 
         <FormItem label="出生日期">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+          />
         </FormItem>
         <FormItem label="年龄">
-          <InputNumber placeholder="请输入" allowClear min="1" :precision="0" />
+          <InputNumber
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            min="1"
+            :precision="0"
+          />
         </FormItem>
         <FormItem label="客户等级">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+          />
         </FormItem>
         <FormItem label="客户来源">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+          />
         </FormItem>
         <FormItem label="联系地址">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+          />
         </FormItem>
         <FormItem label="标签">
-          <Select placeholder="请输入" mode="tags">
+          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请输入" mode="tags">
             <!-- <SelectOption key="1">身份证</SelectOption>
             <SelectOption key="2">护照</SelectOption>
             <SelectOption key="3">军官证</SelectOption>
@@ -112,7 +155,7 @@
           </Select>
         </FormItem>
         <FormItem label="所属分组">
-          <Select placeholder="请选择">
+          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
             <SelectOption key="1">男</SelectOption>
             <SelectOption key="2">女</SelectOption>
           </Select>
@@ -129,6 +172,7 @@
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer, Select, InputNumber } from 'ant-design-vue';
   import { getBasicData } from '../../table/tableData';
+  import { DrawerItemType } from '../type';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -146,7 +190,10 @@
       InputNumber,
     },
     setup() {
-      const drawerInfo = ref({ visible: false, title: '' });
+      const drawerInfo = ref<DrawerItemType>({
+        visible: false,
+        title: '',
+      });
       const cInfo = ref<{ name: string; id?: number | string; des: string }>({
         name: '',
         id: undefined,
@@ -217,15 +264,24 @@
       const addCustomer = () => {
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新增客户';
+        drawerInfo.value.type = 'add';
       };
-      const editCustomer = (item) => {
+      const scanCustomer = (item) => {
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '编辑客户';
+        drawerInfo.value.title = '查看客户信息';
+        drawerInfo.value.item = item;
+        drawerInfo.value.type = 'scan';
       };
       const deleteCustomer = (item) => {};
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
+        drawerInfo.value.item = undefined;
+        drawerInfo.value.type = undefined;
+      };
+      const drawerEdit = () => {
+        drawerInfo.value.title = '编辑客户信息';
+        drawerInfo.value.type = 'edit';
       };
       return {
         columns,
@@ -235,9 +291,10 @@
         drawerInfo,
         cInfo,
         addCustomer,
-        editCustomer,
+        scanCustomer,
         deleteCustomer,
         drawerOnClose,
+        drawerEdit,
       };
     },
   });
