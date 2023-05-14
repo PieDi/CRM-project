@@ -12,15 +12,15 @@
     </template>
 
     <Form :labelCol="{ span: 6 }">
-      <FormItem label="会诊日期">
-        <DatePicker />
+      <FormItem label="其他病史">
+        <TextArea placeholder="请输入" allowClear :value="mInfo.name" />
       </FormItem>
 
-      <FormItem label="会诊专家">
-        <TextInputArea placeholder="请输入" allowClear :value="mInfo.name" />
+      <FormItem label="检查部出院小结位">
+        <TextArea placeholder="请输入" allowClear :value="mInfo.name" />
       </FormItem>
 
-      <FormItem label="会诊内筒">
+      <FormItem label="检查/病理">
         <TextArea placeholder="请输入" allowClear :value="mInfo.name" />
       </FormItem>
 
@@ -32,16 +32,7 @@
 </template>
 <script lang="ts">
   import { defineComponent, ref, PropType } from 'vue';
-  import {
-    Table,
-    Form,
-    Input,
-    Button,
-    Drawer,
-    Select,
-    InputNumber,
-    DatePicker,
-  } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Drawer, Select, InputNumber } from 'ant-design-vue';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -58,7 +49,6 @@
       SelectOption,
       InputNumber,
       TextArea,
-      DatePicker,
     },
     props: {
       drawerInfo: {

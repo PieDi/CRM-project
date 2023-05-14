@@ -12,16 +12,15 @@
     </template>
 
     <Form :labelCol="{ span: 6 }">
-      <FormItem label="会诊日期">
+      <FormItem label="用药记录">
+        <Input placeholder="请输入" allowClear :value="mInfo.name" />
+      </FormItem>
+      <FormItem label="用药时间">
         <DatePicker />
       </FormItem>
 
-      <FormItem label="会诊专家">
-        <TextInputArea placeholder="请输入" allowClear :value="mInfo.name" />
-      </FormItem>
-
-      <FormItem label="会诊内筒">
-        <TextArea placeholder="请输入" allowClear :value="mInfo.name" />
+      <FormItem label="药物名称">
+        <Input placeholder="请输入" allowClear :value="mInfo.name" />
       </FormItem>
 
       <FormItem label="附件">
@@ -42,10 +41,9 @@
     InputNumber,
     DatePicker,
   } from 'ant-design-vue';
-
+  import dayjs, { Dayjs } from 'dayjs';
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
-  const TextArea = Input.TextArea;
   export default defineComponent({
     components: {
       Table,
@@ -57,7 +55,6 @@
       Select,
       SelectOption,
       InputNumber,
-      TextArea,
       DatePicker,
     },
     props: {

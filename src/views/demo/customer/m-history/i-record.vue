@@ -15,7 +15,7 @@
       <FormItem label="检查日期">
         <DatePicker />
       </FormItem>
-      <FormItem label="检查类型">
+      <FormItem label="检查类别">
         <Select placeholder="请选择">
           <SelectOption key="1">男</SelectOption>
           <SelectOption key="2">女</SelectOption>
@@ -26,20 +26,8 @@
         <Input placeholder="请输入" allowClear :value="mInfo.name" />
       </FormItem>
 
-      <FormItem label="项目名称">
+      <FormItem label="检查机构">
         <Input placeholder="请输入" allowClear :value="mInfo.name" />
-      </FormItem>
-
-      <FormItem label="检查医院">
-        <Input placeholder="请输入" allowClear :value="mInfo.name" />
-      </FormItem>
-
-      <FormItem label="影像所见">
-        <TextArea placeholder="请输入" allowClear :value="mInfo.name" />
-      </FormItem>
-
-      <FormItem label="影像诊断">
-        <TextArea placeholder="请输入" allowClear :value="mInfo.name" />
       </FormItem>
 
       <FormItem label="附件">

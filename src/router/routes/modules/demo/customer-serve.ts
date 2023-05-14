@@ -17,33 +17,9 @@ const customerServe: AppRouteModule = {
     {
       path: '/search',
       name: 'Search',
-      component: () => import('/@/views/demo/level/Menu111.vue'),
+      component: () => import('/@/views/demo/customer-serve/search.vue'),
       meta: {
         title: t('routes.demo.customer-server.search'),
-      },
-    },
-    {
-      path: '/add',
-      name: 'Add',
-      component: () => import('/@/views/demo/level/Menu111.vue'),
-      meta: {
-        title: t('routes.demo.customer-server.add'),
-      },
-    },
-    {
-      path: 'edit',
-      name: 'Edit',
-      component: () => import('/@/views/demo/level/Menu111.vue'),
-      meta: {
-        title: t('routes.demo.customer-server.edit'),
-      },
-    },
-    {
-      path: 'delete',
-      name: 'Delete',
-      component: () => import('/@/views/demo/level/Menu111.vue'),
-      meta: {
-        title: t('routes.demo.customer-server.delete'),
       },
     },
   ],

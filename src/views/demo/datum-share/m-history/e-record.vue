@@ -12,16 +12,22 @@
     </template>
 
     <Form :labelCol="{ span: 6 }">
-      <FormItem label="会诊日期">
+      <FormItem label="检查日期">
         <DatePicker />
       </FormItem>
-
-      <FormItem label="会诊专家">
-        <TextInputArea placeholder="请输入" allowClear :value="mInfo.name" />
+      <FormItem label="检查类型">
+        <Select placeholder="请选择">
+          <SelectOption key="1">男</SelectOption>
+          <SelectOption key="2">女</SelectOption>
+        </Select>
       </FormItem>
 
-      <FormItem label="会诊内筒">
-        <TextArea placeholder="请输入" allowClear :value="mInfo.name" />
+      <FormItem label="项目名称">
+        <Input placeholder="请输入" allowClear :value="mInfo.name" />
+      </FormItem>
+
+      <FormItem label="检查医院">
+        <Input placeholder="请输入" allowClear :value="mInfo.name" />
       </FormItem>
 
       <FormItem label="附件">
@@ -45,7 +51,6 @@
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
-  const TextArea = Input.TextArea;
   export default defineComponent({
     components: {
       Table,
@@ -57,7 +62,6 @@
       Select,
       SelectOption,
       InputNumber,
-      TextArea,
       DatePicker,
     },
     props: {

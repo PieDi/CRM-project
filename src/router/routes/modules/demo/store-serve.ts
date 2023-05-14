@@ -17,7 +17,7 @@ const storeServe: AppRouteModule = {
     {
       path: '/in',
       name: 'In',
-      component: () => import('/@/views/demo/level/Menu111.vue'),
+      component: () => import('/@/views/demo/store-serve/in/search.vue'),
       meta: {
         title: t('routes.demo.store-serve.in'),
       },
@@ -25,7 +25,7 @@ const storeServe: AppRouteModule = {
     {
       path: '/out',
       name: 'Out',
-      component: () => import('/@/views/demo/level/Menu111.vue'),
+      component: () => import('/@/views/demo/store-serve/in/search.vue'),
       meta: {
         title: t('routes.demo.store-serve.out'),
       },
