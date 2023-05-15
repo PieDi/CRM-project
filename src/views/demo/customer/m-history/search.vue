@@ -55,6 +55,7 @@
             >用药记录</Button
           >
         </template>
+
         <template v-if="column.dataIndex === 'examine'">
           <Button
             type="link"
@@ -100,19 +101,35 @@
     ></template>
 
     <template v-if="dRecordDrawerInfo.visible">
-      <d-record :drawer-info="dRecordDrawerInfo" @drawerOnClose="dRecordClose"></d-record
+      <d-record
+        :drawer-info="dRecordDrawerInfo"
+        @drawerOnClose="dRecordClose"
+        @edit="dRecordEdit"
+      ></d-record
     ></template>
 
     <template v-if="eRecordDrawerInfo.visible">
-      <e-record :drawer-info="eRecordDrawerInfo" @drawerOnClose="eRecordClose"></e-record
+      <e-record
+        :drawer-info="eRecordDrawerInfo"
+        @drawerOnClose="eRecordClose"
+        @edit="eRecordEdit"
+      ></e-record
     ></template>
 
     <template v-if="iRecordDrawerInfo.visible">
-      <i-record :drawer-info="iRecordDrawerInfo" @drawerOnClose="iRecordClose"></i-record
+      <i-record
+        :drawer-info="iRecordDrawerInfo"
+        @drawerOnClose="iRecordClose"
+        @edit="iRecordEdit"
+      ></i-record
     ></template>
 
     <template v-if="oRecordDrawerInfo.visible">
-      <o-record :drawer-info="oRecordDrawerInfo" @drawerOnClose="oRecordClose"></o-record
+      <o-record
+        :drawer-info="oRecordDrawerInfo"
+        @drawerOnClose="oRecordClose"
+        @edit="oRecordEdit"
+      ></o-record
     ></template>
   </PageWrapper>
 </template>
@@ -218,7 +235,7 @@
           dataIndex: 'operation',
         },
       ];
-
+      // 病史记录
       const mRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '' });
       const mRecordClose = () => {
         mRecordDrawerInfo.value.title = '';
@@ -236,57 +253,83 @@
         mRecordDrawerInfo.value.item = item;
         mRecordDrawerInfo.value.type = 'scan';
       };
-
       const deleteMRecord = (item: any) => {};
-
+      // 用药记录
       const dRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '', item: undefined });
       const dRecordClose = () => {
         dRecordDrawerInfo.value.title = '';
         dRecordDrawerInfo.value.visible = false;
         dRecordDrawerInfo.value.item = undefined;
+        dRecordDrawerInfo.value.type = undefined;
       };
-
       const dRecordClick = (item: any) => {
         dRecordDrawerInfo.value.title = '用药记录';
         dRecordDrawerInfo.value.visible = true;
         dRecordDrawerInfo.value.item = item;
+        dRecordDrawerInfo.value.type = 'scan';
+      };
+      const dRecordEdit = () => {
+        dRecordDrawerInfo.value.title = '编辑用药记录';
+        dRecordDrawerInfo.value.type = 'edit';
       };
 
+      // 检验记录
       const eRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '', item: undefined });
       const eRecordClose = () => {
         eRecordDrawerInfo.value.title = '';
         eRecordDrawerInfo.value.visible = false;
         eRecordDrawerInfo.value.item = undefined;
+        eRecordDrawerInfo.value.type = undefined;
       };
       const eRecordClick = (item: any) => {
         eRecordDrawerInfo.value.title = '检查记录';
         eRecordDrawerInfo.value.visible = true;
         eRecordDrawerInfo.value.item = item;
+        eRecordDrawerInfo.value.type = 'scan';
+      };
+      const eRecordEdit = () => {
+        eRecordDrawerInfo.value.title = '编辑检查记录';
+        eRecordDrawerInfo.value.type = 'edit';
       };
 
+      // 影像记录
       const iRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '', item: undefined });
       const iRecordClose = () => {
         iRecordDrawerInfo.value.title = '';
         iRecordDrawerInfo.value.visible = false;
         iRecordDrawerInfo.value.item = undefined;
+        iRecordDrawerInfo.value.type = undefined;
       };
       const iRecordClick = (item: any) => {
         iRecordDrawerInfo.value.title = '影像记录';
         iRecordDrawerInfo.value.visible = true;
         iRecordDrawerInfo.value.item = undefined;
+        iRecordDrawerInfo.value.type = 'scan';
+      };
+      const iRecordEdit = () => {
+        iRecordDrawerInfo.value.title = '编辑影像记录';
+        iRecordDrawerInfo.value.type = 'edit';
       };
 
+      // 其他记录
       const oRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '', item: undefined });
       const oRecordClose = () => {
         oRecordDrawerInfo.value.title = '';
         oRecordDrawerInfo.value.visible = false;
         oRecordDrawerInfo.value.item = undefined;
+        oRecordDrawerInfo.value.type = undefined;
       };
       const oRecordClick = (item: any) => {
-        oRecordDrawerInfo.value.title = '其他信息';
+        oRecordDrawerInfo.value.title = '其他记录';
         oRecordDrawerInfo.value.visible = true;
         oRecordDrawerInfo.value.item = item;
+        oRecordDrawerInfo.value.type = 'scan';
       };
+      const oRecordEdit = () => {
+        oRecordDrawerInfo.value.title = '编辑其他记录';
+        oRecordDrawerInfo.value.type = 'edit';
+      };
+
       return {
         columns,
         data: getBasicData(),
@@ -302,15 +345,22 @@
         dRecordDrawerInfo,
         dRecordClose,
         dRecordClick,
+        dRecordEdit,
+
         eRecordDrawerInfo,
         eRecordClose,
         eRecordClick,
+        eRecordEdit,
+
         iRecordDrawerInfo,
         iRecordClose,
         iRecordClick,
+        iRecordEdit,
+
         oRecordDrawerInfo,
         oRecordClose,
         oRecordClick,
+        oRecordEdit,
       };
     },
   });

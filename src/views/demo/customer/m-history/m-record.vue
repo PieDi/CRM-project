@@ -82,7 +82,7 @@
 </template>
 <script lang="ts">
   import { defineComponent, ref, PropType } from 'vue';
-  import { Table, Form, Input, Button, Drawer, Select, InputNumber } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Drawer, Select } from 'ant-design-vue';
   import { DrawerItemType } from '../type';
 
   const FormItem = Form.Item;
@@ -97,7 +97,6 @@
       Drawer,
       Select,
       SelectOption,
-      InputNumber,
     },
     props: {
       drawerInfo: {
@@ -106,7 +105,6 @@
       },
     },
     setup(props, { emit }) {
-      // const drawerInfo = ref({ visible: false, title: '' });
       const mInfo = ref<{ name: string; id?: number | string; des: string }>({
         name: '',
         id: undefined,
