@@ -2,10 +2,10 @@
   <PageWrapper title="客户订单管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
-        ><FormItem label="客户名称">
+        ><FormItem label="客户姓名">
           <Input placeholder="请输入" allowClear />
         </FormItem>
-        <FormItem label="订单名称" style="margin-left: 10px">
+        <FormItem label="订单编号" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear />
         </FormItem>
         <Button type="primary" style="margin-left: 10px">搜索</Button></div

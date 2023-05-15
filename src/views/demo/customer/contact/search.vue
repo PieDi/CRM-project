@@ -5,12 +5,11 @@
         ><FormItem label="合同名称">
           <Input placeholder="请输入" allowClear />
         </FormItem>
-        <FormItem label="客户名称" style="margin-left: 10px">
+        <FormItem label="客户姓名" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear />
         </FormItem>
         <Button type="primary" style="margin-left: 10px">搜索</Button></div
       >
-      <Button type="primary" style="margin-left: 10px" @click="addContact">合同关联</Button>
     </div>
 
     <Table
@@ -33,46 +32,18 @@
             "
             >下载</Button
           >
-          <!-- <Button
+          <Button
             type="link"
             @click="
               () => {
-                deleteOrder(record);
+                previewContact(record);
               }
             "
-            >删除</Button
-          > -->
+            >预览</Button
+          >
         </template>
       </template>
     </Table>
-    <Drawer
-      :destroy-on-close="true"
-      :title="drawerInfo.title"
-      placement="right"
-      @close="drawerOnClose"
-      :visible="drawerInfo.visible"
-    >
-      <template #extra>
-        <!-- <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button> -->
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary">提交</Button>
-      </template>
-
-      <Form :labelCol="{ span: 6 }">
-        <FormItem label="合同">
-          <Select placeholder="请选择">
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
-          </Select>
-        </FormItem>
-        <FormItem label="订单">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
-        </FormItem>
-
-        <FormItem label="其他">
-          <TextArea placeholder="请输入" allowClear :value="cInfo.des" />
-        </FormItem>
-      </Form>
-    </Drawer>
   </PageWrapper>
 </template>
 <script lang="ts">
@@ -89,7 +60,6 @@
     DatePicker,
   } from 'ant-design-vue';
   import { getBasicData } from '../../table/tableData';
-  import { DrawerItemType } from '../type';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -110,10 +80,6 @@
       TextArea,
     },
     setup() {
-      const drawerInfo = ref<DrawerItemType>({
-        visible: false,
-        title: '',
-      });
       const cInfo = ref<{ name: string; id?: number | string; des: string }>({
         name: '',
         id: undefined,
@@ -176,29 +142,18 @@
           dataIndex: 'operation',
         },
       ];
-      const addContact = () => {
-        drawerInfo.value.visible = true;
-        drawerInfo.value.title = '合同关联';
-        drawerInfo.value.type = 'add';
-      };
+
       const downloadContact = (item) => {};
-      const drawerOnClose = () => {
-        drawerInfo.value.visible = false;
-        drawerInfo.value.title = '';
-        drawerInfo.value.item = undefined;
-        drawerInfo.value.type = undefined;
-      };
+      const previewContact = (item) => {};
 
       return {
         columns,
         data: getBasicData(),
         loading,
         pagination,
-        drawerInfo,
         cInfo,
-        addContact,
         downloadContact,
-        drawerOnClose,
+        previewContact,
       };
     },
   });

@@ -2,7 +2,7 @@
   <PageWrapper title="客户病史查询">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
-        ><FormItem label="客户名称">
+        ><FormItem label="客户姓名">
           <Input placeholder="请输入" allowClear />
         </FormItem>
 
