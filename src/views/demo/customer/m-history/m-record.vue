@@ -8,20 +8,16 @@
     :visible="drawerInfo.visible"
   >
     <template #extra>
-      <!-- <Button type="primary" @click="submit">提交</Button> -->
       <Button v-if="drawerInfo.type === 'scan'" type="link" @click="edit">编辑</Button>
-
       <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
     </template>
 
     <Form :labelCol="{ span: 6 }">
       <FormItem label="客户姓名">
-        <Input
-          :disabled="drawerInfo.type !== 'add'"
-          placeholder="请输入"
-          allowClear
-          :value="mInfo.name"
-        />
+        <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
+          <SelectOption key="1">男</SelectOption>
+          <SelectOption key="2">女</SelectOption>
+        </Select>
       </FormItem>
       <FormItem label="性别">
         <Select placeholder="请选择" disabled>

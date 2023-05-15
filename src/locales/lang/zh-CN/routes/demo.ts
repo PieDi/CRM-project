@@ -104,10 +104,12 @@ export default {
     order: {
       init: '客户订单管理',
       search: '客户订单查询',
+      statistics: '订单统计',
     },
     contact: {
       init: '客户合同管理',
       search: '客户合同查询',
+      template: '合同模板',
     },
 
     invoice: {

@@ -13,7 +13,10 @@
 
     <Form :labelCol="{ span: 6 }">
       <FormItem label="客户姓名">
-        <Input placeholder="请输入" allowClear :value="mInfo.name" />
+        <Select placeholder="请选择">
+          <SelectOption key="1">男</SelectOption>
+          <SelectOption key="2">女</SelectOption>
+        </Select>
       </FormItem>
       <FormItem label="性别">
         <Select placeholder="请选择">

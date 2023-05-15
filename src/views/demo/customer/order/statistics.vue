@@ -1,19 +1,16 @@
 <template>
-  <PageWrapper title="客户信息管理">
+  <PageWrapper title="订单统计">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客户名称">
           <Input placeholder="请输入" allowClear />
         </FormItem>
-        <FormItem label="证件号码" style="margin-left: 10px">
-          <Input placeholder="请输入" allowClear />
-        </FormItem>
-        <FormItem label="客户标签" style="margin-left: 10px">
+        <FormItem label="订单名称" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear />
         </FormItem>
         <Button type="primary" style="margin-left: 10px">搜索</Button></div
       >
-      <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增客户</Button>
+      <Button type="primary" style="margin-left: 10px" @click="addOrder">新增订单</Button>
     </div>
 
     <Table
@@ -31,7 +28,7 @@
             type="link"
             @click="
               () => {
-                scanCustomer(record);
+                scanOrder(record);
               }
             "
             >查看</Button
@@ -40,7 +37,7 @@
             type="link"
             @click="
               () => {
-                deleteCustomer(record);
+                deleteOrder(record);
               }
             "
             >删除</Button
@@ -57,18 +54,15 @@
     >
       <template #extra>
         <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
-
         <Button v-if="drawerInfo.type !== 'scan'" type="primary">提交</Button>
       </template>
 
       <Form :labelCol="{ span: 6 }">
         <FormItem label="客户姓名">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            :value="cInfo.name"
-          />
+          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
+            <SelectOption key="1">男</SelectOption>
+            <SelectOption key="2">女</SelectOption>
+          </Select>
         </FormItem>
         <FormItem label="客户电话">
           <Input
@@ -261,18 +255,18 @@
           dataIndex: 'operation',
         },
       ];
-      const addCustomer = () => {
+      const addOrder = () => {
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '新增客户';
+        drawerInfo.value.title = '新增订单';
         drawerInfo.value.type = 'add';
       };
-      const scanCustomer = (item) => {
+      const scanOrder = (item) => {
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '查看客户信息';
+        drawerInfo.value.title = '查看订单信息';
         drawerInfo.value.item = item;
         drawerInfo.value.type = 'scan';
       };
-      const deleteCustomer = (item) => {};
+      const deleteOrder = (item) => {};
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
@@ -280,7 +274,7 @@
         drawerInfo.value.type = undefined;
       };
       const drawerEdit = () => {
-        drawerInfo.value.title = '编辑客户信息';
+        drawerInfo.value.title = '编辑订单信息';
         drawerInfo.value.type = 'edit';
       };
       return {
@@ -290,9 +284,9 @@
         pagination,
         drawerInfo,
         cInfo,
-        addCustomer,
-        scanCustomer,
-        deleteCustomer,
+        addOrder,
+        scanOrder,
+        deleteOrder,
         drawerOnClose,
         drawerEdit,
       };

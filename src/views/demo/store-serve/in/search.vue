@@ -28,10 +28,10 @@
             type="link"
             @click="
               () => {
-                editStoreIn(record);
+                scanStoreIn(record);
               }
             "
-            >编辑</Button
+            >查看</Button
           >
           <Button
             type="link"
@@ -46,6 +46,7 @@
       </template>
     </Table>
     <Drawer
+      :mask-closable="false"
       :destroy-on-close="true"
       :title="drawerInfo.title"
       placement="right"
@@ -53,24 +54,50 @@
       :visible="drawerInfo.visible"
     >
       <template #extra>
-        <Button type="primary">提交</Button>
+        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="editStoreIn">编辑</Button>
+        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
       </template>
 
       <Form :labelCol="{ span: 6 }">
         <FormItem label="入库时间">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
         </FormItem>
         <FormItem label="入库批次">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
         </FormItem>
         <FormItem label="产品编号">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
         </FormItem>
         <FormItem label="产品名称">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
         </FormItem>
         <FormItem label="其他">
-          <TextArea placeholder="请输入" allowClear :value="cInfo.name" />
+          <TextArea
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
         </FormItem>
       </Form>
     </Drawer>
@@ -81,7 +108,7 @@
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer } from 'ant-design-vue';
   import { getBasicData } from '../../table/tableData';
-
+  import { DrawerItemType } from '../../customer/type';
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   export default defineComponent({
@@ -96,7 +123,7 @@
       TextArea,
     },
     setup() {
-      const drawerInfo = ref({ visible: false, title: '' });
+      const drawerInfo = ref<DrawerItemType>({ visible: false, title: '', item: undefined });
       const cInfo = ref<{ name: string; id?: number | string; des: string }>({
         name: '',
         id: undefined,
@@ -144,10 +171,17 @@
       ];
       const addStoreIn = () => {
         drawerInfo.value.visible = true;
+        drawerInfo.value.type = 'add';
         drawerInfo.value.title = '新增入库';
       };
-      const editStoreIn = (item) => {
+      const scanStoreIn = (item) => {
         drawerInfo.value.visible = true;
+        drawerInfo.value.item = item;
+        drawerInfo.value.type = 'scan';
+        drawerInfo.value.title = '查看入库';
+      };
+      const editStoreIn = () => {
+        drawerInfo.value.type = 'edit';
         drawerInfo.value.title = '编辑入库';
       };
       const deleteStoreIn = (item) => {};
@@ -155,6 +189,7 @@
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
       };
+      const submit = () => {};
       return {
         columns,
         data: getBasicData(),
@@ -164,8 +199,10 @@
         cInfo,
         addStoreIn,
         editStoreIn,
+        scanStoreIn,
         deleteStoreIn,
         drawerOnClose,
+        submit,
       };
     },
   });

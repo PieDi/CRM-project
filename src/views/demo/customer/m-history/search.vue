@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="客户病史查询">
+  <PageWrapper title="客户病史管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客户名称">

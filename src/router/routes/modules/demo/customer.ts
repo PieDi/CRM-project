@@ -67,7 +67,15 @@ const customer: AppRouteModule = {
           name: 'OrderSearch',
           component: () => import('/@/views/demo/customer/order/search.vue'),
           meta: {
-            title: t('routes.demo.customer.order.search'),
+            title: t('routes.demo.customer.order.init'),
+          },
+        },
+        {
+          path: 'statistics',
+          name: 'OrderStatistics',
+          component: () => import('/@/views/demo/customer/order/statistics.vue'),
+          meta: {
+            title: t('routes.demo.customer.order.statistics'),
           },
         },
       ],
@@ -84,7 +92,15 @@ const customer: AppRouteModule = {
           name: 'ContactSearch',
           component: () => import('/@/views/demo/customer/contact/search.vue'),
           meta: {
-            title: t('routes.demo.customer.contact.search'),
+            title: t('routes.demo.customer.contact.init'),
+          },
+        },
+        {
+          path: 'template',
+          name: 'ContactTemplate',
+          component: () => import('/@/views/demo/customer/contact/template.vue'),
+          meta: {
+            title: t('routes.demo.customer.contact.template'),
           },
         },
       ],

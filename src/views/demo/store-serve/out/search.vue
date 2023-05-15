@@ -28,10 +28,10 @@
             type="link"
             @click="
               () => {
-                editStoreOut(record);
+                scanStoreOut(record);
               }
             "
-            >编辑</Button
+            >查看</Button
           >
           <Button
             type="link"
@@ -46,6 +46,7 @@
       </template>
     </Table>
     <Drawer
+      :mask-closable="false"
       :destroy-on-close="true"
       :title="drawerInfo.title"
       placement="right"
@@ -53,27 +54,58 @@
       :visible="drawerInfo.visible"
     >
       <template #extra>
-        <Button type="primary">提交</Button>
+        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="editStoreOut">编辑</Button>
+        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
       </template>
 
       <Form :labelCol="{ span: 6 }">
         <FormItem label="出库时间">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
         </FormItem>
         <FormItem label="出库批次">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
         </FormItem>
         <FormItem label="购买人员">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
         </FormItem>
         <FormItem label="产品编号">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
         </FormItem>
         <FormItem label="产品名称">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
         </FormItem>
         <FormItem label="其他">
-          <TextArea placeholder="请输入" allowClear :value="cInfo.name" />
+          <TextArea
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
         </FormItem>
       </Form>
     </Drawer>
@@ -84,6 +116,7 @@
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer } from 'ant-design-vue';
   import { getBasicData } from '../../table/tableData';
+  import { DrawerItemType } from '../../customer/type';
 
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
@@ -99,7 +132,7 @@
       TextArea,
     },
     setup() {
-      const drawerInfo = ref({ visible: false, title: '' });
+      const drawerInfo = ref<DrawerItemType>({ visible: false, title: '' });
       const cInfo = ref<{ name: string; id?: number | string; des: string }>({
         name: '',
         id: undefined,
@@ -151,10 +184,17 @@
       ];
       const addStoreOut = () => {
         drawerInfo.value.visible = true;
+        drawerInfo.value.type = 'add';
         drawerInfo.value.title = '新增出库';
       };
-      const editStoreOut = (item) => {
+      const scanStoreOut = (item) => {
         drawerInfo.value.visible = true;
+        drawerInfo.value.type = 'scan';
+        drawerInfo.value.item = item;
+        drawerInfo.value.title = '查看出库';
+      };
+      const editStoreOut = () => {
+        drawerInfo.value.type = 'edit';
         drawerInfo.value.title = '编辑出库';
       };
       const deleteStoreOut = (item) => {};
@@ -162,6 +202,7 @@
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
       };
+      const submit = () => {};
       return {
         columns,
         data: getBasicData(),
@@ -170,9 +211,11 @@
         drawerInfo,
         cInfo,
         addStoreOut,
+        scanStoreOut,
         editStoreOut,
         deleteStoreOut,
         drawerOnClose,
+        submit,
       };
     },
   });
