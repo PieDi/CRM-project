@@ -6,7 +6,7 @@ import {
   EXCEPTION_COMPONENT,
   PAGE_NOT_FOUND_NAME,
 } from '/@/router/constant';
-
+import { RoleEnum } from '/@/enums/roleEnum';
 // 404 on a page
 export const PAGE_NOT_FOUND_ROUTE: AppRouteRecordRaw = {
   path: '/:path(.*)*',
@@ -26,6 +26,7 @@ export const PAGE_NOT_FOUND_ROUTE: AppRouteRecordRaw = {
         title: 'ErrorPage',
         hideBreadcrumb: true,
         hideMenu: true,
+        roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
       },
     },
   ],
@@ -48,6 +49,7 @@ export const REDIRECT_ROUTE: AppRouteRecordRaw = {
       meta: {
         title: REDIRECT_NAME,
         hideBreadcrumb: true,
+        roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
       },
     },
   ],
@@ -72,6 +74,7 @@ export const ERROR_LOG_ROUTE: AppRouteRecordRaw = {
         title: t('routes.basic.errorLogList'),
         hideBreadcrumb: true,
         currentActiveMenu: '/error-log',
+        roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
       },
     },
   ],

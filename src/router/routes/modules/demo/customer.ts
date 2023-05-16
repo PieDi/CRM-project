@@ -1,6 +1,7 @@
 import type { AppRouteModule } from '/@/router/types';
 import { LAYOUT } from '/@/router/constant';
 import { t } from '/@/hooks/web/useI18n';
+import { RoleEnum } from '/@/enums/roleEnum';
 
 const customer: AppRouteModule = {
   path: '/customer',
@@ -11,6 +12,7 @@ const customer: AppRouteModule = {
     orderNo: 100,
     icon: 'ion:git-compare-outline',
     title: t('routes.demo.customer.init'),
+    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
   },
   children: [
     {
@@ -26,6 +28,7 @@ const customer: AppRouteModule = {
           component: () => import('/@/views/demo/customer/info/search.vue'),
           meta: {
             title: t('routes.demo.customer.info.init'),
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
         {
@@ -34,6 +37,7 @@ const customer: AppRouteModule = {
           component: () => import('/@/views/demo/customer/info/group.vue'),
           meta: {
             title: t('routes.demo.customer.info.group'),
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
       ],
@@ -51,6 +55,7 @@ const customer: AppRouteModule = {
           component: () => import('/@/views/demo/customer/m-history/search.vue'),
           meta: {
             title: t('routes.demo.customer.mHistory.init'),
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
       ],
@@ -68,6 +73,7 @@ const customer: AppRouteModule = {
           component: () => import('/@/views/demo/customer/order/search.vue'),
           meta: {
             title: t('routes.demo.customer.order.init'),
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
         {
@@ -76,6 +82,7 @@ const customer: AppRouteModule = {
           component: () => import('/@/views/demo/customer/order/statistics.vue'),
           meta: {
             title: t('routes.demo.customer.order.statistics'),
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
       ],
@@ -93,6 +100,7 @@ const customer: AppRouteModule = {
           component: () => import('/@/views/demo/customer/contact/search.vue'),
           meta: {
             title: t('routes.demo.customer.contact.init'),
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
         {
@@ -101,6 +109,7 @@ const customer: AppRouteModule = {
           component: () => import('/@/views/demo/customer/contact/template.vue'),
           meta: {
             title: t('routes.demo.customer.contact.template'),
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
       ],
@@ -119,6 +128,7 @@ const customer: AppRouteModule = {
           component: () => import('/@/views/demo/customer/invoice/search.vue'),
           meta: {
             title: t('routes.demo.customer.invoice.search'),
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
       ],

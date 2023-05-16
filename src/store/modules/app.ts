@@ -4,18 +4,18 @@ import type {
   MenuSetting,
   TransitionSetting,
   MultiTabsSetting,
-} from "/#/config";
-import type { BeforeMiniState } from "/#/store";
+} from '/#/config';
+import type { BeforeMiniState } from '/#/store';
 
-import { defineStore } from "pinia";
-import { store } from "/@/store";
+import { defineStore } from 'pinia';
+import { store } from '/@/store';
 
-import { ThemeEnum } from "/@/enums/appEnum";
-import { APP_DARK_MODE_KEY_, PROJ_CFG_KEY } from "/@/enums/cacheEnum";
-import { Persistent } from "/@/utils/cache/persistent";
-import { darkMode } from "/@/settings/designSetting";
-import { resetRouter } from "/@/router";
-import { deepMerge } from "/@/utils";
+import { ThemeEnum } from '/@/enums/appEnum';
+import { APP_DARK_MODE_KEY_, PROJ_CFG_KEY } from '/@/enums/cacheEnum';
+import { Persistent } from '/@/utils/cache/persistent';
+import { darkMode } from '/@/settings/designSetting';
+import { resetRouter } from '/@/router';
+import { deepMerge } from '/@/utils';
 
 interface AppState {
   darkMode?: ThemeEnum;
@@ -28,7 +28,7 @@ interface AppState {
 }
 let timeId: TimeoutHandle;
 export const useAppStore = defineStore({
-  id: "app",
+  id: 'app',
   state: (): AppState => ({
     darkMode: undefined,
     pageLoading: false,
@@ -39,10 +39,8 @@ export const useAppStore = defineStore({
     getPageLoading(state): boolean {
       return state.pageLoading;
     },
-    getDarkMode(state): "light" | "dark" | string {
-      return (
-        state.darkMode || localStorage.getItem(APP_DARK_MODE_KEY_) || darkMode
-      );
+    getDarkMode(state): 'light' | 'dark' | string {
+      return state.darkMode || localStorage.getItem(APP_DARK_MODE_KEY_) || darkMode;
     },
 
     getBeforeMiniInfo(state): BeforeMiniState {
@@ -81,6 +79,7 @@ export const useAppStore = defineStore({
     },
 
     setProjectConfig(config: DeepPartial<ProjectConfig>): void {
+      // @ts-ignore
       this.projectConfig = deepMerge(this.projectConfig || {}, config);
       Persistent.setLocal(PROJ_CFG_KEY, this.projectConfig);
     },

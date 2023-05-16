@@ -1,5 +1,5 @@
 import type { AppRouteModule } from '/@/router/types';
-
+import { RoleEnum } from '/@/enums/roleEnum';
 import { LAYOUT } from '/@/router/constant';
 import { t } from '/@/hooks/web/useI18n';
 
@@ -12,6 +12,7 @@ const datumShare: AppRouteModule = {
     orderNo: 500,
     icon: 'ion:tv-outline',
     title: t('routes.demo.datum-share.init'),
+    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
   },
   children: [
     {
@@ -20,6 +21,7 @@ const datumShare: AppRouteModule = {
       component: () => import('/@/views/demo/datum-share/index.vue'),
       meta: {
         title: t('routes.demo.datum-share.classify'),
+        roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
       },
     },
     {
@@ -29,6 +31,7 @@ const datumShare: AppRouteModule = {
       meta: {
         title: '共享资料',
         hideMenu: true,
+        roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
       },
     },
   ],

@@ -1,5 +1,5 @@
 import type { AppRouteRecordRaw, AppRouteModule } from '/@/router/types';
-
+import { RoleEnum } from '/@/enums/roleEnum';
 import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
 
 import { mainOutRoutes } from './mainOut';
@@ -27,6 +27,7 @@ export const RootRoute: AppRouteRecordRaw = {
   redirect: PageEnum.BASE_HOME,
   meta: {
     title: 'Root',
+    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
   },
 };
 
@@ -36,6 +37,7 @@ export const LoginRoute: AppRouteRecordRaw = {
   component: () => import('/@/views/sys/login/Login.vue'),
   meta: {
     title: t('routes.basic.login'),
+    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
   },
 };
 

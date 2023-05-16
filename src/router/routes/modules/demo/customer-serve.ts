@@ -1,5 +1,5 @@
 import type { AppRouteModule } from '/@/router/types';
-
+import { RoleEnum } from '/@/enums/roleEnum';
 import { LAYOUT } from '/@/router/constant';
 import { t } from '/@/hooks/web/useI18n';
 
@@ -12,6 +12,7 @@ const customerServe: AppRouteModule = {
     orderNo: 300,
     icon: 'ion:menu-outline',
     title: t('routes.demo.customer-server.init'),
+    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
   },
   children: [
     {
@@ -20,6 +21,7 @@ const customerServe: AppRouteModule = {
       component: () => import('/@/views/demo/customer-serve/search.vue'),
       meta: {
         title: t('routes.demo.customer-server.search'),
+        roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
       },
     },
   ],

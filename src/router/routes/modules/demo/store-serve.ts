@@ -1,5 +1,5 @@
 import type { AppRouteModule } from '/@/router/types';
-
+import { RoleEnum } from '/@/enums/roleEnum';
 import { LAYOUT } from '/@/router/constant';
 import { t } from '/@/hooks/web/useI18n';
 
@@ -11,6 +11,7 @@ const storeServe: AppRouteModule = {
     orderNo: 400,
     icon: 'gg:loadbar-doc',
     title: t('routes.demo.store-serve.init'),
+    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
   },
   children: [
     {
@@ -19,6 +20,7 @@ const storeServe: AppRouteModule = {
       component: () => import('/@/views/demo/store-serve/in/search.vue'),
       meta: {
         title: t('routes.demo.store-serve.in'),
+        roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
       },
     },
     {
@@ -27,6 +29,7 @@ const storeServe: AppRouteModule = {
       component: () => import('/@/views/demo/store-serve/out/search.vue'),
       meta: {
         title: t('routes.demo.store-serve.out'),
+        roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
       },
     },
   ],
