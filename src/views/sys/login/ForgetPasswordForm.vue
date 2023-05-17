@@ -10,15 +10,11 @@
         />
       </FormItem>
 
-      <FormItem name="mobile" class="enter-x">
-        <Input size="large" v-model:value="formData.mobile" :placeholder="t('sys.login.mobile')" />
+      <FormItem name="email" class="enter-x">
+        <Input size="large" v-model:value="formData.email" placeholder="邮箱" />
       </FormItem>
-      <FormItem name="sms" class="enter-x">
-        <CountdownInput
-          size="large"
-          v-model:value="formData.sms"
-          :placeholder="t('sys.login.smsCode')"
-        />
+      <FormItem name="password" class="enter-x">
+        <Input size="large" v-model:value="formData.password" placeholder="密码" />
       </FormItem>
 
       <FormItem class="enter-x">
@@ -36,7 +32,6 @@
   import { reactive, ref, computed, unref } from 'vue';
   import LoginFormTitle from './LoginFormTitle.vue';
   import { Form, Input, Button } from 'ant-design-vue';
-  import { CountdownInput } from '/@/components/CountDown';
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useLoginState, useFormRules, LoginStateEnum } from './useLogin';
 
@@ -50,8 +45,8 @@
 
   const formData = reactive({
     account: '',
-    mobile: '',
-    sms: '',
+    email: '',
+    password: '',
   });
 
   const getShow = computed(() => unref(getLoginState) === LoginStateEnum.RESET_PASSWORD);
@@ -59,6 +54,7 @@
   async function handleReset() {
     const form = unref(formRef);
     if (!form) return;
+    console.log('reset password');
     await form.resetFields();
   }
 </script>

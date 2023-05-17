@@ -127,7 +127,7 @@
             placeholder="请输入"
             allowClear
             min="1"
-            :precision="0"
+            :precision="1"
           />
         </FormItem>
         <FormItem label="客户等级">
