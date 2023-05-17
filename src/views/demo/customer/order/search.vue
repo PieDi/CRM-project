@@ -5,7 +5,7 @@
         ><FormItem label="客户姓名">
           <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
         </FormItem>
-        <FormItem label="负责人">
+        <FormItem label="负责人" style="margin-left: 10px">
           <Select
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
@@ -159,7 +159,7 @@
     DatePicker,
   } from 'ant-design-vue';
   import { getBasicData } from '../../table/tableData';
-  import { DrawerItemType } from '../type';
+  import { DrawerItemType } from '/@/views/type';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;

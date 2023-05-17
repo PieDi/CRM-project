@@ -56,7 +56,7 @@
   import { Table, Form, Input, Button, Drawer, DatePicker } from 'ant-design-vue';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import dayjs, { Dayjs } from 'dayjs';
-  import { DrawerItemType } from '../type';
+  import { DrawerItemType } from '/@/views/type';
 
   const FormItem = Form.Item;
 

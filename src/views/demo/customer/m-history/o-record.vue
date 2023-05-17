@@ -57,7 +57,7 @@
   import { defineComponent, ref, PropType } from 'vue';
   import { Table, Form, Input, Button, Drawer, DatePicker } from 'ant-design-vue';
   import { DeleteOutlined } from '@ant-design/icons-vue';
-  import { DrawerItemType } from '../type';
+  import { DrawerItemType } from '/@/views/type';
 
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;

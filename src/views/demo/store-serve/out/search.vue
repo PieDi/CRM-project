@@ -3,7 +3,7 @@
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="产品名称">
-          <Input placeholder="请输入" allowClear />
+          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
         </FormItem>
         <!-- <FormItem label="客户标签" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear />
@@ -116,7 +116,7 @@
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer } from 'ant-design-vue';
   import { getBasicData } from '../../table/tableData';
-  import { DrawerItemType } from '../../customer/type';
+  import { DrawerItemType } from '/@/views/type';
 
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;

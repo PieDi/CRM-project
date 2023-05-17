@@ -143,7 +143,7 @@
   import eRecord from './e-record.vue';
   import iRecord from './i-record.vue';
   import oRecord from './o-record.vue';
-  import { DrawerItemType } from '../type';
+  import { DrawerItemType } from '/@/views/type';
   const FormItem = Form.Item;
   export default defineComponent({
     components: {

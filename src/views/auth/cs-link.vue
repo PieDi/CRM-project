@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="客户信息管理">
+  <PageWrapper title="客户管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客户姓名">
@@ -21,7 +21,6 @@
 
         <Button type="primary" style="margin-left: 10px">搜索</Button></div
       >
-      <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增客户</Button>
     </div>
 
     <Table
@@ -78,7 +77,12 @@
             :value="cInfo.name"
           />
         </FormItem>
-
+        <FormItem label="负责人">
+          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
+            <SelectOption key="1">男</SelectOption>
+            <SelectOption key="2">女</SelectOption>
+          </Select>
+        </FormItem>
         <FormItem label="客户电话">
           <Input
             :disabled="drawerInfo.type === 'scan'"
@@ -161,6 +165,9 @@
           </Select>
         </FormItem>
       </Form>
+      <!-- <FormItem label="客户电话">
+        <TextArea placeholder="请输入" allowClear :value="cInfo.des" />
+      </FormItem> -->
     </Drawer>
   </PageWrapper>
 </template>
@@ -168,9 +175,9 @@
   import { defineComponent, ref } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer, Select, InputNumber } from 'ant-design-vue';
-  import { getBasicData } from '../../table/tableData';
+  import { type ColumnsType } from 'ant-design-vue/lib/table';
+  import { getBasicData } from '../demo/table/tableData';
   import { DrawerItemType } from '/@/views/type';
-
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   export default defineComponent({
@@ -209,7 +216,7 @@
         showSizeChanger: false,
       });
 
-      const columns: any = [
+      const columns: ColumnsType<any> = [
         {
           title: '姓名',
           dataIndex: 'name',

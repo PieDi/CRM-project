@@ -110,11 +110,8 @@
   import eRecord from './e-record.vue';
   import iRecord from './i-record.vue';
   import oRecord from './o-record.vue';
-  type DrawerItemType = {
-    visible: boolean;
-    title: string;
-    item?: any;
-  };
+  import { DrawerItemType } from '/@/views/type';
+
   const FormItem = Form.Item;
   export default defineComponent({
     components: {

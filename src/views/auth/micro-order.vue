@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="客户信息管理">
+  <PageWrapper title="小程序订单管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客户姓名">
@@ -15,13 +15,11 @@
             <SelectOption key="2">女</SelectOption>
           </Select>
         </FormItem>
-        <FormItem label="证件号码" style="margin-left: 10px">
+        <FormItem label="订单编号" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
         </FormItem>
-
         <Button type="primary" style="margin-left: 10px">搜索</Button></div
       >
-      <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增客户</Button>
     </div>
 
     <Table
@@ -39,20 +37,20 @@
             type="link"
             @click="
               () => {
-                scanCustomer(record);
+                scanOrder(record);
               }
             "
             >查看</Button
           >
-          <Button
+          <!-- <Button
             type="link"
             @click="
               () => {
-                deleteCustomer(record);
+                deleteOrder(record);
               }
             "
             >删除</Button
-          >
+          > -->
         </template>
       </template>
     </Table>
@@ -63,14 +61,37 @@
       @close="drawerOnClose"
       :visible="drawerInfo.visible"
     >
-      <template #extra>
+      <!-- <template #extra>
         <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
-
         <Button v-if="drawerInfo.type !== 'scan'" type="primary">提交</Button>
-      </template>
+      </template> -->
 
       <Form :labelCol="{ span: 6 }">
         <FormItem label="客户姓名">
+          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
+            <SelectOption key="1">男</SelectOption>
+            <SelectOption key="2">女</SelectOption>
+          </Select>
+        </FormItem>
+        <FormItem label="负责人">
+          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
+            <SelectOption key="1">标准产品</SelectOption>
+            <SelectOption key="2">非标准产品</SelectOption>
+          </Select>
+        </FormItem>
+        <FormItem label="订单名称">
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            :value="cInfo.name"
+          />
+        </FormItem>
+        <FormItem label="下单时间">
+          <DatePicker :disabled="drawerInfo.type === 'scan'" />
+        </FormItem>
+
+        <FormItem label="订单编号">
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -79,22 +100,35 @@
           />
         </FormItem>
 
-        <FormItem label="客户电话">
-          <Input
+        <FormItem label="订单类型">
+          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
+            <SelectOption key="1">标准产品</SelectOption>
+            <SelectOption key="2">非标准产品</SelectOption>
+          </Select>
+        </FormItem>
+
+        <FormItem label="订单数量">
+          <InputNumber
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
             allowClear
-            :value="cInfo.name"
+            min="1"
+            :precision="0"
           />
         </FormItem>
-        <FormItem label="性别">
+
+        <FormItem label="订单金额">
+          <InputNumber :disabled="drawerInfo.type === 'scan'" placeholder="请输入" allowClear />
+        </FormItem>
+
+        <FormItem label="关联合同">
           <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
             <SelectOption key="1">男</SelectOption>
             <SelectOption key="2">女</SelectOption>
           </Select>
         </FormItem>
 
-        <FormItem label="证件类型">
+        <FormItem label="负责人">
           <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
             <SelectOption key="1">身份证</SelectOption>
             <SelectOption key="2">护照</SelectOption>
@@ -104,61 +138,13 @@
           </Select>
         </FormItem>
 
-        <FormItem label="证件号码">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
+        <FormItem label="其他">
+          <TextArea
             placeholder="请输入"
             allowClear
-            :value="cInfo.name"
-          />
-        </FormItem>
-
-        <FormItem label="出生日期">
-          <Input
+            :value="cInfo.des"
             :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            :value="cInfo.name"
           />
-        </FormItem>
-        <FormItem label="年龄">
-          <InputNumber
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            min="1"
-            :precision="0"
-          />
-        </FormItem>
-        <FormItem label="客户等级">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            :value="cInfo.name"
-          />
-        </FormItem>
-        <FormItem label="客户来源">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            :value="cInfo.name"
-          />
-        </FormItem>
-        <FormItem label="联系地址">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            :value="cInfo.name"
-          />
-        </FormItem>
-        <FormItem label="所属分组">
-          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
-          </Select>
         </FormItem>
       </Form>
     </Drawer>
@@ -167,12 +153,22 @@
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Drawer, Select, InputNumber } from 'ant-design-vue';
-  import { getBasicData } from '../../table/tableData';
+  import {
+    Table,
+    Form,
+    Input,
+    Button,
+    Drawer,
+    Select,
+    InputNumber,
+    DatePicker,
+  } from 'ant-design-vue';
+  import { getBasicData } from '../demo/table/tableData';
   import { DrawerItemType } from '/@/views/type';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
+  const TextArea = Input.TextArea;
   export default defineComponent({
     components: {
       PageWrapper,
@@ -185,6 +181,8 @@
       Select,
       SelectOption,
       InputNumber,
+      DatePicker,
+      TextArea,
     },
     setup() {
       const drawerInfo = ref<DrawerItemType>({
@@ -211,75 +209,72 @@
 
       const columns: any = [
         {
-          title: '姓名',
+          title: '客户姓名',
           dataIndex: 'name',
           key: 'name',
         },
         {
-          title: '电话',
+          title: '订单名称',
           dataIndex: 'address',
         },
         {
-          title: '性别',
+          title: '下单时间',
           dataIndex: 'no',
         },
         {
-          title: '证件类型',
-          width: 150,
-          dataIndex: 'beginTime',
+          title: '订单编号',
+          width: 100,
+          dataIndex: 'aaa',
         },
         {
-          title: '证件号码',
-          width: 150,
-          dataIndex: 'endTime',
-        },
-        {
-          title: '年龄',
+          title: '订单类型',
           width: 150,
           dataIndex: 'endTime',
         },
         {
-          title: '联系地址',
+          title: '订单数量',
+          width: 150,
+          dataIndex: 'endTime',
+        },
+        {
+          title: '订单金额',
+          width: 150,
+          dataIndex: 'endTime',
+        },
+        {
+          title: '合同名称',
           width: 150,
           dataIndex: 'endTime',
         },
         {
           title: '负责人',
-          width: 100,
-          dataIndex: 'endTime',
-        },
-        {
-          title: '所属分组',
           width: 150,
           dataIndex: 'endTime',
         },
+        // {
+        //   title: '其他',
+        //   width: 150,
+        //   dataIndex: 'endTime',
+        // },
         {
           title: '操作',
           dataIndex: 'operation',
         },
       ];
-      const addCustomer = () => {
+
+      const scanOrder = (item) => {
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '新增客户';
-        drawerInfo.value.type = 'add';
-      };
-      const scanCustomer = (item) => {
-        drawerInfo.value.visible = true;
-        drawerInfo.value.title = '查看客户信息';
+        drawerInfo.value.title = '查看订单信息';
         drawerInfo.value.item = item;
         drawerInfo.value.type = 'scan';
       };
-      const deleteCustomer = (item) => {};
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.item = undefined;
         drawerInfo.value.type = undefined;
       };
-      const drawerEdit = () => {
-        drawerInfo.value.title = '编辑客户信息';
-        drawerInfo.value.type = 'edit';
-      };
+
       return {
         columns,
         data: getBasicData(),
@@ -287,11 +282,8 @@
         pagination,
         drawerInfo,
         cInfo,
-        addCustomer,
-        scanCustomer,
-        deleteCustomer,
+        scanOrder,
         drawerOnClose,
-        drawerEdit,
       };
     },
   });

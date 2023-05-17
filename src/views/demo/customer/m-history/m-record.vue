@@ -79,7 +79,7 @@
 <script lang="ts">
   import { defineComponent, ref, PropType } from 'vue';
   import { Table, Form, Input, Button, Drawer, Select } from 'ant-design-vue';
-  import { DrawerItemType } from '../type';
+  import { DrawerItemType } from '/@/views/type';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
