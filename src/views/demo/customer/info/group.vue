@@ -3,7 +3,7 @@
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }">
         <FormItem label="分组名称">
-          <Input placeholder="请输入" allowClear />
+          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
         </FormItem>
         <Button type="primary" style="margin-left: 10px">搜索</Button>
       </div>
@@ -21,7 +21,15 @@
     >
       <template #bodyCell="{ column, _text, record }">
         <template v-if="column.dataIndex === 'operation'">
-          <Button type="link" @click="()=>{editGroup(record)}">编辑</Button>
+          <Button
+            type="link"
+            @click="
+              () => {
+                editGroup(record);
+              }
+            "
+            >编辑</Button
+          >
           <Button
             type="link"
             @click="

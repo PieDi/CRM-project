@@ -3,10 +3,20 @@
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客户姓名">
-          <Input placeholder="请输入" allowClear />
+          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
+        </FormItem>
+        <FormItem label="负责人">
+          <Select
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请选择"
+            :style="{ width: '150px' }"
+          >
+            <SelectOption key="1">男</SelectOption>
+            <SelectOption key="2">女</SelectOption>
+          </Select>
         </FormItem>
         <FormItem label="订单编号" style="margin-left: 10px">
-          <Input placeholder="请输入" allowClear />
+          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
         </FormItem>
         <Button type="primary" style="margin-left: 10px">搜索</Button></div
       >
@@ -208,8 +218,8 @@
         },
         {
           title: '订单编号',
-          width: 150,
-          dataIndex: 'beginTime',
+          width: 90,
+          dataIndex: 'aaa',
         },
         {
           title: '订单类型',
