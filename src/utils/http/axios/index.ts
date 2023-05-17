@@ -99,8 +99,7 @@ const transform: AxiosTransform = {
 
   // 请求之前处理config
   beforeRequestHook: (config, options) => {
-    const { apiUrl, joinPrefix, joinParamsToUrl, formatDate, joinTime = true, urlPrefix } = options;
-
+    const { apiUrl, joinPrefix, joinParamsToUrl, formatDate = true, urlPrefix } = options;
     if (joinPrefix) {
       config.url = `${urlPrefix}${config.url}`;
     }
@@ -112,14 +111,7 @@ const transform: AxiosTransform = {
     const data = config.data || false;
     formatDate && data && !isString(data) && formatRequestDate(data);
     if (config.method?.toUpperCase() === RequestEnum.GET) {
-      if (!isString(params)) {
-        // 给 get 请求加上时间戳参数，避免从缓存中拿数据。
-        config.params = Object.assign(params || {}, joinTimestamp(joinTime, false));
-      } else {
-        // 兼容restful风格
-        config.url = config.url + params + `${joinTimestamp(joinTime, true)}`;
-        config.params = undefined;
-      }
+      config.params = params;
     } else {
       if (!isString(params)) {
         formatDate && formatRequestDate(params);
@@ -175,7 +167,7 @@ const transform: AxiosTransform = {
   /**
    * @description: 响应错误处理
    */
-  responseInterceptorsCatch: (axiosInstance: AxiosResponse, error: any) => {
+  responseInterceptorsCatch: (axiosInstance: AxiosResponse<any>, error: any) => {
     const { t } = useI18n();
     const errorLogStore = useErrorLogStoreWithOut();
     errorLogStore.addAjaxErrorInfo(error);
@@ -276,11 +268,3 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
   );
 }
 export const defHttp = createAxios();
-
-// other api url
-// export const otherHttp = createAxios({
-//   requestOptions: {
-//     apiUrl: 'xxx',
-//     urlPrefix: 'xxx',
-//   },
-// });

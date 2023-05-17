@@ -8,7 +8,6 @@ enum Api {
 }
 
 // Get personal center-basic settings
-
 export const accountInfoApi = () => defHttp.get<GetAccountInfoModel>({ url: Api.ACCOUNT_INFO });
 
 export const sessionTimeoutApi = () => defHttp.post<void>({ url: Api.SESSION_TIMEOUT });

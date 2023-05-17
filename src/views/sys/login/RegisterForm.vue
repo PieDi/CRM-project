@@ -3,14 +3,23 @@
     <LoginFormTitle class="enter-x" />
 
     <Form class="p-4 enter-x" :model="formData" :rules="getFormRules" ref="formRef">
-      <FormItem name="account" class="enter-x">
+      <FormItem name="user" class="enter-x">
         <Input
           class="fix-auto-fill"
           size="large"
-          v-model:value="formData.account"
+          v-model:value="formData.user"
           :placeholder="t('sys.login.userName')"
         />
       </FormItem>
+      <FormItem name="userName" class="enter-x">
+        <Input
+          class="fix-auto-fill"
+          size="large"
+          v-model:value="formData.userName"
+          placeholder="用户名"
+        />
+      </FormItem>
+
       <FormItem name="mobile" class="enter-x">
         <Input
           size="large"
@@ -36,14 +45,14 @@
           :placeholder="t('sys.login.password')"
         />
       </FormItem>
-      <FormItem name="confirmPassword" class="enter-x">
+      <!-- <FormItem name="confirmPassword" class="enter-x">
         <InputPassword
           size="large"
           visibilityToggle
-          v-model:value="formData.confirmPassword"
+          v-model:value="formData.password"
           :placeholder="t('sys.login.confirmPassword')"
         />
-      </FormItem>
+      </FormItem> -->
 
       <!-- <FormItem class="enter-x" name="policy">
         <Checkbox v-model:checked="formData.policy" size="small">
@@ -74,7 +83,7 @@
   import { StrengthMeter } from '/@/components/StrengthMeter';
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useLoginState, useFormRules, useFormValid, LoginStateEnum } from './useLogin';
-
+  import { registerApi } from '/@/api/demo/basic';
   const FormItem = Form.Item;
   const InputPassword = Input.Password;
   const { t } = useI18n();
@@ -84,11 +93,11 @@
   const loading = ref(false);
 
   const formData = reactive({
-    account: '',
+    user: '',
+    userName: '',
     password: '',
-    confirmPassword: '',
-    mobile: '',
     email: '',
+    mobile: '',
   });
 
   const { getFormRules } = useFormRules(formData);
@@ -99,6 +108,7 @@
   async function handleRegister() {
     const data = await validForm();
     if (!data) return;
-    console.log(data);
+    console.log(data, 111);
+    const res = await registerApi(data);
   }
 </script>
