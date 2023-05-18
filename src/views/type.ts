@@ -1,6 +1,12 @@
-export type DrawerItemType = {
+export type DrawerItemType<T> = {
   visible: boolean;
   title: string;
-  item?: any;
+  item?: T;
   type?: 'scan' | 'add' | 'edit';
+};
+
+export type PageListInfo<T> = {
+  total: number;
+  current: number;
+  dataSource: Array<T>;
 };

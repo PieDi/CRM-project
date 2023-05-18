@@ -3,9 +3,14 @@
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客户姓名">
-          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
+          <Input
+            placeholder="请输入"
+            allowClear
+            :style="{ width: '150px' }"
+            v-model:value="searchInfo.userName"
+          />
         </FormItem>
-        <FormItem label="负责人" style="margin-left: 10px">
+        <!-- <FormItem label="负责人" style="margin-left: 10px">
           <Select
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
@@ -17,16 +22,16 @@
         </FormItem>
         <FormItem label="证件号码" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
-        </FormItem>
+        </FormItem> -->
 
-        <Button type="primary" style="margin-left: 10px">搜索</Button></div
+        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
       <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增客户</Button>
     </div>
 
     <Table
       :columns="columns"
-      :dataSource="data"
+      :dataSource="pageInfo.dataSource"
       :canResize="false"
       :loading="loading"
       :striped="false"
@@ -165,11 +170,15 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, onMounted, createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer, Select, InputNumber } from 'ant-design-vue';
-  import { getBasicData } from '../../table/tableData';
-  import { DrawerItemType } from '/@/views/type';
+  import { type DrawerItemType, PageListInfo } from '/@/views/type';
+  import { getCustomerList } from '/@/api/demo/customer';
+  import { UserInfo } from '/#/store';
+  import { type ColumnsType } from 'ant-design-vue/lib/table';
+  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -185,9 +194,14 @@
       Select,
       SelectOption,
       InputNumber,
+      ExclamationCircleOutlined,
     },
     setup() {
-      const drawerInfo = ref<DrawerItemType>({
+      const searchInfo = ref({
+        userName: undefined,
+        // title: '',
+      });
+      const drawerInfo = ref<DrawerItemType<UserInfo>>({
         visible: false,
         title: '',
       });
@@ -196,28 +210,47 @@
         id: undefined,
         des: '',
       });
+      const pageInfo = ref<PageListInfo<UserInfo>>({
+        total: 0,
+        current: 1,
+        dataSource: [],
+      });
       const loading = ref(false);
       const pagination = ref({
-        total: 50,
-        current: 1,
-        pageSize: 10,
+        total: pageInfo.value.total,
+        current: pageInfo.value.current,
+        pageSize: 20,
         showTotal: (total: number) => `共${total}条`,
         onChange: (page: number) => {
-          console.log(2132323, page);
+          customerListReq(page);
         },
         showQuickJumper: false,
         showSizeChanger: false,
       });
+      const customerListReq = async (pageNum: number) => {
+        loading.value = true;
+        const res = await getCustomerList({ userName: searchInfo.value.userName, pageNum });
+        loading.value = false;
+        if (res) {
+          pageInfo.value.total = res.total;
+          pageInfo.value.dataSource = res.data;
+        }
+      };
+      const searchAction = () => {
+        customerListReq(1);
+      };
+      onMounted(() => {
+        customerListReq(1);
+      });
 
-      const columns: any = [
+      const columns: ColumnsType<UserInfo> = [
         {
           title: '姓名',
-          dataIndex: 'name',
-          key: 'name',
+          dataIndex: 'userName',
         },
         {
           title: '电话',
-          dataIndex: 'address',
+          dataIndex: 'mobile',
         },
         {
           title: '性别',
@@ -269,7 +302,17 @@
         drawerInfo.value.item = item;
         drawerInfo.value.type = 'scan';
       };
-      const deleteCustomer = (item) => {};
+      const deleteCustomer = (item: UserInfo) => {
+        confirm(
+          withConfirm({
+            icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+            content: '确定删除该客户',
+            async onOk() {
+              console.log('OK');
+            },
+          }),
+        );
+      };
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
@@ -282,16 +325,18 @@
       };
       return {
         columns,
-        data: getBasicData(),
         loading,
         pagination,
+        pageInfo,
         drawerInfo,
         cInfo,
+        searchInfo,
         addCustomer,
         scanCustomer,
         deleteCustomer,
         drawerOnClose,
         drawerEdit,
+        searchAction,
       };
     },
   });

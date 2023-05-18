@@ -2,13 +2,9 @@ module.exports = {
   root: true,
   extends: ['@vben'],
   overrides: [
-    // {
-    //   files: '*.vue',
-    //   extends: ['@vue/typescript/recommended', 'plugin:vue/vue3-recommended', '@vue/typescript'],
-    // },
     {
       files: ['*.vue', '*.js'],
-      extends: ['plugin:vue/essential', '@vue/standard'],
+      extends: ['@vue/typescript/recommended', 'plugin:vue/vue3-recommended', '@vue/typescript'],
       parserOptions: {
         ecmaVersion: 12,
         sourceType: 'module',
