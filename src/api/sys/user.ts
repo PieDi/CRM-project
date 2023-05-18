@@ -1,10 +1,11 @@
 import { defHttp } from '/@/utils/http/axios';
 import { LoginParams, RegisterParams, LoginResultModel, GetUserInfoModel } from './model/userModel';
+import { UserInfo } from '/#/store';
 import { ErrorMessageMode } from '/#/axios';
 import CryptoJS from 'crypto-js';
-const k = '1234567812345678';
+
 export const SHA256Encrypted = (m: string) => {
-  return CryptoJS.HmacSHA256(m, k).toString();
+  return CryptoJS.SHA256(m).toString();
 };
 enum Api {
   // Login = '/login',
@@ -38,8 +39,8 @@ export const registerApi = (params) => defHttp.post<RegisterParams>({ url: Api.R
 /**
  * @description: getUserInfo
  */
-export function getUserInfo() {
-  return defHttp.post<GetUserInfoModel>({ url: Api.GetUserInfo }, { errorMessageMode: 'none' });
+export function getUserInfo(params?: any) {
+  return defHttp.post<UserInfo>({ url: Api.GetUserInfo, params }, { errorMessageMode: 'none' });
 }
 export function getUserDetail(params) {
   return defHttp.post<GetUserInfoModel>(

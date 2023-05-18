@@ -87,21 +87,19 @@ export const useUserStore = defineStore({
         goHome?: boolean;
         mode?: ErrorMessageMode;
       },
-    ): Promise<GetUserInfoModel | null> {
+    ): Promise<UserInfo | null> {
       try {
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginApi(loginParams, mode);
         const { token } = data;
-
         // save token
         this.setToken(token);
-
         return this.afterLoginAction(goHome);
       } catch (error) {
         return Promise.reject(error);
       }
     },
-    async afterLoginAction(goHome?: boolean): Promise<GetUserInfoModel | null> {
+    async afterLoginAction(goHome?: boolean): Promise<UserInfo | null> {
       if (!this.getToken) return null;
       // get user info
       const userInfo = await this.getUserInfoAction();
@@ -125,16 +123,19 @@ export const useUserStore = defineStore({
     },
     async getUserInfoAction(): Promise<UserInfo | null> {
       if (!this.getToken) return null;
-      const userInfo = await getUserInfo();
-      const userDetail = await getUserDetail();
-      const { roles = [] } = userInfo;
-      if (isArray(roles)) {
-        const roleList = roles.map((item) => item.value) as RoleEnum[];
-        this.setRoleList(roleList);
+      const userInfo = await getUserInfo({});
+      // const userDetail = await getUserDetail();
+      const { roleIdList = [] } = userInfo;
+      if (isArray(roleIdList)) {
+        // const roleList = roleIdList.map((item) => item.value) as RoleEnum[];
+        // this.setRoleList(roleList);
+        this.setRoleList([RoleEnum.SUPER]);
       } else {
-        userInfo.roles = [];
-        this.setRoleList([]);
+        // userInfo.roleIdList = [];
+        // this.setRoleList([]);
+        this.setRoleList([RoleEnum.SUPER]);
       }
+      //@ts-ignore
       this.setUserInfo(userInfo);
       return userInfo;
     },

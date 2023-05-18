@@ -58,6 +58,7 @@
   import { useUserStore } from '/@/store/modules/user';
   import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { SHA256Encrypted } from '/@/api/sys/user';
   import { loginApi } from '/@/api/sys/user';
   //import { onKeyStroke } from '@vueuse/core';
 
@@ -74,7 +75,6 @@
   const { getFormRules } = useFormRules();
   const formRef = ref();
   const loading = ref(false);
-  const rememberMe = ref(false);
   const formData = reactive({
     userName: '',
     password: '',
@@ -90,6 +90,7 @@
     try {
       loading.value = true;
       const userInfo = await userStore.login({
+        // password: SHA256Encrypted(data.password),
         password: data.password,
         userName: data.userName,
         mode: 'none', //不要默认的错误提示
@@ -98,7 +99,7 @@
       if (userInfo) {
         notification.success({
           message: t('sys.login.loginSuccessTitle'),
-          description: `${t('sys.login.loginSuccessDesc')}: ${userInfo.realName}`,
+          description: `${t('sys.login.loginSuccessDesc')}: ${userInfo.userName}`,
           duration: 3,
         });
       }
