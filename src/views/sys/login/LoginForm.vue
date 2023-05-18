@@ -8,10 +8,10 @@
     v-show="getShow"
     @keypress.enter="handleLogin"
   >
-    <FormItem name="account" class="enter-x">
+    <FormItem name="userName" class="enter-x">
       <Input
         size="large"
-        v-model:value="formData.account"
+        v-model:value="formData.userName"
         :placeholder="t('sys.login.userName')"
         class="fix-auto-fill"
       />
@@ -55,10 +55,10 @@
   import LoginFormTitle from './LoginFormTitle.vue';
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useMessage } from '/@/hooks/web/useMessage';
-
   import { useUserStore } from '/@/store/modules/user';
   import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { loginApi } from '/@/api/sys/user';
   //import { onKeyStroke } from '@vueuse/core';
 
   const ACol = Col;
@@ -76,8 +76,8 @@
   const loading = ref(false);
   const rememberMe = ref(false);
   const formData = reactive({
-    account: 'vben',
-    password: '123456',
+    userName: '',
+    password: '',
   });
   const { validForm } = useFormValid(formRef);
   //onKeyStroke('Enter', handleLogin);
@@ -91,9 +91,10 @@
       loading.value = true;
       const userInfo = await userStore.login({
         password: data.password,
-        username: data.account,
+        userName: data.userName,
         mode: 'none', //不要默认的错误提示
       });
+
       if (userInfo) {
         notification.success({
           message: t('sys.login.loginSuccessTitle'),

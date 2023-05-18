@@ -3,14 +3,6 @@
     <LoginFormTitle class="enter-x" />
 
     <Form class="p-4 enter-x" :model="formData" :rules="getFormRules" ref="formRef">
-      <FormItem name="user" class="enter-x">
-        <Input
-          class="fix-auto-fill"
-          size="large"
-          v-model:value="formData.user"
-          :placeholder="t('sys.login.userName')"
-        />
-      </FormItem>
       <FormItem name="userName" class="enter-x">
         <Input
           class="fix-auto-fill"
@@ -83,9 +75,8 @@
   import { StrengthMeter } from '/@/components/StrengthMeter';
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useLoginState, useFormRules, useFormValid, LoginStateEnum } from './useLogin';
-  import { registerApi } from '/@/api/demo/basic';
+  import { registerApi } from '/@/api/sys/user';
   const FormItem = Form.Item;
-  const InputPassword = Input.Password;
   const { t } = useI18n();
   const { handleBackLogin, getLoginState } = useLoginState();
 
@@ -93,7 +84,6 @@
   const loading = ref(false);
 
   const formData = reactive({
-    user: '',
     userName: '',
     password: '',
     email: '',
