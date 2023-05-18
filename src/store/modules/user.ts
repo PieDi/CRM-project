@@ -125,15 +125,11 @@ export const useUserStore = defineStore({
       if (!this.getToken) return null;
       const userInfo = await getUserInfo({});
       // const userDetail = await getUserDetail();
-      const { roleIdList = [] } = userInfo;
-      if (isArray(roleIdList)) {
-        // const roleList = roleIdList.map((item) => item.value) as RoleEnum[];
-        // this.setRoleList(roleList);
-        this.setRoleList([RoleEnum.SUPER]);
+      const { role } = userInfo;
+      if (role) {
+        this.setRoleList([role as RoleEnum]);
       } else {
-        // userInfo.roleIdList = [];
-        // this.setRoleList([]);
-        this.setRoleList([RoleEnum.SUPER]);
+        this.setRoleList([]);
       }
       //@ts-ignore
       this.setUserInfo(userInfo);

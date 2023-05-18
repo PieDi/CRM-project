@@ -13,10 +13,13 @@ enum Api {
   // GetUserInfo = '/getUserInfo',
   // GetPermCode = '/getPermCode',
   // TestRetry = '/testRetry',
-  Register = '/sys/user/save',
-  Login = '/sys/login',
-  GetUserInfo = '/sys/user/info',
-  GetUserDetail = '/sys/user/detail',
+
+  Register = '/sys/user/save', //注册
+  Login = '/sys/login', //登录
+  GetUserInfo = '/sys/user/info', // 获取登录用户信息
+  GetUserDetail = '/sys/user/detail', // 获取用户信息详情
+  UserList = '/sys/user/list', // 获取系统用户列表
+  DeleteUser = '/sys/user/delete', // 删除用户
 }
 
 /**
@@ -49,6 +52,13 @@ export function getUserDetail(params) {
   );
 }
 
+export const getUserList = (params: { pageNum: number; userName?: string }) =>
+  defHttp.post<{ total: number; data: UserInfo[] }>({
+    url: Api.UserList,
+    params: { pageSize: 20, ...params },
+  });
+
+// 项目无用代码
 export function getPermCode() {
   return defHttp.get<string[]>({ url: Api.GetPermCode });
 }

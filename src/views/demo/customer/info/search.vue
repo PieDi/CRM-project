@@ -10,7 +10,7 @@
             v-model:value="searchInfo.userName"
           />
         </FormItem>
-        <!-- <FormItem label="负责人" style="margin-left: 10px">
+        <FormItem label="负责人" style="margin-left: 10px">
           <Select
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
@@ -22,7 +22,7 @@
         </FormItem>
         <FormItem label="证件号码" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
-        </FormItem> -->
+        </FormItem>
 
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
