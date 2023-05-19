@@ -67,13 +67,18 @@
 
       <Form :labelCol="{ span: 6 }">
         <FormItem label="员工姓名">
-          <Input disabled placeholder="请输入" allowClear v-model:value="formState.userName" />
+          <Input
+            disabled
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.userName"
+          />
         </FormItem>
         <FormItem label="员工电话">
-          <Input disabled placeholder="请输入" allowClear v-model:value="formState.mobile" />
+          <Input disabled placeholder="请输入" allowClear v-model:value="drawerInfo.item.mobile" />
         </FormItem>
         <FormItem label="员工邮箱">
-          <Input disabled placeholder="请输入" allowClear v-model:value="formState.email" />
+          <Input disabled placeholder="请输入" allowClear v-model:value="drawerInfo.item.email" />
         </FormItem>
         <!-- <FormItem label="性别">
           <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
@@ -85,7 +90,7 @@
           <Select
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
-            v-model:value="formState.role"
+            v-model:value="drawerInfo.item.role"
           >
             <SelectOption key="super">超管</SelectOption>
             <SelectOption key="admin">管理员</SelectOption>
@@ -97,7 +102,7 @@
           <Select
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
-            v-model:value="formState.status"
+            v-model:value="drawerInfo.item.status"
           >
             <SelectOption :key="1">激活</SelectOption>
             <SelectOption :key="0">禁用</SelectOption>
@@ -151,21 +156,6 @@
           status: undefined,
           role: undefined,
         },
-      });
-      const formState = reactive<{
-        userId: number | string | undefined;
-        userName: string | undefined;
-        email: string | undefined;
-        mobile: string | undefined;
-        status: number | undefined;
-        role: string | undefined;
-      }>({
-        userId: undefined,
-        userName: undefined,
-        email: undefined,
-        mobile: undefined,
-        status: undefined,
-        role: undefined,
       });
 
       const pageInfo = ref<PageListInfo<UserInfo>>({
@@ -240,14 +230,13 @@
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '查看员工信息';
         drawerInfo.value.type = 'scan';
-        drawerInfo.value.item = item;
 
-        formState.email = item.email;
-        formState.userName = item.userName;
-        formState.status = item.status;
-        formState.role = item.role;
-        formState.mobile = item.mobile;
-        formState.userId = item.userId;
+        drawerInfo.value.item.email = item.email;
+        drawerInfo.value.item.userName = item.userName;
+        drawerInfo.value.item.status = item.status;
+        drawerInfo.value.item.role = item.role;
+        drawerInfo.value.item.mobile = item.mobile;
+        drawerInfo.value.item.userId = item.userId;
       };
       const deleteStaff = (item) => {
         confirm(
@@ -264,14 +253,13 @@
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-        drawerInfo.value.item = undefined;
-
-        formState.email = undefined;
-        formState.userName = undefined;
-        formState.status = undefined;
-        formState.role = undefined;
-        formState.mobile = undefined;
-        formState.userId = undefined;
+        // 重置 item 数据
+        drawerInfo.value.item.email = undefined;
+        drawerInfo.value.item.userName = undefined;
+        drawerInfo.value.item.status = undefined;
+        drawerInfo.value.item.role = undefined;
+        drawerInfo.value.item.mobile = undefined;
+        drawerInfo.value.item.userId = undefined;
       };
       const drawerEdit = () => {
         drawerInfo.value.title = '编辑员工信息';
@@ -291,7 +279,6 @@
         searchInfo,
         pageInfo,
         drawerInfo,
-        formState,
         submit,
         scanStaff,
         deleteStaff,

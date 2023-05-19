@@ -7,6 +7,7 @@
       :value="innerValueRef"
       @change="handleChange"
       :disabled="disabled"
+      autoComplete="“off”"
     >
       <template #[item]="data" v-for="item in Object.keys($slots)">
         <slot :name="item" v-bind="data || {}"></slot>

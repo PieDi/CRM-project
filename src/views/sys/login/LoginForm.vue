@@ -14,6 +14,7 @@
         v-model:value="formData.userName"
         :placeholder="t('sys.login.userName')"
         class="fix-auto-fill"
+        autoComplete="“off”"
       />
     </FormItem>
     <FormItem name="password" class="enter-x">

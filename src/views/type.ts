@@ -1,7 +1,7 @@
 export type DrawerItemType<T> = {
   visible: boolean;
   title: string;
-  item?: T;
+  item: T;
   type?: 'scan' | 'add' | 'edit';
 };
 

@@ -9,6 +9,7 @@
           size="large"
           v-model:value="formData.userName"
           placeholder="用户名"
+          autoComplete="“off”"
         />
       </FormItem>
 
@@ -18,6 +19,7 @@
           v-model:value="formData.mobile"
           :placeholder="t('sys.login.mobile')"
           class="fix-auto-fill"
+          autoComplete="“off”"
         />
       </FormItem>
 
@@ -27,6 +29,7 @@
           v-model:value="formData.email"
           placeholder="邮箱"
           class="fix-auto-fill"
+          autoComplete="“off”"
         />
       </FormItem>
 
@@ -37,20 +40,6 @@
           :placeholder="t('sys.login.password')"
         />
       </FormItem>
-      <!-- <FormItem name="confirmPassword" class="enter-x">
-        <InputPassword
-          size="large"
-          visibilityToggle
-          v-model:value="formData.password"
-          :placeholder="t('sys.login.confirmPassword')"
-        />
-      </FormItem> -->
-
-      <!-- <FormItem class="enter-x" name="policy">
-        <Checkbox v-model:checked="formData.policy" size="small">
-          {{ t('sys.login.policy') }}
-        </Checkbox>
-      </FormItem> -->
 
       <Button
         type="primary"
