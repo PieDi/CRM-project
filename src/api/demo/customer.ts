@@ -27,6 +27,8 @@ enum Api {
   UpdateCustomerMH = '/customer/disease/basic/update', // 修改病史
   DeleteCustomerMH = '/customer/disease/basic/delete', // 删除病史
   CustomerMHDetail = '/customer/disease/basic/detail', // 病史详情
+  CustomerMHUpload = '/customer/disease/basic/upload', //详情
+
   /**
    * 客户用药记录
    */
@@ -127,6 +129,8 @@ export const deleteCustomerMH = (id: string | number) =>
 
 export const getCustomerMHDetail = (id: string | number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerMHDetail, params: { id } });
+export const fileMHUpload = (id: string | number) =>
+  defHttp.uploadFile<CustomerInfo>({ url: Api.CustomerMHUpload }, {});
 
 /**
  * 客户用药记录
