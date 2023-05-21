@@ -1,8 +1,8 @@
 <template>
   <PageWrapper title="合同模板">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
-      <div v-if="uploadAuth" :style="{ display: 'flex' }"></div>
-      <Upload {...props}>
+      <div :style="{ display: 'flex' }"></div>
+      <Upload {...props} v-if="uploadAuth">
         <Button>模板上传</Button>
       </Upload>
     </div>

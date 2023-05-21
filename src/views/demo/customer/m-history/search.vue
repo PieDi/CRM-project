@@ -3,21 +3,38 @@
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客户姓名">
-          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
+          <Input
+            placeholder="请输入"
+            allowClear
+            :style="{ width: '150px' }"
+            v-model:value="searchInfo.customerName"
+          />
         </FormItem>
-        <FormItem label="证件号码" style="margin-left: 10px">
-          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
+        <FormItem label="疾病名称" style="margin-left: 10px">
+          <Input
+            placeholder="请输入"
+            allowClear
+            :style="{ width: '150px' }"
+            v-model:value="searchInfo.diseaseName"
+          />
         </FormItem>
-        <Button type="primary" style="margin-left: 10px">搜索</Button></div
+        <FormItem label="就诊医院" style="margin-left: 10px">
+          <Input
+            placeholder="请输入"
+            allowClear
+            :style="{ width: '150px' }"
+            v-model:value="searchInfo.hospitalName"
+          />
+        </FormItem>
+        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
       <Button type="primary" style="margin-left: 10px" @click="addMHistory">新增客户病史</Button>
     </div>
 
     <Table
       :columns="columns"
-      :dataSource="data"
+      :dataSource="pageInfo.dataSource"
       :canResize="false"
-      :loading="loading"
       :striped="false"
       :bordered="true"
       :pagination="pagination"
@@ -125,25 +142,28 @@
     ></template>
 
     <template v-if="oRecordDrawerInfo.visible">
-      <o-record
+      <c-record
         :drawer-info="oRecordDrawerInfo"
         @drawerOnClose="oRecordClose"
         @edit="oRecordEdit"
-      ></o-record
+      ></c-record
     ></template>
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, computed, onMounted } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button } from 'ant-design-vue';
-  import { getBasicData } from '../../table/tableData';
+  import { getCustomerMHPage } from '/@/api/demo/customer';
+  import { CustomerMHInfo } from '/@/api/demo/model/customer';
   import mRecord from './m-record.vue';
   import dRecord from './d-record.vue';
   import eRecord from './e-record.vue';
   import iRecord from './i-record.vue';
-  import oRecord from './o-record.vue';
-  import { DrawerItemType } from '/@/views/type';
+  import cRecord from './c-record.vue';
+  import { type DrawerItemType, PageListInfo } from '/@/views/type';
+  import { type ColumnsType } from 'ant-design-vue/lib/table';
+
   const FormItem = Form.Item;
   export default defineComponent({
     components: {
@@ -156,26 +176,53 @@
       dRecord,
       eRecord,
       iRecord,
-      oRecord,
+      cRecord,
     },
     setup() {
-      const loading = ref(false);
+      const searchInfo = ref({
+        customerName: undefined,
+        diseaseName: undefined,
+        hospitalName: undefined,
+      });
+
       const addMHistory = () => {
         mRecordDrawerInfo.value.title = '新增客户病史';
         mRecordDrawerInfo.value.visible = true;
       };
-      const pagination = ref({
-        total: 50,
+
+      const pageInfo = ref<PageListInfo<CustomerMHInfo>>({
+        total: 0,
         current: 1,
+        dataSource: [],
+      });
+      const pagination = computed(() => ({
+        total: pageInfo.value.total,
+        current: pageInfo.value.current,
         pageSize: 10,
         showTotal: (total: number) => `共${total}条`,
         onChange: (page: number) => {
-          console.log(2132323, page);
+          customerMHListReq(page);
         },
         showQuickJumper: false,
         showSizeChanger: false,
+      }));
+
+      const customerMHListReq = async (pageNum: number) => {
+        const res = await getCustomerMHPage({ ...searchInfo.value, pageNum });
+        if (res) {
+          pageInfo.value.total = res.total;
+          pageInfo.value.current = res.pageNum;
+          pageInfo.value.dataSource = res.data;
+        }
+      };
+      const searchAction = () => {
+        customerMHListReq(1);
+      };
+      onMounted(() => {
+        customerMHListReq(1);
       });
-      const columns: any = [
+
+      const columns: ColumnsType<CustomerMHInfo> = [
         {
           title: '姓名',
           width: 90,
@@ -226,7 +273,7 @@
           dataIndex: 'image',
         },
         {
-          title: '其他记录',
+          title: '会诊记录',
           width: 80,
           dataIndex: 'other',
         },
@@ -235,8 +282,9 @@
           dataIndex: 'operation',
         },
       ];
+
       // 病史记录
-      const mRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '' });
+      const mRecordDrawerInfo = ref<DrawerItemType<any>>({ visible: false, title: '', item: {} });
       const mRecordClose = () => {
         mRecordDrawerInfo.value.title = '';
         mRecordDrawerInfo.value.visible = false;
@@ -247,15 +295,16 @@
         mRecordDrawerInfo.value.title = '编辑客户病史';
         mRecordDrawerInfo.value.type = 'edit';
       };
-      const scanMRecord = (item: any) => {
+      const scanMRecord = (item: CustomerMHInfo) => {
         mRecordDrawerInfo.value.title = '查看客户病史';
         mRecordDrawerInfo.value.visible = true;
         mRecordDrawerInfo.value.item = item;
         mRecordDrawerInfo.value.type = 'scan';
       };
-      const deleteMRecord = (item: any) => {};
+      const deleteMRecord = (item: CustomerMHInfo) => {};
+
       // 用药记录
-      const dRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '', item: undefined });
+      const dRecordDrawerInfo = ref<DrawerItemType<any>>({ visible: false, title: '', item: {} });
       const dRecordClose = () => {
         dRecordDrawerInfo.value.title = '';
         dRecordDrawerInfo.value.visible = false;
@@ -274,7 +323,11 @@
       };
 
       // 检验记录
-      const eRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '', item: undefined });
+      const eRecordDrawerInfo = ref<DrawerItemType<any>>({
+        visible: false,
+        title: '',
+        item: undefined,
+      });
       const eRecordClose = () => {
         eRecordDrawerInfo.value.title = '';
         eRecordDrawerInfo.value.visible = false;
@@ -293,7 +346,11 @@
       };
 
       // 影像记录
-      const iRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '', item: undefined });
+      const iRecordDrawerInfo = ref<DrawerItemType<any>>({
+        visible: false,
+        title: '',
+        item: undefined,
+      });
       const iRecordClose = () => {
         iRecordDrawerInfo.value.title = '';
         iRecordDrawerInfo.value.visible = false;
@@ -312,7 +369,11 @@
       };
 
       // 其他记录
-      const oRecordDrawerInfo = ref<DrawerItemType>({ visible: false, title: '', item: undefined });
+      const oRecordDrawerInfo = ref<DrawerItemType<any>>({
+        visible: false,
+        title: '',
+        item: undefined,
+      });
       const oRecordClose = () => {
         oRecordDrawerInfo.value.title = '';
         oRecordDrawerInfo.value.visible = false;
@@ -332,10 +393,12 @@
 
       return {
         columns,
-        data: getBasicData(),
-        loading,
         pagination,
+        searchInfo,
+        pageInfo,
+        searchAction,
         addMHistory,
+
         mRecordDrawerInfo,
         mRecordClose,
         mRecordEdit,
