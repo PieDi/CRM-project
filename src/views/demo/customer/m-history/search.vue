@@ -104,7 +104,7 @@
                 oRecordClick(record);
               }
             "
-            >其他记录</Button
+            >就诊记录</Button
           >
         </template>
       </template>
@@ -212,7 +212,8 @@
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
-          pageInfo.value.dataSource = res.data;
+          pageInfo.value.dataSource = [{}];
+          // pageInfo.value.dataSource = res.data;
         }
       };
       const searchAction = () => {
@@ -273,7 +274,7 @@
           dataIndex: 'image',
         },
         {
-          title: '会诊记录',
+          title: '就诊记录',
           width: 80,
           dataIndex: 'other',
         },
@@ -368,7 +369,7 @@
         iRecordDrawerInfo.value.type = 'edit';
       };
 
-      // 其他记录
+      // 就诊记录
       const oRecordDrawerInfo = ref<DrawerItemType<any>>({
         visible: false,
         title: '',
@@ -381,7 +382,7 @@
         oRecordDrawerInfo.value.type = undefined;
       };
       const oRecordClick = (item: any) => {
-        oRecordDrawerInfo.value.title = '其他记录';
+        oRecordDrawerInfo.value.title = '就诊记录';
         oRecordDrawerInfo.value.visible = true;
         oRecordDrawerInfo.value.item = item;
         oRecordDrawerInfo.value.type = 'scan';

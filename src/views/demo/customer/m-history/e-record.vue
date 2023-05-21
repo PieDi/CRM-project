@@ -21,7 +21,7 @@
         <template v-for="(item, i) in listInfo">
           <div>
             <FormItem label="检查日期">
-              <DatePicker />
+              <DatePicker :show-time="true" />
             </FormItem>
             <FormItem label="检查类型">
               <Select placeholder="请选择">

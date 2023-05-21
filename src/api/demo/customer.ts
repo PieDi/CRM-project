@@ -55,7 +55,7 @@ enum Api {
   DeleteCustomerI = '/customer/disease/image/delete', // 删除影像
   CustomerIDetail = '/customer/disease/image/detail', // 影像详情
   /**
-   * 客户会诊记录
+   * 客户就诊记录
    */
   CustomerCPage = '/customer/disease/consultation/page', // 会诊分页查询列表
   CustomerCList = '/customer/disease/consultation/list', // 全部会诊
@@ -207,7 +207,7 @@ export const getCustomerIDetail = (id: string | number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerIDetail, params: { id } });
 
 /**
- * 客户会诊记录
+ * 客户就诊记录
  */
 export const getCustomerCPage = (params: CustomerMHListParams) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerMHInfo[] }>({

@@ -20,7 +20,7 @@
         <template v-for="(item, i) in listInfo">
           <div>
             <FormItem label="会诊日期">
-              <DatePicker />
+              <DatePicker :show-time="true" />
             </FormItem>
 
             <FormItem label="会诊专家">

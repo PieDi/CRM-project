@@ -23,7 +23,7 @@
               <Input placeholder="请输入" allowClear :value="item.name" />
             </FormItem>
             <FormItem label="用药时间">
-              <DatePicker />
+              <DatePicker :show-time="true" />
             </FormItem>
 
             <FormItem label="药物名称">

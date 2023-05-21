@@ -63,6 +63,10 @@
           :disabled="drawerInfo.type === 'scan' || drawerInfo.type === 'edit'"
         />
       </FormItem>
+      <FormItem label="会诊日期">
+        <DatePicker :show-time="true" />
+      </FormItem>
+
       <FormItem label="科室">
         <Input
           placeholder="请输入"
@@ -81,23 +85,35 @@
         />
       </FormItem>
       <FormItem label="附件">
-        <Input
-          placeholder="请输入"
-          allowClear
-          :value="mInfo.name"
-          :disabled="drawerInfo.type === 'scan'"
-        />
+        <Upload :file-list="fileList" :before-upload="beforeUpload" @remove="handleRemove">
+          <Button>选择</Button>
+        </Upload>
+        <Button @click="handleUpload" type="link" :loading="uploading">{{
+          uploading ? '上传中' : '上传'
+        }}</Button>
       </FormItem>
     </Form>
   </Drawer>
 </template>
 <script lang="ts">
   import { defineComponent, ref, PropType, onMounted } from 'vue';
-  import { Table, Form, Input, Button, Drawer, Select } from 'ant-design-vue';
+  import {
+    Table,
+    Form,
+    Input,
+    Button,
+    Drawer,
+    Select,
+    DatePicker,
+    Upload,
+    message,
+  } from 'ant-design-vue';
   import { getCustomerList } from '/@/api/demo/customer';
   import { CustomerMHInfo, CustomerInfo } from '/@/api/demo/model/customer';
   import { DrawerItemType } from '/@/views/type';
   import { SelectValue } from 'ant-design-vue/lib/select';
+  import type { UploadProps } from 'ant-design-vue';
+
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   export default defineComponent({
@@ -110,6 +126,8 @@
       Drawer,
       Select,
       SelectOption,
+      DatePicker,
+      Upload,
     },
     props: {
       drawerInfo: {
@@ -151,7 +169,46 @@
       const edit = () => {
         emit('edit');
       };
+      // 文件上传
+      const fileList = ref<UploadProps['fileList']>([]);
+      const uploading = ref<boolean>(false);
 
+      const handleRemove: UploadProps['onRemove'] = (file) => {
+        //@ts-ignore
+        const index = fileList.value.indexOf(file);
+        //@ts-ignore
+        const newFileList = fileList.value.slice();
+        newFileList.splice(index, 1);
+        fileList.value = newFileList;
+      };
+
+      const beforeUpload: UploadProps['beforeUpload'] = (file) => {
+        //@ts-ignore
+        fileList.value = [...fileList.value, file];
+        return false;
+      };
+
+      const handleUpload = () => {
+        const formData = new FormData();
+        //@ts-ignore
+        formData.append('files', fileList.value);
+        uploading.value = true;
+        // You can use any AJAX library you like
+
+        // request('https://www.mocky.io/v2/5cc8019d300000980a055e76', {
+        //   method: 'post',
+        //   data: formData,
+        // })
+        //   .then(() => {
+        //     fileList.value = [];
+        //     uploading.value = false;
+        //     message.success('upload successfully.');
+        //   })
+        //   .catch(() => {
+        //     uploading.value = false;
+        //     message.error('upload failed.');
+        //   });
+      };
       return {
         drawerInfo: props.drawerInfo,
         customerOnChange,
@@ -162,8 +219,15 @@
         drawerOnClose,
         submit,
         edit,
+        // 文件上传
+        fileList,
+        uploading,
+        handleRemove,
+        beforeUpload,
+        handleUpload,
       };
     },
   });
 </script>
+<style lang="less" scoped></style>
 <style lang="less" scoped></style>

@@ -244,6 +244,7 @@
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { CustomerInfo } from '/@/api/demo/model/customer';
   import dayjs, { Dayjs } from 'dayjs';
+  import { sexMap, docTypeMap, cGroupMap } from '/@/views/const';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -336,10 +337,12 @@
         {
           title: '性别',
           dataIndex: 'sex',
+          customRender: (state) => sexMap[state.record.sex as number],
         },
         {
           title: '证件类型',
           dataIndex: 'documentType',
+          customRender: (state) => docTypeMap[state.record.documentType as number],
         },
         {
           title: '证件号码',
@@ -360,6 +363,7 @@
         {
           title: '所属分组',
           dataIndex: 'groupType',
+          customRender: (state) => cGroupMap[state.record.groupType as number],
         },
         {
           title: '操作',
@@ -372,7 +376,6 @@
         drawerInfo.value.type = 'add';
       };
       const scanCustomer = (item: CustomerInfo) => {
-        console.log(2123323, item);
         drawerInfo.value.item.age = item.age;
         drawerInfo.value.item.birth = item.birth;
         drawerInfo.value.item.contactAddress = item.contactAddress;
@@ -398,11 +401,11 @@
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
             content: '确定删除该客户',
             async onOk() {
-              const res = await deleteCustomer({});
-              // searchInfo.value.name = undefined;
-              // searchInfo.value.groupType = undefined;
-              // searchInfo.value.documentNumber = undefined;
-              // customerListReq(1);
+              const res = await deleteCustomer(item.id as number);
+              if (res) {
+                message.success('删除客户成功');
+                customerListReq(pageInfo.value.current);
+              }
             },
           }),
         );
@@ -443,6 +446,7 @@
         }
         if (res) {
           message.success(drawerInfo.value.type === 'add' ? '添加客户成功' : '修改用户信息成功');
+          customerListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
         }
       };
 
