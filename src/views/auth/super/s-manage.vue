@@ -21,7 +21,7 @@
     <Table
       :columns="columns"
       :dataSource="pageInfo.dataSource"
-      :canResize="false"
+      :canResize="true"
       :loading="loading"
       :striped="false"
       :bordered="true"
@@ -113,7 +113,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, reactive, createVNode } from 'vue';
+  import { defineComponent, ref, onMounted, reactive, createVNode, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer, Select, message } from 'ant-design-vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
@@ -164,17 +164,17 @@
         dataSource: [],
       });
       const loading = ref(false);
-      const pagination = ref({
+      const pagination = computed(() => ({
         total: pageInfo.value.total,
         current: pageInfo.value.current,
-        pageSize: 20,
+        pageSize: 10,
         showTotal: (total: number) => `共${total}条`,
         onChange: (page: number) => {
           userListReq(page);
         },
         showQuickJumper: false,
         showSizeChanger: false,
-      });
+      }));
       const userListReq = async (pageNum: number) => {
         loading.value = true;
         const res = await getUserList({ userName: searchInfo.userName, pageNum });

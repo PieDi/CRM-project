@@ -14,38 +14,53 @@
 
     <Form :labelCol="{ span: 6 }">
       <FormItem label="客户姓名">
-        <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
-          <SelectOption key="1">男</SelectOption>
-          <SelectOption key="2">女</SelectOption>
-        </Select>
-      </FormItem>
-      <FormItem label="性别">
-        <Select placeholder="请选择" disabled>
-          <SelectOption key="1">男</SelectOption>
-          <SelectOption key="2">女</SelectOption>
-        </Select>
-      </FormItem>
-
-      <FormItem label="证件类型">
-        <Select placeholder="请选择" disabled>
-          <SelectOption key="1">身份证</SelectOption>
-          <SelectOption key="2">护照</SelectOption>
-          <SelectOption key="3">军官证</SelectOption>
-          <SelectOption key="4">港澳通行证</SelectOption>
-          <SelectOption key="5">台湾通行证</SelectOption>
+        <Select
+          :show-search="true"
+          :disabled="drawerInfo.type === 'scan'"
+          placeholder="请选择"
+          :filter-option="filterOption"
+          @change="customerOnChange"
+        >
+          <SelectOption v-for="item of dataSource" :key="item.mobile" :value="item.name">{{
+            `${item.name}-${item.mobile}`
+          }}</SelectOption>
         </Select>
       </FormItem>
 
-      <FormItem label="证件号码">
-        <Input placeholder="请输入" allowClear :value="mInfo.name" disabled />
-      </FormItem>
+      <template v-if="currentCustomer">
+        <FormItem label="性别">
+          <Select placeholder="请选择" disabled v-model:value="currentCustomer.sex">
+            <SelectOption :key="1">男</SelectOption>
+            <SelectOption :key="2">女</SelectOption>
+          </Select>
+        </FormItem>
+
+        <FormItem label="证件类型">
+          <Select placeholder="请选择" disabled v-model:value="currentCustomer.documentType">
+            <SelectOption :key="1">身份证</SelectOption>
+            <SelectOption :key="2">护照</SelectOption>
+            <SelectOption :key="3">军官证</SelectOption>
+            <SelectOption :key="4">港澳通行证</SelectOption>
+            <SelectOption :key="5">台湾通行证</SelectOption>
+          </Select>
+        </FormItem>
+
+        <FormItem label="证件号码">
+          <Input
+            placeholder="请输入"
+            allowClear
+            disabled
+            v-model:value="currentCustomer.documentNumber"
+          />
+        </FormItem>
+      </template>
 
       <FormItem label="就诊医院">
         <Input
           placeholder="请输入"
           allowClear
           :value="mInfo.name"
-          :disabled="drawerInfo.type === 'scan' || drawerInfo.type !== 'add'"
+          :disabled="drawerInfo.type === 'scan' || drawerInfo.type === 'edit'"
         />
       </FormItem>
       <FormItem label="科室">
@@ -54,7 +69,7 @@
           allowClear
           min="1"
           :precision="0"
-          :disabled="drawerInfo.type === 'scan' || drawerInfo.type !== 'add'"
+          :disabled="drawerInfo.type === 'scan' || drawerInfo.type === 'edit'"
         />
       </FormItem>
       <FormItem label="疾病名称">
@@ -77,10 +92,12 @@
   </Drawer>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, PropType } from 'vue';
+  import { defineComponent, ref, PropType, onMounted } from 'vue';
   import { Table, Form, Input, Button, Drawer, Select } from 'ant-design-vue';
+  import { getCustomerList } from '/@/api/demo/customer';
+  import { CustomerMHInfo, CustomerInfo } from '/@/api/demo/model/customer';
   import { DrawerItemType } from '/@/views/type';
-
+  import { SelectValue } from 'ant-design-vue/lib/select';
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   export default defineComponent({
@@ -96,7 +113,7 @@
     },
     props: {
       drawerInfo: {
-        type: Object as PropType<DrawerItemType>,
+        type: Object as PropType<DrawerItemType<CustomerMHInfo>>,
         default: () => ({ visible: false, title: '' }),
       },
     },
@@ -106,8 +123,25 @@
         id: undefined,
         des: '',
       });
-      const loading = ref(false);
-
+      const dataSource = ref<Array<CustomerInfo>>([]);
+      onMounted(async () => {
+        const res = await getCustomerList();
+        if (res) dataSource.value = res;
+      });
+      const currentCustomer = ref<CustomerInfo>();
+      const customerOnChange = (value: SelectValue, option: any) => {
+        currentCustomer.value = dataSource.value.find(
+          (item: CustomerInfo) => item.mobile === (option.key as string),
+        );
+        console.log(11111, currentCustomer.value);
+      };
+      const filterOption = (input: string, option: any) => {
+        console.log(233423424, input, option);
+        return (
+          option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
+          option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
+        );
+      };
       const drawerOnClose = () => {
         emit('drawerOnClose');
       };
@@ -119,12 +153,12 @@
       };
 
       return {
-        loading,
         drawerInfo: props.drawerInfo,
+        customerOnChange,
+        currentCustomer,
         mInfo,
-        // addCustomer,
-        // editCustomer,
-        // deleteCustomer,
+        dataSource,
+        filterOption,
         drawerOnClose,
         submit,
         edit,

@@ -1,44 +1,44 @@
-import {
-  AccountParams,
-  DeptListItem,
-  MenuParams,
-  RoleParams,
-  RolePageParams,
-  MenuListGetResultModel,
-  DeptListGetResultModel,
-  AccountListGetResultModel,
-  RolePageListGetResultModel,
-  RoleListGetResultModel,
-} from './model/systemModel';
 import { defHttp } from '/@/utils/http/axios';
+import {
+  CustomerListParams,
+  CustomerInfo,
+  CustomerSaveParams,
+  CustomerMHListParams,
+  CustomerMHInfo,
+  CustomerMHSaveParams,
+} from './model/customer';
 
 enum Api {
-  AccountList = '/system/getAccountList',
-  IsAccountExist = '/system/accountExist',
-  DeptList = '/system/getDeptList',
-  setRoleStatus = '/system/setRoleStatus',
-  MenuList = '/system/getMenuList',
-  RolePageList = '/system/getRoleListByPage',
-  GetAllRoleList = '/system/getAllRoleList',
+  CustomerServePage = '/customer/service/page', // 分页查询列表
+  CustomerServeList = '/customer/service/list', // 全部客户
+  SaveCustomerServe = '/customer/service/save', // 保存
+  UpdateCustomerServe = '/customer/service/update', // 修改
+  DeleteCustomerServe = '/customer/service/delete', // 删除
+  CustomerServeDetail = '/customer/service/detail', //详情
 }
 
-export const getAccountList = (params: AccountParams) =>
-  defHttp.get<AccountListGetResultModel>({ url: Api.AccountList, params });
+/**
+ * 客户基本信息
+ */
+export const getCustomerServePage = (params: CustomerListParams) =>
+  defHttp.post<{ total: number; data: CustomerInfo[] }>({
+    url: Api.CustomerServePage,
+    params: { pageSize: 20, ...params },
+  });
+export const getCustomerServeList = (name?: string) =>
+  defHttp.post<Array<CustomerInfo>>({
+    url: Api.SaveCustomerServe,
+    params: { name },
+  });
 
-export const getDeptList = (params?: DeptListItem) =>
-  defHttp.get<DeptListGetResultModel>({ url: Api.DeptList, params });
+export const saveCustomerServe = (params?: CustomerSaveParams) =>
+  defHttp.post<any>({ url: Api.SaveCustomerServe, params });
 
-export const getMenuList = (params?: MenuParams) =>
-  defHttp.get<MenuListGetResultModel>({ url: Api.MenuList, params });
+export const updateCustomerServe = (params?: CustomerSaveParams) =>
+  defHttp.post<any>({ url: Api.UpdateCustomerServe, params });
 
-export const getRoleListByPage = (params?: RolePageParams) =>
-  defHttp.get<RolePageListGetResultModel>({ url: Api.RolePageList, params });
+export const deleteCustomerServe = (id: string | number) =>
+  defHttp.post<any>({ url: Api.DeleteCustomerServe, params: { id } });
 
-export const getAllRoleList = (params?: RoleParams) =>
-  defHttp.get<RoleListGetResultModel>({ url: Api.GetAllRoleList, params });
-
-export const setRoleStatus = (id: number, status: string) =>
-  defHttp.post({ url: Api.setRoleStatus, params: { id, status } });
-
-export const isAccountExist = (account: string) =>
-  defHttp.post({ url: Api.IsAccountExist, params: { account } }, { errorMessageMode: 'none' });
+export const getCustomerServeDetail = (id: string | number) =>
+  defHttp.post<CustomerInfo>({ url: Api.CustomerServeDetail, params: { id } });
