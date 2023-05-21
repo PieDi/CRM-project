@@ -264,6 +264,29 @@ export function getBasicData() {
   })();
 }
 
+export function getReturnListData() {
+  return (() => {
+    const items: any = []
+    for (let index = 0; index < 100; index++) {
+      items.push({
+        key: `${index}`,
+        name: `张三-${index}`,
+        source: `${index}`,
+        tag: `标签${index}`,
+        kind: '1',
+        level: `${index}`,
+        time: new Date().toLocaleString(),
+        mobile: `188-3819-7439`,
+        type: '1',
+        staff: `员工${index}`,
+        status: '0',
+        operator: '1'
+      })
+    }
+    return items
+  })()
+}
+
 export function getTreeTableData() {
   return (() => {
     const arr: any = [];

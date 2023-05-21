@@ -3,10 +3,16 @@
     <!-- v-model:activeKey="activeKey" -->
     <div class="visit-return-content">
       <Tabs>
-        <tab-pane key="1" tab="近期回访">Content of Tab Pane 1</tab-pane>
-        <tab-pane key="2" tab="再次回访" force-render>Content of Tab Pane 2</tab-pane>
+        <tab-pane key="1" tab="近期回访">
+          <recent-return-list />
+        </tab-pane>
+        <tab-pane key="2" tab="再次回访" force-render>
+          <again-return-list />
+        </tab-pane>
         <!-- <tab-pane key="3" tab="Tab 3">Content of Tab Pane 3</tab-pane> -->
-        <tab-pane key="3" tab="全部回访" force-render>Content of Tab Pane 2</tab-pane>
+        <tab-pane key="3" tab="全部回访" force-render>
+          <all-return-list />
+        </tab-pane>
       </Tabs>
     </div>
   </PageWrapper>
@@ -16,13 +22,19 @@
   import { PageWrapper } from '/@/components/Page';
   import { Tabs, TabPane } from 'ant-design-vue';
   import { getBasicData } from '../table/tableData';
+  import RecentReturnList from './return-list/recent-return-list.vue';
+  import AgainReturnList from './return-list/again-return-list.vue';
+  import AllReturnList from './return-list/all-return-list.vue';
+
 
   export default defineComponent({
     components: {
       PageWrapper,
-
       Tabs,
       TabPane,
+      RecentReturnList,
+      AgainReturnList,
+      AllReturnList
     },
     setup() {
       const drawerInfo = ref({ visible: false, title: '' });
@@ -123,7 +135,7 @@
 </script>
 <style lang="less" scoped>
   .visit-return-content {
-    height: calc(100vh - 184px);
+    
     padding: 0 15px;
     background: #fff;
   }
