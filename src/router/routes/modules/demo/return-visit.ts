@@ -18,12 +18,21 @@ const returnVisit: AppRouteModule = {
     {
       path: 'search',
       name: 'ReturnVisitSearch',
-      component: () => import('/@/views/demo/visit-return/index.vue'),
+      component: () => import('/@/views/demo/visit-return/search.vue'),
       meta: {
         title: t('routes.demo.return-visit.search'),
         roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
       },
     },
+    {
+      path: 'plan',
+      name: 'ReturnListPlan',
+      component: () => import('@/views/demo/visit-return/plan.vue'),
+      meta: {
+        title: t('routes.demo.return-visit.plan'),
+        roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF]
+      }
+    }
   ],
 };
 

@@ -278,9 +278,7 @@ export function getReturnListData() {
         time: new Date().toLocaleString(),
         mobile: `188-3819-7439`,
         type: '1',
-        staff: `员工${index}`,
-        status: '0',
-        operator: '1'
+        status: '0'
       })
     }
     return items

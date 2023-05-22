@@ -80,7 +80,7 @@ export default defineComponent({
       },
       {
         title: '操作',
-        dataIndex: 'operator'
+        dataIndex: 'operation'
       }
     ]
 
