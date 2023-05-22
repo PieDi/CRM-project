@@ -51,11 +51,33 @@
       <template #extra>
         <Button type="primary">提交</Button>
       </template>
-      <FormItem label="分组名称">
-        <Input placeholder="请输入" allowClear :value="groupInfo.name" />
+      <FormItem label="分组分类">
+        <Select placeholder="请选择" v-model:value="groupInfo.type">
+          <SelectOption :key="1">个人客户</SelectOption>
+          <SelectOption :key="2">企业客户</SelectOption>
+          <SelectOption :key="3">其他</SelectOption>
+        </Select>
       </FormItem>
-      <FormItem label="分组描述">
-        <TextArea placeholder="请输入" allowClear :value="groupInfo.des" />
+
+      <FormItem label="分组名称">
+        <Input placeholder="请输入" allowClear v-model:value="groupInfo.name" />
+      </FormItem>
+
+      <FormItem label="分组描述" v-if="groupInfo.type">
+        <TextArea
+          v-if="groupInfo.type === 3"
+          placeholder="请输入"
+          allowClear
+          v-model:value="groupInfo.des"
+        />
+        <Select v-else placeholder="请选择" v-model:value="groupInfo.des">
+          <SelectOption :key="1.1">干细胞客户</SelectOption>
+          <SelectOption :key="1.2">免疫细胞客户</SelectOption>
+          <SelectOption :key="1.3">其他细胞客户</SelectOption>
+          <SelectOption :key="2">就医服务客户</SelectOption>
+          <SelectOption :key="3">体验客户</SelectOption>
+          <SelectOption :key="4">其他</SelectOption>
+        </Select>
       </FormItem>
     </Drawer>
   </PageWrapper>
@@ -63,11 +85,12 @@
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Drawer } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Drawer, Select } from 'ant-design-vue';
   import { getBasicData } from '../../table/tableData';
 
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
+  const SelectOption = Select.Option;
   export default defineComponent({
     components: {
       PageWrapper,
@@ -77,10 +100,18 @@
       Button,
       Drawer,
       TextArea,
+      Select,
+      SelectOption,
     },
     setup() {
       const drawerInfo = ref({ visible: false, title: '' });
-      const groupInfo = ref<{ name: string; id?: number | string; des: string }>({
+      const groupInfo = ref<{
+        name: string;
+        id?: number | string;
+        des: string;
+        type: number | undefined;
+      }>({
+        type: undefined,
         name: '',
         id: undefined,
         des: '',

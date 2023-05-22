@@ -125,39 +125,13 @@ export class VAxios {
   /**
    * @description:  File Upload
    */
-  uploadFile<T = any>(config: AxiosRequestConfig, params: UploadFileParams) {
-    const formData = new window.FormData();
-    const customFilename = params.name || 'file';
-
-    if (params.filename) {
-      formData.append(customFilename, params.file, params.filename);
-    } else {
-      formData.append(customFilename, params.file);
-    }
-
-    if (params.data) {
-      Object.keys(params.data).forEach((key) => {
-        const value = params.data![key];
-        if (Array.isArray(value)) {
-          value.forEach((item) => {
-            formData.append(`${key}[]`, item);
-          });
-          return;
-        }
-
-        formData.append(key, params.data![key]);
-      });
-    }
-
-    return this.axiosInstance.request<T>({
+  uploadFile<T = any>(config: AxiosRequestConfig, data: FormData) {
+    delete config.headers?.['Content-Type'];
+    return this.request({
       ...config,
-      method: 'POST',
-      data: formData,
-      headers: {
-        'Content-type': ContentTypeEnum.FORM_DATA,
-        // @ts-ignore
-        ignoreCancelToken: true,
-      },
+      method: 'post',
+      headers: { 'Content-Type': ContentTypeEnum.FORM_DATA },
+      data,
     });
   }
 
@@ -165,7 +139,6 @@ export class VAxios {
   supportFormData(config: AxiosRequestConfig) {
     const headers = config.headers || this.options.headers;
     const contentType = headers?.['Content-Type'] || headers?.['content-type'];
-
     if (
       contentType !== ContentTypeEnum.FORM_URLENCODED ||
       !Reflect.has(config, 'data') ||
@@ -215,7 +188,7 @@ export class VAxios {
     }
     conf.requestOptions = opt;
 
-    conf = this.supportFormData(conf);
+    // conf = this.supportFormData(conf);
 
     return new Promise((resolve, reject) => {
       this.axiosInstance

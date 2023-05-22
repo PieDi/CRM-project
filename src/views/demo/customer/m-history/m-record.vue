@@ -113,6 +113,7 @@
   import { DrawerItemType } from '/@/views/type';
   import { SelectValue } from 'ant-design-vue/lib/select';
   import type { UploadProps } from 'ant-design-vue';
+  import { fileMHUpload } from '/@/api/demo/customer';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -192,9 +193,9 @@
         const formData = new FormData();
         //@ts-ignore
         formData.append('files', fileList.value);
-        uploading.value = true;
+        // uploading.value = true;
         // You can use any AJAX library you like
-
+        fileMHUpload(formData);
         // request('https://www.mocky.io/v2/5cc8019d300000980a055e76', {
         //   method: 'post',
         //   data: formData,
