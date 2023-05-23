@@ -28,7 +28,7 @@ enum Api {
   UpdateCustomerMH = '/customer/disease/basic/update', // 修改病史
   DeleteCustomerMH = '/customer/disease/basic/delete', // 删除病史
   CustomerMHDetail = '/customer/disease/basic/detail', // 病史详情
-  CustomerMHUpload = '/customer/disease/basic/upload', //详情
+  CustomerMHUpload = '/customer/disease/basic/upload', //上传
 
   /**
    * 客户用药记录
@@ -39,6 +39,7 @@ enum Api {
   UpdateCustomerD = '/customer/disease/medicine/update', // 修改用药
   DeleteCustomerD = '/customer/disease/medicine/delete', // 删除用药
   CustomerDDetail = '/customer/disease/medicine/detail', // 用药详情
+  CustomerDUpload = '/customer/disease/medicine/upload', //上传
   /**
    * 客户检验记录
    */
@@ -148,10 +149,10 @@ export const getCustomerDList = (customerId?: undefined) =>
     params: { customerId },
   });
 
-export const saveCustomerD = (params?: CustomerMHSaveParams) =>
+export const saveCustomerD = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerD, params });
 
-export const updateCustomerD = (params?: CustomerMHSaveParams) =>
+export const updateCustomerD = (params?: any) =>
   defHttp.post<any>({ url: Api.UpdateCustomerD, params });
 
 export const deleteCustomerD = (id: string | number) =>
@@ -160,6 +161,8 @@ export const deleteCustomerD = (id: string | number) =>
 export const getCustomerDDetail = (id: string | number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerDDetail, params: { id } });
 
+  export const fileDUpload = (params: any) =>
+  defHttp.uploadFile<number[]>({ url: Api.CustomerDUpload }, params);
 /**
  * 客户检验记录
  */

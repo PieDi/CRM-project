@@ -123,12 +123,12 @@
     Upload,
     message,
   } from 'ant-design-vue';
-  import { getCustomerList, saveCustomerMH } from '/@/api/demo/customer';
+  import { getCustomerList, saveCustomerMH, updateCustomerMH,fileMHUpload } from '/@/api/demo/customer';
   import { CustomerMHInfo, CustomerInfo } from '/@/api/demo/model/customer';
   import { DrawerItemType } from '/@/views/type';
   import { SelectValue } from 'ant-design-vue/lib/select';
   import type { UploadProps } from 'ant-design-vue';
-  import { fileMHUpload } from '/@/api/demo/customer';
+
   import dayjs, { Dayjs } from 'dayjs';
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -217,7 +217,10 @@
             visitDate: mInfo.value.visitDate ? mInfo.value.visitDate.valueOf() : undefined,
             fileIds: filesId.value.length ? filesId.value : undefined,
           };
-          const res = await saveCustomerMH(params);
+          
+          let res;
+          if (props.drawerInfo.type === 'add') res = await saveCustomerMH(params)
+          if(props.drawerInfo.type === 'edit') res = await updateCustomerMH(params)
           if (res) {
             message.success(
               props.drawerInfo.type === 'add' ? '新增客户病史成功' : '修改客户病史成功',
