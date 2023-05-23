@@ -127,6 +127,7 @@
         :drawer-info="dRecordDrawerInfo"
         @drawerOnClose="dRecordClose"
         @edit="dRecordEdit"
+        @submit="dRecordSubmit"
       ></d-record
     ></template>
 
@@ -169,7 +170,7 @@
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import dayjs, { Dayjs } from 'dayjs';
-  import confirm, { withSuccess } from 'ant-design-vue/es/modal/confirm';
+  import confirm from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
   const FormItem = Form.Item;
@@ -235,26 +236,26 @@
         {
           title: '姓名',
           width: 70,
-          dataIndex: 'name',
+          dataIndex: 'customerName',
         },
-        {
-          title: '性别',
-          width: 70,
-          dataIndex: 'no',
-        },
+        // {
+        //   title: '性别',
+        //   width: 70,
+        //   dataIndex: 'no',
+        // },
         // {
         //   title: '证件类型',
         //   width: 90,
         //   dataIndex: 'type',
         // },
-        {
-          title: '证件号码',
-          width: 150,
-          dataIndex: 'endTime',
-        },
+        // {
+        //   title: '证件号码',
+        //   width: 150,
+        //   dataIndex: 'endTime',
+        // },
         {
           title: '会诊时间',
-          width: 150,
+          width: 180,
           dataIndex: 'visitDate',
           customRender: (state) => dayjs(state.record.visitDate).format('YYYY-MM-DD HH:mm:ss'),
         },
@@ -336,26 +337,29 @@
       };
 
       // 用药记录
-      const dRecordDrawerInfo = ref<DrawerItemType<any>>({ visible: false, title: '', item: {} });
+      const dRecordDrawerInfo = ref<DrawerItemType<number | undefined>>({ visible: false, title: '', item: undefined });
       const dRecordClose = () => {
         dRecordDrawerInfo.value.title = '';
         dRecordDrawerInfo.value.visible = false;
         dRecordDrawerInfo.value.item = undefined;
         dRecordDrawerInfo.value.type = undefined;
       };
-      const dRecordClick = (item: any) => {
+      const dRecordClick = (item: CustomerMHInfo) => {
         dRecordDrawerInfo.value.title = '用药记录';
         dRecordDrawerInfo.value.visible = true;
-        dRecordDrawerInfo.value.item = item;
+        dRecordDrawerInfo.value.item = item.id;
         dRecordDrawerInfo.value.type = 'scan';
       };
       const dRecordEdit = () => {
         dRecordDrawerInfo.value.title = '编辑用药记录';
         dRecordDrawerInfo.value.type = 'edit';
       };
+      const dRecordSubmit = () => {
+        customerMHListReq(pageInfo.value.current);
+      };
 
       // 检验记录
-      const eRecordDrawerInfo = ref<DrawerItemType<any>>({
+      const eRecordDrawerInfo = ref<DrawerItemType<number | undefined>>({
         visible: false,
         title: '',
         item: undefined,
@@ -366,10 +370,10 @@
         eRecordDrawerInfo.value.item = undefined;
         eRecordDrawerInfo.value.type = undefined;
       };
-      const eRecordClick = (item: any) => {
+      const eRecordClick = (item: CustomerMHInfo) => {
         eRecordDrawerInfo.value.title = '检查记录';
         eRecordDrawerInfo.value.visible = true;
-        eRecordDrawerInfo.value.item = item;
+        eRecordDrawerInfo.value.item = item.id;
         eRecordDrawerInfo.value.type = 'scan';
       };
       const eRecordEdit = () => {
@@ -378,7 +382,7 @@
       };
 
       // 影像记录
-      const iRecordDrawerInfo = ref<DrawerItemType<any>>({
+      const iRecordDrawerInfo = ref<DrawerItemType<number | undefined>>({
         visible: false,
         title: '',
         item: undefined,
@@ -389,10 +393,10 @@
         iRecordDrawerInfo.value.item = undefined;
         iRecordDrawerInfo.value.type = undefined;
       };
-      const iRecordClick = (item: any) => {
+      const iRecordClick = (item: CustomerMHInfo) => {
         iRecordDrawerInfo.value.title = '影像记录';
         iRecordDrawerInfo.value.visible = true;
-        iRecordDrawerInfo.value.item = undefined;
+        iRecordDrawerInfo.value.item = item.id;
         iRecordDrawerInfo.value.type = 'scan';
       };
       const iRecordEdit = () => {
@@ -401,7 +405,7 @@
       };
 
       // 就诊记录
-      const oRecordDrawerInfo = ref<DrawerItemType<any>>({
+      const oRecordDrawerInfo = ref<DrawerItemType<number | undefined>>({
         visible: false,
         title: '',
         item: undefined,
@@ -412,10 +416,10 @@
         oRecordDrawerInfo.value.item = undefined;
         oRecordDrawerInfo.value.type = undefined;
       };
-      const oRecordClick = (item: any) => {
+      const oRecordClick = (item: CustomerMHInfo) => {
         oRecordDrawerInfo.value.title = '就诊记录';
         oRecordDrawerInfo.value.visible = true;
-        oRecordDrawerInfo.value.item = item;
+        oRecordDrawerInfo.value.item = item.id;
         oRecordDrawerInfo.value.type = 'scan';
       };
       const oRecordEdit = () => {
@@ -442,6 +446,7 @@
         dRecordClose,
         dRecordClick,
         dRecordEdit,
+        dRecordSubmit,
 
         eRecordDrawerInfo,
         eRecordClose,

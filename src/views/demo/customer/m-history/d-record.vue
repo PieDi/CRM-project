@@ -27,7 +27,7 @@
             </FormItem>
 
             <FormItem label="用药时间">
-              <DatePicker :show-time="true" allowClear v-model:value="item.useDate" />
+              <DatePicker allowClear v-model:value="item.useDate" />
             </FormItem>
 
             <FormItem label="附件">
@@ -36,6 +36,7 @@
                 :before-upload="
                   (file) => {
                     beforeUpload(file, i);
+                    return false;
                   }
                 "
                 @remove="
@@ -85,8 +86,8 @@
   import dayjs, { Dayjs } from 'dayjs';
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
-  import { CustomerDInfo } from '/@/api/demo/model/customer';
-  import { number } from 'echarts';
+  import { saveCustomerD, updateCustomerD, fileDUpload } from '/@/api/demo/customer';
+
 
   const FormItem = Form.Item;
   export default defineComponent({
@@ -121,14 +122,38 @@
       const drawerOnClose = () => {
         emit('drawerOnClose');
       };
-      const submit = () => {
-        emit('submit', listInfo.value);
+      const submit = async () => {
+        if (listInfo.value.length) {
+          const params = listInfo.value.map((item, i) => {
+            return {
+              diseaseId: props.drawerInfo.item,
+              medicineName: item.medicineName,
+              useDose: item.useDose,
+              useDate: item.useDate ? item.useDate.format('YYYY-MM-DD') : undefined,
+              fileIds: filesIdMap.value[i]
+                ? filesIdMap.value[i].length
+                  ? filesIdMap.value[i]
+                  : undefined
+                : undefined,
+            };
+          });
+          console.log(1212121, params);
+          const res = await saveCustomerD(params);
+          if (res) {
+            message.success('用药记录录入成功');
+            emit('submit');
+          }
+        }
       };
       const edit = () => {
         editAble.value = true;
+        Object.keys(fileListMap.value).forEach(key => { 
+          fileListMap.value[key] = []
+        })
         emit('edit');
       };
       const add = () => {
+        fileListMap.value[listInfo.value.length] = [];
         listInfo.value.push({
           id: undefined,
           medicineName: undefined,
@@ -144,33 +169,34 @@
       const uploadingMap = ref<{ [number: string]: boolean }>({});
 
       const handleRemove = (file: File, i: number) => {
-        console.log(24343 ,file)
-
+        const fileList = fileListMap.value[i];
         //@ts-ignore
-        const index = fileList.value.indexOf(file);
+        const index = fileList.indexOf(file);
         //@ts-ignore
-        const newFileList = fileList.value.slice();
+        const newFileList = fileList.slice();
         newFileList.splice(index, 1);
-        fileList.value = newFileList;
+        fileListMap.value[i] = newFileList;
       };
 
-      const beforeUpload = (file:File, i: number) => {
+      const beforeUpload = (file: File, i: number) => {
+        const fileList = fileListMap.value[i];
         //@ts-ignore
-        fileList.value = [...fileList.value, file];
+        fileListMap.value[i] = [...fileList, file];
         return false;
       };
-      const filesId = ref<number[]>([]);
-      const handleUpload = async () => {
-        if (fileList.value?.length) {
+      const filesIdMap = ref<{ [number: string]: number[] }>({});
+      const handleUpload = async (i: number) => {
+        const fileList = fileListMap.value[i];
+        if (fileList?.length) {
           const formData = new FormData();
-          fileList.value?.forEach((file) => {
+          fileList?.forEach((file) => {
             // @ts-ignore
             formData.append('files', file);
           });
-          const res = await fileMHUpload(formData);
+          const res = await fileDUpload(formData);
           if (res) {
             message.success('上传成功');
-            filesId.value = res;
+            filesIdMap.value[i] = res;
           }
         }
       };
