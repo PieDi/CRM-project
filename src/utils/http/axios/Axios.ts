@@ -125,7 +125,7 @@ export class VAxios {
   /**
    * @description:  File Upload
    */
-  uploadFile<T = any>(config: AxiosRequestConfig, data: FormData) {
+  uploadFile<T = any>(config: AxiosRequestConfig, data: FormData): Promise<T> {
     delete config.headers?.['Content-Type'];
     return this.request({
       ...config,

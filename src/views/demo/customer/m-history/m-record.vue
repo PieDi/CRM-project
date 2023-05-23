@@ -11,12 +11,11 @@
       <Button v-if="drawerInfo.type === 'scan'" type="link" @click="edit">编辑</Button>
       <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
     </template>
-
     <Form :labelCol="{ span: 6 }">
       <FormItem label="客户姓名">
         <Select
           :show-search="true"
-          :disabled="drawerInfo.type === 'scan'"
+          :disabled="drawerInfo.type !== 'add'"
           placeholder="请选择"
           :filter-option="filterOption"
           @change="customerOnChange"
@@ -59,38 +58,50 @@
         <Input
           placeholder="请输入"
           allowClear
-          :value="mInfo.name"
-          :disabled="drawerInfo.type === 'scan' || drawerInfo.type === 'edit'"
+          v-model:value="mInfo.hospitalName"
+          :disabled="drawerInfo.type === 'scan'"
         />
       </FormItem>
       <FormItem label="会诊日期">
-        <DatePicker :show-time="true" />
+        <DatePicker
+          :show-time="true"
+          v-model:value="mInfo.visitDate"
+          :disabled="drawerInfo.type === 'scan'"
+        />
       </FormItem>
 
       <FormItem label="科室">
         <Input
           placeholder="请输入"
           allowClear
-          min="1"
-          :precision="0"
-          :disabled="drawerInfo.type === 'scan' || drawerInfo.type === 'edit'"
+          v-model:value="mInfo.departmentName"
+          :disabled="drawerInfo.type === 'scan'"
         />
       </FormItem>
       <FormItem label="疾病名称">
         <Input
           placeholder="请输入"
           allowClear
-          :value="mInfo.name"
+          v-model:value="mInfo.diseaseName"
           :disabled="drawerInfo.type === 'scan'"
         />
       </FormItem>
       <FormItem label="附件">
-        <Upload :file-list="fileList" :before-upload="beforeUpload" @remove="handleRemove">
-          <Button>选择</Button>
+        <Upload
+          :file-list="fileList"
+          :before-upload="beforeUpload"
+          @remove="handleRemove"
+          :disabled="drawerInfo.type === 'scan'"
+        >
+          <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
         </Upload>
-        <Button @click="handleUpload" type="link" :loading="uploading">{{
-          uploading ? '上传中' : '上传'
-        }}</Button>
+        <Button
+          v-if="drawerInfo.type !== 'scan'"
+          @click="handleUpload"
+          type="link"
+          :loading="uploading"
+          >{{ uploading ? '上传中' : '上传' }}</Button
+        >
       </FormItem>
     </Form>
   </Drawer>
@@ -114,7 +125,7 @@
   import { SelectValue } from 'ant-design-vue/lib/select';
   import type { UploadProps } from 'ant-design-vue';
   import { fileMHUpload } from '/@/api/demo/customer';
-
+  import dayjs, { Dayjs } from 'dayjs';
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   export default defineComponent({
@@ -137,25 +148,38 @@
       },
     },
     setup(props, { emit }) {
-      const mInfo = ref<{ name: string; id?: number | string; des: string }>({
-        name: '',
-        id: undefined,
-        des: '',
+      const mInfo = ref<{
+        departmentName: string | undefined;
+        diseaseName: string | undefined;
+        hospitalName: undefined | string;
+        visitDate: Dayjs | undefined;
+      }>({
+        departmentName: undefined,
+        diseaseName: undefined,
+        hospitalName: undefined,
+        visitDate: undefined,
       });
+
       const dataSource = ref<Array<CustomerInfo>>([]);
       onMounted(async () => {
         const res = await getCustomerList();
-        if (res) dataSource.value = res;
+        if (res) {
+          dataSource.value = res.data;
+          if (props.drawerInfo.type !== 'add' && props.drawerInfo?.item) {
+            currentCustomer.value = dataSource.value.find(
+              (item: CustomerInfo) => item.id === props.drawerInfo?.item?.id,
+            );
+            // 编辑时设置默认的 currentCustomer
+          }
+        }
       });
       const currentCustomer = ref<CustomerInfo>();
       const customerOnChange = (value: SelectValue, option: any) => {
         currentCustomer.value = dataSource.value.find(
           (item: CustomerInfo) => item.mobile === (option.key as string),
         );
-        console.log(11111, currentCustomer.value);
       };
       const filterOption = (input: string, option: any) => {
-        console.log(233423424, input, option);
         return (
           option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
           option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -165,9 +189,16 @@
         emit('drawerOnClose');
       };
       const submit = () => {
+        const params = {
+          customerId: currentCustomer,
+        };
+        if (!filesId.value.length) {
+        }
         emit('submit', mInfo.value);
       };
       const edit = () => {
+        // 编辑附件时  视为准备重新上传附件
+        fileList.value = [];
         emit('edit');
       };
       // 文件上传
@@ -188,27 +219,18 @@
         fileList.value = [...fileList.value, file];
         return false;
       };
-
-      const handleUpload = () => {
+      const filesId = ref<number[]>([]);
+      const handleUpload = async () => {
         const formData = new FormData();
-        //@ts-ignore
-        formData.append('files', fileList.value);
-        // uploading.value = true;
-        // You can use any AJAX library you like
-        fileMHUpload(formData);
-        // request('https://www.mocky.io/v2/5cc8019d300000980a055e76', {
-        //   method: 'post',
-        //   data: formData,
-        // })
-        //   .then(() => {
-        //     fileList.value = [];
-        //     uploading.value = false;
-        //     message.success('upload successfully.');
-        //   })
-        //   .catch(() => {
-        //     uploading.value = false;
-        //     message.error('upload failed.');
-        //   });
+        fileList.value?.forEach((file) => {
+          // @ts-ignore
+          formData.append('files', file);
+        });
+        const res = await fileMHUpload(formData);
+        if (res) {
+          message.success('上传成功');
+          filesId.value = res.data;
+        }
       };
       return {
         drawerInfo: props.drawerInfo,
