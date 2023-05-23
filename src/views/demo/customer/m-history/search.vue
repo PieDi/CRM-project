@@ -64,6 +64,7 @@
         <template v-if="column.dataIndex === 'drug'">
           <Button
             type="link"
+            style="padding: 0"
             @click="
               () => {
                 dRecordClick(record);
@@ -76,6 +77,7 @@
         <template v-if="column.dataIndex === 'examine'">
           <Button
             type="link"
+            style="padding: 0"
             @click="
               () => {
                 eRecordClick(record);
@@ -88,6 +90,7 @@
         <template v-if="column.dataIndex === 'image'">
           <Button
             type="link"
+            style="padding: 0"
             @click="
               () => {
                 iRecordClick(record);
@@ -99,6 +102,7 @@
         <template v-if="column.dataIndex === 'other'">
           <Button
             type="link"
+            style="padding: 0"
             @click="
               () => {
                 oRecordClick(record);
@@ -114,6 +118,7 @@
         :drawer-info="mRecordDrawerInfo"
         @drawerOnClose="mRecordClose"
         @edit="mRecordEdit"
+        @submit="mRecordSubmit"
       ></m-record
     ></template>
 
@@ -151,10 +156,10 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, computed, onMounted } from 'vue';
+  import { defineComponent, ref, computed, onMounted, createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button } from 'ant-design-vue';
-  import { getCustomerMHPage } from '/@/api/demo/customer';
+  import { Table, Form, Input, Button, message } from 'ant-design-vue';
+  import { getCustomerMHPage, deleteCustomerMH } from '/@/api/demo/customer';
   import { CustomerMHInfo } from '/@/api/demo/model/customer';
   import mRecord from './m-record.vue';
   import dRecord from './d-record.vue';
@@ -163,6 +168,9 @@
   import cRecord from './c-record.vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
+  import dayjs, { Dayjs } from 'dayjs';
+  import confirm, { withSuccess } from 'ant-design-vue/es/modal/confirm';
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
   const FormItem = Form.Item;
   export default defineComponent({
@@ -213,8 +221,7 @@
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
-          pageInfo.value.dataSource = [{}];
-          // pageInfo.value.dataSource = res.data;
+          pageInfo.value.dataSource = res.data;
         }
       };
       const searchAction = () => {
@@ -227,37 +234,44 @@
       const columns: ColumnsType<CustomerMHInfo> = [
         {
           title: '姓名',
-          width: 90,
+          width: 70,
           dataIndex: 'name',
-          key: 'name',
         },
         {
           title: '性别',
           width: 70,
           dataIndex: 'no',
         },
-        {
-          title: '证件类型',
-          width: 90,
-          dataIndex: 'type',
-        },
+        // {
+        //   title: '证件类型',
+        //   width: 90,
+        //   dataIndex: 'type',
+        // },
         {
           title: '证件号码',
           width: 150,
           dataIndex: 'endTime',
         },
         {
+          title: '会诊时间',
+          width: 150,
+          dataIndex: 'visitDate',
+          customRender: (state) => dayjs(state.record.visitDate).format('YYYY-MM-DD HH:mm:ss'),
+        },
+        {
           title: '医院名称',
-          dataIndex: 'address',
+          width: 150,
+          dataIndex: 'hospitalName',
         },
         {
           title: '科室',
           width: 70,
-          dataIndex: 'no',
+          dataIndex: 'departmentName',
         },
         {
           title: '疾病名称',
-          dataIndex: 'endTime',
+          width: 150,
+          dataIndex: 'diseaseName',
         },
         {
           title: '用药记录',
@@ -303,7 +317,23 @@
         mRecordDrawerInfo.value.item = item;
         mRecordDrawerInfo.value.type = 'scan';
       };
-      const deleteMRecord = (item: CustomerMHInfo) => {};
+      const deleteMRecord = (item: CustomerMHInfo) => {
+        confirm({
+          icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+          content: '确定删除该记录',
+          okText: '确定',
+          async onOk() {
+            const res = await deleteCustomerMH(item.id as number);
+            if (res) {
+              message.success('删除成功')
+              customerMHListReq(pageInfo.value.current);
+            }
+          },
+        });
+      };
+      const mRecordSubmit = (reload: boolean) => {
+        customerMHListReq(reload ? 1 : pageInfo.value.current);
+      };
 
       // 用药记录
       const dRecordDrawerInfo = ref<DrawerItemType<any>>({ visible: false, title: '', item: {} });
@@ -406,6 +436,7 @@
         mRecordEdit,
         scanMRecord,
         deleteMRecord,
+        mRecordSubmit,
 
         dRecordDrawerInfo,
         dRecordClose,
