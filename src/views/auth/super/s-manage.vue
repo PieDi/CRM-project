@@ -120,7 +120,7 @@
   import { getUserList } from '/@/api/sys/user';
   import { UserInfo } from '/#/store';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
-  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+  import confirm, { withWarn } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
   const FormItem = Form.Item;
@@ -240,7 +240,7 @@
       };
       const deleteStaff = (item) => {
         confirm(
-          withConfirm({
+          withWarn({
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
             content: '确定删除该客户',
             async onOk() {

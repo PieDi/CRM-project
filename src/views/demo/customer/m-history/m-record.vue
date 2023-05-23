@@ -19,14 +19,18 @@
           placeholder="请选择"
           :filter-option="filterOption"
           @change="customerOnChange"
+          v-model:value="currentCustomer.mobile"
         >
-          <SelectOption v-for="item of dataSource" :key="item.mobile" :value="item.name">{{
-            `${item.name}-${item.mobile}`
-          }}</SelectOption>
+          <SelectOption
+            v-for="item of dataSource"
+            :key="`${item.id}-${item.name}`"
+            :value="item.mobile"
+            >{{ `${item.name}-${item.mobile}` }}</SelectOption
+          >
         </Select>
       </FormItem>
 
-      <template v-if="currentCustomer">
+      <template v-if="currentCustomer.mobile">
         <FormItem label="性别">
           <Select placeholder="请选择" disabled v-model:value="currentCustomer.sex">
             <SelectOption :key="1">男</SelectOption>
@@ -119,7 +123,7 @@
     Upload,
     message,
   } from 'ant-design-vue';
-  import { getCustomerList } from '/@/api/demo/customer';
+  import { getCustomerList, saveCustomerMH } from '/@/api/demo/customer';
   import { CustomerMHInfo, CustomerInfo } from '/@/api/demo/model/customer';
   import { DrawerItemType } from '/@/views/type';
   import { SelectValue } from 'ant-design-vue/lib/select';
@@ -154,10 +158,12 @@
         hospitalName: undefined | string;
         visitDate: Dayjs | undefined;
       }>({
-        departmentName: undefined,
-        diseaseName: undefined,
-        hospitalName: undefined,
-        visitDate: undefined,
+        departmentName: props.drawerInfo.item.departmentName || undefined,
+        diseaseName: props.drawerInfo.item.diseaseName || undefined,
+        hospitalName: props.drawerInfo.item.hospitalName || undefined,
+        visitDate: props.drawerInfo.item.visitDate
+          ? dayjs(props.drawerInfo.item.visitDate)
+          : undefined,
       });
 
       const dataSource = ref<Array<CustomerInfo>>([]);
@@ -166,6 +172,7 @@
         if (res) {
           dataSource.value = res;
           if (props.drawerInfo.type !== 'add' && props.drawerInfo?.item) {
+            //@ts-ignore
             currentCustomer.value = dataSource.value.find(
               (item: CustomerInfo) => item.id === props.drawerInfo?.item?.id,
             );
@@ -176,10 +183,21 @@
       onMounted(() => {
         customerReq();
       });
-      const currentCustomer = ref<CustomerInfo>();
+      //@ts-ignore
+      const currentCustomer = ref<CustomerInfo>({
+        id: undefined,
+        birth: undefined,
+        documentNumber: undefined,
+        documentType: undefined,
+        mobile: undefined,
+        name: undefined,
+        sex: undefined,
+      });
       const customerOnChange = (value: SelectValue, option: any) => {
+        //@ts-ignore
+
         currentCustomer.value = dataSource.value.find(
-          (item: CustomerInfo) => item.mobile === (option.key as string),
+          (item: CustomerInfo) => item.mobile === (option.value as string),
         );
       };
       const filterOption = (input: string, option: any) => {
@@ -191,13 +209,22 @@
       const drawerOnClose = () => {
         emit('drawerOnClose');
       };
-      const submit = () => {
-        const params = {
-          customerId: currentCustomer,
-        };
-        if (!filesId.value.length) {
+      const submit = async () => {
+        if (currentCustomer.value) {
+          const params = {
+            customerId: currentCustomer.value.id,
+            ...mInfo.value,
+            visitDate: mInfo.value.visitDate ? mInfo.value.visitDate.valueOf() : undefined,
+            fileIds: filesId.value.length ? filesId.value : undefined,
+          };
+          const res = await saveCustomerMH(params);
+          if (res) {
+            message.success(
+              props.drawerInfo.type === 'add' ? '新增客户病史成功' : '修改客户病史成功',
+            );
+            emit('submit', props.drawerInfo.type === 'add' ? true : false);
+          }
         }
-        emit('submit', mInfo.value);
       };
       const edit = () => {
         // 编辑附件时  视为准备重新上传附件
@@ -224,15 +251,17 @@
       };
       const filesId = ref<number[]>([]);
       const handleUpload = async () => {
-        const formData = new FormData();
-        fileList.value?.forEach((file) => {
-          // @ts-ignore
-          formData.append('files', file);
-        });
-        const res = await fileMHUpload(formData);
-        if (res) {
-          message.success('上传成功');
-          filesId.value = res.data;
+        if (fileList.value?.length) {
+          const formData = new FormData();
+          fileList.value?.forEach((file) => {
+            // @ts-ignore
+            formData.append('files', file);
+          });
+          const res = await fileMHUpload(formData);
+          if (res) {
+            message.success('上传成功');
+            filesId.value = res;
+          }
         }
       };
       return {
@@ -255,5 +284,4 @@
     },
   });
 </script>
-<style lang="less" scoped></style>
 <style lang="less" scoped></style>

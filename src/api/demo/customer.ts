@@ -6,6 +6,7 @@ import {
   CustomerMHListParams,
   CustomerMHInfo,
   CustomerMHSaveParams,
+  CustomerDInfo
 } from './model/customer';
 
 enum Api {
@@ -131,20 +132,20 @@ export const getCustomerMHDetail = (id: string | number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerMHDetail, params: { id } });
 
 export const fileMHUpload = (params: any) =>
-  defHttp.uploadFile<{ data: number[] }>({ url: Api.CustomerMHUpload }, params);
+  defHttp.uploadFile<number[]>({ url: Api.CustomerMHUpload }, params);
 
 /**
  * 客户用药记录
  */
 export const getCustomerDPage = (params: CustomerMHListParams) =>
-  defHttp.post<{ total: number; pageNum: number; data: CustomerMHInfo[] }>({
+  defHttp.post<{ total: number; pageNum: number; data: CustomerDInfo[] }>({
     url: Api.CustomerDPage,
     params: { pageSize: 20, ...params },
   });
-export const getCustomerDList = (name?: string) =>
-  defHttp.post<Array<CustomerMHInfo>>({
+export const getCustomerDList = (customerId?: undefined) =>
+  defHttp.post<Array<CustomerDInfo>>({
     url: Api.CustomerDList,
-    params: { name },
+    params: { customerId },
   });
 
 export const saveCustomerD = (params?: CustomerMHSaveParams) =>

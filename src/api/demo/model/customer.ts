@@ -46,6 +46,20 @@ export interface CustomerMHInfo {
   remark: string | undefined;
 }
 
-export interface CustomerMHSaveParams extends CustomerMHInfo {
+export interface CustomerMHSaveParams {
   customerId: number | string | undefined;
+  id?: number | string | undefined;
+  departmentName: string | undefined;
+  diseaseName: string | undefined;
+  hospitalName: string | undefined;
+  visitDate: number | undefined;
+  fileIds: number[] | undefined;
+}
+
+
+export interface CustomerDInfo {
+  id?: number | string | undefined;
+  medicineName: string | undefined;
+  useDose: string | undefined;
+  useDate: number | undefined;
 }
