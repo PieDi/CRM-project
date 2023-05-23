@@ -87,7 +87,7 @@ export const getCustomerPage = (params: CustomerListParams) =>
     params: { pageSize: 20, ...params },
   });
 export const getCustomerList = (name?: string) =>
-  defHttp.post<{ data: Array<CustomerInfo> }>({
+  defHttp.post<Array<CustomerInfo>>({
     url: Api.CustomerList,
     params: { name },
   });

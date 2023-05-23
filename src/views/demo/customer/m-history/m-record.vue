@@ -161,10 +161,10 @@
       });
 
       const dataSource = ref<Array<CustomerInfo>>([]);
-      onMounted(async () => {
+      const customerReq = async () => {
         const res = await getCustomerList();
         if (res) {
-          dataSource.value = res.data;
+          dataSource.value = res;
           if (props.drawerInfo.type !== 'add' && props.drawerInfo?.item) {
             currentCustomer.value = dataSource.value.find(
               (item: CustomerInfo) => item.id === props.drawerInfo?.item?.id,
@@ -172,6 +172,9 @@
             // 编辑时设置默认的 currentCustomer
           }
         }
+      };
+      onMounted(() => {
+        customerReq();
       });
       const currentCustomer = ref<CustomerInfo>();
       const customerOnChange = (value: SelectValue, option: any) => {
