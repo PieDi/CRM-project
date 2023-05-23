@@ -188,6 +188,7 @@
       const addMHistory = () => {
         mRecordDrawerInfo.value.title = '新增客户病史';
         mRecordDrawerInfo.value.visible = true;
+        mRecordDrawerInfo.value.type = 'add';
       };
 
       const pageInfo = ref<PageListInfo<CustomerMHInfo>>({

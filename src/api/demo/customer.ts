@@ -87,7 +87,7 @@ export const getCustomerPage = (params: CustomerListParams) =>
     params: { pageSize: 20, ...params },
   });
 export const getCustomerList = (name?: string) =>
-  defHttp.post<Array<CustomerInfo>>({
+  defHttp.post<{ data: Array<CustomerInfo> }>({
     url: Api.CustomerList,
     params: { name },
   });
@@ -131,7 +131,7 @@ export const getCustomerMHDetail = (id: string | number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerMHDetail, params: { id } });
 
 export const fileMHUpload = (params: any) =>
-  defHttp.uploadFile<CustomerInfo>({ url: Api.CustomerMHUpload }, params);
+  defHttp.uploadFile<{ data: number[] }>({ url: Api.CustomerMHUpload }, params);
 
 /**
  * 客户用药记录
