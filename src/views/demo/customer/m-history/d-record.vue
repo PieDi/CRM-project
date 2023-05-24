@@ -20,14 +20,28 @@
         <template v-for="(item, i) in listInfo">
           <div>
             <FormItem label="药物名称">
-              <Input placeholder="请输入" allowClear v-model:value="item.medicineName" />
+              <Input
+                placeholder="请输入"
+                allowClear
+                v-model:value="item.medicineName"
+                :disabled="drawerInfo.type === 'scan'"
+              />
             </FormItem>
             <FormItem label="用药计量">
-              <Input placeholder="请输入" allowClear v-model:value="item.useDose" />
+              <Input
+                placeholder="请输入"
+                allowClear
+                v-model:value="item.useDose"
+                :disabled="drawerInfo.type === 'scan'"
+              />
             </FormItem>
 
             <FormItem label="用药时间">
-              <DatePicker allowClear v-model:value="item.useDate" />
+              <DatePicker
+                allowClear
+                v-model:value="item.useDate"
+                :disabled="drawerInfo.type === 'scan'"
+              />
             </FormItem>
 
             <FormItem label="附件">
@@ -80,14 +94,13 @@
   </Drawer>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, PropType } from 'vue';
+  import { defineComponent, ref, PropType, onMounted } from 'vue';
   import { Table, Form, Input, Button, Drawer, DatePicker, Upload, message } from 'ant-design-vue';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import dayjs, { Dayjs } from 'dayjs';
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
-  import { saveCustomerD, updateCustomerD, fileDUpload } from '/@/api/demo/customer';
-
+  import { getCustomerDList, saveCustomerD, fileDUpload } from '/@/api/demo/customer';
 
   const FormItem = Form.Item;
   export default defineComponent({
@@ -112,12 +125,32 @@
     setup(props, { emit }) {
       const listInfo = ref<
         Array<{
-          id: number | string | undefined;
+          id: number | undefined;
           medicineName: string | undefined;
           useDose: string | undefined;
           useDate: Dayjs | undefined;
         }>
       >([]);
+      const dListReq = async () => {
+        if (props.drawerInfo.item) {
+          const res = await getCustomerDList(props.drawerInfo.item);
+          if (res) {
+            const list: Array<any> = [];
+            res.forEach((item) => {
+              list.push({
+                id: item?.id,
+                medicineName: item?.medicineName,
+                useDose: item?.useDose,
+                useDate: item?.useDate ? dayjs(item?.useDate, 'YYYY-MM-DD') : undefined,
+              });
+            });
+            listInfo.value = list;
+          }
+        }
+      };
+      onMounted(() => {
+        dListReq();
+      });
       const editAble = ref(false);
       const drawerOnClose = () => {
         emit('drawerOnClose');
@@ -147,9 +180,9 @@
       };
       const edit = () => {
         editAble.value = true;
-        Object.keys(fileListMap.value).forEach(key => { 
-          fileListMap.value[key] = []
-        })
+        Object.keys(fileListMap.value).forEach((key) => {
+          fileListMap.value[key] = [];
+        });
         emit('edit');
       };
       const add = () => {
@@ -163,6 +196,7 @@
       };
       const deleteRecord = (i: number) => {
         listInfo.value.splice(i, 1);
+        delete fileListMap.value[i];
       };
       // 文件上传
       const fileListMap = ref<{ [number: string]: UploadProps['fileList'] }>({});

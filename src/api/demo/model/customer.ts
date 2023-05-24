@@ -56,10 +56,39 @@ export interface CustomerMHSaveParams {
   fileIds: number[] | undefined;
 }
 
-
 export interface CustomerDInfo {
-  id?: number | string | undefined;
+  id?: number | undefined;
+  diseaseId: number | undefined;
   medicineName: string | undefined;
   useDose: string | undefined;
-  useDate: number | undefined;
+  useDate: string | undefined;
+  fileIds: number[] | undefined;
+}
+
+export interface CustomerEInfo {
+  id?: number | undefined;
+  diseaseId: number | undefined;
+  checkMechanism: string | undefined;
+  checkType: string | undefined;
+  checkDate: number | undefined;
+  fileIds: number[] | undefined;
+}
+
+export interface CustomerIInfo {
+  id?: number | undefined;
+  diseaseId: number | undefined;
+  checkMechanism: string | undefined;
+  checkType: number | undefined;
+  checkDate: number | undefined;
+  checkPart: string | undefined;
+  fileIds: number[] | undefined;
+}
+
+export interface CustomerCInfo {
+  id?: number | undefined;
+  diseaseId: number | undefined;
+  consultationContent: string | undefined;
+  consultationExpert: string | undefined;
+  consultationDate: number | undefined;
+  fileIds: number[] | undefined;
 }

@@ -6,7 +6,10 @@ import {
   CustomerMHListParams,
   CustomerMHInfo,
   CustomerMHSaveParams,
-  CustomerDInfo
+  CustomerDInfo,
+  CustomerEInfo,
+  CustomerIInfo,
+  CustomerCInfo
 } from './model/customer';
 
 enum Api {
@@ -49,6 +52,7 @@ enum Api {
   UpdateCustomerE = '/customer/disease/check/update', // 修改检验
   DeleteCustomerE = '/customer/disease/check/delete', // 删除检验
   CustomerEDetail = '/customer/disease/check/detail', // 检验详情
+  CustomerEUpload = '/customer/disease/check/upload', //上传
   /**
    * 客户影像记录
    */
@@ -58,6 +62,8 @@ enum Api {
   UpdateCustomerI = '/customer/disease/image/update', // 修改影像
   DeleteCustomerI = '/customer/disease/image/delete', // 删除影像
   CustomerIDetail = '/customer/disease/image/detail', // 影像详情
+  CustomerIUpload = '/customer/disease/image/upload', //上传
+
   /**
    * 客户就诊记录
    */
@@ -67,7 +73,7 @@ enum Api {
   UpdateCustomerC = '/customer/disease/consultation/update', // 修改会诊
   DeleteCustomerC = '/customer/disease/consultation/delete', // 删除会诊
   CustomerCDetail = '/customer/disease/consultation/detail', // 会诊详情
-
+  CustomerCUpload = '/customer/disease/consultation/upload', //上传
   /**
    * 客户订单
    */
@@ -138,109 +144,113 @@ export const fileMHUpload = (params: any) =>
 /**
  * 客户用药记录
  */
-export const getCustomerDPage = (params: CustomerMHListParams) =>
-  defHttp.post<{ total: number; pageNum: number; data: CustomerDInfo[] }>({
-    url: Api.CustomerDPage,
-    params: { pageSize: 20, ...params },
-  });
-export const getCustomerDList = (customerId?: undefined) =>
+// export const getCustomerDPage = (params: CustomerMHListParams) =>
+//   defHttp.post<{ total: number; pageNum: number; data: CustomerDInfo[] }>({
+//     url: Api.CustomerDPage,
+//     params: { pageSize: 20, ...params },
+//   });
+export const getCustomerDList = (diseaseId: number) =>
   defHttp.post<Array<CustomerDInfo>>({
     url: Api.CustomerDList,
-    params: { customerId },
+    params: { diseaseId },
   });
 
 export const saveCustomerD = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerD, params });
 
-export const updateCustomerD = (params?: any) =>
-  defHttp.post<any>({ url: Api.UpdateCustomerD, params });
+// export const updateCustomerD = (params?: any) =>
+//   defHttp.post<any>({ url: Api.UpdateCustomerD, params });
 
-export const deleteCustomerD = (id: string | number) =>
-  defHttp.post<any>({ url: Api.DeleteCustomerD, params: { id } });
+// export const deleteCustomerD = (id: string | number) =>
+//   defHttp.post<any>({ url: Api.DeleteCustomerD, params: { id } });
 
-export const getCustomerDDetail = (id: string | number) =>
-  defHttp.post<CustomerInfo>({ url: Api.CustomerDDetail, params: { id } });
+// export const getCustomerDDetail = (id: string | number) =>
+//   defHttp.post<CustomerInfo>({ url: Api.CustomerDDetail, params: { id } });
 
   export const fileDUpload = (params: any) =>
   defHttp.uploadFile<number[]>({ url: Api.CustomerDUpload }, params);
 /**
  * 客户检验记录
  */
-export const getCustomerEPage = (params: CustomerMHListParams) =>
-  defHttp.post<{ total: number; pageNum: number; data: CustomerMHInfo[] }>({
-    url: Api.CustomerEPage,
-    params: { pageSize: 20, ...params },
-  });
-export const getCustomerEList = (name?: string) =>
-  defHttp.post<Array<CustomerMHInfo>>({
+// export const getCustomerEPage = (params: CustomerMHListParams) =>
+//   defHttp.post<{ total: number; pageNum: number; data: CustomerMHInfo[] }>({
+//     url: Api.CustomerEPage,
+//     params: { pageSize: 20, ...params },
+//   });
+export const getCustomerEList = (diseaseId: number) =>
+  defHttp.post<Array<CustomerEInfo>>({
     url: Api.CustomerEList,
-    params: { name },
+    params: { diseaseId },
   });
 
-export const saveCustomerE = (params?: CustomerMHSaveParams) =>
+export const saveCustomerE = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerE, params });
 
-export const updateCustomerE = (params?: CustomerMHSaveParams) =>
-  defHttp.post<any>({ url: Api.UpdateCustomerE, params });
+// export const updateCustomerE = (params?: CustomerMHSaveParams) =>
+//   defHttp.post<any>({ url: Api.UpdateCustomerE, params });
 
-export const deleteCustomerE = (id: string | number) =>
-  defHttp.post<any>({ url: Api.DeleteCustomerE, params: { id } });
+// export const deleteCustomerE = (id: string | number) =>
+//   defHttp.post<any>({ url: Api.DeleteCustomerE, params: { id } });
 
-export const getCustomerEDetail = (id: string | number) =>
-  defHttp.post<CustomerInfo>({ url: Api.CustomerEDetail, params: { id } });
-
+// export const getCustomerEDetail = (id: string | number) =>
+//   defHttp.post<CustomerInfo>({ url: Api.CustomerEDetail, params: { id } });
+  
+export const fileEUpload = (params: any) =>
+  defHttp.uploadFile<number[]>({ url: Api.CustomerEUpload }, params);
 /**
  * 客户影像记录
  */
-export const getCustomerIPage = (params: CustomerMHListParams) =>
-  defHttp.post<{ total: number; pageNum: number; data: CustomerMHInfo[] }>({
-    url: Api.CustomerIPage,
-    params: { pageSize: 20, ...params },
-  });
-export const getCustomerIList = (name?: string) =>
-  defHttp.post<Array<CustomerMHInfo>>({
+// export const getCustomerIPage = (params: CustomerMHListParams) =>
+//   defHttp.post<{ total: number; pageNum: number; data: CustomerMHInfo[] }>({
+//     url: Api.CustomerIPage,
+//     params: { pageSize: 20, ...params },
+//   });
+export const getCustomerIList = (diseaseId: number) =>
+  defHttp.post<Array<CustomerIInfo>>({
     url: Api.CustomerIList,
-    params: { name },
+    params: { diseaseId },
   });
 
-export const saveCustomerI = (params?: CustomerMHSaveParams) =>
+export const saveCustomerI = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerI, params });
 
-export const updateCustomerI = (params?: CustomerMHSaveParams) =>
-  defHttp.post<any>({ url: Api.UpdateCustomerI, params });
+// export const updateCustomerI = (params?: CustomerMHSaveParams) =>
+//   defHttp.post<any>({ url: Api.UpdateCustomerI, params });
 
-export const deleteCustomerI = (id: string | number) =>
-  defHttp.post<any>({ url: Api.DeleteCustomerI, params: { id } });
+// export const deleteCustomerI = (id: string | number) =>
+//   defHttp.post<any>({ url: Api.DeleteCustomerI, params: { id } });
 
-export const getCustomerIDetail = (id: string | number) =>
-  defHttp.post<CustomerInfo>({ url: Api.CustomerIDetail, params: { id } });
-
+// export const getCustomerIDetail = (id: string | number) =>
+//   defHttp.post<CustomerInfo>({ url: Api.CustomerIDetail, params: { id } });
+  export const fileIUpload = (params: any) =>
+  defHttp.uploadFile<number[]>({ url: Api.CustomerIUpload }, params);
 /**
  * 客户就诊记录
  */
-export const getCustomerCPage = (params: CustomerMHListParams) =>
-  defHttp.post<{ total: number; pageNum: number; data: CustomerMHInfo[] }>({
-    url: Api.CustomerCPage,
-    params: { pageSize: 20, ...params },
-  });
-export const getCustomerCList = (name?: string) =>
-  defHttp.post<Array<CustomerMHInfo>>({
+// export const getCustomerCPage = (params: CustomerMHListParams) =>
+//   defHttp.post<{ total: number; pageNum: number; data: CustomerMHInfo[] }>({
+//     url: Api.CustomerCPage,
+//     params: { pageSize: 20, ...params },
+//   });
+export const getCustomerCList = (diseaseId: number) =>
+  defHttp.post<Array<CustomerCInfo>>({
     url: Api.CustomerCList,
-    params: { name },
+    params: { diseaseId },
   });
 
-export const saveCustomerC = (params?: CustomerMHSaveParams) =>
+export const saveCustomerC = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerC, params });
 
-export const updateCustomerC = (params?: CustomerMHSaveParams) =>
-  defHttp.post<any>({ url: Api.UpdateCustomerC, params });
+// export const updateCustomerC = (params?: CustomerMHSaveParams) =>
+//   defHttp.post<any>({ url: Api.UpdateCustomerC, params });
 
-export const deleteCustomerC = (id: string | number) =>
-  defHttp.post<any>({ url: Api.DeleteCustomerC, params: { id } });
+// export const deleteCustomerC = (id: string | number) =>
+//   defHttp.post<any>({ url: Api.DeleteCustomerC, params: { id } });
 
-export const getCustomerCDetail = (id: string | number) =>
-  defHttp.post<CustomerInfo>({ url: Api.CustomerCDetail, params: { id } });
-
+// export const getCustomerCDetail = (id: string | number) =>
+//   defHttp.post<CustomerInfo>({ url: Api.CustomerCDetail, params: { id } });
+  export const fileCUpload = (params: any) =>
+  defHttp.uploadFile<number[]>({ url: Api.CustomerCUpload }, params);
 /**
  * 客户订单
  */
