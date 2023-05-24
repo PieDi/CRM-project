@@ -9,7 +9,9 @@ import {
   CustomerDInfo,
   CustomerEInfo,
   CustomerIInfo,
-  CustomerCInfo
+  CustomerCInfo,
+  CustomerOrderInfo,
+  CustomerOrderListParams
 } from './model/customer';
 
 enum Api {
@@ -250,17 +252,19 @@ export const saveCustomerC = (params?: any) =>
 // export const getCustomerCDetail = (id: string | number) =>
 //   defHttp.post<CustomerInfo>({ url: Api.CustomerCDetail, params: { id } });
   export const fileCUpload = (params: any) =>
-  defHttp.uploadFile<number[]>({ url: Api.CustomerCUpload }, params);
+    defHttp.uploadFile<number[]>({ url: Api.CustomerCUpload }, params);
+  
+    
 /**
  * 客户订单
  */
-export const getCustomerOrderPage = (params: CustomerMHListParams) =>
-  defHttp.post<{ total: number; pageNum: number; data: CustomerMHInfo[] }>({
+export const getCustomerOrderPage = (params: CustomerOrderListParams) =>
+  defHttp.post<{ total: number; pageNum: number; data: CustomerOrderInfo[] }>({
     url: Api.CustomerOrderPage,
     params: { pageSize: 20, ...params },
   });
 export const getCustomerOrderList = (name?: string) =>
-  defHttp.post<Array<CustomerMHInfo>>({
+  defHttp.post<Array<CustomerOrderInfo>>({
     url: Api.CustomerOrderList,
     params: { name },
   });

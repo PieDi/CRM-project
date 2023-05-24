@@ -1,5 +1,5 @@
 /**
- * 客户基本信息
+ * 客户列表请求类型
  */
 export interface CustomerListParams {
   documentNumber?: string;
@@ -7,7 +7,9 @@ export interface CustomerListParams {
   name?: string;
   pageNum: number;
 }
-
+/**
+ * 客户信息
+ */
 export interface CustomerInfo {
   id: number | string | undefined;
   age: number | undefined;
@@ -55,7 +57,9 @@ export interface CustomerMHSaveParams {
   visitDate: number | undefined;
   fileIds: number[] | undefined;
 }
-
+/**
+ * 客户用药
+ */
 export interface CustomerDInfo {
   id?: number | undefined;
   diseaseId: number | undefined;
@@ -64,7 +68,9 @@ export interface CustomerDInfo {
   useDate: string | undefined;
   fileIds: number[] | undefined;
 }
-
+/**
+ * 客户检验
+ */
 export interface CustomerEInfo {
   id?: number | undefined;
   diseaseId: number | undefined;
@@ -73,7 +79,9 @@ export interface CustomerEInfo {
   checkDate: number | undefined;
   fileIds: number[] | undefined;
 }
-
+/**
+ * 客户影像
+ */
 export interface CustomerIInfo {
   id?: number | undefined;
   diseaseId: number | undefined;
@@ -83,7 +91,9 @@ export interface CustomerIInfo {
   checkPart: string | undefined;
   fileIds: number[] | undefined;
 }
-
+/**
+ * 客户会诊
+ */
 export interface CustomerCInfo {
   id?: number | undefined;
   diseaseId: number | undefined;
@@ -91,4 +101,24 @@ export interface CustomerCInfo {
   consultationExpert: string | undefined;
   consultationDate: number | undefined;
   fileIds: number[] | undefined;
+}
+
+/**
+ * 客户订单查询
+ */
+export interface CustomerOrderListParams {
+  customerName?: string;
+  orderNumber?: number;
+  pageNum: number;
+}
+
+export interface CustomerOrderInfo {
+  id?: number | undefined;
+  orderAmount: number | undefined;
+  orderDate:number | undefined;
+  orderName: string | undefined;
+  orderNumber: string | undefined;
+  productId: string | undefined;
+  remark: string | undefined;
+  responsiblePerson: string | undefined;
 }
