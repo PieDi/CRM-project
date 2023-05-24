@@ -20,24 +20,76 @@
         <template v-for="(item, i) in listInfo">
           <div>
             <FormItem label="检查日期">
-              <DatePicker :show-time="true" />
+              <DatePicker
+                :show-time="true"
+                v-model:value="item.checkDate"
+                :disabled="drawerInfo.type === 'scan'"
+              />
             </FormItem>
+            <FormItem label="检查机构">
+              <Input
+                placeholder="请输入"
+                allowClear
+                v-model:value="item.checkMechanism"
+                :disabled="drawerInfo.type === 'scan'"
+              />
+            </FormItem>
+            <FormItem label="检查部位">
+              <Input
+                placeholder="请输入"
+                allowClear
+                v-model:value="item.checkPart"
+                :disabled="drawerInfo.type === 'scan'"
+              />
+            </FormItem>
+
             <FormItem label="检查类别">
-              <Select placeholder="请选择">
-                <SelectOption key="1">男</SelectOption>
-                <SelectOption key="2">女</SelectOption>
+              <Select
+                placeholder="请选择"
+                allowClear
+                v-model:value="item.checkType"
+                :disabled="drawerInfo.type === 'scan'"
+              >
+                <SelectOption :key="1">CT</SelectOption>
+                <SelectOption :key="2">MR</SelectOption>
+                <SelectOption :key="3">PET-CT</SelectOption>
+                <SelectOption :key="4">PET-MR</SelectOption>
+                <SelectOption :key="5">超声</SelectOption>
+                <SelectOption :key="6">钼靶</SelectOption>
+                <SelectOption :key="7">ECT</SelectOption>
+                <SelectOption :key="8">DR</SelectOption>
               </Select>
             </FormItem>
 
-            <FormItem label="检查部位">
-              <Input placeholder="请输入" allowClear :value="item.name" />
-            </FormItem>
-
-            <FormItem label="检查机构">
-              <Input placeholder="请输入" allowClear :value="item.name" />
-            </FormItem>
             <FormItem label="附件">
-              <Input placeholder="请输入" allowClear :value="item.name" />
+              <Upload
+                :file-list="fileListMap[i]"
+                :before-upload="
+                  (file) => {
+                    beforeUpload(file, i);
+                    return false;
+                  }
+                "
+                @remove="
+                  (file:any) => {
+                    handleRemove(file, i);
+                  }
+                "
+                :disabled="drawerInfo.type === 'scan'"
+              >
+                <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
+              </Upload>
+              <Button
+                v-if="drawerInfo.type !== 'scan'"
+                @click="
+                  () => {
+                    handleUpload(i);
+                  }
+                "
+                type="link"
+                :loading="uploadingMap[i]"
+                >{{ uploadingMap[i] ? '上传中' : '上传' }}</Button
+              >
             </FormItem>
 
             <template v-if="i !== 0">
@@ -59,10 +111,23 @@
   </Drawer>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, PropType } from 'vue';
-  import { Table, Form, Input, Button, Drawer, Select, DatePicker } from 'ant-design-vue';
+  import { defineComponent, ref, PropType,onMounted } from 'vue';
+  import {
+    Table,
+    Form,
+    Input,
+    Button,
+    Drawer,
+    Select,
+    DatePicker,
+    message,
+    Upload,
+  } from 'ant-design-vue';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import { DrawerItemType } from '/@/views/type';
+  import type { UploadProps } from 'ant-design-vue';
+  import dayjs, { Dayjs } from 'dayjs';
+  import { getCustomerIList,saveCustomerI, fileIUpload } from '/@/api/demo/customer';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -78,35 +143,128 @@
       SelectOption,
       DatePicker,
       DeleteOutlined,
+      Upload,
     },
     props: {
       drawerInfo: {
-        type: Object as PropType<DrawerItemType>,
+        type: Object as PropType<DrawerItemType<any>>,
         default: () => ({ visible: false, title: '' }),
       },
     },
     setup(props, { emit }) {
-      const listInfo = ref<Array<{ name: string; id?: number | string; des: string }>>([]);
+      const listInfo = ref<
+        Array<{
+          id: number | string | undefined;
+          checkMechanism: string | undefined;
+          checkPart: string | undefined;
+          checkType: string | undefined;
+          checkDate: Dayjs | undefined;
+        }>
+        >([]);
+        const dListReq = async () => {
+        if (props.drawerInfo.item) {
+          const res = await getCustomerIList(props.drawerInfo.item);
+          if (res) {
+            const list: Array<any> = [];
+            res.forEach((item) => {
+              list.push({
+                id: item?.id,
+                checkMechanism: item?.checkMechanism,
+                checkType: item?.checkType,
+                checkPart: item.checkPart,
+                checkDate: item?.checkDate ? dayjs(item?.checkDate) : undefined,
+              });
+            });
+            listInfo.value = list;
+          }
+        }
+      };
+      onMounted(() => {
+        dListReq();
+      });
       const editAble = ref(false);
       const drawerOnClose = () => {
         emit('drawerOnClose');
       };
-      const submit = () => {
-        emit('submit', listInfo.value);
+      const submit = async () => {
+        if (listInfo.value.length) {
+          const params = listInfo.value.map((item, i) => {
+            return {
+              diseaseId: props.drawerInfo.item,
+              checkMechanism: item.checkMechanism,
+              checkType: item.checkType,
+              checkPart: item.checkPart,
+              checkDate: item.checkDate ? item.checkDate.valueOf() : undefined,
+              fileIds: filesIdMap.value[i]
+                ? filesIdMap.value[i].length
+                  ? filesIdMap.value[i]
+                  : undefined
+                : undefined,
+            };
+          });
+          const res = await saveCustomerI(params);
+          if (res) {
+            message.success('影像记录录入成功');
+            emit('submit');
+          }
+        }
       };
       const edit = () => {
         editAble.value = true;
+        Object.keys(fileListMap.value).forEach((key) => {
+          fileListMap.value[key] = [];
+        });
         emit('edit');
       };
       const add = () => {
+        fileListMap.value[listInfo.value.length] = [];
         listInfo.value.push({
-          name: '',
           id: undefined,
-          des: '',
+          checkMechanism: undefined,
+          checkPart: undefined,
+          checkType: undefined,
+          checkDate: undefined,
         });
       };
       const deleteRecord = (i: number) => {
         listInfo.value.splice(i, 1);
+        delete fileListMap.value[i];
+      };
+      // 文件上传
+      const fileListMap = ref<{ [number: string]: UploadProps['fileList'] }>({});
+      const uploadingMap = ref<{ [number: string]: boolean }>({});
+
+      const handleRemove = (file: File, i: number) => {
+        const fileList = fileListMap.value[i];
+        //@ts-ignore
+        const index = fileList.indexOf(file);
+        //@ts-ignore
+        const newFileList = fileList.slice();
+        newFileList.splice(index, 1);
+        fileListMap.value[i] = newFileList;
+      };
+
+      const beforeUpload = (file: File, i: number) => {
+        const fileList = fileListMap.value[i];
+        //@ts-ignore
+        fileListMap.value[i] = [...fileList, file];
+        return false;
+      };
+      const filesIdMap = ref<{ [number: string]: number[] }>({});
+      const handleUpload = async (i: number) => {
+        const fileList = fileListMap.value[i];
+        if (fileList?.length) {
+          const formData = new FormData();
+          fileList?.forEach((file) => {
+            // @ts-ignore
+            formData.append('files', file);
+          });
+          const res = await fileIUpload(formData);
+          if (res) {
+            message.success('上传成功');
+            filesIdMap.value[i] = res;
+          }
+        }
       };
       return {
         editAble,
@@ -117,6 +275,12 @@
         edit,
         add,
         deleteRecord,
+        // 文件上传
+        fileListMap,
+        uploadingMap,
+        handleRemove,
+        beforeUpload,
+        handleUpload,
       };
     },
   });

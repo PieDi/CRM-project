@@ -105,7 +105,7 @@
             style="padding: 0"
             @click="
               () => {
-                oRecordClick(record);
+                cRecordClick(record);
               }
             "
             >就诊记录</Button
@@ -136,6 +136,7 @@
         :drawer-info="eRecordDrawerInfo"
         @drawerOnClose="eRecordClose"
         @edit="eRecordEdit"
+        @submit="eRecordSubmit"
       ></e-record
     ></template>
 
@@ -144,14 +145,16 @@
         :drawer-info="iRecordDrawerInfo"
         @drawerOnClose="iRecordClose"
         @edit="iRecordEdit"
+        @submit="iRecordSubmit"
       ></i-record
     ></template>
 
-    <template v-if="oRecordDrawerInfo.visible">
+    <template v-if="cRecordDrawerInfo.visible">
       <c-record
-        :drawer-info="oRecordDrawerInfo"
-        @drawerOnClose="oRecordClose"
-        @edit="oRecordEdit"
+        :drawer-info="cRecordDrawerInfo"
+        @drawerOnClose="cRecordClose"
+        @edit="cRecordEdit"
+        @submit="cRecordSubmit"
       ></c-record
     ></template>
   </PageWrapper>
@@ -326,7 +329,7 @@
           async onOk() {
             const res = await deleteCustomerMH(item.id as number);
             if (res) {
-              message.success('删除成功')
+              message.success('删除成功');
               customerMHListReq(pageInfo.value.current);
             }
           },
@@ -337,7 +340,11 @@
       };
 
       // 用药记录
-      const dRecordDrawerInfo = ref<DrawerItemType<number | undefined>>({ visible: false, title: '', item: undefined });
+      const dRecordDrawerInfo = ref<DrawerItemType<number | undefined>>({
+        visible: false,
+        title: '',
+        item: undefined,
+      });
       const dRecordClose = () => {
         dRecordDrawerInfo.value.title = '';
         dRecordDrawerInfo.value.visible = false;
@@ -380,6 +387,9 @@
         eRecordDrawerInfo.value.title = '编辑检查记录';
         eRecordDrawerInfo.value.type = 'edit';
       };
+      const eRecordSubmit = () => {
+        customerMHListReq(pageInfo.value.current);
+      };
 
       // 影像记录
       const iRecordDrawerInfo = ref<DrawerItemType<number | undefined>>({
@@ -403,28 +413,34 @@
         iRecordDrawerInfo.value.title = '编辑影像记录';
         iRecordDrawerInfo.value.type = 'edit';
       };
+      const iRecordSubmit = () => {
+        customerMHListReq(pageInfo.value.current);
+      };
 
       // 就诊记录
-      const oRecordDrawerInfo = ref<DrawerItemType<number | undefined>>({
+      const cRecordDrawerInfo = ref<DrawerItemType<number | undefined>>({
         visible: false,
         title: '',
         item: undefined,
       });
-      const oRecordClose = () => {
-        oRecordDrawerInfo.value.title = '';
-        oRecordDrawerInfo.value.visible = false;
-        oRecordDrawerInfo.value.item = undefined;
-        oRecordDrawerInfo.value.type = undefined;
+      const cRecordClose = () => {
+        cRecordDrawerInfo.value.title = '';
+        cRecordDrawerInfo.value.visible = false;
+        cRecordDrawerInfo.value.item = undefined;
+        cRecordDrawerInfo.value.type = undefined;
       };
-      const oRecordClick = (item: CustomerMHInfo) => {
-        oRecordDrawerInfo.value.title = '就诊记录';
-        oRecordDrawerInfo.value.visible = true;
-        oRecordDrawerInfo.value.item = item.id;
-        oRecordDrawerInfo.value.type = 'scan';
+      const cRecordClick = (item: CustomerMHInfo) => {
+        cRecordDrawerInfo.value.title = '就诊记录';
+        cRecordDrawerInfo.value.visible = true;
+        cRecordDrawerInfo.value.item = item.id;
+        cRecordDrawerInfo.value.type = 'scan';
       };
-      const oRecordEdit = () => {
-        oRecordDrawerInfo.value.title = '编辑其他记录';
-        oRecordDrawerInfo.value.type = 'edit';
+      const cRecordEdit = () => {
+        cRecordDrawerInfo.value.title = '编辑其他记录';
+        cRecordDrawerInfo.value.type = 'edit';
+      };
+      const cRecordSubmit = () => {
+        customerMHListReq(pageInfo.value.current);
       };
 
       return {
@@ -452,16 +468,19 @@
         eRecordClose,
         eRecordClick,
         eRecordEdit,
+        eRecordSubmit,
 
         iRecordDrawerInfo,
         iRecordClose,
         iRecordClick,
         iRecordEdit,
+        iRecordSubmit,
 
-        oRecordDrawerInfo,
-        oRecordClose,
-        oRecordClick,
-        oRecordEdit,
+        cRecordDrawerInfo,
+        cRecordClose,
+        cRecordClick,
+        cRecordEdit,
+        cRecordSubmit,
       };
     },
   });
