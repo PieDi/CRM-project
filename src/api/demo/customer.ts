@@ -11,7 +11,8 @@ import {
   CustomerIInfo,
   CustomerCInfo,
   CustomerOrderInfo,
-  CustomerOrderListParams
+  CustomerOrderListParams,
+  CustomerGroupInfo
 } from './model/customer';
 
 enum Api {
@@ -24,6 +25,17 @@ enum Api {
   UpdateCustomer = '/customer/basic/update', // 修改
   DeleteCustomer = '/customer/basic/delete', // 删除
   CustomerDetail = '/customer/basic/detail', //详情
+
+   /**
+   * 客户分组信息
+   */
+   CustomerGPage = '/customer/group/page', // 分页查询列表
+   CustomerGList = '/customer/group/list', // 全部客户
+   SaveCustomerG = '/customer/group/save', // 保存
+   UpdateCustomerG = '/customer/group/update', // 修改
+   DeleteCustomerG = '/customer/group/delete', // 删除
+  
+   
   /**
    * 客户病史信息
    */
@@ -113,6 +125,30 @@ export const deleteCustomer = (id: string | number) =>
 
 export const getCustomerDetail = (id: string | number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerDetail, params: { id } });
+
+
+  /**
+ * 客户分组信息
+ */
+export const getCustomerGPage = (params: CustomerListParams) =>
+defHttp.post<{ total: number; pageNum: number; data: CustomerGroupInfo[] }>({
+  url: Api.CustomerGPage,
+  params: { pageSize: 20, ...params },
+});
+export const getCustomerGList = (name?: string) =>
+defHttp.post<Array<CustomerGroupInfo>>({
+  url: Api.CustomerGList,
+  params: { name },
+});
+
+export const saveCustomerG = (params?: any) =>
+defHttp.post<any>({ url: Api.SaveCustomerG, params });
+
+export const updateCustomerG = (params?: any) =>
+defHttp.post<any>({ url: Api.UpdateCustomerG, params });
+
+export const deleteCustomerG = (id: string | number) =>
+  defHttp.post<any>({ url: Api.DeleteCustomerG, params: { id } });
 
 /**
  * 客户病史信息
@@ -269,7 +305,7 @@ export const getCustomerOrderList = (name?: string) =>
     params: { name },
   });
 
-export const saveCustomerOrder = (params?: CustomerMHSaveParams) =>
+export const saveCustomerOrder = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerOrder, params });
 
 export const updateCustomerOrder = (params?: CustomerMHSaveParams) =>
