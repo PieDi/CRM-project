@@ -191,9 +191,9 @@
             placeholder="请选择"
             v-model:value="drawerInfo.item.groupType"
           >
-            <SelectOption :key="1">个人客户</SelectOption>
-            <SelectOption :key="2">企业客户</SelectOption>
-            <SelectOption :key="3">默认</SelectOption>
+            <SelectOption v-for="item in customerGroupList" :key="item.id">{{
+              item.name
+            }}</SelectOption>
           </Select>
         </FormItem>
 
@@ -238,11 +238,12 @@
     saveCustomer,
     updateCustomer,
     deleteCustomer,
+    getCustomerGList,
   } from '/@/api/demo/customer';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { CustomerInfo } from '/@/api/demo/model/customer';
+  import { CustomerInfo, CustomerGroupInfo } from '/@/api/demo/model/customer';
   import dayjs, { Dayjs } from 'dayjs';
   import { sexMap, docTypeMap, cGroupMap } from '/@/views/const';
 
@@ -370,12 +371,19 @@
           dataIndex: 'operation',
         },
       ];
+      const customerGroupList = ref<CustomerGroupInfo[]>([]);
+      const getCustomerG = async () => {
+        const res = await getCustomerGList();
+        if (res) customerGroupList.value = res;
+      };
       const addCustomer = () => {
+        getCustomerG();
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新增客户';
         drawerInfo.value.type = 'add';
       };
       const scanCustomer = (item: CustomerInfo) => {
+        getCustomerG();
         drawerInfo.value.item.age = item.age;
         drawerInfo.value.item.birth = item.birth;
         drawerInfo.value.item.contactAddress = item.contactAddress;
@@ -464,6 +472,7 @@
         drawerEdit,
         searchAction,
         submit,
+        customerGroupList,
       };
     },
   });

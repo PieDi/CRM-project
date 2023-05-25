@@ -418,13 +418,14 @@
 
         drawerInfo.value.item.id = item.id;
         drawerInfo.value.item.orderAmount = item.orderAmount;
-        drawerInfo.value.item.orderDate = item.orderDate;
+        drawerInfo.value.item.orderDate = dayjs(item.orderDate);
         drawerInfo.value.item.orderName = item.orderName;
         drawerInfo.value.item.productId = item.productId;
         drawerInfo.value.item.remark = item.remark;
         drawerInfo.value.item.responsiblePerson = item.responsiblePerson;
 
         customerReq();
+        productReq();
       };
       const deleteOrder = (item) => {};
 

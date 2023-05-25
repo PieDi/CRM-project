@@ -27,6 +27,13 @@ export interface CustomerInfo {
   tag: string | undefined;
 }
 
+export interface CustomerGroupInfo {
+  id: number | string | undefined;
+  type: number | undefined;
+  description: string | undefined;
+  name: string | undefined;
+}
+
 export interface CustomerSaveParams extends CustomerInfo {}
 
 /**
@@ -118,7 +125,7 @@ export interface CustomerOrderInfo {
   orderDate:number | undefined;
   orderName: string | undefined;
   orderNumber: string | undefined;
-  productId: string | undefined;
+  productId: number | undefined;
   remark: string | undefined;
   responsiblePerson: string | undefined;
 }
