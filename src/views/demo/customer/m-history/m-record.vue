@@ -158,10 +158,10 @@
         hospitalName: undefined | string;
         visitDate: Dayjs | undefined;
       }>({
-        departmentName: props.drawerInfo.item.departmentName || undefined,
-        diseaseName: props.drawerInfo.item.diseaseName || undefined,
-        hospitalName: props.drawerInfo.item.hospitalName || undefined,
-        visitDate: props.drawerInfo.item.visitDate
+        departmentName: props.drawerInfo?.item?.departmentName || undefined,
+        diseaseName: props.drawerInfo?.item?.diseaseName || undefined,
+        hospitalName: props.drawerInfo?.item?.hospitalName || undefined,
+        visitDate: props.drawerInfo?.item?.visitDate
           ? dayjs(props.drawerInfo.item.visitDate)
           : undefined,
       });
@@ -171,10 +171,11 @@
         const res = await getCustomerList();
         if (res) {
           dataSource.value = res;
+          
           if (props.drawerInfo.type !== 'add' && props.drawerInfo?.item) {
             //@ts-ignore
             currentCustomer.value = dataSource.value.find(
-              (item: CustomerInfo) => item.id === props.drawerInfo?.item?.id,
+              (item: CustomerInfo) => item.id === props.drawerInfo?.item?.customerId,
             );
             // 编辑时设置默认的 currentCustomer
           }
@@ -195,7 +196,6 @@
       });
       const customerOnChange = (value: SelectValue, option: any) => {
         //@ts-ignore
-
         currentCustomer.value = dataSource.value.find(
           (item: CustomerInfo) => item.mobile === (option.value as string),
         );
