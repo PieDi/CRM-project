@@ -269,7 +269,7 @@ export const getCustomerOrderList = (name?: string) =>
     params: { name },
   });
 
-export const saveCustomerOrder = (params?: CustomerMHSaveParams) =>
+export const saveCustomerOrder = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerOrder, params });
 
 export const updateCustomerOrder = (params?: CustomerMHSaveParams) =>

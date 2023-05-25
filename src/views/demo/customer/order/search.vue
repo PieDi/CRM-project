@@ -82,26 +82,35 @@
             :show-search="true"
             :disabled="drawerInfo.type !== 'add'"
             placeholder="请选择"
-            :filter-option="filterOption"
-            @change="customerOnChange"
-            v-model:value="currentCustomer.mobile"
+            :filter-option="cFilterOption"
+            @change="cOnChange"
+            v-model:value="currentC.mobile"
           >
             <SelectOption
-              v-for="item of dataSource"
+              v-for="item of cDataSource"
               :key="`${item.id}-${item.name}`"
               :value="item.mobile"
               >{{ `${item.name}-${item.mobile}` }}</SelectOption
             >
           </Select>
         </FormItem>
-        <!-- <FormItem label="产品ID">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
+
+        <FormItem label="订单产品">
+          <Select
+            :show-search="true"
+            :disabled="drawerInfo.type !== 'add'"
+            placeholder="请选择"
+            :filter-option="pFilterOption"
             v-model:value="drawerInfo.item.productId"
-          />
-        </FormItem> -->
+          >
+            <SelectOption
+              v-for="item of pDataSource"
+              :key="`${item.id}-${item.name}`"
+              :value="item.id"
+              >{{ item.name }}</SelectOption
+            >
+          </Select>
+        </FormItem>
 
         <FormItem label="订单名称">
           <Input
@@ -197,17 +206,16 @@
     Select,
     InputNumber,
     DatePicker,
+    message,
   } from 'ant-design-vue';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { CustomerOrderInfo, CustomerInfo } from '/@/api/demo/model/customer';
-  import {
-    getCustomerList,
-    getCustomerOrderPage,
-    updateCustomerMH,
-    fileMHUpload,
-  } from '/@/api/demo/customer';
+  import { getCustomerList, getCustomerOrderPage, saveCustomerOrder } from '/@/api/demo/customer';
+  import { ProductInfo } from '/@/api/demo/model/product';
+  import { getProductList } from '/@/api/demo/product';
   import { SelectValue } from 'ant-design-vue/lib/select';
+  import dayjs, { Dayjs } from 'dayjs';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -232,26 +240,40 @@
       TextArea,
     },
     setup() {
-      const drawerInfo = ref<DrawerItemType<any>>({
+      const drawerInfo = ref<
+        DrawerItemType<{
+          id: number | undefined;
+          orderAmount: number | undefined;
+          orderDate: Dayjs | undefined;
+          orderName: string | undefined;
+          orderNumber: string | undefined;
+          orderQuantity: number| undefined;
+          productId: number | undefined;
+          remark: string | undefined;
+          responsiblePerson: string | undefined;
+          customerId: number | undefined;
+        }>
+      >({
         visible: false,
         title: '',
         type: undefined,
-        item:  {
+        item: {
           id: undefined,
           orderAmount: undefined,
           orderDate: undefined,
           orderName: undefined,
           orderNumber: undefined,
+          orderQuantity: undefined,
           productId: undefined,
           remark: undefined,
           responsiblePerson: undefined,
+          customerId: undefined,
         },
       });
 
-
-      const dataSource = ref<Array<CustomerInfo>>([]);
+      const cDataSource = ref<Array<CustomerInfo>>([]);
       //@ts-ignore
-      const currentCustomer = ref<CustomerInfo>({
+      const currentC = ref<CustomerInfo>({
         id: undefined,
         birth: undefined,
         documentNumber: undefined,
@@ -260,18 +282,19 @@
         name: undefined,
         sex: undefined,
       });
-      const customerOnChange = (value: SelectValue, option: any) => {
+      const cOnChange = (value: SelectValue, option: any) => {
         //@ts-ignore
-        currentCustomer.value = dataSource.value.find(
+        currentC.value = cDataSource.value.find(
           (item: CustomerInfo) => item.mobile === (option.value as string),
         );
       };
-      const filterOption = (input: string, option: any) => {
+      const cFilterOption = (input: string, option: any) => {
         return (
           option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
           option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
         );
       };
+
       const searchInfo = ref({
         customerName: undefined,
         orderNumber: undefined,
@@ -287,7 +310,7 @@
         pageSize: 10,
         showTotal: (total: number) => `共${total}条`,
         onChange: (page: number) => {
-          customerMHListReq(page);
+          customerOrderListReq(page);
         },
         showQuickJumper: false,
         showSizeChanger: false,
@@ -296,17 +319,31 @@
       const customerReq = async () => {
         const res = await getCustomerList();
         if (res) {
-          dataSource.value = res;
+          cDataSource.value = res;
           if (drawerInfo.value.type !== 'add') {
             //@ts-ignore
-            currentCustomer.value = dataSource.value.find(
+            currentC.value = cDataSource.value.find(
               (item: CustomerInfo) => item.id === drawerInfo.value?.item?.id,
             );
-            // 编辑时设置默认的 currentCustomer
           }
         }
       };
-      const customerMHListReq = async (pageNum: number) => {
+      const pDataSource = ref<Array<ProductInfo>>([]);
+      const productReq = async () => {
+        const res = await getProductList();
+        if (res) {
+          pDataSource.value = res;
+        }
+      };
+
+      const pFilterOption = (input: string, option: any) => {
+        return (
+          option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
+          option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
+        );
+      };
+
+      const customerOrderListReq = async (pageNum: number) => {
         const res = await getCustomerOrderPage({ ...searchInfo.value, pageNum });
         if (res) {
           pageInfo.value.total = res.total;
@@ -315,10 +352,10 @@
         }
       };
       const searchAction = () => {
-        customerMHListReq(1);
+        customerOrderListReq(1);
       };
       onMounted(() => {
-        customerMHListReq(1);
+        customerOrderListReq(1);
       });
 
       const columns: ColumnsType<CustomerOrderInfo> = [
@@ -372,44 +409,56 @@
         drawerInfo.value.title = '新增订单';
         drawerInfo.value.type = 'add';
         customerReq();
+        productReq();
       };
-      const scanOrder = (item:CustomerOrderInfo) => {
+      const scanOrder = (item: CustomerOrderInfo) => {
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '查看订单信息';
         drawerInfo.value.type = 'scan';
 
-        drawerInfo.value.item.id = item.id
-        drawerInfo.value.item.orderAmount = item.orderAmount
-        drawerInfo.value.item.orderDate = item.orderDate
-        drawerInfo.value.item.orderName = item.orderName
-        drawerInfo.value.item.productId = item.productId
-        drawerInfo.value.item.remark = item.remark
-        drawerInfo.value.item.responsiblePerson = item.responsiblePerson
+        drawerInfo.value.item.id = item.id;
+        drawerInfo.value.item.orderAmount = item.orderAmount;
+        drawerInfo.value.item.orderDate = item.orderDate;
+        drawerInfo.value.item.orderName = item.orderName;
+        drawerInfo.value.item.productId = item.productId;
+        drawerInfo.value.item.remark = item.remark;
+        drawerInfo.value.item.responsiblePerson = item.responsiblePerson;
 
         customerReq();
       };
-      const deleteOrder = (item) => { };
-      
+      const deleteOrder = (item) => {};
+
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
 
-        drawerInfo.value.item.id = undefined
-        drawerInfo.value.item.orderAmount = undefined
-        drawerInfo.value.item.orderDate = undefined
-        drawerInfo.value.item.orderName = undefined
-        drawerInfo.value.item.productId = undefined
-        drawerInfo.value.item.remark = undefined
-        drawerInfo.value.item.responsiblePerson = undefined
+        drawerInfo.value.item.id = undefined;
+        drawerInfo.value.item.orderAmount = undefined;
+        drawerInfo.value.item.orderDate = undefined;
+        drawerInfo.value.item.orderName = undefined;
+        drawerInfo.value.item.productId = undefined;
+        drawerInfo.value.item.remark = undefined;
+        drawerInfo.value.item.responsiblePerson = undefined;
       };
       const drawerEdit = () => {
         drawerInfo.value.title = '编辑订单信息';
         drawerInfo.value.type = 'edit';
       };
-      const submit = () => { 
-        console.log(6465656, drawerInfo.value.item)
-      }
+      const submit = async () => {
+        console.log(6465656, drawerInfo.value.item,currentC.value);
+        const res = await saveCustomerOrder({
+          ...drawerInfo.value.item,
+          customerId: currentC.value.id,
+          orderDate: drawerInfo.value.item.orderDate
+            ? drawerInfo.value.item.orderDate.valueOf()
+            : undefined,
+        });
+        if (res) {
+          message.success(drawerInfo.value.type === 'add' ? '新增订单成功' : '修改订单成功');
+          customerOrderListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+        }
+      };
       return {
         columns,
         pagination,
@@ -417,7 +466,7 @@
         searchAction,
         pageInfo,
         drawerInfo,
-        
+
         addOrder,
         scanOrder,
         deleteOrder,
@@ -425,10 +474,14 @@
         drawerEdit,
         submit,
         // 客户相关
-        customerOnChange,
-        currentCustomer,
-        dataSource,
-        filterOption,
+        currentC,
+        cDataSource,
+        cOnChange,
+        cFilterOption,
+        // 产品
+        // currentP,
+        pDataSource,
+        pFilterOption,
       };
     },
   });
