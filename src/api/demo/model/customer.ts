@@ -47,6 +47,7 @@ export interface CustomerMHListParams {
 }
 
 export interface CustomerMHInfo {
+  customerId:number | undefined;
   id: number | undefined;
   departmentName: string | undefined;
   diseaseName: string | undefined;
