@@ -73,7 +73,7 @@
     >
       <template #extra>
         <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary">提交</Button>
+        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
       </template>
 
       <Form :labelCol="{ span: 6 }">
@@ -94,17 +94,30 @@
             >
           </Select>
         </FormItem>
+        <!-- <FormItem label="产品ID">
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.productId"
+          />
+        </FormItem> -->
 
         <FormItem label="订单名称">
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
             allowClear
-            :value="cInfo.name"
+            v-model:value="drawerInfo.item.orderName"
           />
         </FormItem>
         <FormItem label="下单时间">
-          <DatePicker :disabled="drawerInfo.type === 'scan'" />
+          <DatePicker
+            :disabled="drawerInfo.type === 'scan'"
+            showTime
+            placeholder="请选择"
+            v-model:value="drawerInfo.item.orderDate"
+          />
         </FormItem>
 
         <FormItem label="订单编号">
@@ -112,17 +125,17 @@
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
             allowClear
-            :value="cInfo.name"
+            v-model:value="drawerInfo.item.orderNumber"
           />
         </FormItem>
 
-        <FormItem label="订单类型">
+        <!-- <FormItem label="订单类型">
           <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
             <SelectOption :key="1">标准产品</SelectOption>
             <SelectOption :key="2">非标准产品</SelectOption>
             <SelectOption :key="3">其他产品</SelectOption>
           </Select>
-        </FormItem>
+        </FormItem> -->
 
         <FormItem label="订单数量">
           <InputNumber
@@ -131,35 +144,40 @@
             allowClear
             min="1"
             :precision="0"
+            v-model:value="drawerInfo.item.orderQuantity"
           />
         </FormItem>
 
         <FormItem label="订单金额">
-          <InputNumber :disabled="drawerInfo.type === 'scan'" placeholder="请输入" allowClear />
+          <InputNumber
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.orderAmount"
+          />
         </FormItem>
 
-        <FormItem label="关联合同">
+        <!-- <FormItem label="关联合同">
           <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
             <SelectOption key="1">男</SelectOption>
             <SelectOption key="2">女</SelectOption>
           </Select>
-        </FormItem>
-
-        <!-- <FormItem label="负责人">
-          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
-            <SelectOption key="1">身份证</SelectOption>
-            <SelectOption key="2">护照</SelectOption>
-            <SelectOption key="3">军官证</SelectOption>
-            <SelectOption key="4">港澳通行证</SelectOption>
-            <SelectOption key="5">台湾通行证</SelectOption>
-          </Select>
         </FormItem> -->
+
+        <FormItem label="负责人">
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.responsiblePerson"
+          />
+        </FormItem>
 
         <FormItem label="其他">
           <TextArea
             placeholder="请输入"
             allowClear
-            :value="cInfo.des"
+            v-model:value="drawerInfo.item.remark"
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
@@ -179,8 +197,8 @@
     Select,
     InputNumber,
     DatePicker,
-} from 'ant-design-vue';
-import { type ColumnsType } from 'ant-design-vue/lib/table';
+  } from 'ant-design-vue';
+  import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { CustomerOrderInfo, CustomerInfo } from '/@/api/demo/model/customer';
   import {
@@ -194,6 +212,10 @@ import { type ColumnsType } from 'ant-design-vue/lib/table';
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   const TextArea = Input.TextArea;
+  const orderSourceMap: Record<string, string> = {
+    1: 'CRM',
+    2: '小程序',
+  };
   export default defineComponent({
     components: {
       PageWrapper,
@@ -214,23 +236,18 @@ import { type ColumnsType } from 'ant-design-vue/lib/table';
         visible: false,
         title: '',
         type: undefined,
-        item: {
-          //         id: undefined,
-          // orderAmount:undefined,
-          // orderDate:number | undefined;
-          // orderName: string | undefined;
-          // orderNumber: string | undefined;
-          // productId: string | undefined;
-          // remark: string | undefined;
-          // responsiblePerson: string | undefined;
+        item:  {
+          id: undefined,
+          orderAmount: undefined,
+          orderDate: undefined,
+          orderName: undefined,
+          orderNumber: undefined,
+          productId: undefined,
+          remark: undefined,
+          responsiblePerson: undefined,
         },
       });
 
-      const cInfo = ref<{ name: string; id?: number | string; des: string }>({
-        name: '',
-        id: undefined,
-        des: '',
-      });
 
       const dataSource = ref<Array<CustomerInfo>>([]);
       //@ts-ignore
@@ -323,32 +340,26 @@ import { type ColumnsType } from 'ant-design-vue/lib/table';
         },
         {
           title: '订单类型',
-          width: 150,
           dataIndex: 'endTime',
         },
         {
           title: '订单数量',
-          width: 150,
           dataIndex: 'endTime',
         },
         {
           title: '订单金额',
-          width: 150,
           dataIndex: 'endTime',
         },
         {
           title: '合同名称',
-          width: 150,
           dataIndex: 'endTime',
         },
         {
           title: '负责人',
-          width: 150,
           dataIndex: 'endTime',
         },
         {
           title: '其他',
-          width: 150,
           dataIndex: 'endTime',
         },
         {
@@ -362,24 +373,43 @@ import { type ColumnsType } from 'ant-design-vue/lib/table';
         drawerInfo.value.type = 'add';
         customerReq();
       };
-      const scanOrder = (item) => {
+      const scanOrder = (item:CustomerOrderInfo) => {
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '查看订单信息';
-        drawerInfo.value.item = item;
         drawerInfo.value.type = 'scan';
+
+        drawerInfo.value.item.id = item.id
+        drawerInfo.value.item.orderAmount = item.orderAmount
+        drawerInfo.value.item.orderDate = item.orderDate
+        drawerInfo.value.item.orderName = item.orderName
+        drawerInfo.value.item.productId = item.productId
+        drawerInfo.value.item.remark = item.remark
+        drawerInfo.value.item.responsiblePerson = item.responsiblePerson
+
         customerReq();
       };
-      const deleteOrder = (item) => {};
+      const deleteOrder = (item) => { };
+      
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
-        drawerInfo.value.item = undefined;
         drawerInfo.value.type = undefined;
+
+        drawerInfo.value.item.id = undefined
+        drawerInfo.value.item.orderAmount = undefined
+        drawerInfo.value.item.orderDate = undefined
+        drawerInfo.value.item.orderName = undefined
+        drawerInfo.value.item.productId = undefined
+        drawerInfo.value.item.remark = undefined
+        drawerInfo.value.item.responsiblePerson = undefined
       };
       const drawerEdit = () => {
         drawerInfo.value.title = '编辑订单信息';
         drawerInfo.value.type = 'edit';
       };
+      const submit = () => { 
+        console.log(6465656, drawerInfo.value.item)
+      }
       return {
         columns,
         pagination,
@@ -387,12 +417,13 @@ import { type ColumnsType } from 'ant-design-vue/lib/table';
         searchAction,
         pageInfo,
         drawerInfo,
-        cInfo,
+        
         addOrder,
         scanOrder,
         deleteOrder,
         drawerOnClose,
         drawerEdit,
+        submit,
         // 客户相关
         customerOnChange,
         currentCustomer,
