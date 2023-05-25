@@ -1,12 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
-import {
-  CustomerListParams,
-  CustomerInfo,
-  CustomerSaveParams,
-  CustomerMHListParams,
-  CustomerMHInfo,
-  CustomerMHSaveParams,
-} from './model/customer';
+import { CServeInfo } from './model/customer-serve';
 
 enum Api {
   CustomerServePage = '/customer/service/page', // 分页查询列表
@@ -20,25 +13,25 @@ enum Api {
 /**
  * 客户基本信息
  */
-export const getCustomerServePage = (params: CustomerListParams) =>
-  defHttp.post<{ total: number; data: CustomerInfo[] }>({
+export const getCustomerServePage = (params: any) =>
+  defHttp.post<{ total: number; pageNum: number; data: CServeInfo[] }>({
     url: Api.CustomerServePage,
     params: { pageSize: 20, ...params },
   });
 export const getCustomerServeList = (name?: string) =>
-  defHttp.post<Array<CustomerInfo>>({
+  defHttp.post<Array<CServeInfo>>({
     url: Api.SaveCustomerServe,
     params: { name },
   });
 
-export const saveCustomerServe = (params?: CustomerSaveParams) =>
+export const saveCustomerServe = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerServe, params });
 
-export const updateCustomerServe = (params?: CustomerSaveParams) =>
+export const updateCustomerServe = (params?: any) =>
   defHttp.post<any>({ url: Api.UpdateCustomerServe, params });
 
 export const deleteCustomerServe = (id: string | number) =>
   defHttp.post<any>({ url: Api.DeleteCustomerServe, params: { id } });
 
 export const getCustomerServeDetail = (id: string | number) =>
-  defHttp.post<CustomerInfo>({ url: Api.CustomerServeDetail, params: { id } });
+  defHttp.post<CServeInfo>({ url: Api.CustomerServeDetail, params: { id } });
