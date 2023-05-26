@@ -34,6 +34,11 @@ export interface CustomerGroupInfo {
   name: string | undefined;
 }
 
+export interface CustomerSourceInfo {
+  id: number | string | undefined;
+  description: string | undefined;
+  name: string | undefined;
+}
 export interface CustomerSaveParams extends CustomerInfo {}
 
 /**

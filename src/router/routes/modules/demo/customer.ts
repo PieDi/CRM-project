@@ -40,6 +40,15 @@ const customer: AppRouteModule = {
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
+        {
+          path: 'source',
+          name: 'InfoSource',
+          component: () => import('/@/views/demo/customer/info/source.vue'),
+          meta: {
+            title: '客户来源',
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+          },
+        },
       ],
     },
     {

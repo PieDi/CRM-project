@@ -248,7 +248,7 @@
         confirm(
           withConfirm({
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
-            content: '确定删除该客户',
+            content: '确定删除该客服',
             async onOk() {
               const res = await deleteCustomerServe(item.id as number);
               if (res) {

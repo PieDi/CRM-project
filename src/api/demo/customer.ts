@@ -12,7 +12,8 @@ import {
   CustomerCInfo,
   CustomerOrderInfo,
   CustomerOrderListParams,
-  CustomerGroupInfo
+  CustomerGroupInfo,
+  CustomerSourceInfo
 } from './model/customer';
 
 enum Api {
@@ -33,7 +34,17 @@ enum Api {
    CustomerGList = '/customer/group/list', // 全部客户
    SaveCustomerG = '/customer/group/save', // 保存
    UpdateCustomerG = '/customer/group/update', // 修改
-   DeleteCustomerG = '/customer/group/delete', // 删除
+  DeleteCustomerG = '/customer/group/delete', // 删除
+   
+  /**
+   * 客户来源
+  */
+  CustomerSPage = '/customer/source/page', // 分页查询列表
+  CustomerSList = '/customer/source/list', // 全部客户
+  SaveCustomerS = '/customer/source/save', // 保存
+  UpdateCustomerS = '/customer/source/update', // 修改
+ DeleteCustomerS = '/customer/source/delete', // 删除
+  
   
    
   /**
@@ -150,6 +161,31 @@ defHttp.post<any>({ url: Api.UpdateCustomerG, params });
 export const deleteCustomerG = (id: string | number) =>
   defHttp.post<any>({ url: Api.DeleteCustomerG, params: { id } });
 
+  /**
+ * 客户来源
+ */
+export const getCustomerSPage = (params: {name?: string, pageNum: number}) =>
+  defHttp.post<{ total: number; pageNum: number; data: CustomerSourceInfo[] }>({
+    url: Api.CustomerSPage,
+    params: { pageSize: 20, ...params },
+  });
+  export const getCustomerSList = (name?: string) =>
+  defHttp.post<Array<CustomerSourceInfo>>({
+    url: Api.CustomerSList,
+    params: { name },
+  });
+  
+  export const saveCustomerS = (params?: any) =>
+  defHttp.post<any>({ url: Api.SaveCustomerS, params });
+  
+  export const updateCustomerS = (params?: any) =>
+  defHttp.post<any>({ url: Api.UpdateCustomerS, params });
+  
+  export const deleteCustomerS = (id: string | number) =>
+    defHttp.post<any>({ url: Api.DeleteCustomerS, params: { id } });
+
+
+  
 /**
  * 客户病史信息
  */

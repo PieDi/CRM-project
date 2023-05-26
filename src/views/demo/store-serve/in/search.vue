@@ -2,8 +2,11 @@
   <PageWrapper title="入库管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
-        ><FormItem label="产品名称">
-          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
+        ><FormItem label="产品名称" >
+          <Input placeholder="请输入" allowClear :style="{ width: '150px' }"  v-model:value="searchInfo.productName"/>
+        </FormItem>
+        <FormItem label="产品编号" style="margin-left: 10px">
+          <Input placeholder="请输入" allowClear :style="{ width: '150px' }"  v-model:value="searchInfo.productNumber"/>
         </FormItem>
         <!-- <FormItem label="客户标签" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear />
@@ -32,18 +35,10 @@
             "
             >查看</Button
           >
-          <Button
-            type="link"
-            @click="
-              () => {
-                deleteStoreIn(record);
-              }
-            "
-            >删除</Button
-          >
         </template>
       </template>
     </Table>
+
     <Drawer
       :mask-closable="false"
       :destroy-on-close="true"
@@ -175,7 +170,8 @@
         showSizeChanger: false,
       }));
       const searchInfo = ref({
-        name: undefined,
+        productName: undefined,
+        productNumber: undefined
       });
       const pInListReq = async (pageNum: number) => {
         const res = await getProductInPage({ ...searchInfo.value, pageNum });
@@ -193,26 +189,34 @@
       });
 
       const columns: ColumnsType<ProductInInfo> = [
-        {
-          title: '入库时间',
-          dataIndex: 'name',
-          key: 'name',
-        },
+        // {
+        //   title: '入库时间',
+        //   dataIndex: 'name',
+        //   key: 'name',
+        // },
         {
           title: '入库批次',
-          dataIndex: 'address',
+          dataIndex: 'batch',
         },
         {
           title: '产品编号',
-          dataIndex: 'no',
+          dataIndex: 'productNumber',
         },
         {
           title: '产品名称',
-          dataIndex: 'beginTime',
+          dataIndex: 'productName',
+        },
+        {
+          title: '产品数量',
+          dataIndex: 'amount',
+        },
+        {
+          title: '单位',
+          dataIndex: 'unit',
         },
         {
           title: '其他',
-          dataIndex: 'endTime',
+          dataIndex: 'remark',
         },
         {
           title: '操作',
@@ -234,14 +238,15 @@
         );
       };
       const addStoreIn = () => {
+        productReq()
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'add';
         drawerInfo.value.title = '新增入库';
-        productReq()
+        
       };
-      const scanStoreIn = (item:ProductInInfo) => {
+      const scanStoreIn = (item: ProductInInfo) => {
+        productReq()
         drawerInfo.value.visible = true;
-        drawerInfo.value.item = item;
         drawerInfo.value.type = 'scan';
         drawerInfo.value.title = '查看入库';
 
@@ -252,16 +257,15 @@
         drawerInfo.value.item.unit = item.unit;
         drawerInfo.value.item.remark = item.remark;
 
-        productReq()
       };
       const editStoreIn = () => {
         drawerInfo.value.type = 'edit';
         drawerInfo.value.title = '编辑入库';
       };
-      const deleteStoreIn = (item:ProductInInfo) => {};
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
+        drawerInfo.value.type = undefined
 
         drawerInfo.value.item.id = undefined;
         drawerInfo.value.item.amount = undefined;
@@ -279,7 +283,7 @@
           res = await updateProductIn({...drawerInfo.value.item})
         }
         if (res) { 
-          message.success(drawerInfo.value.type === 'add' ? '新增客服成功' : '修改客服成功')
+          message.success(drawerInfo.value.type === 'add' ? '新增入局成功' : '修改入库成功')
           pInListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
           drawerOnClose()
         }
@@ -290,10 +294,10 @@
         pagination,
         pageInfo,
         drawerInfo,
+        searchInfo,
         addStoreIn,
         editStoreIn,
         scanStoreIn,
-        deleteStoreIn,
         drawerOnClose,
         submit,
         pDataSource,
