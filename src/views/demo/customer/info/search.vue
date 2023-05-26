@@ -20,18 +20,29 @@
             <SelectOption key="2">女</SelectOption>
           </Select>
         </FormItem> -->
-        <FormItem label="所属分组" style="margin-left: 10px">
+        <FormItem label="客户分组" style="margin-left: 10px">
           <Select
-            :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
             v-model:value="searchInfo.groupType"
+            :style="{ width: '150px' }"
           >
-            <SelectOption :key="1">个人客户</SelectOption>
-            <SelectOption :key="2">企业客户</SelectOption>
-            <SelectOption :key="3">默认</SelectOption>
+            <SelectOption v-for="item in customerGroupList" :key="item.id">{{
+              item.name
+            }}</SelectOption>
           </Select>
         </FormItem>
 
+        <FormItem label="客户来源" style="margin-left: 10px">
+          <Select
+            placeholder="请选择"
+            v-model:value="searchInfo.sourceId"
+            :style="{ width: '150px' }"
+          >
+            <SelectOption v-for="item in customerSourceList" :key="item.id">{{
+              item.name
+            }}</SelectOption>
+          </Select>
+        </FormItem>
         <FormItem label="证件号码" style="margin-left: 10px">
           <Input
             placeholder="请输入"
@@ -239,11 +250,12 @@
     updateCustomer,
     deleteCustomer,
     getCustomerGList,
+    getCustomerSList,
   } from '/@/api/demo/customer';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { CustomerInfo, CustomerGroupInfo } from '/@/api/demo/model/customer';
+  import { CustomerInfo, CustomerGroupInfo, CustomerSourceInfo } from '/@/api/demo/model/customer';
   import dayjs, { Dayjs } from 'dayjs';
   import { sexMap, docTypeMap, cGroupMap } from '/@/views/const';
 
@@ -270,6 +282,7 @@
       const searchInfo = ref({
         name: undefined,
         groupType: undefined,
+        sourceId: undefined,
         documentNumber: undefined,
       });
 
@@ -324,6 +337,8 @@
       };
       onMounted(() => {
         customerListReq(1);
+        getCustomerG();
+        getCustomerS();
       });
 
       const columns: ColumnsType<CustomerInfo> = [
@@ -376,14 +391,17 @@
         const res = await getCustomerGList();
         if (res) customerGroupList.value = res;
       };
+      const customerSourceList = ref<CustomerSourceInfo[]>([]);
+      const getCustomerS = async () => {
+        const res = await getCustomerSList();
+        if (res) customerSourceList.value = res;
+      };
       const addCustomer = () => {
-        getCustomerG();
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新增客户';
         drawerInfo.value.type = 'add';
       };
       const scanCustomer = (item: CustomerInfo) => {
-        getCustomerG();
         drawerInfo.value.item.age = item.age;
         drawerInfo.value.item.birth = item.birth;
         drawerInfo.value.item.contactAddress = item.contactAddress;
@@ -473,6 +491,7 @@
         searchAction,
         submit,
         customerGroupList,
+        customerSourceList,
       };
     },
   });
