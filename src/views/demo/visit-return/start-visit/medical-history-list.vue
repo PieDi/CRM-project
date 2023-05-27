@@ -9,7 +9,7 @@
     >
       <template #bodyCell="{ column }">
         <template v-if="column.dataIndex === 'operation'">
-          <Button type="primary" @click="lookMedicalHistory">查看</Button>
+          <Button type="link" @click="lookMedicalHistory">查看</Button>
         </template>
       </template>
     </Table>

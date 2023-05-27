@@ -23,8 +23,8 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <div style="display: flex;">
-            <Button type="primary" @click="editReturnPlan(record)">编辑</Button>
-            <Button type="primary" style="margin-left: 10px;" @click="startVisit">开始回访</Button>
+            <Button type="link" @click="editReturnPlan(record)">编辑</Button>
+            <Button type="link" style="margin-left: 10px;" @click="startVisit">开始回访</Button>
           </div>
         </template>
       </template>

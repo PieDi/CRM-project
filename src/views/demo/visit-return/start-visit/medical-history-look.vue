@@ -11,10 +11,18 @@
   >
     <div style="overflow-y: hidden;padding: 20px;height: 500px;">
       <Tabs centered>
-        <TabPane key="1" tab="用药记录">用药记录</TabPane>
-        <TabPane key="2" tab="检验记录">检验记录</TabPane>
-        <TabPane key="3" tab="影像记录">影像记录</TabPane>
-        <TabPane key="4" tab="就诊记录">就诊记录</TabPane>
+        <TabPane key="1" tab="用药记录">
+          
+        </TabPane>
+        <TabPane key="2" tab="检验记录">
+
+        </TabPane>
+        <TabPane key="3" tab="影像记录">
+
+        </TabPane>
+        <TabPane key="4" tab="就诊记录">
+          
+        </TabPane>
       </Tabs>
     </div>
   </Modal>
@@ -23,13 +31,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { propTypes } from '/@/utils/propTypes'
-import { Modal, Tabs } from 'ant-design-vue'
+import { Modal, Tabs, Table } from 'ant-design-vue'
 
 export default defineComponent({
   components: {
     Modal,
     Tabs,
-    TabPane: Tabs.TabPane
+    TabPane: Tabs.TabPane,
+    Table
   },
   props: {
     visible: propTypes.bool
