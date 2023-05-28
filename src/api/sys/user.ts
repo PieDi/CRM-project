@@ -58,6 +58,13 @@ export const getUserList = (params: { pageNum: number; userName?: string }) =>
     params: { pageSize: 20, ...params },
   });
 
+  export const deleteUser = (userId: string | number) =>
+  defHttp.post<any>({ url: Api.DeleteUser, params: { userId } });
+
+
+
+
+
 // 项目无用代码
 export function getPermCode() {
   return defHttp.get<string[]>({ url: Api.GetPermCode });

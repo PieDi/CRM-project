@@ -117,10 +117,10 @@
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer, Select, message } from 'ant-design-vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
-  import { getUserList } from '/@/api/sys/user';
+  import { getUserList, deleteUser } from '/@/api/sys/user';
   import { UserInfo } from '/#/store';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
-  import confirm, { withWarn } from 'ant-design-vue/es/modal/confirm';
+  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
   const FormItem = Form.Item;
@@ -238,16 +238,22 @@
         drawerInfo.value.item.mobile = item.mobile;
         drawerInfo.value.item.userId = item.userId;
       };
-      const deleteStaff = (item) => {
+      const deleteStaff = (item: UserInfo) => {
         confirm(
-          withWarn({
+          withConfirm({
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
-            content: '确定删除该客户',
+            content: '确定删除该员工',
             async onOk() {
-              console.log('OK');
+              const res = await deleteUser(item.userId as number);
+              if (res) {
+                message.success('删除员工成功');
+                userListReq(pageInfo.value.current);
+              }
             },
           }),
         );
+
+    
       };
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
