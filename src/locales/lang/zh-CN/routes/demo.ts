@@ -189,7 +189,8 @@ export default {
   },
   'return-visit': {
     index: '回访管理',
-    search: '回访查询',
+    search: '回访记录',
+    plan: '回访计划',
     add: '回访新增',
     edit: '回访编辑',
     begin: '开始回访',
