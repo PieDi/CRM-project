@@ -31,7 +31,7 @@ export interface ErrorLogInfo {
 }
 
 export interface UserInfo {
-  userId: string | number | undefined;
+  userId: number | undefined;
   userName: string | undefined;
   email: string | undefined;
   mobile: string | undefined;

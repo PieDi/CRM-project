@@ -13,7 +13,7 @@ import {
   CustomerOrderInfo,
   CustomerOrderListParams,
   CustomerGroupInfo,
-  CustomerSourceInfo
+  CustomerSourceInfo,
 } from './model/customer';
 
 enum Api {
@@ -26,27 +26,26 @@ enum Api {
   UpdateCustomer = '/customer/basic/update', // 修改
   DeleteCustomer = '/customer/basic/delete', // 删除
   CustomerDetail = '/customer/basic/detail', //详情
+  assignCustomer = '/customer/basic/assign', // 委派
 
-   /**
+  /**
    * 客户分组信息
    */
-   CustomerGPage = '/customer/group/page', // 分页查询列表
-   CustomerGList = '/customer/group/list', // 全部客户
-   SaveCustomerG = '/customer/group/save', // 保存
-   UpdateCustomerG = '/customer/group/update', // 修改
+  CustomerGPage = '/customer/group/page', // 分页查询列表
+  CustomerGList = '/customer/group/list', // 全部客户
+  SaveCustomerG = '/customer/group/save', // 保存
+  UpdateCustomerG = '/customer/group/update', // 修改
   DeleteCustomerG = '/customer/group/delete', // 删除
-   
+
   /**
    * 客户来源
-  */
+   */
   CustomerSPage = '/customer/source/page', // 分页查询列表
   CustomerSList = '/customer/source/list', // 全部客户
   SaveCustomerS = '/customer/source/save', // 保存
   UpdateCustomerS = '/customer/source/update', // 修改
- DeleteCustomerS = '/customer/source/delete', // 删除
-  
-  
-   
+  DeleteCustomerS = '/customer/source/delete', // 删除
+
   /**
    * 客户病史信息
    */
@@ -137,55 +136,55 @@ export const deleteCustomer = (id: string | number) =>
 export const getCustomerDetail = (id: string | number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerDetail, params: { id } });
 
+export const assignCustomer = (params?: any) =>
+  defHttp.post<any>({ url: Api.assignCustomer, params });
 
-  /**
+/**
  * 客户分组信息
  */
 export const getCustomerGPage = (params: CustomerListParams) =>
-defHttp.post<{ total: number; pageNum: number; data: CustomerGroupInfo[] }>({
-  url: Api.CustomerGPage,
-  params: { pageSize: 20, ...params },
-});
+  defHttp.post<{ total: number; pageNum: number; data: CustomerGroupInfo[] }>({
+    url: Api.CustomerGPage,
+    params: { pageSize: 20, ...params },
+  });
 export const getCustomerGList = (name?: string) =>
-defHttp.post<Array<CustomerGroupInfo>>({
-  url: Api.CustomerGList,
-  params: { name },
-});
+  defHttp.post<Array<CustomerGroupInfo>>({
+    url: Api.CustomerGList,
+    params: { name },
+  });
 
 export const saveCustomerG = (params?: any) =>
-defHttp.post<any>({ url: Api.SaveCustomerG, params });
+  defHttp.post<any>({ url: Api.SaveCustomerG, params });
 
 export const updateCustomerG = (params?: any) =>
-defHttp.post<any>({ url: Api.UpdateCustomerG, params });
+  defHttp.post<any>({ url: Api.UpdateCustomerG, params });
 
 export const deleteCustomerG = (id: string | number) =>
   defHttp.post<any>({ url: Api.DeleteCustomerG, params: { id } });
 
-  /**
+/**
  * 客户来源
  */
-export const getCustomerSPage = (params: {name?: string, pageNum: number}) =>
+export const getCustomerSPage = (params: { name?: string; pageNum: number }) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerSourceInfo[] }>({
     url: Api.CustomerSPage,
     params: { pageSize: 20, ...params },
   });
-  export const getCustomerSList = (name?: string) =>
+export const getCustomerSList = (name?: string) =>
   defHttp.post<Array<CustomerSourceInfo>>({
     url: Api.CustomerSList,
     params: { name },
   });
-  
-  export const saveCustomerS = (params?: any) =>
+
+export const saveCustomerS = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerS, params });
-  
-  export const updateCustomerS = (params?: any) =>
+
+export const updateCustomerS = (params?: any) =>
   defHttp.post<any>({ url: Api.UpdateCustomerS, params });
-  
-  export const deleteCustomerS = (id: string | number) =>
-    defHttp.post<any>({ url: Api.DeleteCustomerS, params: { id } });
 
+export const deleteCustomerS = (id: string | number) =>
+  defHttp.post<any>({ url: Api.DeleteCustomerS, params: { id } });
 
-  
 /**
  * 客户病史信息
  */
@@ -241,7 +240,7 @@ export const saveCustomerD = (params?: any) =>
 // export const getCustomerDDetail = (id: string | number) =>
 //   defHttp.post<CustomerInfo>({ url: Api.CustomerDDetail, params: { id } });
 
-  export const fileDUpload = (params: any) =>
+export const fileDUpload = (params: any) =>
   defHttp.uploadFile<number[]>({ url: Api.CustomerDUpload }, params);
 /**
  * 客户检验记录
@@ -268,7 +267,7 @@ export const saveCustomerE = (params?: any) =>
 
 // export const getCustomerEDetail = (id: string | number) =>
 //   defHttp.post<CustomerInfo>({ url: Api.CustomerEDetail, params: { id } });
-  
+
 export const fileEUpload = (params: any) =>
   defHttp.uploadFile<number[]>({ url: Api.CustomerEUpload }, params);
 /**
@@ -296,7 +295,7 @@ export const saveCustomerI = (params?: any) =>
 
 // export const getCustomerIDetail = (id: string | number) =>
 //   defHttp.post<CustomerInfo>({ url: Api.CustomerIDetail, params: { id } });
-  export const fileIUpload = (params: any) =>
+export const fileIUpload = (params: any) =>
   defHttp.uploadFile<number[]>({ url: Api.CustomerIUpload }, params);
 /**
  * 客户就诊记录
@@ -323,10 +322,9 @@ export const saveCustomerC = (params?: any) =>
 
 // export const getCustomerCDetail = (id: string | number) =>
 //   defHttp.post<CustomerInfo>({ url: Api.CustomerCDetail, params: { id } });
-  export const fileCUpload = (params: any) =>
-    defHttp.uploadFile<number[]>({ url: Api.CustomerCUpload }, params);
-  
-    
+export const fileCUpload = (params: any) =>
+  defHttp.uploadFile<number[]>({ url: Api.CustomerCUpload }, params);
+
 /**
  * 客户订单
  */

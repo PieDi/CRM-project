@@ -4,6 +4,7 @@
 export interface CustomerListParams {
   documentNumber?: string;
   groupType?: number;
+  assign?: number;
   name?: string;
   pageNum: number;
 }
@@ -11,19 +12,19 @@ export interface CustomerListParams {
  * 客户信息
  */
 export interface CustomerInfo {
-  id: number | string | undefined;
+  id: number | undefined;
   age: number | undefined;
   birth: string | undefined;
   contactAddress: string | undefined;
   documentNumber: string | undefined;
   documentType: number | undefined;
-  groupType: number | undefined;
-  level: string | undefined;
+  groupId: number | undefined;
+  level: number | undefined;
   mobile: string | undefined;
   name: string | undefined;
   remark: string | undefined;
   sex: number | undefined;
-  source: string | undefined;
+  sourceId: number | undefined;
   tag: string | undefined;
 }
 

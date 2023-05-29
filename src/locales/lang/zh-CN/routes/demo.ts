@@ -141,7 +141,7 @@ export default {
   },
   level: { level: '多级菜单' },
   'customer-server': {
-    init: '客服管理',
+    init: '客服信息管理',
     search: '客服查询',
     add: '客服新增',
     edit: '客服编辑',

@@ -3,7 +3,7 @@ export default {
   header: {
     // user dropdown
     dropdownItemDoc: '文档',
-    dropdownItemLoginOut: '退出系统',
+    dropdownItemLoginOut: '退出登录',
 
     // tooltip
     tooltipErrorLog: '错误日志',

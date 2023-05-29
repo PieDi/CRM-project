@@ -8,7 +8,7 @@
         </span>
       </span>
     </span>
-    <!-- 
+    
     <template #overlay>
       <Menu @click="handleMenuClick">
         <MenuItem
@@ -17,7 +17,7 @@
           icon="ion:power-outline"
         />
       </Menu>
-    </template> -->
+    </template>
   </Dropdown>
 </template>
 <script lang="ts">
