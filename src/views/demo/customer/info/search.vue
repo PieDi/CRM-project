@@ -10,16 +10,6 @@
             v-model:value="searchInfo.name"
           />
         </FormItem>
-        <!-- <FormItem label="负责人" style="margin-left: 10px">
-          <Select
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
-            :style="{ width: '150px' }"
-          >
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
-          </Select>
-        </FormItem> -->
         <FormItem label="客户分组" style="margin-left: 10px">
           <Select
             placeholder="请选择"
@@ -173,20 +163,26 @@
           />
         </FormItem>
         <FormItem label="客户等级">
-          <Input
+          <InputNumber
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
+            min="1"
+            :precision="0"
             allowClear
             v-model:value="drawerInfo.item.level"
           />
         </FormItem>
         <FormItem label="客户来源">
-          <Input
+          <Select
+            placeholder="请选择"
             :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.source"
-          />
+            v-model:value="drawerInfo.item.sourceId"
+            :style="{ width: '150px' }"
+          >
+            <SelectOption v-for="item in customerSourceList" :key="item.id">{{
+              item.name
+            }}</SelectOption>
+          </Select>
         </FormItem>
         <FormItem label="联系地址">
           <Input
@@ -200,7 +196,7 @@
           <Select
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
-            v-model:value="drawerInfo.item.groupType"
+            v-model:value="drawerInfo.item.groupId"
           >
             <SelectOption v-for="item in customerGroupList" :key="item.id">{{
               item.name
@@ -296,13 +292,13 @@
           contactAddress: undefined,
           documentNumber: undefined,
           documentType: undefined,
-          groupType: undefined,
+          groupId: undefined,
           level: undefined,
           mobile: undefined,
           name: undefined,
           remark: undefined,
           sex: undefined,
-          source: undefined,
+          sourceId: undefined,
           tag: undefined,
         },
       });
@@ -372,14 +368,17 @@
           title: '联系地址',
           dataIndex: 'contactAddress',
         },
-        {
-          title: '负责人',
-          dataIndex: 'endTime',
-        },
+        // {
+        //   title: '负责人',
+        //   dataIndex: 'endTime',
+        // },
         {
           title: '所属分组',
           dataIndex: 'groupType',
-          customRender: (state) => cGroupMap[state.record.groupType as number],
+          customRender: (state) => { 
+            const group = customerGroupList.value.find(item => item.id === state.record.groupId)
+            return group ? group.name: ''
+          },
         },
         {
           title: '操作',
@@ -407,13 +406,13 @@
         drawerInfo.value.item.contactAddress = item.contactAddress;
         drawerInfo.value.item.documentNumber = item.documentNumber;
         drawerInfo.value.item.documentType = item.documentType;
-        drawerInfo.value.item.groupType = item.groupType;
+        drawerInfo.value.item.groupId = item.groupId;
         drawerInfo.value.item.level = item.level;
         drawerInfo.value.item.mobile = item.mobile;
         drawerInfo.value.item.name = item.name;
         drawerInfo.value.item.remark = item.remark;
         drawerInfo.value.item.sex = item.sex;
-        drawerInfo.value.item.source = item.source;
+        drawerInfo.value.item.sourceId = item.sourceId;
         drawerInfo.value.item.tag = item.tag;
         if (item.birth) datePickerValue.value = dayjs(item.birth, 'YYYY-MM-DD');
 
@@ -446,13 +445,13 @@
         drawerInfo.value.item.contactAddress = undefined;
         drawerInfo.value.item.documentNumber = undefined;
         drawerInfo.value.item.documentType = undefined;
-        drawerInfo.value.item.groupType = undefined;
+        drawerInfo.value.item.groupId = undefined;
         drawerInfo.value.item.level = undefined;
         drawerInfo.value.item.mobile = undefined;
         drawerInfo.value.item.name = undefined;
         drawerInfo.value.item.remark = undefined;
         drawerInfo.value.item.sex = undefined;
-        drawerInfo.value.item.source = undefined;
+        drawerInfo.value.item.sourceId = undefined;
         drawerInfo.value.item.tag = undefined;
 
         datePickerValue.value = undefined;

@@ -1,34 +1,34 @@
 <template>
-  <PageWrapper title="客户管理">
+  <PageWrapper title="客户信息管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客户姓名">
-          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
-        </FormItem>
-        <FormItem label="负责人" style="margin-left: 10px">
-          <Select
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
+          <Input
+            placeholder="请输入"
+            allowClear
             :style="{ width: '150px' }"
-          >
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
-          </Select>
-        </FormItem>
-        <FormItem label="证件号码" style="margin-left: 10px">
-          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
+            v-model:value="searchInfo.name"
+          />
         </FormItem>
 
-        <Button type="primary" style="margin-left: 10px">搜索</Button></div
+        <FormItem label="证件号码" style="margin-left: 10px">
+          <Input
+            placeholder="请输入"
+            allowClear
+            :style="{ width: '150px' }"
+            v-model:value="searchInfo.documentNumber"
+          />
+        </FormItem>
+
+        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
+      <!-- <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增客户</Button> -->
     </div>
 
     <Table
       :columns="columns"
-      :dataSource="data"
-      :canResize="false"
-      :loading="loading"
-      :striped="false"
+      :dataSource="pageInfo.dataSource"
+      :canResize="true"
       :bordered="true"
       :pagination="pagination"
     >
@@ -38,19 +38,10 @@
             type="link"
             @click="
               () => {
-                scanCustomer(record);
+                appointStaff(record);
               }
             "
-            >查看</Button
-          >
-          <Button
-            type="link"
-            @click="
-              () => {
-                deleteCustomer(record);
-              }
-            "
-            >删除</Button
+            >员工委派</Button
           >
         </template>
       </template>
@@ -61,125 +52,53 @@
       placement="right"
       @close="drawerOnClose"
       :visible="drawerInfo.visible"
+      :pagination="pagination"
     >
       <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
-
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary">提交</Button>
+        <Button type="primary" @click="submit">提交</Button>
       </template>
 
       <Form :labelCol="{ span: 6 }">
-        <FormItem label="客户姓名">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            :value="cInfo.name"
-          />
-        </FormItem>
-        <FormItem label="负责人">
-          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
-          </Select>
-        </FormItem>
-        <FormItem label="客户电话">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            :value="cInfo.name"
-          />
-        </FormItem>
-        <FormItem label="性别">
-          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
-          </Select>
-        </FormItem>
-
-        <FormItem label="证件类型">
-          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
-            <SelectOption key="1">身份证</SelectOption>
-            <SelectOption key="2">护照</SelectOption>
-            <SelectOption key="3">军官证</SelectOption>
-            <SelectOption key="4">港澳通行证</SelectOption>
-            <SelectOption key="5">台湾通行证</SelectOption>
-          </Select>
-        </FormItem>
-
-        <FormItem label="证件号码">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            :value="cInfo.name"
-          />
-        </FormItem>
-
-        <FormItem label="出生日期">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            :value="cInfo.name"
-          />
-        </FormItem>
-        <FormItem label="年龄">
-          <InputNumber
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            min="1"
-            :precision="0"
-          />
-        </FormItem>
-        <FormItem label="客户等级">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            :value="cInfo.name"
-          />
-        </FormItem>
-        <FormItem label="客户来源">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            :value="cInfo.name"
-          />
-        </FormItem>
-        <FormItem label="联系地址">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            :value="cInfo.name"
-          />
-        </FormItem>
-        <FormItem label="所属分组">
-          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
+        <FormItem label="指定员工">
+          <Select
+            placeholder="请选择"
+            v-model:value="drawerInfo.item.staffId"
+          >
+            <SelectOption v-for="item in staffSourceData" :key="item.userId">{{
+              item.userName
+            }}</SelectOption>
           </Select>
         </FormItem>
       </Form>
-      <!-- <FormItem label="客户电话">
-        <TextArea placeholder="请输入" allowClear :value="cInfo.des" />
-      </FormItem> -->
     </Drawer>
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, onMounted, createVNode, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Drawer, Select, InputNumber } from 'ant-design-vue';
+  import {
+    Table,
+    Form,
+    Input,
+    Button,
+    Drawer,
+    Select,
+    InputNumber,
+    DatePicker,
+    message,
+  } from 'ant-design-vue';
+  import { type DrawerItemType, PageListInfo } from '/@/views/type';
+  import { getCustomerPage, assignCustomer } from '/@/api/demo/customer';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
-  import { getBasicData } from '../demo/table/tableData';
-  import { DrawerItemType } from '/@/views/type';
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+  import { CustomerInfo } from '/@/api/demo/model/customer';
+  import { getUserList } from '/@/api/sys/user';
+  import { UserInfo } from '/#/store';
+  import { sexMap, docTypeMap } from '/@/views/const';
+
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
+  const TextArea = Input.TextArea;
   export default defineComponent({
     components: {
       PageWrapper,
@@ -192,113 +111,140 @@
       Select,
       SelectOption,
       InputNumber,
+      ExclamationCircleOutlined,
+      DatePicker,
+      TextArea,
     },
     setup() {
-      const drawerInfo = ref<DrawerItemType>({
+      const searchInfo = ref({
+        name: undefined,
+        documentNumber: undefined,
+      });
+
+      const drawerInfo = ref<
+        DrawerItemType<{ staffId: number | undefined; id: number | undefined }>
+      >({
         visible: false,
         title: '',
+        item: {
+          id: undefined,
+          staffId: undefined,
+        },
       });
-      const cInfo = ref<{ name: string; id?: number | string; des: string }>({
-        name: '',
-        id: undefined,
-        des: '',
-      });
-      const loading = ref(false);
-      const pagination = ref({
-        total: 50,
+
+      const pageInfo = ref<PageListInfo<CustomerInfo>>({
+        total: 0,
         current: 1,
+        dataSource: [],
+      });
+      const pagination = computed(() => ({
+        total: pageInfo.value.total,
+        current: pageInfo.value.current,
         pageSize: 10,
         showTotal: (total: number) => `共${total}条`,
         onChange: (page: number) => {
-          console.log(2132323, page);
+          customerListReq(page);
         },
         showQuickJumper: false,
         showSizeChanger: false,
+      }));
+      const customerListReq = async (pageNum: number) => {
+        const res = await getCustomerPage({ ...searchInfo.value, assign: 0, pageNum });
+        if (res) {
+          pageInfo.value.total = res.total;
+          pageInfo.value.current = res.pageNum;
+          // pageInfo.value.dataSource = res.data;
+          pageInfo.value.dataSource = [{}];
+        }
+      };
+      const searchAction = () => {
+        customerListReq(1);
+      };
+      onMounted(() => {
+        customerListReq(1);
       });
 
-      const columns: ColumnsType<any> = [
+      const columns: ColumnsType<CustomerInfo> = [
         {
           title: '姓名',
           dataIndex: 'name',
-          key: 'name',
         },
         {
           title: '电话',
-          dataIndex: 'address',
+          dataIndex: 'mobile',
         },
         {
           title: '性别',
-          dataIndex: 'no',
+          dataIndex: 'sex',
+          customRender: (state) => sexMap[state.record.sex as number],
         },
         {
           title: '证件类型',
-          width: 150,
-          dataIndex: 'beginTime',
+          dataIndex: 'documentType',
+          customRender: (state) => docTypeMap[state.record.documentType as number],
         },
         {
           title: '证件号码',
-          width: 150,
-          dataIndex: 'endTime',
+          dataIndex: 'documentNumber',
         },
         {
           title: '年龄',
-          width: 150,
-          dataIndex: 'endTime',
+          dataIndex: 'age',
         },
         {
           title: '联系地址',
-          width: 150,
-          dataIndex: 'endTime',
-        },
-        {
-          title: '负责人',
-          width: 100,
-          dataIndex: 'endTime',
-        },
-        {
-          title: '所属分组',
-          width: 150,
-          dataIndex: 'endTime',
+          dataIndex: 'contactAddress',
         },
         {
           title: '操作',
           dataIndex: 'operation',
         },
       ];
-      const addCustomer = () => {
-        drawerInfo.value.visible = true;
-        drawerInfo.value.title = '新增客户';
-        drawerInfo.value.type = 'add';
+
+      const staffSourceData = ref<UserInfo[]>([]);
+      const userListReq = async () => {
+        const res = await getUserList();
+        if (res) {
+          staffSourceData.value = res;
+        }
       };
-      const scanCustomer = (item) => {
+
+      const appointStaff = (item: CustomerInfo) => {
+        userListReq();
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '查看客户信息';
-        drawerInfo.value.item = item;
+        drawerInfo.value.title = '员工委派';
         drawerInfo.value.type = 'scan';
+        drawerInfo.value.item.id = item.id;
       };
-      const deleteCustomer = (item) => {};
+
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
-        drawerInfo.value.item = undefined;
         drawerInfo.value.type = undefined;
+
+        drawerInfo.value.item.staffId = undefined;
+        drawerInfo.value.item.id = undefined;
       };
-      const drawerEdit = () => {
-        drawerInfo.value.title = '编辑客户信息';
-        drawerInfo.value.type = 'edit';
+
+      const submit = async () => {
+        const res = await assignCustomer({ ...drawerInfo.value.item });
+        if (res) {
+          message.success('委派员工成功');
+          customerListReq(pageInfo.value.current);
+        }
       };
+
       return {
         columns,
-        data: getBasicData(),
-        loading,
         pagination,
+        pageInfo,
         drawerInfo,
-        cInfo,
-        addCustomer,
-        scanCustomer,
-        deleteCustomer,
+        searchInfo,
+        appointStaff,
         drawerOnClose,
-        drawerEdit,
+        searchAction,
+        submit,
+        staffSourceData,
       };
     },
   });

@@ -60,7 +60,7 @@
 <script lang="ts" setup>
   import { reactive, ref, unref, computed } from 'vue';
   import LoginFormTitle from './LoginFormTitle.vue';
-  import { Form, Input, Button } from 'ant-design-vue';
+  import { Form, Input, Button, message } from 'ant-design-vue';
   import { StrengthMeter } from '/@/components/StrengthMeter';
   import { useI18n } from '/@/hooks/web/useI18n';
   import { useLoginState, useFormRules, useFormValid, LoginStateEnum } from './useLogin';
@@ -87,7 +87,10 @@
   async function handleRegister() {
     const data = await validForm();
     if (!data) return;
-    console.log(data, 111);
     const res = await registerApi(data);
+    if ((res)) {
+      message.success('注册成功')
+      handleBackLogin()
+    }
   }
 </script>
