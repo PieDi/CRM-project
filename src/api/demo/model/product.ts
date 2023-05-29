@@ -24,4 +24,5 @@ export interface ProductOutInfo {
   productId: number | undefined
   unit: string | undefined
   remark: string | undefined
+  customerName: string | undefined
 }

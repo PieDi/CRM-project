@@ -35,6 +35,15 @@
             "
             >查看</Button
           >
+          <!-- <Button
+            type="link"
+            @click="
+              () => {
+                deleteIn(record);
+              }
+            "
+            >删除</Button
+          > -->
         </template>
       </template>
     </Table>
@@ -63,7 +72,7 @@
           >
             <SelectOption
               v-for="item of pDataSource"
-              :key="`${item.id}-${item.name}`"
+              :key="`${item.name}-${item.number}`"
               :value="item.id"
               >{{ item.name }}</SelectOption
             >
@@ -107,14 +116,16 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref,computed, onMounted } from 'vue';
+  import { defineComponent, ref,computed, onMounted,createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer, InputNumber,Select, message } from 'ant-design-vue';
   import { DrawerItemType,PageListInfo } from '/@/views/type';
   import { ProductInfo,ProductInInfo } from '/@/api/demo/model/product';
-  import { getProductList,getProductInPage,updateProductIn,saveProductIn } from '/@/api/demo/product';
+  import { getProductList,getProductInPage,updateProductIn,saveProductIn, deleteProductIn } from '/@/api/demo/product';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
-
+  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+  
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   const SelectOption = Select.Option;
@@ -274,6 +285,21 @@
         drawerInfo.value.item.unit = undefined;
         drawerInfo.value.item.remark = undefined;
       };
+      const deleteIn = (item: ProductInInfo) => {
+        confirm(
+          withConfirm({
+            icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+            content: '确定删除该入库',
+            async onOk() {
+              const res = await deleteProductIn(item.id as number);
+              if (res) {
+                message.success('删除入库成功');
+                pInListReq(pageInfo.value.current);
+              }
+            },
+          }),
+        );
+      };
       const submit =async () => {
         let res 
         if (drawerInfo.value.type === 'add') {
@@ -283,7 +309,7 @@
           res = await updateProductIn({...drawerInfo.value.item})
         }
         if (res) { 
-          message.success(drawerInfo.value.type === 'add' ? '新增入局成功' : '修改入库成功')
+          message.success(drawerInfo.value.type === 'add' ? '新增入库成功' : '修改入库成功')
           pInListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
           drawerOnClose()
         }
@@ -299,6 +325,7 @@
         editStoreIn,
         scanStoreIn,
         drawerOnClose,
+        deleteIn,
         submit,
         pDataSource,
         pFilterOption,

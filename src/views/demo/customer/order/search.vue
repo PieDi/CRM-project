@@ -88,7 +88,7 @@
           >
             <SelectOption
               v-for="item of cDataSource"
-              :key="`${item.id}-${item.name}`"
+              :key="`${item.name}-${item.mobile}`"
               :value="item.mobile"
               >{{ `${item.name}-${item.mobile}` }}</SelectOption
             >
@@ -105,7 +105,7 @@
           >
             <SelectOption
               v-for="item of pDataSource"
-              :key="`${item.id}-${item.name}`"
+              :key="`${item.name}-${item.number}`"
               :value="item.id"
               >{{ item.name }}</SelectOption
             >
@@ -137,14 +137,6 @@
             v-model:value="drawerInfo.item.orderNumber"
           />
         </FormItem>
-
-        <!-- <FormItem label="订单类型">
-          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
-            <SelectOption :key="1">标准产品</SelectOption>
-            <SelectOption :key="2">非标准产品</SelectOption>
-            <SelectOption :key="3">其他产品</SelectOption>
-          </Select>
-        </FormItem> -->
 
         <FormItem label="订单数量">
           <InputNumber
@@ -195,7 +187,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, computed } from 'vue';
+  import { defineComponent, ref, onMounted, computed, createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import {
     Table,
@@ -211,10 +203,18 @@
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { CustomerOrderInfo, CustomerInfo } from '/@/api/demo/model/customer';
-  import { getCustomerList, getCustomerOrderPage, saveCustomerOrder } from '/@/api/demo/customer';
+  import {
+    getCustomerList,
+    getCustomerOrderPage,
+    saveCustomerOrder,
+    deleteCustomerOrder,
+  } from '/@/api/demo/customer';
   import { ProductInfo } from '/@/api/demo/model/product';
   import { getProductList } from '/@/api/demo/product';
   import { SelectValue } from 'ant-design-vue/lib/select';
+  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+
   import dayjs, { Dayjs } from 'dayjs';
 
   const FormItem = Form.Item;
@@ -247,7 +247,7 @@
           orderDate: Dayjs | undefined;
           orderName: string | undefined;
           orderNumber: string | undefined;
-          orderQuantity: number| undefined;
+          orderQuantity: number | undefined;
           productId: number | undefined;
           remark: string | undefined;
           responsiblePerson: string | undefined;
@@ -369,23 +369,24 @@
         },
         {
           title: '下单时间',
-          dataIndex: 'no',
+          dataIndex: 'orderDate',
+          customRender: (state) => dayjs(state.record.orderDate).format('YYYY-MM-DD HH:mm:ss'),
         },
         {
           title: '订单编号',
           dataIndex: 'orderNumber',
         },
-        {
-          title: '订单类型',
-          dataIndex: 'endTime',
-        },
+        // {
+        //   title: '订单类型',
+        //   dataIndex: 'endTime',
+        // },
         {
           title: '订单数量',
-          dataIndex: 'endTime',
+          dataIndex: 'orderQuantity',
         },
         {
           title: '订单金额',
-          dataIndex: 'endTime',
+          dataIndex: 'orderAmount',
         },
         {
           title: '合同名称',
@@ -393,11 +394,11 @@
         },
         {
           title: '负责人',
-          dataIndex: 'endTime',
+          dataIndex: 'responsiblePerson',
         },
         {
           title: '其他',
-          dataIndex: 'endTime',
+          dataIndex: 'remark',
         },
         {
           title: '操作',
@@ -427,7 +428,21 @@
         customerReq();
         productReq();
       };
-      const deleteOrder = (item) => {};
+      const deleteOrder = (item: CustomerOrderInfo) => {
+        confirm(
+          withConfirm({
+            icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+            content: '确定删除该订单',
+            async onOk() {
+              const res = await deleteCustomerOrder(item.id as number);
+              if (res) {
+                message.success('删除订单成功');
+                customerOrderListReq(pageInfo.value.current);
+              }
+            },
+          }),
+        );
+      };
 
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
@@ -447,7 +462,7 @@
         drawerInfo.value.type = 'edit';
       };
       const submit = async () => {
-        console.log(6465656, drawerInfo.value.item,currentC.value);
+        console.log(6465656, drawerInfo.value.item, currentC.value);
         const res = await saveCustomerOrder({
           ...drawerInfo.value.item,
           customerId: currentC.value.id,

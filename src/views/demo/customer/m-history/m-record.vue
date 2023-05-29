@@ -23,7 +23,7 @@
         >
           <SelectOption
             v-for="item of dataSource"
-            :key="`${item.id}-${item.name}`"
+            :key="`${item.name}-${item.mobile}`"
             :value="item.mobile"
             >{{ `${item.name}-${item.mobile}` }}</SelectOption
           >

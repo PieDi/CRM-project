@@ -81,7 +81,7 @@
           >
             <SelectOption
               v-for="item of pDataSource"
-              :key="`${item.id}-${item.name}`"
+              :key="`${item.name}-${item.number}`"
               :value="item.id"
               >{{ item.name }}</SelectOption
             >
@@ -96,12 +96,11 @@
             :filter-option="cFilterOption"
             v-model:value="drawerInfo.item.customerId"
             @change="cOnChange"
-
           >
             <SelectOption
               v-for="item of cDataSource"
-              :key="`${item.id}-${item.name}`"
-              :value="item.mobile"
+              :key="`${item.name}-${item.mobile}`"
+              :value="item.id"
               >{{ `${item.name}-${item.mobile}` }}</SelectOption
             >
           </Select>
@@ -125,12 +124,26 @@
         </FormItem>
 
         <FormItem label="订单ID">
-          <Input
+          <Select
+            :show-search="true"
+            placeholder="请选择"
+            :filter-option="oFilterOption"
+            v-model:value="drawerInfo.item.orderId"
+          >
+            <SelectOption
+              v-for="item of oDataSource"
+              :key="`${item.orderName}-${item.orderNumber}`"
+              :value="item.id"
+              >{{ `${item.orderName}-${item.orderNumber}` }}</SelectOption
+            >
+          </Select>
+
+          <!-- <Input
             v-model:value="drawerInfo.item.orderId"
             placeholder="请输入"
             allowClear
             :disabled="drawerInfo.type === 'scan'"
-          />
+          /> -->
         </FormItem>
 
         <FormItem label="其他">
@@ -158,8 +171,8 @@
     saveProductOut,
   } from '/@/api/demo/product';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
-  import { getCustomerList } from '/@/api/demo/customer';
-  import { CustomerInfo } from '/@/api/demo/model/customer';
+  import { getCustomerList, getCustomerOrderList } from '/@/api/demo/customer';
+  import { CustomerInfo, CustomerOrderInfo } from '/@/api/demo/model/customer';
   import { SelectValue } from 'ant-design-vue/lib/select';
 
   const FormItem = Form.Item;
@@ -223,7 +236,7 @@
         productName: undefined,
         productNumber: undefined,
       });
-      const pInListReq = async (pageNum: number) => {
+      const pOutListReq = async (pageNum: number) => {
         const res = await getProductOutPage({ ...searchInfo.value, pageNum });
         if (res) {
           pageInfo.value.total = res.total;
@@ -232,37 +245,41 @@
         }
       };
       const searchAction = () => {
-        pInListReq(1);
+        pOutListReq(1);
       };
       onMounted(() => {
-        pInListReq(1);
+        pOutListReq(1);
       });
 
       const columns: ColumnsType<ProductOutInfo> = [
-        {
-          title: '出库时间',
-          dataIndex: 'name',
-          key: 'name',
-        },
+        // {
+        //   title: '出库时间',
+        //   dataIndex: 'name',
+        //   key: 'name',
+        // },
         {
           title: '出库批次',
-          dataIndex: 'address',
+          dataIndex: 'batch',
+        },
+        {
+          title: '出库数量',
+          dataIndex: 'amount',
         },
         {
           title: '产品编号',
-          dataIndex: 'no',
+          dataIndex: 'productNumber',
         },
         {
           title: '购买人员',
-          dataIndex: 'no',
+          dataIndex: 'customerName',
         },
         {
           title: '产品名称',
-          dataIndex: 'beginTime',
+          dataIndex: 'productName',
         },
         {
           title: '其他',
-          dataIndex: 'endTime',
+          dataIndex: 'remark',
         },
         {
           title: '操作',
@@ -287,7 +304,7 @@
 
       // 客户信息
       const cDataSource = ref<Array<CustomerInfo>>([]);
-        //@ts-ignore
+      //@ts-ignore
       const currentCustomer = ref<CustomerInfo>({
         id: undefined,
         birth: undefined,
@@ -299,7 +316,7 @@
       });
       const cOnChange = (value: SelectValue, option: any) => {
         //@ts-ignore
-        currentCustomer.value = dataSource.value.find(
+        currentCustomer.value = cDataSource.value.find(
           (item: CustomerInfo) => item.mobile === (option.value as string),
         );
       };
@@ -316,9 +333,24 @@
           option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
         );
       };
+
+      const oDataSource = ref<Array<CustomerOrderInfo>>([]);
+      const orderListReq = async () => {
+        const res = await getCustomerOrderList();
+        if (res) {
+          oDataSource.value = res.filter(item => !item.outStorage);
+        }
+      };
+      const oFilterOption = (input: string, option: any) => {
+        return (
+          option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0
+        );
+      };
+
       const addStoreOut = () => {
         productReq();
         customerReq();
+        orderListReq();
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'add';
         drawerInfo.value.title = '新增出库';
@@ -326,9 +358,22 @@
       const scanStoreOut = (item) => {
         productReq();
         customerReq();
+        orderListReq();
+
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'scan';
         drawerInfo.value.title = '查看出库';
+
+        drawerInfo.value.item.id = item.id;
+        drawerInfo.value.item.amount = item.amount;
+        drawerInfo.value.item.batch = item.batch;
+        drawerInfo.value.item.customerId = item.customerId;
+        drawerInfo.value.item.orderId = item.orderId;
+        drawerInfo.value.item.productId = item.productId;
+        drawerInfo.value.item.unit = item.unit;
+        drawerInfo.value.item.remark = item.remark;
+        console.log(3243545, drawerInfo.value.item.orderId)
+        
       };
       const editStoreOut = () => {
         drawerInfo.value.type = 'edit';
@@ -339,7 +384,22 @@
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
       };
-      const submit = () => {};
+      const submit = async () => {
+        const params = { ...drawerInfo.value.item, customerId: currentCustomer.value.id };
+
+        let res;
+        if (drawerInfo.value.type === 'add') {
+          // 新增客服
+          res = await saveProductOut(params);
+        } else {
+          res = await updateProductOut(params);
+        }
+        if (res) {
+          message.success(drawerInfo.value.type === 'add' ? '新增出库成功' : '修改出库成功');
+          pOutListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+          drawerOnClose();
+        }
+      };
       return {
         columns,
         searchAction,
@@ -359,7 +419,10 @@
         // 客户信息
         cDataSource,
         cFilterOption,
-        cOnChange
+        cOnChange,
+        // 订单信息
+        oDataSource,
+        oFilterOption
       };
     },
   });

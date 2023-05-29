@@ -123,6 +123,8 @@ export interface CustomerOrderListParams {
   customerName?: string;
   orderNumber?: number;
   pageNum: number;
+  source?: number
+  productType?: number
 }
 
 export interface CustomerOrderInfo {
@@ -134,4 +136,6 @@ export interface CustomerOrderInfo {
   productId: number | undefined;
   remark: string | undefined;
   responsiblePerson: string | undefined;
+  next: { status: number, operate: string }[] | undefined
+  outStorage: boolean | undefined
 }
