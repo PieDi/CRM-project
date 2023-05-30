@@ -13,6 +13,7 @@
         <!-- <FormItem label="创建时间" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
         </FormItem> -->
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
       <Button type="primary" style="margin-left: 10px" @click="addCustomerServe">新增客服</Button>
@@ -184,6 +185,10 @@
           pageInfo.value.dataSource = res.data;
         }
       };
+      const resetAction = () => { 
+        searchInfo.value.name = undefined
+        cServiceListReq(1);
+      }
       const searchAction = () => {
         cServiceListReq(1);
       };
@@ -296,6 +301,7 @@
         deleteCServe,
         drawerOnClose,
         submit,
+        resetAction,
         searchAction,
         searchInfo,
       };

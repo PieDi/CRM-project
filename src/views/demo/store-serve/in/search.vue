@@ -11,6 +11,7 @@
         <!-- <FormItem label="客户标签" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear />
         </FormItem> -->
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
       <Button type="primary" style="margin-left: 10px" @click="addStoreIn">新增入库</Button>
@@ -192,6 +193,11 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
           pageInfo.value.dataSource = res.data;
         }
       };
+      const resetAction = () => { 
+        searchInfo.value.productName = undefined
+        searchInfo.value.productNumber = undefined
+        pInListReq(1);
+      }
       const searchAction = () => {
         pInListReq(1);
       };
@@ -316,6 +322,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
       };
       return {
         columns,
+        resetAction,
         searchAction,
         pagination,
         pageInfo,

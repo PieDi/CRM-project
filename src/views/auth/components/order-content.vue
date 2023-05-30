@@ -27,6 +27,7 @@
           v-model:value="searchInfo.orderNumber"
         />
       </FormItem>
+      <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
       <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
     >
   </div>
@@ -51,7 +52,7 @@
           >查看</Button
         >
         <Button
-        v-if="productType===2"
+          v-if="productType === 2"
           type="link"
           @click="
             () => {
@@ -79,7 +80,6 @@
     @close="drawerOnClose"
     :visible="drawerInfo.visible"
   >
-
     <Form :labelCol="{ span: 6 }">
       <FormItem label="客户姓名">
         <Select
@@ -88,11 +88,7 @@
           placeholder="请选择"
           v-model:value="drawerInfo.item.customerId"
         >
-          <SelectOption
-            v-for="item of cDataSource"
-            :value="item.id"
-            >{{ item.name }}</SelectOption
-          >
+          <SelectOption v-for="item of cDataSource" :value="item.id">{{ item.name }}</SelectOption>
         </Select>
       </FormItem>
 
@@ -292,8 +288,17 @@
           pageInfo.value.dataSource = res.data;
         }
       };
-      const searchAction = () => {customerOrderListReq(1);};
-      onMounted(() => {customerOrderListReq(1);});
+      const resetAction = () => {
+        searchInfo.value.customerName = undefined;
+        searchInfo.value.orderNumber = undefined;
+        customerOrderListReq(1);
+      };
+      const searchAction = () => {
+        customerOrderListReq(1);
+      };
+      onMounted(() => {
+        customerOrderListReq(1);
+      });
 
       const columns: ColumnsType<CustomerOrderInfo> = [
         {
@@ -382,7 +387,7 @@
         drawerInfo.value.type = undefined;
 
         drawerInfo.value.item.id = undefined;
-        drawerInfo.value.item.customerId= undefined
+        drawerInfo.value.item.customerId = undefined;
         drawerInfo.value.item.orderAmount = undefined;
         drawerInfo.value.item.orderDate = undefined;
         drawerInfo.value.item.orderName = undefined;
@@ -390,13 +395,14 @@
         drawerInfo.value.item.remark = undefined;
         drawerInfo.value.item.responsiblePerson = undefined;
       };
-      
-      const auditOrder = (item: CustomerOrderInfo) => { }
+
+      const auditOrder = (item: CustomerOrderInfo) => {};
 
       return {
         columns,
         pagination,
         searchInfo,
+        resetAction,
         searchAction,
         pageInfo,
         drawerInfo,
@@ -407,7 +413,7 @@
         pDataSource,
 
         source: props.source,
-        productType: props.productType
+        productType: props.productType,
       };
     },
   });

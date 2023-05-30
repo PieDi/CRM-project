@@ -41,7 +41,7 @@
             v-model:value="searchInfo.documentNumber"
           />
         </FormItem>
-
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
       <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增客户</Button>
@@ -285,6 +285,7 @@
       const drawerInfo = ref<DrawerItemType<CustomerInfo>>({
         visible: false,
         title: '',
+        //@ts-ignore
         item: {
           id: undefined,
           age: undefined,
@@ -328,6 +329,13 @@
           pageInfo.value.dataSource = res.data;
         }
       };
+      const resetAction= () => { 
+        searchInfo.value.name = undefined
+        searchInfo.value.groupType = undefined
+        searchInfo.value.sourceId = undefined
+        searchInfo.value.documentNumber = undefined
+        customerListReq(1);
+      }
       const searchAction = () => {
         customerListReq(1);
       };
@@ -488,6 +496,7 @@
         deleteAction,
         drawerOnClose,
         drawerEdit,
+        resetAction,
         searchAction,
         submit,
         customerGroupList,

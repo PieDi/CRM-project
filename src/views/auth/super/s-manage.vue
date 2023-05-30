@@ -14,6 +14,7 @@
         <!-- <FormItem label="证件号码" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
         </FormItem> -->
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
     </div>
@@ -74,7 +75,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, reactive, createVNode, computed } from 'vue';
+  import { defineComponent, ref, onMounted, createVNode, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer, Select, message } from 'ant-design-vue';
   import { type PageListInfo } from '/@/views/type';
@@ -105,7 +106,7 @@
       message,
     },
     setup() {
-      const searchInfo = reactive({ userName: undefined });
+      const searchInfo = ref({ userName: undefined });
 
       const pageInfo = ref<PageListInfo<UserInfo>>({
         total: 0,
@@ -124,13 +125,17 @@
         showSizeChanger: false,
       }));
       const userPageReq = async (pageNum: number) => {
-        const res = await getUserPage({ userName: searchInfo.userName, pageNum });
+        const res = await getUserPage({ ...searchInfo.value, pageNum });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
           pageInfo.value.dataSource = res.data;
         }
       };
+      const resetAction = () => { 
+        searchInfo.value.userName = undefined
+        userPageReq(1);
+      }
       const searchAction = () => {
         userPageReq(1);
       };
@@ -235,6 +240,7 @@
         searchInfo,
         pageInfo,
         deleteStaff,
+        resetAction,
         searchAction,
         activateStaff,
         unUseStaff,

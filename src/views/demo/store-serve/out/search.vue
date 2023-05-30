@@ -21,6 +21,7 @@
         <!-- <FormItem label="客户标签" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear />
         </FormItem> -->
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
       <Button type="primary" style="margin-left: 10px" @click="addStoreOut">新增出库</Button>
@@ -244,6 +245,11 @@
           pageInfo.value.dataSource = res.data;
         }
       };
+      const resetAction = () => { 
+        searchInfo.value.productName = undefined
+        searchInfo.value.productNumber = undefined
+        pOutListReq(1);
+      }
       const searchAction = () => {
         pOutListReq(1);
       };
@@ -371,9 +377,7 @@
         drawerInfo.value.item.orderId = item.orderId;
         drawerInfo.value.item.productId = item.productId;
         drawerInfo.value.item.unit = item.unit;
-        drawerInfo.value.item.remark = item.remark;
-        console.log(3243545, drawerInfo.value.item.orderId)
-        
+        drawerInfo.value.item.remark = item.remark;        
       };
       const editStoreOut = () => {
         drawerInfo.value.type = 'edit';
@@ -402,6 +406,7 @@
       };
       return {
         columns,
+        resetAction,
         searchAction,
         pagination,
         pageInfo,

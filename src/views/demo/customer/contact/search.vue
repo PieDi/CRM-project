@@ -8,6 +8,7 @@
         <FormItem label="客户姓名" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
         </FormItem>
+        <Button type="primary" style="margin-left: 10px" >重置</Button>
         <Button type="primary" style="margin-left: 10px">搜索</Button></div
       >
     </div>

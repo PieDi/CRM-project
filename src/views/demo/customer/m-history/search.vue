@@ -26,6 +26,7 @@
             v-model:value="searchInfo.hospitalName"
           />
         </FormItem>
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
       <Button type="primary" style="margin-left: 10px" @click="addMHistory">新增客户病史</Button>
@@ -228,6 +229,12 @@
           pageInfo.value.dataSource = res.data;
         }
       };
+      const resetAction = () => { 
+        searchInfo.value.diseaseName = undefined
+        searchInfo.value.hospitalName = undefined
+        searchInfo.value.customerName = undefined
+        customerMHListReq(1);
+      }
       const searchAction = () => {
         customerMHListReq(1);
       };
@@ -455,6 +462,7 @@
         pagination,
         searchInfo,
         pageInfo,
+        resetAction,
         searchAction,
         addMHistory,
 

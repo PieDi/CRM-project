@@ -28,6 +28,7 @@
             v-model:value="searchInfo.orderNumber"
           />
         </FormItem>
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
       <Button type="primary" style="margin-left: 10px" @click="addOrder">新增订单</Button>
@@ -319,6 +320,11 @@
           pageInfo.value.dataSource = res.data;
         }
       };
+      const resetAction = () => { 
+        searchInfo.value.customerName = undefined
+        searchInfo.value.orderNumber = undefined
+        customerOrderListReq(1);
+      }
       const searchAction = () => {
         customerOrderListReq(1);
       };
@@ -448,6 +454,7 @@
         columns,
         pagination,
         searchInfo,
+        resetAction,
         searchAction,
         pageInfo,
         drawerInfo,

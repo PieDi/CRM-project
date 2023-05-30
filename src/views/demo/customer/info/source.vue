@@ -10,6 +10,7 @@
             :style="{ width: '150px' }"
           />
         </FormItem>
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
       <Button type="primary" style="margin-left: 10px" @click="addSource">新增来源</Button>
@@ -156,6 +157,10 @@
           pageInfo.value.dataSource = res.data;
         }
       };
+      const resetAction = () => { 
+        searchInfo.value.name = undefined
+        customerSourceReq(1);
+      }
       const searchAction = () => {
         customerSourceReq(1);
       };
@@ -246,6 +251,7 @@
         groupInfo,
         editGroup,
         deleteGroup,
+        resetAction,
         searchAction,
       };
     },
