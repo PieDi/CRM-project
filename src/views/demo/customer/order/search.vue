@@ -209,7 +209,6 @@
   } from '/@/api/demo/customer';
   import { ProductInfo } from '/@/api/demo/model/product';
   import { getProductList } from '/@/api/demo/product';
-  import { SelectValue } from 'ant-design-vue/lib/select';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
@@ -218,10 +217,7 @@
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   const TextArea = Input.TextArea;
-  const orderSourceMap: Record<string, string> = {
-    1: 'CRM',
-    2: '小程序',
-  };
+
   export default defineComponent({
     components: {
       PageWrapper,

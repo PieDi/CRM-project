@@ -15,11 +15,15 @@
   </PageWrapper>
 </template>
 <script lang="ts" setup>
+  import { onMounted } from 'vue';
   import { Calendar, Badge } from 'ant-design-vue';
   import { PageWrapper } from '/@/components/Page';
   import WorkbenchHeader from './components/WorkbenchHeader.vue';
+  import { getVisitCalendar } from '/@/api/demo/visit-return';
   import { Dayjs } from 'dayjs';
-
+  onMounted(async () => {
+    getVisitCalendar();
+  });
   const onPanelChange = () => {
     console.log(4354545);
   };

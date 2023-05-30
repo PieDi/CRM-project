@@ -1,5 +1,19 @@
 <template>
-  <PageWrapper title="资料分类">
+  <PageWrapper :title="route.query.name as string || '文件夹'">
+    <div :style="{ display: 'flex', justifyContent: 'space-between' }">
+      <div :style="{ display: 'flex' }"></div>
+      <Upload
+        :max-count="1"
+        :before-upload="
+          () => {
+            return false;
+          }
+        "
+        v-if="authShow"
+      >
+        <Button>资料上传</Button>
+      </Upload>
+    </div>
     <div class="file-content">
       <div v-for="(item, i) in fileList" :key="i" class="file-item">
         <div class="file-item-border">
@@ -14,16 +28,35 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, onMounted, toRaw, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Button } from 'ant-design-vue';
+  import { Button, Upload } from 'ant-design-vue';
+  import { useRoute } from 'vue-router';
+  import { getShareList } from '/@/api/demo/datum-share';
+  import { useUserStore } from '/@/store/modules/user';
+  import { RoleEnum } from '/@/enums/roleEnum';
 
   export default defineComponent({
     components: {
       PageWrapper,
       Button,
+      Upload,
     },
     setup() {
+      const userStore = useUserStore();
+      const roleList = toRaw(userStore.getRoleList) || [];
+      const authShow = computed(() => {
+        return roleList.some((role) => [RoleEnum.SUPER, RoleEnum.ADMIN].includes(role));
+      });
+      const route = useRoute();
+      const datumListReq = async (path?: string) => {
+        const res = await getShareList(path);
+        if (res) fileList.value = res;
+      };
+
+      onMounted(() => {
+        datumListReq((route.query.name as string) || '');
+      });
       const fileList = ref([
         { id: 1, title: '1', des: '1', files: [] },
         { id: 2, title: '2', des: '2', files: [] },
@@ -32,11 +65,14 @@
 
       const downloadFile = (item) => {};
       const deleteFile = (item) => {};
-
+      const beforeUpload = () => {};
       return {
+        route,
         fileList,
+        beforeUpload,
         downloadFile,
         deleteFile,
+        authShow,
       };
     },
   });
@@ -73,5 +109,10 @@
         }
       }
     }
+  }
+</style>
+<style lang="less">
+  .ant-upload-list {
+    display: none;
   }
 </style>

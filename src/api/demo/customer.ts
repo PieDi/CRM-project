@@ -108,6 +108,7 @@ enum Api {
   DeleteCustomerOrder = '/customer/order/delete', // 删除订单
   CustomerOrderDetail = '/customer/order/detail', // 订单详情
   CustomerOrderHandle = '/customer/order/handle', // 订单详情
+  CustomerOrderColumnar = '/customer/order/columnar', // 订单详情
 }
 
 /**
@@ -351,5 +352,11 @@ export const deleteCustomerOrder = (id: string | number) =>
 export const getCustomerOrderDetail = (id: string | number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerOrderDetail, params: { id } });
 
-export const handleCustomerOrder = (params: {id: number, status: number}) =>
+export const handleCustomerOrder = (params: { id: number; status: number }) =>
   defHttp.post<any>({ url: Api.CustomerOrderHandle, params });
+
+export const columnarCustomerOrder = (type: number) =>
+  defHttp.post<Array<{ date: string; count: number }>>({
+    url: Api.CustomerOrderColumnar,
+    params: { type },
+  });

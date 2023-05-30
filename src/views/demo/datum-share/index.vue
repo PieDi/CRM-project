@@ -2,16 +2,29 @@
   <PageWrapper title="资料分类">
     <div :style="{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }">
       <div :style="{ display: 'flex' }"></div>
-      <Button type="primary" style="margin-left: 10px" @click="addFile">新建文件夹</Button>
+      <Button v-if="authShow" type="primary" style="margin-left: 10px" @click="addFile">新建文件夹</Button>
     </div>
     <div class="file-content">
       <div v-for="(item, i) in fileList" :key="i" class="file-item">
-        <div class="file-item-border" @click="fileClick">
-          <p>{{ item.title }}</p>
-          <div class="btn"
-            ><Button type="link" @click="editFile">编辑</Button>
-            <Button type="link" @click="deleteFile">删除</Button></div
-          >
+        <div
+          class="file-item-border"
+          @click="
+            () => {
+              fileClick(item);
+            }
+          "
+        >
+          <p>{{ item }}</p>
+          <!-- <div class="btn"
+            ><Button type="link" @click="(e:MouseEvent)=>{
+              editFile(item)
+              e.stopPropagation()
+            }">编辑</Button>
+            <Button type="link" @click="(e:MouseEvent)=>{
+              deleteFile(item)
+              e.stopPropagation()
+            }">删除</Button></div
+          > -->
         </div>
       </div>
     </div>
@@ -23,25 +36,30 @@
       :visible="drawerInfo.visible"
     >
       <template #extra>
-        <Button type="primary">提交</Button>
+        <Button type="primary" @click="submit">提交</Button>
       </template>
 
       <Form :labelCol="{ span: 6 }">
         <FormItem label="文件夹名称">
-          <Input placeholder="请输入" allowClear :value="cInfo.name" />
+          <Input placeholder="请输入" allowClear v-model:value="drawerInfo.item.name" />
         </FormItem>
-        <FormItem label="描述">
+        <!-- <FormItem label="描述">
           <TextArea placeholder="请输入" allowClear :value="cInfo.name" />
-        </FormItem>
+        </FormItem> -->
       </Form>
     </Drawer>
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, onMounted, toRaw, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Drawer } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Drawer, message } from 'ant-design-vue';
+  import { createShare, getShareList } from '/@/api/demo/datum-share';
+  import { type DrawerItemType } from '/@/views/type';
   import { useRouter } from 'vue-router';
+  import { useUserStore } from '/@/store/modules/user';
+  import { RoleEnum } from '/@/enums/roleEnum';
+
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   export default defineComponent({
@@ -56,19 +74,26 @@
       TextArea,
     },
     setup() {
-      const router = useRouter();
-      const drawerInfo = ref({ visible: false, title: '' });
-      const cInfo = ref<{ name: string; id?: number | string; des: string }>({
-        name: '',
-        id: undefined,
-        des: '',
+      const userStore = useUserStore();
+      const roleList = toRaw(userStore.getRoleList) || [];
+      const authShow = computed(() => {
+        return roleList.some((role) => [RoleEnum.SUPER, RoleEnum.ADMIN].includes(role));
       });
-      const loading = ref(false);
-      const fileList = ref([
-        { id: 1, title: '1', des: '1', files: [] },
-        { id: 2, title: '2', des: '2', files: [] },
-        { id: 3, title: '3', des: '3', files: [] },
-      ]);
+
+      const router = useRouter();
+      const drawerInfo = ref<DrawerItemType<{ name: string | undefined }>>({
+        visible: false,
+        title: '',
+        item: { name: undefined },
+      });
+      const fileList = ref<Array<string>>([]);
+      const datumListReq = async (path?: string) => {
+        const res = await getShareList(path);
+        if (res) fileList.value = res;
+      };
+      onMounted(() => {
+        datumListReq('');
+      });
       const addFile = () => {
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新建文件夹';
@@ -77,24 +102,32 @@
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '编辑文件夹';
       };
+
       const deleteFile = (item) => {};
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
       };
-      const fileClick = () => {
-        router.push({ name: 'DatumShareFileGroup' });
+      const submit = async () => {
+        const res = await createShare({ ...drawerInfo.value.item });
+        if (res) {
+          message.success('新建文件夹成功');
+          datumListReq('');
+        }
+      };
+      const fileClick = (name: string) => {
+        router.push({ path: '/datum-share/file-group', query: { name } });
       };
       return {
-        loading,
         drawerInfo,
-        cInfo,
         fileList,
         addFile,
         editFile,
         fileClick,
         deleteFile,
         drawerOnClose,
+        submit,
+        authShow
       };
     },
   });

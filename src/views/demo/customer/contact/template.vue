@@ -40,7 +40,7 @@
 <script lang="ts">
   import { defineComponent, ref, toRaw, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Upload, Button, Modal, message } from 'ant-design-vue';
+  import { Upload, Button, Modal } from 'ant-design-vue';
   import { UploadOutlined } from '@ant-design/icons-vue';
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
