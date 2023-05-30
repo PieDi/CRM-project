@@ -49,6 +49,15 @@ const customer: AppRouteModule = {
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
+        {
+          path: 'cs-link',
+          name: 'SysAuthCSLink',
+          component: () => import('/@/views/auth/cs-link.vue'),
+          meta: {
+            title: '客户关联',
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
+          },
+        },
       ],
     },
     {
@@ -92,6 +101,24 @@ const customer: AppRouteModule = {
           meta: {
             title: t('routes.demo.customer.order.statistics'),
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+          },
+        },
+        {
+          path: 'micro-order',
+          name: 'SysAuthCSLinkMicroOrder',
+          component: () => import('/@/views/auth/micro-order.vue'),
+          meta: {
+            title: '小程序订单',
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
+          },
+        },
+        {
+          path: 'ns-order',
+          name: 'SysAuthNSOrder',
+          component: () => import('/@/views/auth/super/ns-order.vue'),
+          meta: {
+            title: '非标订单管理',
+            roles: [RoleEnum.SUPER],
           },
         },
       ],

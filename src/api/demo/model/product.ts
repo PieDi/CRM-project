@@ -1,8 +1,8 @@
 export interface ProductInfo {
   id: number  | undefined;
-  name: string  | undefined;
-  type: number  | undefined;
+  name: string | undefined;
   number: string  | undefined;
+  type: number  | undefined;
   introduction: string  | undefined;
 }
 

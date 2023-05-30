@@ -28,6 +28,7 @@
             v-model:value="searchInfo.orderNumber"
           />
         </FormItem>
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
       <Button type="primary" style="margin-left: 10px" @click="addOrder">新增订单</Button>
@@ -82,15 +83,12 @@
             :show-search="true"
             :disabled="drawerInfo.type !== 'add'"
             placeholder="请选择"
-            :filter-option="cFilterOption"
-            @change="cOnChange"
-            v-model:value="currentC.mobile"
+            v-model:value="drawerInfo.item.customerId"
           >
             <SelectOption
               v-for="item of cDataSource"
-              :key="`${item.name}-${item.mobile}`"
-              :value="item.mobile"
-              >{{ `${item.name}-${item.mobile}` }}</SelectOption
+              :value="item.id"
+              >{{ item.name }}</SelectOption
             >
           </Select>
         </FormItem>
@@ -272,29 +270,6 @@
       });
 
       const cDataSource = ref<Array<CustomerInfo>>([]);
-      //@ts-ignore
-      const currentC = ref<CustomerInfo>({
-        id: undefined,
-        birth: undefined,
-        documentNumber: undefined,
-        documentType: undefined,
-        mobile: undefined,
-        name: undefined,
-        sex: undefined,
-      });
-      const cOnChange = (value: SelectValue, option: any) => {
-        //@ts-ignore
-        currentC.value = cDataSource.value.find(
-          (item: CustomerInfo) => item.mobile === (option.value as string),
-        );
-      };
-      const cFilterOption = (input: string, option: any) => {
-        return (
-          option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
-          option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        );
-      };
-
       const searchInfo = ref({
         customerName: undefined,
         orderNumber: undefined,
@@ -320,12 +295,6 @@
         const res = await getCustomerList();
         if (res) {
           cDataSource.value = res;
-          if (drawerInfo.value.type !== 'add') {
-            //@ts-ignore
-            currentC.value = cDataSource.value.find(
-              (item: CustomerInfo) => item.id === drawerInfo.value?.item?.id,
-            );
-          }
         }
       };
       const pDataSource = ref<Array<ProductInfo>>([]);
@@ -351,6 +320,11 @@
           pageInfo.value.dataSource = res.data;
         }
       };
+      const resetAction = () => { 
+        searchInfo.value.customerName = undefined
+        searchInfo.value.orderNumber = undefined
+        customerOrderListReq(1);
+      }
       const searchAction = () => {
         customerOrderListReq(1);
       };
@@ -414,7 +388,7 @@
       };
       const scanOrder = (item: CustomerOrderInfo) => {
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '查看订单信息';
+        drawerInfo.value.title = '订单信息';
         drawerInfo.value.type = 'scan';
 
         drawerInfo.value.item.id = item.id;
@@ -422,6 +396,7 @@
         drawerInfo.value.item.orderDate = dayjs(item.orderDate);
         drawerInfo.value.item.orderName = item.orderName;
         drawerInfo.value.item.productId = item.productId;
+        drawerInfo.value.item.customerId = item.customerId;
         drawerInfo.value.item.remark = item.remark;
         drawerInfo.value.item.responsiblePerson = item.responsiblePerson;
 
@@ -454,6 +429,7 @@
         drawerInfo.value.item.orderDate = undefined;
         drawerInfo.value.item.orderName = undefined;
         drawerInfo.value.item.productId = undefined;
+        drawerInfo.value.item.customerId = undefined;
         drawerInfo.value.item.remark = undefined;
         drawerInfo.value.item.responsiblePerson = undefined;
       };
@@ -462,10 +438,8 @@
         drawerInfo.value.type = 'edit';
       };
       const submit = async () => {
-        console.log(6465656, drawerInfo.value.item, currentC.value);
         const res = await saveCustomerOrder({
           ...drawerInfo.value.item,
-          customerId: currentC.value.id,
           orderDate: drawerInfo.value.item.orderDate
             ? drawerInfo.value.item.orderDate.valueOf()
             : undefined,
@@ -473,12 +447,14 @@
         if (res) {
           message.success(drawerInfo.value.type === 'add' ? '新增订单成功' : '修改订单成功');
           customerOrderListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+          drawerOnClose()
         }
       };
       return {
         columns,
         pagination,
         searchInfo,
+        resetAction,
         searchAction,
         pageInfo,
         drawerInfo,
@@ -490,10 +466,7 @@
         drawerEdit,
         submit,
         // 客户相关
-        currentC,
         cDataSource,
-        cOnChange,
-        cFilterOption,
         // 产品
         // currentP,
         pDataSource,

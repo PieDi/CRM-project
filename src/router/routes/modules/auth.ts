@@ -1,7 +1,6 @@
 import type { AppRouteModule } from '/@/router/types';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { LAYOUT } from '/@/router/constant';
-import { t } from '/@/hooks/web/useI18n';
 
 const dashboard: AppRouteModule = {
   path: '/sys-auth',
@@ -15,24 +14,6 @@ const dashboard: AppRouteModule = {
   },
   children: [
     {
-      path: 'cs-link',
-      name: 'SysAuthCSLink',
-      component: () => import('/@/views/auth/cs-link.vue'),
-      meta: {
-        title: '客户关联',
-        roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
-      },
-    },
-    {
-      path: 'micro-order',
-      name: 'SysAuthCSLinkMicroOrder',
-      component: () => import('/@/views/auth/micro-order.vue'),
-      meta: {
-        title: '小程序订单',
-        roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
-      },
-    },
-    {
       path: 'staff-manage',
       name: 'SysAuthStaffManage',
       component: () => import('/@/views/auth/super/s-manage.vue'),
@@ -42,11 +23,11 @@ const dashboard: AppRouteModule = {
       },
     },
     {
-      path: 'ns-order',
-      name: 'SysAuthNSOrder',
-      component: () => import('/@/views/auth/super/ns-order.vue'),
+      path: 'product-manage',
+      name: 'SysAuthProductManage',
+      component: () => import('/@/views/auth/super/product.vue'),
       meta: {
-        title: '非标订单管理',
+        title: '产品信息管理',
         roles: [RoleEnum.SUPER],
       },
     },

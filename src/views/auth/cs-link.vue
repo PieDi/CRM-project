@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="客户信息管理">
+  <PageWrapper title="客户关联">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客户姓名">
@@ -19,7 +19,7 @@
             v-model:value="searchInfo.documentNumber"
           />
         </FormItem>
-
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
       <!-- <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增客户</Button> -->
@@ -153,10 +153,14 @@
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
-          // pageInfo.value.dataSource = res.data;
-          pageInfo.value.dataSource = [{}];
+          pageInfo.value.dataSource = res.data;
         }
       };
+      const resetAction = () => { 
+        searchInfo.value.name = undefined
+        searchInfo.value.documentNumber = undefined
+        customerListReq(1);
+      }
       const searchAction = () => {
         customerListReq(1);
       };
@@ -231,6 +235,7 @@
         if (res) {
           message.success('委派员工成功');
           customerListReq(pageInfo.value.current);
+          drawerOnClose()
         }
       };
 
@@ -242,6 +247,7 @@
         searchInfo,
         appointStaff,
         drawerOnClose,
+        resetAction,
         searchAction,
         submit,
         staffSourceData,

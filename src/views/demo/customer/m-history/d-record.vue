@@ -53,14 +53,27 @@
                     return false;
                   }
                 "
-                @remove="
-                  (file:any) => {
-                    handleRemove(file, i);
-                  }
-                "
                 :disabled="drawerInfo.type === 'scan'"
               >
                 <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
+                <template #itemRender="{ file, actions }">
+                  <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
+                  <Space>
+                    <!-- <Button type="link" @click="()=>{
+                handleDownload(file)
+              }">下载</Button> -->
+                    <Button
+                      type="link"
+                      :disabled="drawerInfo.type === 'scan'"
+                      @click="
+                        () => {
+                          handleRemove(file, i);
+                        }
+                      "
+                      >删除</Button
+                    >
+                  </Space>
+                </template>
               </Upload>
               <Button
                 v-if="drawerInfo.type !== 'scan'"
@@ -95,7 +108,17 @@
 </template>
 <script lang="ts">
   import { defineComponent, ref, PropType, onMounted } from 'vue';
-  import { Table, Form, Input, Button, Drawer, DatePicker, Upload, message } from 'ant-design-vue';
+  import {
+    Table,
+    Form,
+    Input,
+    Button,
+    Drawer,
+    DatePicker,
+    Upload,
+    Space,
+    message,
+  } from 'ant-design-vue';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import dayjs, { Dayjs } from 'dayjs';
   import { DrawerItemType } from '/@/views/type';
@@ -114,6 +137,7 @@
       DatePicker,
       DeleteOutlined,
       Upload,
+      Space,
     },
     props: {
       // 用药记录是用 customerId
@@ -136,15 +160,26 @@
           const res = await getCustomerDList(props.drawerInfo.item);
           if (res) {
             const list: Array<any> = [];
-            res.forEach((item) => {
+            res.forEach((item, i) => {
               list.push({
                 id: item?.id,
                 medicineName: item?.medicineName,
                 useDose: item?.useDose,
                 useDate: item?.useDate ? dayjs(item?.useDate, 'YYYY-MM-DD') : undefined,
               });
+              const t: any[] = [];
+              item.files?.forEach((file, j) => { 
+                t.push({
+                  uid: j,
+                  name: file.fileName,
+                  status: 'done',
+                  url: file.path,
+                });
+              })
+              fileListMap[i] = t
             });
             listInfo.value = list;
+
           }
         }
       };
@@ -199,7 +234,7 @@
         delete fileListMap.value[i];
       };
       // 文件上传
-      const fileListMap = ref<{ [number: string]: UploadProps['fileList'] }>({});
+      const fileListMap = ref<{ [number: string]: any }>({});
       const uploadingMap = ref<{ [number: string]: boolean }>({});
 
       const handleRemove = (file: File, i: number) => {

@@ -208,7 +208,7 @@ export const updateCustomerMH = (params?: CustomerMHSaveParams) =>
 export const deleteCustomerMH = (id: string | number) =>
   defHttp.post<any>({ url: Api.DeleteCustomerMH, params: { id } });
 
-export const getCustomerMHDetail = (id: string | number) =>
+export const getCustomerMHDetail = (id: number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerMHDetail, params: { id } });
 
 export const fileMHUpload = (params: any) =>
@@ -351,5 +351,5 @@ export const deleteCustomerOrder = (id: string | number) =>
 export const getCustomerOrderDetail = (id: string | number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerOrderDetail, params: { id } });
 
-export const handleCustomerOrder = (params?: CustomerMHSaveParams) =>
+export const handleCustomerOrder = (params: {id: number, status: number}) =>
   defHttp.post<any>({ url: Api.CustomerOrderHandle, params });

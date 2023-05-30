@@ -26,6 +26,7 @@
             v-model:value="searchInfo.hospitalName"
           />
         </FormItem>
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
       <Button type="primary" style="margin-left: 10px" @click="addMHistory">新增客户病史</Button>
@@ -228,6 +229,12 @@
           pageInfo.value.dataSource = res.data;
         }
       };
+      const resetAction = () => { 
+        searchInfo.value.diseaseName = undefined
+        searchInfo.value.hospitalName = undefined
+        searchInfo.value.customerName = undefined
+        customerMHListReq(1);
+      }
       const searchAction = () => {
         customerMHListReq(1);
       };
@@ -241,21 +248,6 @@
           width: 70,
           dataIndex: 'customerName',
         },
-        // {
-        //   title: '性别',
-        //   width: 70,
-        //   dataIndex: 'no',
-        // },
-        // {
-        //   title: '证件类型',
-        //   width: 90,
-        //   dataIndex: 'type',
-        // },
-        // {
-        //   title: '证件号码',
-        //   width: 150,
-        //   dataIndex: 'endTime',
-        // },
         {
           title: '会诊时间',
           width: 180,
@@ -304,12 +296,23 @@
       ];
 
       // 病史记录
-      const mRecordDrawerInfo = ref<DrawerItemType<any>>({ visible: false, title: '', item: {} });
+      const mRecordDrawerInfo = ref<DrawerItemType<any>>({
+        visible: false, title: '', item: {
+          departmentName:  undefined,
+        diseaseName:undefined,
+        hospitalName: undefined,
+          visitDate: undefined,
+          customerId: undefined
+      } });
       const mRecordClose = () => {
         mRecordDrawerInfo.value.title = '';
         mRecordDrawerInfo.value.visible = false;
-        mRecordDrawerInfo.value.item = undefined;
         mRecordDrawerInfo.value.type = undefined;
+        mRecordDrawerInfo.value.item.departmentName = undefined
+        mRecordDrawerInfo.value.item.diseaseName = undefined
+        mRecordDrawerInfo.value.item.hospitalName = undefined
+        mRecordDrawerInfo.value.item.visitDate = undefined
+        mRecordDrawerInfo.value.item.customerId = undefined
       };
       const mRecordEdit = (item: any) => {
         mRecordDrawerInfo.value.title = '编辑客户病史';
@@ -318,8 +321,14 @@
       const scanMRecord = (item: CustomerMHInfo) => {
         mRecordDrawerInfo.value.title = '查看客户病史';
         mRecordDrawerInfo.value.visible = true;
-        mRecordDrawerInfo.value.item = item;
         mRecordDrawerInfo.value.type = 'scan';
+
+        mRecordDrawerInfo.value.item.departmentName = item.departmentName
+        mRecordDrawerInfo.value.item.diseaseName = item.diseaseName
+        mRecordDrawerInfo.value.item.hospitalName = item.hospitalName
+        mRecordDrawerInfo.value.item.visitDate = item.visitDate
+        mRecordDrawerInfo.value.item.customerId = item.customerId
+        mRecordDrawerInfo.value.item.id = item.id
       };
       const deleteMRecord = (item: CustomerMHInfo) => {
         confirm({
@@ -337,6 +346,7 @@
       };
       const mRecordSubmit = (reload: boolean) => {
         customerMHListReq(reload ? 1 : pageInfo.value.current);
+        mRecordClose()
       };
 
       // 用药记录
@@ -354,8 +364,8 @@
       const dRecordClick = (item: CustomerMHInfo) => {
         dRecordDrawerInfo.value.title = '用药记录';
         dRecordDrawerInfo.value.visible = true;
-        dRecordDrawerInfo.value.item = item.id;
         dRecordDrawerInfo.value.type = 'scan';
+        dRecordDrawerInfo.value.item = item.id;
       };
       const dRecordEdit = () => {
         dRecordDrawerInfo.value.title = '编辑用药记录';
@@ -363,6 +373,7 @@
       };
       const dRecordSubmit = () => {
         customerMHListReq(pageInfo.value.current);
+        dRecordClose()
       };
 
       // 检验记录
@@ -389,6 +400,7 @@
       };
       const eRecordSubmit = () => {
         customerMHListReq(pageInfo.value.current);
+        eRecordClose()
       };
 
       // 影像记录
@@ -415,6 +427,7 @@
       };
       const iRecordSubmit = () => {
         customerMHListReq(pageInfo.value.current);
+        iRecordClose()
       };
 
       // 就诊记录
@@ -441,6 +454,7 @@
       };
       const cRecordSubmit = () => {
         customerMHListReq(pageInfo.value.current);
+        cRecordClose()
       };
 
       return {
@@ -448,6 +462,7 @@
         pagination,
         searchInfo,
         pageInfo,
+        resetAction,
         searchAction,
         addMHistory,
 

@@ -12,14 +12,9 @@ import { PageWrapper } from '/@/components/Page';
     components: {
       PageWrapper,
       OrderContent,
-     
     },
     setup() {
-     
-
-      return {
-        
-      };
+      return {};
     },
   });
 </script>

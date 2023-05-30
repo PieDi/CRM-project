@@ -27,6 +27,7 @@
           v-model:value="searchInfo.orderNumber"
         />
       </FormItem>
+      <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
       <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
     >
   </div>
@@ -41,6 +42,23 @@
   >
     <template #bodyCell="{ column, _text, record }">
       <template v-if="column.dataIndex === 'operation'">
+        <Popover trigger="hover" v-if="handleShow && record.next && record.next.length">
+          <template #content>
+            <div :style="{ display: 'flex', 'flex-direction': 'column' }"
+              ><Button
+                type="link"
+                v-for="h of record.next"
+                @click="
+                  () => {
+                    handleAction({ id: record.id, status: h.status, opinion: h.operate });
+                  }
+                "
+                >{{ h.operate }}</Button
+              ></div
+            >
+          </template>
+          <Button type="link">操作</Button>
+        </Popover>
         <Button
           type="link"
           @click="
@@ -50,16 +68,7 @@
           "
           >查看</Button
         >
-        <Button
-        v-if="productType===2"
-          type="link"
-          @click="
-            () => {
-              auditOrder(record);
-            }
-          "
-          >审核</Button
-        >
+
         <!-- <Button
             type="link"
             @click="
@@ -79,25 +88,15 @@
     @close="drawerOnClose"
     :visible="drawerInfo.visible"
   >
-    <!-- <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary">提交</Button>
-      </template> -->
-
     <Form :labelCol="{ span: 6 }">
       <FormItem label="客户姓名">
         <Select
           :show-search="true"
           :disabled="drawerInfo.type !== 'add'"
           placeholder="请选择"
-          v-model:value="currentC.mobile"
+          v-model:value="drawerInfo.item.customerId"
         >
-          <SelectOption
-            v-for="item of cDataSource"
-            :key="`${item.id}-${item.name}`"
-            :value="item.mobile"
-            >{{ `${item.name}-${item.mobile}` }}</SelectOption
-          >
+          <SelectOption v-for="item of cDataSource" :value="item.id">{{ item.name }}</SelectOption>
         </Select>
       </FormItem>
 
@@ -191,7 +190,7 @@
   </Drawer>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, computed } from 'vue';
+  import { defineComponent, ref, onMounted, computed, toRaw } from 'vue';
   import {
     Table,
     Form,
@@ -201,14 +200,18 @@
     Select,
     InputNumber,
     DatePicker,
+    Popover,
+    message,
   } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { CustomerOrderInfo, CustomerInfo } from '/@/api/demo/model/customer';
-  import { getCustomerList, getCustomerOrderPage } from '/@/api/demo/customer';
+  import { getCustomerList, getCustomerOrderPage, handleCustomerOrder } from '/@/api/demo/customer';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { ProductInfo } from '/@/api/demo/model/product';
   import { getProductList } from '/@/api/demo/product';
   import dayjs, { Dayjs } from 'dayjs';
+  import { useUserStore } from '/@/store/modules/user';
+  import { RoleEnum } from '/@/enums/roleEnum';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -226,12 +229,20 @@
       InputNumber,
       DatePicker,
       TextArea,
+      Popover,
     },
     props: {
       source: Number,
       productType: Number,
     },
     setup(props) {
+      const userStore = useUserStore();
+      const roleList = toRaw(userStore.getRoleList) || [];
+
+      const handleShow = computed(() => {
+        return roleList.some((role) => [RoleEnum.SUPER, RoleEnum.ADMIN].includes(role));
+      });
+
       const drawerInfo = ref<
         DrawerItemType<{
           id: number | undefined;
@@ -297,8 +308,17 @@
           pageInfo.value.dataSource = res.data;
         }
       };
-      const searchAction = () => {customerOrderListReq(1);};
-      onMounted(() => {customerOrderListReq(1);});
+      const resetAction = () => {
+        searchInfo.value.customerName = undefined;
+        searchInfo.value.orderNumber = undefined;
+        customerOrderListReq(1);
+      };
+      const searchAction = () => {
+        customerOrderListReq(1);
+      };
+      onMounted(() => {
+        customerOrderListReq(1);
+      });
 
       const columns: ColumnsType<CustomerOrderInfo> = [
         {
@@ -349,26 +369,10 @@
       ];
 
       const cDataSource = ref<Array<CustomerInfo>>([]);
-      //@ts-ignore
-      const currentC = ref<CustomerInfo>({
-        id: undefined,
-        birth: undefined,
-        documentNumber: undefined,
-        documentType: undefined,
-        mobile: undefined,
-        name: undefined,
-        sex: undefined,
-      });
       const customerReq = async () => {
         const res = await getCustomerList();
         if (res) {
           cDataSource.value = res;
-          if (drawerInfo.value.type !== 'add') {
-            //@ts-ignore
-            currentC.value = cDataSource.value.find(
-              (item: CustomerInfo) => item.id === drawerInfo.value?.item?.id,
-            );
-          }
         }
       };
 
@@ -382,10 +386,11 @@
 
       const scanOrder = (item: CustomerOrderInfo) => {
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '查看订单信息';
+        drawerInfo.value.title = '订单信息';
         drawerInfo.value.type = 'scan';
 
         drawerInfo.value.item.id = item.id;
+        drawerInfo.value.item.customerId = item.customerId;
         drawerInfo.value.item.orderAmount = item.orderAmount;
         drawerInfo.value.item.orderDate = dayjs(item.orderDate);
         drawerInfo.value.item.orderName = item.orderName;
@@ -402,6 +407,7 @@
         drawerInfo.value.type = undefined;
 
         drawerInfo.value.item.id = undefined;
+        drawerInfo.value.item.customerId = undefined;
         drawerInfo.value.item.orderAmount = undefined;
         drawerInfo.value.item.orderDate = undefined;
         drawerInfo.value.item.orderName = undefined;
@@ -409,25 +415,31 @@
         drawerInfo.value.item.remark = undefined;
         drawerInfo.value.item.responsiblePerson = undefined;
       };
-      
-      const auditOrder = (item: CustomerOrderInfo) => { }
+
+      const handleAction = async (p: any) => {
+        const res = await handleCustomerOrder(p);
+        if (res) {
+          message.success('操作成功');
+          customerOrderListReq(pageInfo.value.current);
+        }
+      };
 
       return {
         columns,
         pagination,
         searchInfo,
+        resetAction,
         searchAction,
         pageInfo,
         drawerInfo,
         scanOrder,
-        auditOrder,
+
         drawerOnClose,
-        currentC,
         cDataSource,
         pDataSource,
 
-        source: props.source,
-        productType: props.productType
+        handleShow,
+        handleAction,
       };
     },
   });
