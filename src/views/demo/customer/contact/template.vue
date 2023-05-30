@@ -1,98 +1,148 @@
 <template>
   <PageWrapper title="合同模板">
-    <div :style="{ display: 'flex', justifyContent: 'space-between' }">
+    <div :style="{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }">
       <div :style="{ display: 'flex' }"></div>
-      <Upload {...props} v-if="uploadAuth">
-        <Button>模板上传</Button>
-      </Upload>
+      <Button v-if="authShow" type="primary" style="margin-left: 10px" @click="addFile">新建文件夹</Button>
     </div>
-    <div class="contact-content">
-      <div v-for="(item, i) in contactList" :key="i" class="contact-item">
-        <div class="contact-item-border">
-          <p>{{ item.title }}</p>
-          <div class="btn"
-            ><Button type="link" @click="editContact">下载</Button>
-            <Button
-              type="link"
-              @click="
-                () => {
-                  previewContact(item);
-                }
-              "
-              >预览</Button
-            >
-            <Button type="link" @click="deleteContact">删除</Button>
-          </div>
+    <div class="file-content">
+      <div v-for="(item, i) in fileList" :key="i" class="file-item">
+        <div
+          class="file-item-border"
+          @click="
+            () => {
+              fileClick(item);
+            }
+          "
+        >
+          <p>{{ item }}</p>
+          <!-- <div class="btn"
+            ><Button type="link" @click="(e:MouseEvent)=>{
+              editFile(item)
+              e.stopPropagation()
+            }">编辑</Button>
+            <Button type="link" @click="(e:MouseEvent)=>{
+              deleteFile(item)
+              e.stopPropagation()
+            }">删除</Button></div
+          > -->
         </div>
       </div>
     </div>
-    <Modal
-      v-model:visible="pdfModal"
-      title="预览"
-      width="100%"
-      wrap-class-name="pdf-modal"
-      :footer="null"
+    <Drawer
+      :destroy-on-close="true"
+      :title="drawerInfo.title"
+      placement="right"
+      @close="drawerOnClose"
+      :visible="drawerInfo.visible"
     >
-      <div id="mypdf"></div>
-    </Modal>
+      <template #extra>
+        <Button type="primary" @click="submit">提交</Button>
+      </template>
+
+      <Form :labelCol="{ span: 6 }">
+        <FormItem label="文件夹名称">
+          <Input placeholder="请输入" allowClear v-model:value="drawerInfo.item.name" />
+        </FormItem>
+        <!-- <FormItem label="描述">
+          <TextArea placeholder="请输入" allowClear :value="cInfo.name" />
+        </FormItem> -->
+      </Form>
+    </Drawer>
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, toRaw, computed } from 'vue';
+  import { defineComponent, ref, onMounted, toRaw, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Upload, Button, Modal } from 'ant-design-vue';
-  import { UploadOutlined } from '@ant-design/icons-vue';
+  import { Table, Form, Input, Button, Drawer, message } from 'ant-design-vue';
+  import { createTemplate, getTemplateList } from '/@/api/demo/contact';
+  import { type DrawerItemType } from '/@/views/type';
+  import { useRouter } from 'vue-router';
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
-  import PDFObject from './pdfobject';
 
+  const FormItem = Form.Item;
+  const TextArea = Input.TextArea;
   export default defineComponent({
     components: {
       PageWrapper,
-      UploadOutlined,
-      Upload,
+      Table,
+      Form,
+      FormItem,
+      Input,
       Button,
-      Modal,
+      Drawer,
+      TextArea,
     },
     setup() {
       const userStore = useUserStore();
       const roleList = toRaw(userStore.getRoleList) || [];
-      const uploadAuth = computed(() => {
+      const authShow = computed(() => {
         return roleList.some((role) => [RoleEnum.SUPER, RoleEnum.ADMIN].includes(role));
       });
-      const contactList = ref([{ title: '1' }, { title: '2' }, { title: '3' }, { title: '4' }]);
-      const editContact = () => {};
-      const deleteContact = () => {};
-      const pdfModal = ref(false);
-      const previewContact = (item) => {
-        pdfModal.value = true;
-        setTimeout(() => {
-          PDFObject.embed('https://soft.xiaoz.org/office/hee%20hee.pdf', '#mypdf');
-        }, 200);
+
+      const router = useRouter();
+      const drawerInfo = ref<DrawerItemType<{ name: string | undefined }>>({
+        visible: false,
+        title: '',
+        item: { name: undefined },
+      });
+      const fileList = ref<Array<string>>([]);
+      const tListReq = async (path?: string) => {
+        const res = await getTemplateList(path);
+        if (res) fileList.value = res;
+      };
+      onMounted(() => {
+        tListReq('');
+      });
+      const addFile = () => {
+        drawerInfo.value.visible = true;
+        drawerInfo.value.title = '新建文件夹';
+      };
+      const editFile = (item) => {
+        drawerInfo.value.visible = true;
+        drawerInfo.value.title = '编辑文件夹';
       };
 
+      const deleteFile = (item) => {};
+      const drawerOnClose = () => {
+        drawerInfo.value.visible = false;
+        drawerInfo.value.title = '';
+      };
+      const submit = async () => {
+        const res = await createTemplate({ ...drawerInfo.value.item });
+        if (res) {
+          message.success('新建文件夹成功');
+          tListReq('');
+        }
+      };
+      const fileClick = (name: string) => {
+        router.push({ path: '/customer/contact/t-group', query: { name } });
+      };
       return {
-        contactList,
-        editContact,
-        deleteContact,
-        previewContact,
-        uploadAuth,
-        pdfModal,
+        drawerInfo,
+        fileList,
+        addFile,
+        editFile,
+        fileClick,
+        deleteFile,
+        drawerOnClose,
+        submit,
+        authShow
       };
     },
   });
 </script>
 <style lang="less" scoped>
-  .contact-content {
+  .file-content {
     display: flex;
     width: auto;
     min-height: calc(100vh - 226px);
     background: #fff;
-    .contact-item {
+    .file-item {
       width: 200px;
       height: 200px;
       padding: 10px;
-      .contact-item-border {
+      .file-item-border {
         width: auto;
         height: 100%;
         border: 1px solid #eee;
@@ -105,39 +155,14 @@
         }
         .btn {
           display: none;
-          padding: 0 15px;
-          button {
-            width: 40px;
-          }
+          padding: 0 29px;
         }
       }
-      .contact-item-border:hover {
+      .file-item-border:hover {
         .btn {
           display: block;
         }
       }
     }
-  }
-</style>
-<style lang="less">
-  .pdf-modal {
-    .ant-modal {
-      max-width: 100%;
-      top: 0;
-      padding-bottom: 0;
-      margin: 0;
-    }
-    .ant-modal-content {
-      display: flex;
-      flex-direction: column;
-      height: calc(100vh);
-    }
-    .ant-modal-body {
-      flex: 1;
-    }
-  }
-  .pdfobject-container {
-    height: 100%;
-    border: 1rem solid rgba(0, 0, 0, 0.1);
   }
 </style>

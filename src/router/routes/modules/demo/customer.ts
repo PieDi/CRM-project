@@ -148,6 +148,16 @@ const customer: AppRouteModule = {
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
+        {
+          path: 't-group',
+          name: 'ContactTGroup',
+          component: () => import('/@/views/demo/customer/contact/t-group.vue'),
+          meta: {
+            title: '合同模板',
+            hideMenu: true,
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+          },
+        },
       ],
     },
     {

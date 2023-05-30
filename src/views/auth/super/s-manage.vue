@@ -60,6 +60,16 @@
             >授权</Button
           >
           <Button
+            v-else
+            type="link"
+            @click="
+              () => {
+                demotionStaff(record);
+              }
+            "
+            >降权</Button
+          >
+          <Button
             type="link"
             danger
             @click="
@@ -79,7 +89,7 @@
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer, Select, message } from 'ant-design-vue';
   import { type PageListInfo } from '/@/views/type';
-  import { getUserPage, deleteUser, authUser, promotionUser } from '/@/api/sys/user';
+  import { getUserPage, deleteUser, authUser, promotionUser,demotionUser } from '/@/api/sys/user';
   import { UserInfo } from '/#/store';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
@@ -233,6 +243,22 @@
           }),
         );
       };
+      const demotionStaff = (item: UserInfo) => {
+        confirm(
+          withConfirm({
+            icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+            content: '确定降权该员工',
+            async onOk() {
+              const res = await demotionUser(item.userId as number);
+              if (res) {
+                message.success('降权员工成功');
+                userPageReq(pageInfo.value.current);
+              }
+            },
+          }),
+        );
+      };
+      
 
       return {
         columns,
@@ -245,6 +271,7 @@
         activateStaff,
         unUseStaff,
         promotionStaff,
+        demotionStaff
       };
     },
   });
