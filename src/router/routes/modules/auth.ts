@@ -14,24 +14,8 @@ const dashboard: AppRouteModule = {
     roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
   },
   children: [
-    {
-      path: 'cs-link',
-      name: 'SysAuthCSLink',
-      component: () => import('/@/views/auth/cs-link.vue'),
-      meta: {
-        title: '客户关联',
-        roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
-      },
-    },
-    {
-      path: 'micro-order',
-      name: 'SysAuthCSLinkMicroOrder',
-      component: () => import('/@/views/auth/micro-order.vue'),
-      meta: {
-        title: '小程序订单',
-        roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
-      },
-    },
+    
+  
     {
       path: 'staff-manage',
       name: 'SysAuthStaffManage',
@@ -41,15 +25,7 @@ const dashboard: AppRouteModule = {
         roles: [RoleEnum.SUPER],
       },
     },
-    {
-      path: 'ns-order',
-      name: 'SysAuthNSOrder',
-      component: () => import('/@/views/auth/super/ns-order.vue'),
-      meta: {
-        title: '非标订单管理',
-        roles: [RoleEnum.SUPER],
-      },
-    },
+    
   ],
 };
 

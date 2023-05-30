@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="客服查询">
+  <PageWrapper title="客服信息管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客服名称">

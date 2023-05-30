@@ -79,10 +79,6 @@
     @close="drawerOnClose"
     :visible="drawerInfo.visible"
   >
-    <!-- <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary">提交</Button>
-      </template> -->
 
     <Form :labelCol="{ span: 6 }">
       <FormItem label="客户姓名">
@@ -90,13 +86,12 @@
           :show-search="true"
           :disabled="drawerInfo.type !== 'add'"
           placeholder="请选择"
-          v-model:value="currentC.mobile"
+          v-model:value="drawerInfo.item.customerId"
         >
           <SelectOption
             v-for="item of cDataSource"
-            :key="`${item.id}-${item.name}`"
-            :value="item.mobile"
-            >{{ `${item.name}-${item.mobile}` }}</SelectOption
+            :value="item.id"
+            >{{ item.name }}</SelectOption
           >
         </Select>
       </FormItem>
@@ -349,26 +344,10 @@
       ];
 
       const cDataSource = ref<Array<CustomerInfo>>([]);
-      //@ts-ignore
-      const currentC = ref<CustomerInfo>({
-        id: undefined,
-        birth: undefined,
-        documentNumber: undefined,
-        documentType: undefined,
-        mobile: undefined,
-        name: undefined,
-        sex: undefined,
-      });
       const customerReq = async () => {
         const res = await getCustomerList();
         if (res) {
           cDataSource.value = res;
-          if (drawerInfo.value.type !== 'add') {
-            //@ts-ignore
-            currentC.value = cDataSource.value.find(
-              (item: CustomerInfo) => item.id === drawerInfo.value?.item?.id,
-            );
-          }
         }
       };
 
@@ -382,10 +361,11 @@
 
       const scanOrder = (item: CustomerOrderInfo) => {
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '查看订单信息';
+        drawerInfo.value.title = '订单信息';
         drawerInfo.value.type = 'scan';
 
         drawerInfo.value.item.id = item.id;
+        drawerInfo.value.item.customerId = item.customerId;
         drawerInfo.value.item.orderAmount = item.orderAmount;
         drawerInfo.value.item.orderDate = dayjs(item.orderDate);
         drawerInfo.value.item.orderName = item.orderName;
@@ -402,6 +382,7 @@
         drawerInfo.value.type = undefined;
 
         drawerInfo.value.item.id = undefined;
+        drawerInfo.value.item.customerId= undefined
         drawerInfo.value.item.orderAmount = undefined;
         drawerInfo.value.item.orderDate = undefined;
         drawerInfo.value.item.orderName = undefined;
@@ -422,7 +403,6 @@
         scanOrder,
         auditOrder,
         drawerOnClose,
-        currentC,
         cDataSource,
         pDataSource,
 

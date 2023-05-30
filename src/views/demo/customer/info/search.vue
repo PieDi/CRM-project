@@ -472,6 +472,7 @@
         if (res) {
           message.success(drawerInfo.value.type === 'add' ? '添加客户成功' : '修改用户信息成功');
           customerListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+          drawerOnClose()
         }
       };
 

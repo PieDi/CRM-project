@@ -55,14 +55,27 @@
                     return false;
                   }
                 "
-                @remove="
-                  (file:any) => {
-                    handleRemove(file, i);
-                  }
-                "
                 :disabled="drawerInfo.type === 'scan'"
               >
                 <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
+                <template #itemRender="{ file, actions }">
+                  <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
+                  <Space>
+                    <!-- <Button type="link" @click="()=>{
+                handleDownload(file)
+              }">下载</Button> -->
+                    <Button
+                      type="link"
+                      :disabled="drawerInfo.type === 'scan'"
+                      @click="
+                        () => {
+                          handleRemove(file, i);
+                        }
+                      "
+                      >删除</Button
+                    >
+                  </Space>
+                </template>
               </Upload>
               <Button
                 v-if="drawerInfo.type !== 'scan'"
@@ -97,7 +110,7 @@
 </template>
 <script lang="ts">
   import { defineComponent, ref, PropType, onMounted } from 'vue';
-  import { Table, Form, Input, Button, Drawer, DatePicker, Upload, message } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Drawer, DatePicker, Upload, Space,message } from 'ant-design-vue';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
@@ -116,6 +129,7 @@
       DatePicker,
       DeleteOutlined,
       Upload,
+      Space
     },
     props: {
       drawerInfo: {

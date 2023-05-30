@@ -26,6 +26,7 @@ export interface CustomerInfo {
   sex: number | undefined;
   sourceId: number | undefined;
   tag: string | undefined;
+  files: Array<{ fileName: string; path: string }> | undefined;
 }
 
 export interface CustomerGroupInfo {
@@ -53,7 +54,7 @@ export interface CustomerMHListParams {
 }
 
 export interface CustomerMHInfo {
-  customerId:number | undefined;
+  customerId: number | undefined;
   id: number | undefined;
   departmentName: string | undefined;
   diseaseName: string | undefined;
@@ -81,6 +82,7 @@ export interface CustomerDInfo {
   useDose: string | undefined;
   useDate: string | undefined;
   fileIds: number[] | undefined;
+  files: Array<{ fileName: string; path: string }> | undefined;
 }
 /**
  * 客户检验
@@ -92,6 +94,7 @@ export interface CustomerEInfo {
   checkType: string | undefined;
   checkDate: number | undefined;
   fileIds: number[] | undefined;
+  files: Array<{ fileName: string; path: string }> | undefined;
 }
 /**
  * 客户影像
@@ -104,6 +107,7 @@ export interface CustomerIInfo {
   checkDate: number | undefined;
   checkPart: string | undefined;
   fileIds: number[] | undefined;
+  files: Array<{ fileName: string; path: string }> | undefined;
 }
 /**
  * 客户会诊
@@ -115,6 +119,7 @@ export interface CustomerCInfo {
   consultationExpert: string | undefined;
   consultationDate: number | undefined;
   fileIds: number[] | undefined;
+  files: Array<{ fileName: string; path: string }> | undefined;
 }
 
 /**
@@ -124,19 +129,20 @@ export interface CustomerOrderListParams {
   customerName?: string;
   orderNumber?: number;
   pageNum: number;
-  source?: number
-  productType?: number
+  source?: number;
+  productType?: number;
 }
 
 export interface CustomerOrderInfo {
   id?: number | undefined;
   orderAmount: number | undefined;
-  orderDate:number | undefined;
+  orderDate: number | undefined;
   orderName: string | undefined;
   orderNumber: string | undefined;
   productId: number | undefined;
+  customerId:number | undefined;
   remark: string | undefined;
   responsiblePerson: string | undefined;
-  next: { status: number, operate: string }[] | undefined
-  outStorage: boolean | undefined
+  next: { status: number; operate: string }[] | undefined;
+  outStorage: boolean | undefined;
 }

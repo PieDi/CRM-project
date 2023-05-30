@@ -14,23 +14,19 @@
     <Form :labelCol="{ span: 6 }">
       <FormItem label="客户姓名">
         <Select
-          :show-search="true"
           :disabled="drawerInfo.type !== 'add'"
           placeholder="请选择"
-          :filter-option="filterOption"
           @change="customerOnChange"
-          v-model:value="currentCustomer.mobile"
+          v-model:value="currentCustomer.id"
         >
           <SelectOption
             v-for="item of dataSource"
-            :key="`${item.name}-${item.mobile}`"
-            :value="item.mobile"
-            >{{ `${item.name}-${item.mobile}` }}</SelectOption
-          >
+            :value="item.id"
+            >{{ item.name }}</SelectOption>
         </Select>
       </FormItem>
 
-      <template v-if="currentCustomer.mobile">
+      <template v-if="currentCustomer?.id">
         <FormItem label="性别">
           <Select placeholder="请选择" disabled v-model:value="currentCustomer.sex">
             <SelectOption :key="1">男</SelectOption>
@@ -94,10 +90,28 @@
         <Upload
           :file-list="fileList"
           :before-upload="beforeUpload"
-          @remove="handleRemove"
           :disabled="drawerInfo.type === 'scan'"
         >
           <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
+
+          <template #itemRender="{ file, actions }">
+            <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
+            <Space>
+              <!-- <Button type="link" @click="()=>{
+                handleDownload(file)
+              }">下载</Button> -->
+              <Button
+                type="link"
+                :disabled="drawerInfo.type === 'scan'"
+                @click="
+                  () => {
+                    handleRemove(file);
+                  }
+                "
+                >删除</Button
+              >
+            </Space>
+          </template>
         </Upload>
         <Button
           v-if="drawerInfo.type !== 'scan'"
@@ -121,9 +135,16 @@
     Select,
     DatePicker,
     Upload,
+    Space,
     message,
   } from 'ant-design-vue';
-  import { getCustomerList, saveCustomerMH, updateCustomerMH,fileMHUpload } from '/@/api/demo/customer';
+  import {
+    getCustomerList,
+    saveCustomerMH,
+    updateCustomerMH,
+    fileMHUpload,
+    getCustomerMHDetail,
+  } from '/@/api/demo/customer';
   import { CustomerMHInfo, CustomerInfo } from '/@/api/demo/model/customer';
   import { DrawerItemType } from '/@/views/type';
   import { SelectValue } from 'ant-design-vue/lib/select';
@@ -144,6 +165,7 @@
       SelectOption,
       DatePicker,
       Upload,
+      Space,
     },
     props: {
       drawerInfo: {
@@ -165,25 +187,6 @@
           ? dayjs(props.drawerInfo.item.visitDate)
           : undefined,
       });
-
-      const dataSource = ref<Array<CustomerInfo>>([]);
-      const customerReq = async () => {
-        const res = await getCustomerList();
-        if (res) {
-          dataSource.value = res;
-          
-          if (props.drawerInfo.type !== 'add' && props.drawerInfo?.item) {
-            //@ts-ignore
-            currentCustomer.value = dataSource.value.find(
-              (item: CustomerInfo) => item.id === props.drawerInfo?.item?.customerId,
-            );
-            // 编辑时设置默认的 currentCustomer
-          }
-        }
-      };
-      onMounted(() => {
-        customerReq();
-      });
       //@ts-ignore
       const currentCustomer = ref<CustomerInfo>({
         id: undefined,
@@ -194,33 +197,61 @@
         name: undefined,
         sex: undefined,
       });
-      const customerOnChange = (value: SelectValue, option: any) => {
+      const dataSource = ref<Array<CustomerInfo>>([]);
+      const customerReq = async () => {
+        const res = await getCustomerList();
+        if (res) {
+          dataSource.value = res;
+          if (props.drawerInfo?.item.customerId) {
+            //@ts-ignore
+            const t = dataSource.value.find(
+              (item: CustomerInfo) => item.id === props.drawerInfo?.item?.customerId,
+            );
+            if (t) currentCustomer.value = t;
+            const detailRes = await getCustomerMHDetail(props.drawerInfo?.item?.id as number);
+            if (detailRes) {
+              const t: any[] = [];
+              detailRes.files?.forEach((file, i) => {
+                t.push({
+                  uid: i,
+                  name: file.fileName,
+                  status: 'done',
+                  url: file.path,
+                });
+              });
+              fileList.value = t;
+            }
+          }
+        }
+      };
+      onMounted(() => {
+        customerReq();
+      });
+
+      const customerOnChange = (value: SelectValue) => {
         //@ts-ignore
-        currentCustomer.value = dataSource.value.find(
-          (item: CustomerInfo) => item.mobile === (option.value as string),
+        const t = dataSource.value.find(
+          (item: CustomerInfo) => item.id === value,
         );
+        if (t) currentCustomer.value = {...t}
       };
-      const filterOption = (input: string, option: any) => {
-        return (
-          option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
-          option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        );
-      };
+  
       const drawerOnClose = () => {
         emit('drawerOnClose');
       };
       const submit = async () => {
-        if (currentCustomer.value) {
+        if (currentCustomer.value.id) {
           const params = {
             customerId: currentCustomer.value.id,
+            id: props.drawerInfo.item.id,
             ...mInfo.value,
             visitDate: mInfo.value.visitDate ? mInfo.value.visitDate.valueOf() : undefined,
             fileIds: filesId.value.length ? filesId.value : undefined,
           };
-          
+
           let res;
-          if (props.drawerInfo.type === 'add') res = await saveCustomerMH(params)
-          if(props.drawerInfo.type === 'edit') res = await updateCustomerMH(params)
+          if (props.drawerInfo.type === 'add') res = await saveCustomerMH(params);
+          if (props.drawerInfo.type === 'edit') res = await updateCustomerMH(params);
           if (res) {
             message.success(
               props.drawerInfo.type === 'add' ? '新增客户病史成功' : '修改客户病史成功',
@@ -238,13 +269,17 @@
       const fileList = ref<UploadProps['fileList']>([]);
       const uploading = ref<boolean>(false);
 
-      const handleRemove: UploadProps['onRemove'] = (file) => {
+      const handleRemove = (file: any) => {
         //@ts-ignore
         const index = fileList.value.indexOf(file);
         //@ts-ignore
         const newFileList = fileList.value.slice();
         newFileList.splice(index, 1);
         fileList.value = newFileList;
+      };
+      const handleDownload = (file: any) => {
+        console.log(24545450, file);
+        if (file?.url) window.open(file.url);
       };
 
       const beforeUpload: UploadProps['beforeUpload'] = (file) => {
@@ -273,7 +308,6 @@
         currentCustomer,
         mInfo,
         dataSource,
-        filterOption,
         drawerOnClose,
         submit,
         edit,
@@ -281,6 +315,7 @@
         fileList,
         uploading,
         handleRemove,
+        handleDownload,
         beforeUpload,
         handleUpload,
       };

@@ -70,14 +70,27 @@
                     return false;
                   }
                 "
-                @remove="
-                  (file:any) => {
-                    handleRemove(file, i);
-                  }
-                "
                 :disabled="drawerInfo.type === 'scan'"
               >
                 <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
+                <template #itemRender="{ file, actions }">
+                  <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
+                  <Space>
+                    <!-- <Button type="link" @click="()=>{
+                handleDownload(file)
+              }">下载</Button> -->
+                    <Button
+                      type="link"
+                      :disabled="drawerInfo.type === 'scan'"
+                      @click="
+                        () => {
+                          handleRemove(file, i);
+                        }
+                      "
+                      >删除</Button
+                    >
+                  </Space>
+                </template>
               </Upload>
               <Button
                 v-if="drawerInfo.type !== 'scan'"
@@ -111,7 +124,7 @@
   </Drawer>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, PropType,onMounted } from 'vue';
+  import { defineComponent, ref, PropType, onMounted } from 'vue';
   import {
     Table,
     Form,
@@ -120,6 +133,7 @@
     Drawer,
     Select,
     DatePicker,
+    Space,
     message,
     Upload,
   } from 'ant-design-vue';
@@ -127,7 +141,7 @@
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
   import dayjs, { Dayjs } from 'dayjs';
-  import { getCustomerIList,saveCustomerI, fileIUpload } from '/@/api/demo/customer';
+  import { getCustomerIList, saveCustomerI, fileIUpload } from '/@/api/demo/customer';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -144,6 +158,7 @@
       DatePicker,
       DeleteOutlined,
       Upload,
+      Space,
     },
     props: {
       drawerInfo: {
@@ -160,8 +175,8 @@
           checkType: string | undefined;
           checkDate: Dayjs | undefined;
         }>
-        >([]);
-        const dListReq = async () => {
+      >([]);
+      const dListReq = async () => {
         if (props.drawerInfo.item) {
           const res = await getCustomerIList(props.drawerInfo.item);
           if (res) {
