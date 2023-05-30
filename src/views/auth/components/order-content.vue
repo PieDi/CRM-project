@@ -42,6 +42,23 @@
   >
     <template #bodyCell="{ column, _text, record }">
       <template v-if="column.dataIndex === 'operation'">
+        <Popover trigger="hover" v-if="handleShow && record.next && record.next.length">
+          <template #content>
+            <div :style="{ display: 'flex', 'flex-direction': 'column' }"
+              ><Button
+                type="link"
+                v-for="h of record.next"
+                @click="
+                  () => {
+                    handleAction({ id: record.id, status: h.status, opinion: h.operate });
+                  }
+                "
+                >{{ h.operate }}</Button
+              ></div
+            >
+          </template>
+          <Button type="link">操作</Button>
+        </Popover>
         <Button
           type="link"
           @click="
@@ -51,16 +68,7 @@
           "
           >查看</Button
         >
-        <Button
-          v-if="productType === 2"
-          type="link"
-          @click="
-            () => {
-              auditOrder(record);
-            }
-          "
-          >审核</Button
-        >
+
         <!-- <Button
             type="link"
             @click="
@@ -182,7 +190,7 @@
   </Drawer>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, computed } from 'vue';
+  import { defineComponent, ref, onMounted, computed, toRaw } from 'vue';
   import {
     Table,
     Form,
@@ -192,14 +200,18 @@
     Select,
     InputNumber,
     DatePicker,
+    Popover,
+    message,
   } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { CustomerOrderInfo, CustomerInfo } from '/@/api/demo/model/customer';
-  import { getCustomerList, getCustomerOrderPage } from '/@/api/demo/customer';
+  import { getCustomerList, getCustomerOrderPage, handleCustomerOrder } from '/@/api/demo/customer';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { ProductInfo } from '/@/api/demo/model/product';
   import { getProductList } from '/@/api/demo/product';
   import dayjs, { Dayjs } from 'dayjs';
+  import { useUserStore } from '/@/store/modules/user';
+  import { RoleEnum } from '/@/enums/roleEnum';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -217,12 +229,20 @@
       InputNumber,
       DatePicker,
       TextArea,
+      Popover,
     },
     props: {
       source: Number,
       productType: Number,
     },
     setup(props) {
+      const userStore = useUserStore();
+      const roleList = toRaw(userStore.getRoleList) || [];
+
+      const handleShow = computed(() => {
+        return roleList.some((role) => [RoleEnum.SUPER, RoleEnum.ADMIN].includes(role));
+      });
+
       const drawerInfo = ref<
         DrawerItemType<{
           id: number | undefined;
@@ -396,7 +416,13 @@
         drawerInfo.value.item.responsiblePerson = undefined;
       };
 
-      const auditOrder = (item: CustomerOrderInfo) => {};
+      const handleAction = async (p: any) => {
+        const res = await handleCustomerOrder(p);
+        if (res) {
+          message.success('操作成功');
+          customerOrderListReq(pageInfo.value.current);
+        }
+      };
 
       return {
         columns,
@@ -407,13 +433,13 @@
         pageInfo,
         drawerInfo,
         scanOrder,
-        auditOrder,
+
         drawerOnClose,
         cDataSource,
         pDataSource,
 
-        source: props.source,
-        productType: props.productType,
+        handleShow,
+        handleAction,
       };
     },
   });

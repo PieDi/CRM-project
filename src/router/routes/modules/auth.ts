@@ -1,7 +1,6 @@
 import type { AppRouteModule } from '/@/router/types';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { LAYOUT } from '/@/router/constant';
-import { t } from '/@/hooks/web/useI18n';
 
 const dashboard: AppRouteModule = {
   path: '/sys-auth',
@@ -14,8 +13,6 @@ const dashboard: AppRouteModule = {
     roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
   },
   children: [
-    
-  
     {
       path: 'staff-manage',
       name: 'SysAuthStaffManage',
@@ -25,7 +22,15 @@ const dashboard: AppRouteModule = {
         roles: [RoleEnum.SUPER],
       },
     },
-    
+    {
+      path: 'product-manage',
+      name: 'SysAuthProductManage',
+      component: () => import('/@/views/auth/super/product.vue'),
+      meta: {
+        title: '产品信息管理',
+        roles: [RoleEnum.SUPER],
+      },
+    },
   ],
 };
 

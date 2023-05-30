@@ -2,6 +2,11 @@ import { defHttp } from '/@/utils/http/axios';
 import { ProductInfo, ProductInInfo, ProductOutInfo } from './model/product';
 enum Api {
   ProductList = '/product/basic/list',
+  ProductPage = '/product/basic/page',
+  ProductSave = '/product/basic/save',
+  ProductUpdate = '/product/basic/update',
+  ProductRemoval = '/product/basic/removal',
+
   // 产品入库
   ProductInList = '/product/in/list',
   ProductInPage = '/product/in/page',
@@ -20,6 +25,27 @@ enum Api {
 export const getProductList = (params?: { type?: number; name: string }) =>
   defHttp.post<ProductInfo[]>({ url: Api.ProductList, params });
 
+export const getProductPage = (params: { name?: string; number?: number; pageNum: number }) =>
+  defHttp.post<{ total: number; pageNum: number; data: ProductInfo[] }>({
+    url: Api.ProductPage,
+    params: { pageSize: 20, ...params },
+  });
+export const saveProduct = (params: any) =>
+  defHttp.post<{ total: number; pageNum: number; data: ProductInfo[] }>({
+    url: Api.ProductSave,
+    params,
+  });
+export const updateProduct = (params: any) =>
+  defHttp.post<{ total: number; pageNum: number; data: ProductInfo[] }>({
+    url: Api.ProductUpdate,
+    params,
+  });
+
+export const removalProduct = (id: number) =>
+  defHttp.post<{ total: number; pageNum: number; data: ProductInfo[] }>({
+    url: Api.ProductRemoval,
+    params: { id },
+  });
 // 入库
 export const getProductInPage = (params: any) =>
   defHttp.post<{ total: number; pageNum: number; data: ProductInInfo[] }>({

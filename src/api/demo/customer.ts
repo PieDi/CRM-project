@@ -351,5 +351,5 @@ export const deleteCustomerOrder = (id: string | number) =>
 export const getCustomerOrderDetail = (id: string | number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerOrderDetail, params: { id } });
 
-export const handleCustomerOrder = (params?: CustomerMHSaveParams) =>
+export const handleCustomerOrder = (params: {id: number, status: number}) =>
   defHttp.post<any>({ url: Api.CustomerOrderHandle, params });
