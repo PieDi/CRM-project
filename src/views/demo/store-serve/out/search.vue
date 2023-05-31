@@ -130,6 +130,7 @@
             placeholder="请选择"
             :filter-option="oFilterOption"
             v-model:value="drawerInfo.item.orderId"
+            :disabled="drawerInfo.type === 'scan'"
           >
             <SelectOption
               v-for="item of oDataSource"

@@ -12,7 +12,7 @@
         "
         v-if="authShow"
       >
-        <Button>资料上传</Button>
+        <Button>模板上传</Button>
       </Upload>
     </div>
     <div class="file-content">
@@ -33,7 +33,8 @@
   import { PageWrapper } from '/@/components/Page';
   import { Button, Upload,message } from 'ant-design-vue';
   import { useRoute } from 'vue-router';
-  import { getShareList, uploadShare } from '/@/api/demo/datum-share';
+import { uploadTemplate, getTemplateList } from '/@/api/demo/contact';
+
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
 
@@ -52,7 +53,7 @@
       const route = useRoute();
       const fileList = ref([]);
       const datumListReq = async (path?: string) => {
-        const res = await getShareList(`/${path}`);
+        const res = await getTemplateList(`/${path}`);
         if (res) fileList.value = res;
       };
       onMounted(() => {
@@ -66,7 +67,7 @@
         const formData = new FormData();
         formData.append('file', file);
         formData.append('path', `/${route.query.name as string}`);
-          const res = await uploadShare(formData);
+          const res = await uploadTemplate(formData);
           if (res) {
             message.success('上传成功');
             datumListReq((route.query.name as string) || '');
