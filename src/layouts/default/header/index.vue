@@ -34,7 +34,7 @@
 
     <!-- action  -->
     <div :class="`${prefixCls}-action`">
-      <Notify v-if="getShowNotice" :class="`${prefixCls}-action__item notify-item`" />
+      <!-- <Notify v-if="getShowNotice" :class="`${prefixCls}-action__item notify-item`" /> -->
       <FullScreen v-if="getShowFullScreen" :class="`${prefixCls}-action__item fullscreen-item`" />
       <UserDropDown :theme="getHeaderTheme" />
     </div>

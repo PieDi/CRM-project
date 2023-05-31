@@ -1,30 +1,35 @@
 <template>
   <PageWrapper>
-    <div style="display: flex;justify-content: space-between;">
-      <div style="display: flex;">
-        <FormItem label="患者姓名">
-          <Input placeholder="请输入" allow-clear style="width: 150px;" />
+    <div style="display: flex; justify-content: space-between">
+      <div style="display: flex">
+        <FormItem label="客户姓名">
+          <Input
+            placeholder="请输入"
+            v-model:value="searchInfo.customerName"
+            allow-clear
+            style="width: 150px"
+          />
         </FormItem>
-        <FormItem label="联系电话" style="margin-left: 10px;">
+        <!-- <FormItem label="联系电话" style="margin-left: 10px;">
           <Input placeholder="请输入" allow-clear style="width: 150px;" />
-        </FormItem>
-        <Button type="primary" style="margin-left: 10px;">搜索</Button>
+        </FormItem> -->
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
+        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
       <Button type="primary" @click="addReturnPlan">新建回访</Button>
     </div>
 
     <Table
       :columns="columns"
-      :dataSource="data"
-      :loading="loading"
+      :dataSource="pageInfo.dataSource"
       :bordered="true"
       :pagination="pagination"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
-          <div style="display: flex;">
-            <Button type="link" @click="editReturnPlan(record)">编辑</Button>
-            <Button type="link" style="margin-left: 10px;" @click="startVisit">开始回访</Button>
+          <div style="display: flex">
+            <Button type="link" @click="scanReturnPlan(record)">查看</Button>
+            <Button type="link" style="margin-left: 10px" @click="startVisit">开始回访</Button>
           </div>
         </template>
       </template>
@@ -34,42 +39,99 @@
       :visible="drawerInfo.visible"
       :title="drawerInfo.title"
       placement="right"
-      @close="onDrawerClose"
+      @close="drawerOnClose"
     >
       <template #extra>
-        <Button v-if="drawerInfo.type === 'add'" type="primary">提交</Button>
+        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
+        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
       </template>
-      
-      <Form>
-        <FormItem label="患者姓名">
-          <Input placeholder="请输入" v-model:value="drawerInfo.item.name" allow-clear />
-        </FormItem>
 
-        <FormItem label="患者来源">
-          <Input placeholder="请输入" allow-clear />
-        </FormItem>
-
-        <FormItem label="疾病种类">
-          <Input placeholder="请输入" allow-clear />
-        </FormItem>
-
-        <FormItem label="患者等级">
-          <Input placeholder="请输入" allow-clear />
+      <Form :labelCol="{ span: 6 }">
+        <FormItem label="客户姓名">
+          <Select
+            :disabled="drawerInfo.type !== 'add'"
+            placeholder="请选择"
+            allow-clear
+            v-model:value="drawerInfo.item.customerId"
+          >
+            <SelectOption v-for="item of dataSource" :value="item.id">{{ item.name }}</SelectOption>
+          </Select>
         </FormItem>
 
         <FormItem label="回访时间">
-          <DatePicker />
+          <DatePicker
+            :disabled="drawerInfo.type !== 'add'"
+            show-time
+            allow-clear
+            placeholder="请选择"
+            v-model:value="drawerInfo.item.visitTime"
+          />
         </FormItem>
 
-        <FormItem label="联系电话">
-          <Input placeholder="请输入" allow-clear />
+        <FormItem label="回访项目">
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.item"
+          />
+          <!-- <Select
+            :disabled="drawerInfo.type !== 'add'"
+            placeholder="请选择"
+            allow-clear
+            v-model:value="drawerInfo.item.item"
+          >
+            <SelectOption :value="1">回访项目1</SelectOption>
+            <SelectOption :value="2">回访项目2</SelectOption>
+          </Select> -->
         </FormItem>
 
         <FormItem label="回访类型">
-          <Select placeholder="请选择">
-            <SelectOption value="回访类型1">回访类型1</SelectOption>
-            <SelectOption value="回访类型2">回访类型2</SelectOption>
+          <Select
+            :disabled="drawerInfo.type !== 'add'"
+            placeholder="请选择"
+            allow-clear
+            v-model:value="drawerInfo.item.type"
+          >
+            <SelectOption :value="1">电话回访</SelectOption>
+            <SelectOption :value="2">线下回访</SelectOption>
+            <SelectOption :value="3">其他</SelectOption>
           </Select>
+        </FormItem>
+        <FormItem label="标题">
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.title"
+          />
+        </FormItem>
+
+        <FormItem label="回访内容">
+          <TextArea
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.visitContent"
+          />
+        </FormItem>
+
+        <FormItem label="下一步计划">
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.nextPlan"
+          />
+        </FormItem>
+
+        <FormItem label="备注">
+          <TextArea
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.remark"
+          />
         </FormItem>
       </Form>
     </Drawer>
@@ -78,138 +140,231 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-import { PageWrapper } from '@/components/Page'
-import { Form, Input, Button, Table, Drawer, DatePicker, Select } from 'ant-design-vue'
-import StartVisit from './start-visit/index.vue'
-import { DrawerItemType } from '@/views/type'
-import { getReturnListData } from '../table/tableData'
+  import { defineComponent, ref, computed, onMounted } from 'vue';
+  import { PageWrapper } from '@/components/Page';
+  import { Form, Input, Button, Table, Drawer, DatePicker, Select, message } from 'ant-design-vue';
+  import StartVisit from './start-visit/index.vue';
+  import { type DrawerItemType, PageListInfo } from '/@/views/type';
+  import { getVisitPage, saveVisit } from '/@/api/demo/visit-return';
+  import { VisitReturnInfo } from '/@/api/demo/model/visit-return';
+  import { type ColumnsType } from 'ant-design-vue/lib/table';
+  import { getCustomerList } from '/@/api/demo/customer';
+  import { CustomerInfo } from '/@/api/demo/model/customer';
+  import dayjs, { Dayjs } from 'dayjs';
 
-export default defineComponent({
-  components: {
-    PageWrapper,
-    Form,
-    FormItem: Form.Item,
-    Input,
-    Button,
-    Table,
-    Drawer,
-    DatePicker,
-    Select,
-    SelectOption: Select.Option,
-    StartVisit
-  },
-  setup() {
-    const columns: any = ref([
-      {
-        title: '患者姓名',
-        dataIndex: 'name'
-      },
-      {
-        title: '患者来源',
-        dataIndex: 'source'
-      },
-      {
-        title: '疾病种类',
-        dataIndex: 'kind'
-      },
-      {
-        title: '患者等级',
-        dataIndex: 'level'
-      },
-      {
-        title: '回访时间',
-        dataIndex: 'time'
-      },
-      {
-        title: '联系电话',
-        dataIndex: 'mobile'
-      },
-      {
-        title: '回访类型',
-        dataIndex: 'type'
-      },
-      {
-        title: '回访状态',
-        dataIndex: 'status'
-      },
-      {
-        title: '操作',
-        dataIndex: 'operation'
-      }
-    ]);
-    
-    const loading = ref(false)
+  const TextArea = Input.TextArea;
+  export default defineComponent({
+    components: {
+      PageWrapper,
+      Form,
+      FormItem: Form.Item,
+      Input,
+      Button,
+      Table,
+      Drawer,
+      DatePicker,
+      Select,
+      SelectOption: Select.Option,
+      StartVisit,
+      TextArea,
+    },
+    setup() {
+      const columns: ColumnsType<VisitReturnInfo> = [
+        {
+          title: '患者姓名',
+          dataIndex: 'name',
+        },
+        {
+          title: '患者来源',
+          dataIndex: 'source',
+        },
+        {
+          title: '疾病种类',
+          dataIndex: 'kind',
+        },
+        {
+          title: '患者等级',
+          dataIndex: 'level',
+        },
+        {
+          title: '回访时间',
+          dataIndex: 'time',
+        },
+        {
+          title: '联系电话',
+          dataIndex: 'mobile',
+        },
+        {
+          title: '回访类型',
+          dataIndex: 'type',
+        },
+        {
+          title: '回访状态',
+          dataIndex: 'status',
+        },
+        {
+          title: '操作',
+          dataIndex: 'operation',
+        },
+      ];
 
-    const current = ref(3)
-    const pagination = ref({
-      total: 100,
-      current,
-      pageSize: 10,
-      showTotal: (total) => `共${total}条`,
-      showQuickJumper: false,
-      showSizeChanger: false,
-      onChange: (page, pageSize) => {
-        current.value = page
-        console.log(`page is ${page}, pageSize is ${pageSize}`)
-      }
-    })
+      const searchInfo = ref({
+        customerName: undefined,
+      });
+      const pageInfo = ref<PageListInfo<VisitReturnInfo>>({
+        total: 0,
+        current: 1,
+        dataSource: [],
+      });
+      const pagination = computed(() => ({
+        total: pageInfo.value.total,
+        current: pageInfo.value.current,
+        pageSize: 10,
+        showTotal: (total: number) => `共${total}条`,
+        onChange: (page: number) => {
+          visitRListReq(page);
+        },
+        showQuickJumper: false,
+        showSizeChanger: false,
+      }));
 
-    const drawerInfo = ref({
-      visible: false,
-      title: '',
-      item: {}
-    })
+      const visitRListReq = async (pageNum: number) => {
+        const res = await getVisitPage({ ...searchInfo.value, status: 1, pageNum });
+        if (res) {
+          pageInfo.value.total = res.total;
+          pageInfo.value.current = res.pageNum;
+          pageInfo.value.dataSource = res.data;
+        }
+      };
+      onMounted(() => {
+        visitRListReq(1);
+      });
+      // 客户
+      const dataSource = ref<Array<CustomerInfo>>([]);
+      const customerReq = async () => {
+        const res = await getCustomerList();
+        if (res) {
+          dataSource.value = res;
+        }
+      };
 
-    const addReturnPlan = () => {
-      drawerInfo.value.visible = true
-      drawerInfo.value.title = '新建回访'
-      drawerInfo.value.type = 'add'
-    }
+      // 抽屉
+      const drawerInfo = ref<DrawerItemType<VisitReturnInfo>>({
+        visible: false,
+        type: undefined,
+        title: '',
+        item: {
+          customerId: undefined,
+          item: undefined,
+          nextPlan: undefined,
+          remark: undefined,
+          title: undefined,
+          type: undefined,
+          visitContent: undefined,
+          visitTime: undefined,
+        },
+      });
 
-    const editReturnPlan = (item) => {
-      drawerInfo.value.visible = true
-      drawerInfo.value.title = '编辑回访'
-      drawerInfo.value.item.name = item.name
-      drawerInfo.value.item.mobile = item.mobile
-      console.log(JSON.stringify(item))
-    }
+      const addReturnPlan = () => {
+        customerReq();
+        drawerInfo.value.visible = true;
+        drawerInfo.value.title = '新建回访';
+        drawerInfo.value.type = 'add';
+      };
 
-    const onDrawerClose = () => {
-      drawerInfo.value.visible = false
-      drawerInfo.value.title = ''
-      drawerInfo.value.type = 'edit'
-      drawerInfo.value.item.name = ''
-    }
+      const scanReturnPlan = (item: VisitReturnInfo) => {
+        customerReq();
+        drawerInfo.value.visible = true;
+        drawerInfo.value.title = '查看回访';
+        drawerInfo.value.type = 'scan';
 
-    const showModal = ref(false)
-    const startVisit = () => {
-      showModal.value = true
-    }
-    const onModelConfirm = () => {
-      showModal.value = false
-    }
-    const onModelCancel = () => {
-      showModal.value = false
-    }
-    return {
-      columns,
-      loading,
-      data: getReturnListData(),
-      pagination,
-      drawerInfo,
-      addReturnPlan,
-      editReturnPlan,
-      onDrawerClose,
-      showModal,
-      startVisit,
-      onModelConfirm,
-      onModelCancel
-    }
-  }
-})
+        drawerInfo.value.item.customerId = item.customerId;
+        drawerInfo.value.item.item = item.item;
+        drawerInfo.value.item.nextPlan = item.nextPlan;
+        drawerInfo.value.item.remark = item.remark;
+        drawerInfo.value.item.title = item.title;
+        drawerInfo.value.item.type = item.type;
+        drawerInfo.value.item.visitContent = item.visitContent;
+        drawerInfo.value.item.visitTime = dayjs(item.visitTime);
+      };
+      const drawerEdit = () => {
+        drawerInfo.value.title = '编辑回访';
+        drawerInfo.value.type = 'edit';
+      };
+      const drawerOnClose = () => {
+        drawerInfo.value.visible = false;
+        drawerInfo.value.title = '';
+        drawerInfo.value.type = undefined;
+
+        drawerInfo.value.item.customerId = undefined;
+        drawerInfo.value.item.item = undefined;
+        drawerInfo.value.item.nextPlan = undefined;
+        drawerInfo.value.item.remark = undefined;
+        drawerInfo.value.item.title = undefined;
+        drawerInfo.value.item.type = undefined;
+        drawerInfo.value.item.visitContent = undefined;
+        drawerInfo.value.item.visitTime = undefined;
+      };
+
+      const submit = async () => {
+        let res;
+        if (drawerInfo.value.type === 'add')
+          res = await saveVisit({
+            ...drawerInfo.value.item,
+            visitTime: drawerInfo.value.item.visitTime
+              ? drawerInfo.value.item.visitTime.valueOf()
+              : undefined,
+          });
+        if (res) {
+          message.success(
+            drawerInfo.value.type === 'add' ? '新增回访计划成功' : '修改回访计划成功',
+          );
+          visitRListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+          drawerOnClose();
+        }
+      };
+
+      /**
+       * 开始回访
+       */
+      const showModal = ref(false);
+      const startVisit = () => {
+        showModal.value = true;
+      };
+      const onModelConfirm = () => {
+        showModal.value = false;
+      };
+      const onModelCancel = () => {
+        showModal.value = false;
+      };
+      const resetAction = () => {
+        searchInfo.value.customerName = undefined;
+        visitRListReq(1);
+      };
+      const searchAction = () => {};
+      return {
+        columns,
+        searchInfo,
+        pageInfo,
+        pagination,
+        resetAction,
+        searchAction,
+        // 抽屉
+        dataSource,
+        drawerInfo,
+        addReturnPlan,
+        scanReturnPlan,
+        drawerOnClose,
+        drawerEdit,
+        submit,
+        // 开始回访
+        showModal,
+        startVisit,
+        onModelConfirm,
+        onModelCancel,
+      };
+    },
+  });
 </script>
 
-<style lang="less" scoped>
-
-</style>
+<style lang="less" scoped></style>
