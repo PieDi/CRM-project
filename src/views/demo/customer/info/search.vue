@@ -253,7 +253,7 @@
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { CustomerInfo, CustomerGroupInfo, CustomerSourceInfo } from '/@/api/demo/model/customer';
   import dayjs, { Dayjs } from 'dayjs';
-  import { sexMap, docTypeMap, cGroupMap } from '/@/views/const';
+  import { sexMap, docTypeMap } from '/@/views/const';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;

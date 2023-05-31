@@ -2,7 +2,9 @@
   <PageWrapper title="合同模板">
     <div :style="{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }">
       <div :style="{ display: 'flex' }"></div>
-      <Button v-if="authShow" type="primary" style="margin-left: 10px" @click="addFile">新建文件夹</Button>
+      <Button v-if="authShow" type="primary" style="margin-left: 10px" @click="addFile"
+        >新建文件夹</Button
+      >
     </div>
     <div class="file-content">
       <div v-for="(item, i) in fileList" :key="i" class="file-item">
@@ -15,16 +17,20 @@
           "
         >
           <p>{{ item }}</p>
-          <!-- <div class="btn"
-            ><Button type="link" @click="(e:MouseEvent)=>{
+          <div class="btn">
+            <!-- <Button type="link" @click="(e:MouseEvent)=>{
               editFile(item)
               e.stopPropagation()
-            }">编辑</Button>
-            <Button type="link" @click="(e:MouseEvent)=>{
+            }">编辑</Button> -->
+            <Button
+              type="link"
+              @click="(e:MouseEvent)=>{
               deleteFile(item)
               e.stopPropagation()
-            }">删除</Button></div
-          > -->
+            }"
+              >删除</Button
+            ></div
+          >
         </div>
       </div>
     </div>
@@ -51,14 +57,16 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, toRaw, computed } from 'vue';
+  import { defineComponent, ref, onMounted, toRaw, computed, createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer, message } from 'ant-design-vue';
-  import { createTemplate, getTemplateList } from '/@/api/demo/contact';
+  import { createTemplate, getTemplateList, deleteTemplate } from '/@/api/demo/contact';
   import { type DrawerItemType } from '/@/views/type';
   import { useRouter } from 'vue-router';
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
+  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
@@ -103,7 +111,21 @@
         drawerInfo.value.title = '编辑文件夹';
       };
 
-      const deleteFile = (item) => {};
+      const deleteFile = (item) => {
+        confirm(
+          withConfirm({
+            icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+            content: '确定删除该文件夹',
+            async onOk() {
+              const res = await deleteTemplate({ path: `/${item}` });
+              if (res) {
+                message.success('删除文件夹');
+                tListReq('');
+              }
+            },
+          }),
+        );
+      };
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
@@ -127,7 +149,7 @@
         deleteFile,
         drawerOnClose,
         submit,
-        authShow
+        authShow,
       };
     },
   });
@@ -155,7 +177,7 @@
         }
         .btn {
           display: none;
-          padding: 0 29px;
+          padding: 0 64px;
         }
       }
       .file-item-border:hover {

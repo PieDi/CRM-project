@@ -6,7 +6,7 @@
         :max-count="1"
         :before-upload="
           (file) => {
-            beforeUpload(file)
+            beforeUpload(file);
             return false;
           }
         "
@@ -18,10 +18,26 @@
     <div class="file-content">
       <div v-for="(item, i) in fileList" :key="i" class="file-item">
         <div class="file-item-border">
-          <!-- <p>{{ item.title }}</p> -->
+          <p>{{ item }}</p>
           <div class="btn"
-            ><Button type="link" @click="downloadFile">下载</Button>
-            <Button type="link" @click="deleteFile">删除</Button></div
+            ><Button
+              type="link"
+              @click="
+                () => {
+                  downloadFile(item);
+                }
+              "
+              >下载</Button
+            >
+            <Button
+              type="link"
+              @click="
+                () => {
+                  deleteFile(item);
+                }
+              "
+              >删除</Button
+            ></div
           >
         </div>
       </div>
@@ -29,14 +45,15 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, toRaw, computed } from 'vue';
+  import { defineComponent, ref, onMounted, toRaw, computed, createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Button, Upload,message } from 'ant-design-vue';
+  import { Button, Upload, message } from 'ant-design-vue';
   import { useRoute } from 'vue-router';
-import { uploadTemplate, getTemplateList } from '/@/api/demo/contact';
-
+  import { uploadTemplate, getTemplateList,deleteTemplate } from '/@/api/demo/contact';
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
+  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
   export default defineComponent({
     components: {
@@ -52,26 +69,46 @@ import { uploadTemplate, getTemplateList } from '/@/api/demo/contact';
       });
       const route = useRoute();
       const fileList = ref([]);
-      const datumListReq = async (path?: string) => {
-        const res = await getTemplateList(`/${path}`);
+      const tGroupReq = async () => {
+        const res = await getTemplateList(`/${route.query.name as string}`);
         if (res) fileList.value = res;
       };
       onMounted(() => {
-        datumListReq((route.query.name as string) || '');
+        tGroupReq();
       });
-      
 
-      const downloadFile = (item) => {};
-      const deleteFile = (item) => {};
+      const downloadFile = (item) => {
+        window.open(
+          `http://129.204.202.223:8001/basic-api/sys/share/download?path=/${
+            route.query.name as string
+          }/${item}`,
+        );
+      };
+      const deleteFile = (item) => {
+        confirm(
+          withConfirm({
+            icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+            content: '确定删除该文件',
+            async onOk() {
+              console.log(345678, item);
+              const res = await deleteTemplate({ path: `/${route.query.name as string}/${item}` });
+              if (res) {
+                message.success('删除文件');
+                tGroupReq();
+              }
+            },
+          }),
+        );
+      };
       const beforeUpload = async (file: any) => {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('path', `/${route.query.name as string}`);
-          const res = await uploadTemplate(formData);
-          if (res) {
-            message.success('上传成功');
-            datumListReq((route.query.name as string) || '');
-          }
+        const res = await uploadTemplate(formData);
+        if (res) {
+          message.success('上传成功');
+          tGroupReq();
+        }
       };
       return {
         route,

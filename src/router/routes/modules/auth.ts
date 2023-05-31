@@ -10,7 +10,7 @@ const dashboard: AppRouteModule = {
     orderNo: 600,
     icon: 'ion:grid-outline',
     title: '系统管理',
-    roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
+    roles: [RoleEnum.SUPER],
   },
   children: [
     {
