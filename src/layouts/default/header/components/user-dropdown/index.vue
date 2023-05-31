@@ -8,9 +8,10 @@
         </span>
       </span>
     </span>
-    
+
     <template #overlay>
       <Menu @click="handleMenuClick">
+        <MenuItem key="modify" text="修改密码" icon="ion:lock-closed-outline" />
         <MenuItem
           key="logout"
           :text="t('layout.header.dropdownItemLoginOut')"
@@ -18,7 +19,9 @@
         />
       </Menu>
     </template>
+    
   </Dropdown>
+  <LockAction @register="register" />
 </template>
 <script lang="ts">
   // components
@@ -35,7 +38,7 @@
   import { propTypes } from '/@/utils/propTypes';
   import { openWindow } from '/@/utils';
   import { createAsyncComponent } from '/@/utils/factory/createAsyncComponent';
-  type MenuEvent = 'logout' | 'doc' | 'lock';
+  type MenuEvent = 'logout' | 'doc' | 'lock' | 'modify';
 
   export default defineComponent({
     name: 'UserDropdown',
@@ -54,7 +57,6 @@
       const { t } = useI18n();
       const { getShowDoc, getUseLockPage } = useHeaderSetting();
       const userStore = useUserStore();
-
       const getUserInfo = computed(() => {
         const { userName = '' } = userStore.getUserInfo || {};
         return { userName, avatar: headerImg };
@@ -62,19 +64,19 @@
 
       const [register, { openModal }] = useModal();
 
-      function handleLock() {
-        openModal(true);
-      }
-
+      function handleLock() {openModal(true);}
+      
       //  login out
       function handleLoginOut() {
         userStore.confirmLoginOut();
       }
-
       // open doc
       function openDoc() {
         openWindow(DOC_URL);
       }
+      const handleModify = () => {
+        openModal(true);
+      };
 
       function handleMenuClick(e: MenuInfo) {
         switch (e.key as MenuEvent) {
@@ -86,6 +88,9 @@
             break;
           case 'lock':
             handleLock();
+            break;
+          case 'modify':
+            handleModify();
             break;
         }
       }

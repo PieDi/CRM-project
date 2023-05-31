@@ -4,6 +4,7 @@ enum Api {
   TemplateList = '/contract/template/list', // 全部客户
   TemplateUpload = '/contract/template/upload', // 删除
   TemplateCreate = '/contract/template/create', //详情
+  TemplateDelete = '/contract/template/delete',
 }
 
 export const getTemplateList = (path?: string) =>
@@ -16,3 +17,5 @@ export const createTemplate = (params?: any) => defHttp.post<any>({ url: Api.Tem
 
 export const uploadTemplate = (params?: any) =>
   defHttp.uploadFile<number[]>({ url: Api.TemplateUpload }, params);
+
+  export const deleteTemplate = (params?: any) => defHttp.post<any>({ url: Api.TemplateDelete, params });

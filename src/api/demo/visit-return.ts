@@ -1,5 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
-import { CServeInfo } from './model/customer-serve';
+import { VisitReturnInfo } from './model/visit-return';
 
 enum Api {
   
@@ -14,17 +14,17 @@ enum Api {
 }
 
 export const getVisitCalendar = () =>
-  defHttp.post<Array<CServeInfo>>({
+  defHttp.post<Array<VisitReturnInfo>>({
     url: Api.VisitCalendar,
   });
 
 export const getVisitPage = (params: any) =>
-  defHttp.post<{ total: number; pageNum: number; data: CServeInfo[] }>({
+  defHttp.post<{ total: number; pageNum: number; data: VisitReturnInfo[] }>({
     url: Api.VisitPage,
     params: { pageSize: 20, ...params },
   });
 export const getVisitList = (name?: string) =>
-  defHttp.post<Array<CServeInfo>>({
+  defHttp.post<Array<VisitReturnInfo>>({
     url: Api.VisitList,
     params: { name },
   });
@@ -39,4 +39,4 @@ export const deleteVisit = (id: string | number) =>
   defHttp.post<any>({ url: Api.DeleteVisit, params: { id } });
 
 export const getVisit = (id: string | number) =>
-  defHttp.post<CServeInfo>({ url: Api.VisitDetail, params: { id } });
+  defHttp.post<VisitReturnInfo>({ url: Api.VisitDetail, params: { id } });

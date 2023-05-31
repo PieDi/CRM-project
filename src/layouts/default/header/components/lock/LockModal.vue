@@ -1,7 +1,7 @@
 <template>
   <BasicModal
     :footer="null"
-    :title="t('layout.header.lockScreen')"
+    title="修改密码"
     v-bind="$attrs"
     :class="prefixCls"
     @register="register"

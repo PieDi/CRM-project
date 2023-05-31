@@ -61,12 +61,19 @@
                 <template #itemRender="{ file, actions }">
                   <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
                   <Space>
-                    <!-- <Button type="link" @click="()=>{
-                handleDownload(file)
-              }">下载</Button> -->
                     <Button
                       type="link"
-                      :disabled="drawerInfo.type === 'scan'"
+                      v-if="drawerInfo.type === 'scan'"
+                      @click="
+                        () => {
+                          handleDownload(file, i);
+                        }
+                      "
+                      >下载</Button
+                    >
+                    <Button
+                      v-if="drawerInfo.type !== 'scan'"
+                      type="link"
                       @click="
                         () => {
                           handleRemove(file, i);
@@ -151,13 +158,23 @@
           const res = await getCustomerEList(props.drawerInfo.item);
           if (res) {
             const list: Array<any> = [];
-            res.forEach((item) => {
+            res.forEach((item, i) => {
               list.push({
                 id: item?.id,
                 checkMechanism: item?.checkMechanism,
                 checkType: item?.checkType,
                 checkDate: item?.checkDate ? dayjs(item?.checkDate) : undefined,
               });
+              const t: any[] = [];
+              item.files?.forEach((file, j) => { 
+                t.push({
+                  uid: j,
+                  name: file.fileName,
+                  status: 'done',
+                  url: file.path,
+                });
+              })
+              fileListMap.value[i] = t
             });
             listInfo.value = list;
           }
@@ -217,6 +234,9 @@
       const fileListMap = ref<{ [number: string]: UploadProps['fileList'] }>({});
       const uploadingMap = ref<{ [number: string]: boolean }>({});
 
+      const handleDownload = (file: any, i: number) => {
+        if (file.url) window.open(file.url)
+      };
       const handleRemove = (file: File, i: number) => {
         const fileList = fileListMap.value[i];
         //@ts-ignore
@@ -261,6 +281,7 @@
         // 文件上传
         fileListMap,
         uploadingMap,
+        handleDownload,
         handleRemove,
         beforeUpload,
         handleUpload,

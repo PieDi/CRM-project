@@ -15,16 +15,15 @@
           "
         >
           <p>{{ item }}</p>
-          <!-- <div class="btn"
-            ><Button type="link" @click="(e:MouseEvent)=>{
+          <div class="btn">
+           <!--  <Button type="link" @click="(e:MouseEvent)=>{
               editFile(item)
               e.stopPropagation()
-            }">编辑</Button>
+            }">编辑</Button>-->
             <Button type="link" @click="(e:MouseEvent)=>{
               deleteFile(item)
               e.stopPropagation()
-            }">删除</Button></div
-          > -->
+            }">删除</Button></div> 
         </div>
       </div>
     </div>
@@ -51,14 +50,16 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, toRaw, computed } from 'vue';
+  import { defineComponent, ref, onMounted, toRaw, computed,createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer, message } from 'ant-design-vue';
-  import { createShare, getShareList } from '/@/api/demo/datum-share';
+  import { createShare, getShareList,deleteShare } from '/@/api/demo/datum-share';
   import { type DrawerItemType } from '/@/views/type';
   import { useRouter } from 'vue-router';
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
+  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
@@ -103,7 +104,21 @@
         drawerInfo.value.title = '编辑文件夹';
       };
 
-      const deleteFile = (item) => {};
+      const deleteFile = (item) => {
+        confirm(
+          withConfirm({
+            icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+            content: '确定删除该文件夹',
+            async onOk() {
+              const res = await deleteShare({ path: `/${item}` });
+              if (res) {
+                message.success('删除文件夹');
+                datumListReq('')
+              }
+            },
+          }),
+        );
+      };
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
@@ -155,7 +170,7 @@
         }
         .btn {
           display: none;
-          padding: 0 29px;
+          padding: 0 64px;
         }
       }
       .file-item-border:hover {
