@@ -79,7 +79,7 @@
 
       const downloadFile = (item) => {
         window.open(
-          `http://129.204.202.223:8001/basic-api/sys/share/download?path=/${
+          `http://129.204.202.223:8001/contract/template/download?path=/${
             route.query.name as string
           }/${item}`,
         );
