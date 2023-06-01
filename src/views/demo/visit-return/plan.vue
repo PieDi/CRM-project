@@ -298,19 +298,16 @@
         drawerInfo.value.title = '编辑回访';
         drawerInfo.value.type = 'edit';
       };
+      const resetDrawer = () => { 
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = undefined
+        })
+      }
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-
-        drawerInfo.value.item.customerId = undefined;
-        drawerInfo.value.item.item = undefined;
-        drawerInfo.value.item.nextPlan = undefined;
-        drawerInfo.value.item.remark = undefined;
-        drawerInfo.value.item.title = undefined;
-        drawerInfo.value.item.type = undefined;
-        drawerInfo.value.item.visitContent = undefined;
-        drawerInfo.value.item.visitTime = undefined;
+        resetDrawer()
       };
 
       const submit = async () => {
@@ -330,7 +327,6 @@
           drawerOnClose();
         }
       };
-
       /**
        * 开始回访
        */
@@ -348,7 +344,9 @@
         searchInfo.value.customerName = undefined;
         visitRListReq(1);
       };
-      const searchAction = () => {};
+      const searchAction = () => {
+        visitRListReq(1)
+      };
       return {
         columns,
         searchInfo,
