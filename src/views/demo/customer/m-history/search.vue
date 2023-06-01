@@ -245,7 +245,6 @@
       const columns: ColumnsType<CustomerMHInfo> = [
         {
           title: '姓名',
-          width: 70,
           dataIndex: 'customerName',
         },
         {
@@ -256,17 +255,14 @@
         },
         {
           title: '医院名称',
-          width: 150,
           dataIndex: 'hospitalName',
         },
         {
           title: '科室',
-          width: 70,
           dataIndex: 'departmentName',
         },
         {
           title: '疾病名称',
-          width: 150,
           dataIndex: 'diseaseName',
         },
         {

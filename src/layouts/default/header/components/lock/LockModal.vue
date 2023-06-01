@@ -8,7 +8,7 @@
   >
     <div :class="`${prefixCls}__entry`">
       <div :class="`${prefixCls}__header`">
-        <img :src="avatar" :class="`${prefixCls}__header-img`" />
+        <!-- <img :src="avatar" :class="`${prefixCls}__header-img`" /> -->
         <p :class="`${prefixCls}__header-name`">
           {{ getRealName }}
         </p>
@@ -17,9 +17,7 @@
       <BasicForm @register="registerForm" />
 
       <div :class="`${prefixCls}__footer`">
-        <a-button type="primary" block class="mt-2" @click="handleLock">
-          {{ t('layout.header.lockScreenBtn') }}
-        </a-button>
+        <a-button type="primary" block class="mt-2" @click="handleLock"> 确定 </a-button>
       </div>
     </div>
   </BasicModal>
@@ -30,10 +28,11 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { BasicModal, useModalInner } from '/@/components/Modal/index';
   import { BasicForm, useForm } from '/@/components/Form/index';
-
   import { useUserStore } from '/@/store/modules/user';
   import { useLockStore } from '/@/store/modules/lock';
-  import headerImg from '/@/assets/images/header.jpg';
+  import { modifyPwdApi, SHA256Encrypted } from '/@/api/sys/user';
+  import { message } from 'ant-design-vue';
+
   export default defineComponent({
     name: 'LockModal',
     components: { BasicModal, BasicForm },
@@ -44,7 +43,7 @@
       const userStore = useUserStore();
       const lockStore = useLockStore();
 
-      const getRealName = computed(() => userStore.getUserInfo?.realName);
+      const getRealName = computed(() => userStore.getUserInfo?.userName);
       const [register, { closeModal }] = useModalInner();
 
       const [registerForm, { validateFields, resetFields }] = useForm({
@@ -52,7 +51,16 @@
         schemas: [
           {
             field: 'password',
-            label: t('layout.header.lockScreenPassword'),
+            label: '旧密码',
+            colProps: {
+              span: 24,
+            },
+            component: 'InputPassword',
+            required: true,
+          },
+          {
+            field: 'newPassword',
+            label: '新密码',
             colProps: {
               span: 24,
             },
@@ -64,20 +72,21 @@
 
       async function handleLock() {
         const values = (await validateFields()) as any;
-        const password: string | undefined = values.password;
-        closeModal();
-
-        lockStore.setLockInfo({
-          isLock: true,
-          pwd: password,
-        });
-        await resetFields();
+        const password = values.oldPassword;
+        const newPassword = values.newPassword;
+        if (password && newPassword) {
+          const res = await modifyPwdApi({
+            password: SHA256Encrypted(password),
+            newPassword: SHA256Encrypted(newPassword),
+          });
+          if (res) {
+            message.success('修改密码成功');
+            userStore.confirmLoginOut();
+            closeModal();
+            await resetFields();
+          }
+        }
       }
-
-      const avatar = computed(() => {
-        const { avatar } = userStore.getUserInfo;
-        return avatar || headerImg;
-      });
 
       return {
         t,
@@ -86,7 +95,6 @@
         register,
         registerForm,
         handleLock,
-        avatar,
       };
     },
   });
@@ -98,7 +106,7 @@
     &__entry {
       position: relative;
       //height: 240px;
-      padding: 130px 30px 30px;
+      padding: 30px;
       border-radius: 10px;
     }
 

@@ -17,6 +17,7 @@ enum Api {
   Register = '/sys/user/save', //注册
   Login = '/sys/login', //登录
   Logout = '/sys/logout',
+  ModifyPwd = '/sys/modifyPwd',
   GetUserInfo = '/sys/user/info', // 获取登录用户信息
   GetUserDetail = '/sys/user/detail', // 获取用户信息详情
   // 以及即为员工接口
@@ -31,6 +32,8 @@ enum Api {
 /**
  * @description: user login api
  */
+export const registerApi = (params) => defHttp.post<RegisterParams>({ url: Api.Register, params });
+
 export function loginApi(params: LoginParams, mode: ErrorMessageMode = 'modal') {
   return defHttp.post<LoginResultModel>(
     {
@@ -42,8 +45,12 @@ export function loginApi(params: LoginParams, mode: ErrorMessageMode = 'modal') 
     },
   );
 }
+// 退出登录
+export function doLogout() {
+  return defHttp.post({ url: Api.Logout });
+}
 
-export const registerApi = (params) => defHttp.post<RegisterParams>({ url: Api.Register, params });
+export const modifyPwdApi = (params) => defHttp.post<{password: string, newPassword: string}>({ url: Api.ModifyPwd, params });
 
 /**
  * @description: getUserInfo
@@ -71,10 +78,6 @@ export const getUserList = () =>
 export const deleteUser = (userId: string | number) =>
   defHttp.post<any>({ url: Api.DeleteUser, params: { userId } });
 
-// 退出登录
-export function doLogout() {
-  return defHttp.post({ url: Api.Logout });
-}
 export const authUser = (params: any) => defHttp.post<any>({ url: Api.AuthUser, params });
 
 export const promotionUser = (userId: number) =>

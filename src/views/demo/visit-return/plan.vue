@@ -60,7 +60,7 @@
 
         <FormItem label="回访时间">
           <DatePicker
-            :disabled="drawerInfo.type !== 'add'"
+            :disabled="drawerInfo.type === 'scan'"
             show-time
             allow-clear
             placeholder="请选择"
@@ -88,7 +88,7 @@
 
         <FormItem label="回访类型">
           <Select
-            :disabled="drawerInfo.type !== 'add'"
+            :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
             allow-clear
             v-model:value="drawerInfo.item.type"
@@ -153,6 +153,11 @@
   import dayjs, { Dayjs } from 'dayjs';
 
   const TextArea = Input.TextArea;
+  const visitTypeMap: Record<number, string> = {
+    1: '电话回访',
+    2: '线下回访',
+    3: '其他',
+  };
   export default defineComponent({
     components: {
       PageWrapper,
@@ -171,37 +176,39 @@
     setup() {
       const columns: ColumnsType<VisitReturnInfo> = [
         {
-          title: '患者姓名',
-          dataIndex: 'name',
+          title: '客户姓名',
+          dataIndex: 'customerName',
         },
         {
-          title: '患者来源',
-          dataIndex: 'source',
+          title: '标题',
+          dataIndex: 'title',
         },
         {
-          title: '疾病种类',
-          dataIndex: 'kind',
-        },
-        {
-          title: '患者等级',
-          dataIndex: 'level',
-        },
-        {
-          title: '回访时间',
-          dataIndex: 'time',
-        },
-        {
-          title: '联系电话',
-          dataIndex: 'mobile',
+          title: '回访项目',
+          dataIndex: 'item',
         },
         {
           title: '回访类型',
           dataIndex: 'type',
+          customRender: (state) => visitTypeMap[state.record.type as number],
         },
         {
-          title: '回访状态',
-          dataIndex: 'status',
+          title: '回访时间',
+          dataIndex: 'time',
+          customRender: (state) => dayjs(state.record.visitTime).format('YYYY-MM-DD HH:mm:ss'),
         },
+        {
+          title: '回访内容',
+          dataIndex: 'visitContent',
+        },
+        {
+          title: '下一步',
+          dataIndex: 'nextPlan',
+        },
+        // {
+        //   title: '回访状态',
+        //   dataIndex: 'status',
+        // },
         {
           title: '操作',
           dataIndex: 'operation',
