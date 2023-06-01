@@ -29,7 +29,16 @@
         <template v-if="column.dataIndex === 'operation'">
           <div style="display: flex">
             <Button type="link" @click="scanReturnPlan(record)">查看</Button>
-            <Button type="link" style="margin-left: 10px" @click="startVisit">开始回访</Button>
+            <Button
+              type="link"
+              style="margin-left: 10px"
+              @click="
+                () => {
+                  startVisit(record);
+                }
+              "
+              >开始回访</Button
+            >
           </div>
         </template>
       </template>
@@ -135,7 +144,15 @@
         </FormItem>
       </Form>
     </Drawer>
-    <StartVisit :visible="showModal" @confirm="onModelConfirm" @cancel="onModelCancel" />
+    <template v-if="showModal && visitInfo.info && visitInfo.plan">
+      <StartVisit
+        :visible="showModal"
+        @confirm="onModelConfirm"
+        @cancel="onModelCancel"
+        :customer-info="visitInfo.info"
+        :visit-plan="visitInfo.plan"
+      />
+    </template>
   </PageWrapper>
 </template>
 
@@ -153,6 +170,7 @@
   import dayjs, { Dayjs } from 'dayjs';
   import { useRoute } from 'vue-router';
   const TextArea = Input.TextArea;
+
   const visitTypeMap: Record<number, string> = {
     1: '电话回访',
     2: '线下回访',
@@ -244,6 +262,7 @@
       };
       const route = useRoute();
       onMounted(() => {
+        customerReq();
         visitRListReq(1, route.query?.id ? (route.query?.id as string) : undefined);
       });
       // 客户
@@ -273,41 +292,41 @@
       });
 
       const addReturnPlan = () => {
-        customerReq();
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新建回访';
         drawerInfo.value.type = 'add';
       };
 
       const scanReturnPlan = (item: VisitReturnInfo) => {
-        customerReq();
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '查看回访';
         drawerInfo.value.type = 'scan';
-
-        drawerInfo.value.item.customerId = item.customerId;
-        drawerInfo.value.item.item = item.item;
-        drawerInfo.value.item.nextPlan = item.nextPlan;
-        drawerInfo.value.item.remark = item.remark;
-        drawerInfo.value.item.title = item.title;
-        drawerInfo.value.item.type = item.type;
-        drawerInfo.value.item.visitContent = item.visitContent;
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
+        // drawerInfo.value.item.customerId = item.customerId;
+        // drawerInfo.value.item.item = item.item;
+        // drawerInfo.value.item.nextPlan = item.nextPlan;
+        // drawerInfo.value.item.remark = item.remark;
+        // drawerInfo.value.item.title = item.title;
+        // drawerInfo.value.item.type = item.type;
+        // drawerInfo.value.item.visitContent = item.visitContent;
         drawerInfo.value.item.visitTime = dayjs(item.visitTime);
       };
       const drawerEdit = () => {
         drawerInfo.value.title = '编辑回访';
         drawerInfo.value.type = 'edit';
       };
-      const resetDrawer = () => { 
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = undefined
-        })
-      }
+      const resetDrawer = () => {
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = undefined;
+        });
+      };
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-        resetDrawer()
+        resetDrawer();
       };
 
       const submit = async () => {
@@ -327,11 +346,30 @@
           drawerOnClose();
         }
       };
+      const resetAction = () => {
+        searchInfo.value.customerName = undefined;
+        visitRListReq(1);
+      };
+      const searchAction = () => {
+        visitRListReq(1);
+      };
       /**
        * 开始回访
        */
       const showModal = ref(false);
-      const startVisit = () => {
+      const visitInfo = ref<{
+        info?: CustomerInfo;
+        plan?: VisitReturnInfo;
+      }>({
+        info: undefined,
+        plan: undefined,
+      });
+      const startVisit = (item: VisitReturnInfo) => {
+        const t = dataSource.value.filter((o) => o.id === item.customerId);
+        if (t.length) {
+          visitInfo.value.info = t[0];
+          visitInfo.value.plan = item;
+        }
         showModal.value = true;
       };
       const onModelConfirm = () => {
@@ -339,14 +377,10 @@
       };
       const onModelCancel = () => {
         showModal.value = false;
+        visitInfo.value.info = undefined;
+        visitInfo.value.plan = undefined;
       };
-      const resetAction = () => {
-        searchInfo.value.customerName = undefined;
-        visitRListReq(1);
-      };
-      const searchAction = () => {
-        visitRListReq(1)
-      };
+
       return {
         columns,
         searchInfo,
@@ -364,6 +398,7 @@
         submit,
         // 开始回访
         showModal,
+        visitInfo,
         startVisit,
         onModelConfirm,
         onModelCancel,
