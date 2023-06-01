@@ -1,5 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
-import { VisitReturnInfo } from './model/visit-return';
+import { VisitReturnInfo,CalendarObject } from './model/visit-return';
 
 enum Api {
   
@@ -13,8 +13,8 @@ enum Api {
   VisitDetail = '/customer/returnVisit/detail', //详情
 }
 
-export const getVisitCalendar = () =>
-  defHttp.post<Array<VisitReturnInfo>>({
+export const getVisitCalendar = (params: {month?:string, year?: string}) =>
+  defHttp.post<Array<CalendarObject>>({
     url: Api.VisitCalendar,
   });
 

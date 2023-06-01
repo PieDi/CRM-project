@@ -443,25 +443,16 @@
           }),
         );
       };
+      const resetDrawer = () => { 
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = undefined
+        })
+      }
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-
-        drawerInfo.value.item.age = undefined;
-        drawerInfo.value.item.birth = undefined;
-        drawerInfo.value.item.contactAddress = undefined;
-        drawerInfo.value.item.documentNumber = undefined;
-        drawerInfo.value.item.documentType = undefined;
-        drawerInfo.value.item.groupId = undefined;
-        drawerInfo.value.item.level = undefined;
-        drawerInfo.value.item.mobile = undefined;
-        drawerInfo.value.item.name = undefined;
-        drawerInfo.value.item.remark = undefined;
-        drawerInfo.value.item.sex = undefined;
-        drawerInfo.value.item.sourceId = undefined;
-        drawerInfo.value.item.tag = undefined;
-
+        resetDrawer()
         datePickerValue.value = undefined;
       };
       const drawerEdit = () => {
