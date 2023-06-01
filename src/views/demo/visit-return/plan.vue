@@ -151,7 +151,7 @@
   import { getCustomerList } from '/@/api/demo/customer';
   import { CustomerInfo } from '/@/api/demo/model/customer';
   import dayjs, { Dayjs } from 'dayjs';
-
+  import { useRoute } from 'vue-router';
   const TextArea = Input.TextArea;
   const visitTypeMap: Record<number, string> = {
     1: '电话回访',
@@ -214,7 +214,6 @@
           dataIndex: 'operation',
         },
       ];
-
       const searchInfo = ref({
         customerName: undefined,
       });
@@ -235,16 +234,17 @@
         showSizeChanger: false,
       }));
 
-      const visitRListReq = async (pageNum: number) => {
-        const res = await getVisitPage({ ...searchInfo.value, status: 1, pageNum });
+      const visitRListReq = async (pageNum: number, id?: string) => {
+        const res = await getVisitPage({ ...searchInfo.value, status: 1, pageNum, id });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
           pageInfo.value.dataSource = res.data;
         }
       };
+      const route = useRoute();
       onMounted(() => {
-        visitRListReq(1);
+        visitRListReq(1, route.query?.id ? (route.query?.id as string) : undefined);
       });
       // 客户
       const dataSource = ref<Array<CustomerInfo>>([]);

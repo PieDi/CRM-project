@@ -5,7 +5,15 @@
       <Calendar @panel-change="onPanelChange">
         <template #dateCellRender="{ current }">
           <ul class="events">
-            <li v-for="item in getListData(current)" :key="item.content">
+            <li
+              v-for="item in getListData(current)"
+              :key="item.content"
+              @click="
+                () => {
+                  liClick(item);
+                }
+              "
+            >
               <Badge :status="item.type" :text="item.content" />
             </li>
           </ul>
@@ -15,47 +23,38 @@
   </PageWrapper>
 </template>
 <script lang="ts" setup>
-  import { onMounted } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { Calendar, Badge } from 'ant-design-vue';
   import { PageWrapper } from '/@/components/Page';
   import WorkbenchHeader from './components/WorkbenchHeader.vue';
   import { getVisitCalendar } from '/@/api/demo/visit-return';
+  import { CalendarObject } from '/@/api/demo/model/visit-return';
   import { Dayjs } from 'dayjs';
+  import { useRouter } from 'vue-router';
+  const sourceData = ref<Array<CalendarObject>>([]);
   onMounted(async () => {
-    getVisitCalendar();
+    const res = await getVisitCalendar({});
+    if (res) sourceData.value = res;
   });
-  const onPanelChange = () => {
-    console.log(4354545);
+  const onPanelChange = (val: any) => {
+    getVisitCalendar({ year: val.format('YYYY'), month: val.format('MM') });
   };
   const getListData = (value: Dayjs) => {
-    let listData;
-    switch (value.date()) {
-      case 8:
-        listData = [
-          { type: 'warning', content: 'This is warning event.' },
-          { type: 'success', content: 'This is usual event.' },
-        ];
-        break;
-      case 10:
-        listData = [
-          { type: 'warning', content: 'This is warning event.' },
-          { type: 'success', content: 'This is usual event.' },
-          { type: 'error', content: 'This is error event.' },
-        ];
-        break;
-      case 15:
-        listData = [
-          { type: 'warning', content: 'This is warning event' },
-          { type: 'success', content: 'This is very long usual event。。....' },
-          { type: 'error', content: 'This is error event 1.' },
-          { type: 'error', content: 'This is error event 2.' },
-          { type: 'error', content: 'This is error event 3.' },
-          { type: 'error', content: 'This is error event 4.' },
-        ];
-        break;
-      default:
-    }
-    return listData || [];
+    let listData: Array<{ type: 'warning'; content: string; id: number }> = [];
+    sourceData.value.forEach((o) => {
+      const d = o.date.split('-')[2];
+      if (value.format('DD') === d) {
+        o.visits.forEach((i) => {
+          // @ts-ignore
+          listData.push({ type: 'warning', content: i.title, id: i.id });
+        });
+      }
+    });
+    return listData;
+  };
+  const router = useRouter();
+  const liClick = (o: any) => {
+    router.push({ path: '/return-visit/plan', query: { id: o.id } });
   };
 </script>
 <style lang="less">

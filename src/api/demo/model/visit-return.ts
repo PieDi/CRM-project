@@ -8,3 +8,13 @@ export interface VisitReturnInfo {
   visitTime: any;
   remark: string | undefined;
 }
+
+export interface CalendarObject {
+  date: string;
+  count: number;
+  visits: Array<{
+    id: number;
+    title: string;
+    status: number;
+  }>;
+}
