@@ -173,7 +173,7 @@
   import cRecord from './c-record.vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
-  import dayjs, { Dayjs } from 'dayjs';
+  import dayjs from 'dayjs';
   import confirm from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 

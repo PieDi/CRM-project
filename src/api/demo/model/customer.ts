@@ -82,6 +82,7 @@ export interface CustomerDInfo {
   useDose: string | undefined;
   useDate: string | undefined;
   fileIds: number[] | undefined;
+  newFiles: any[] | undefined;
   files: Array<{ fileName: string; path: string }> | undefined;
 }
 /**

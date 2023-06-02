@@ -194,7 +194,7 @@ export const getCustomerMHPage = (params: CustomerMHListParams) =>
     url: Api.CustomerMHPage,
     params: { pageSize: 20, ...params },
   });
-export const getCustomerMHList = (name?: string) =>
+export const getCustomerMHList = (customerId?: number) =>
   defHttp.post<Array<CustomerMHInfo>>({
     url: Api.CustomerMHList,
     params: { name },
@@ -232,8 +232,8 @@ export const getCustomerDList = (diseaseId: number) =>
 export const saveCustomerD = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerD, params });
 
-// export const updateCustomerD = (params?: any) =>
-//   defHttp.post<any>({ url: Api.UpdateCustomerD, params });
+export const updateCustomerD = (params?: any) =>
+  defHttp.post<any>({ url: Api.UpdateCustomerD, params });
 
 // export const deleteCustomerD = (id: string | number) =>
 //   defHttp.post<any>({ url: Api.DeleteCustomerD, params: { id } });
@@ -260,8 +260,8 @@ export const getCustomerEList = (diseaseId: number) =>
 export const saveCustomerE = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerE, params });
 
-// export const updateCustomerE = (params?: CustomerMHSaveParams) =>
-//   defHttp.post<any>({ url: Api.UpdateCustomerE, params });
+export const updateCustomerE = (params?: any) =>
+  defHttp.post<any>({ url: Api.UpdateCustomerE, params });
 
 // export const deleteCustomerE = (id: string | number) =>
 //   defHttp.post<any>({ url: Api.DeleteCustomerE, params: { id } });
@@ -288,8 +288,8 @@ export const getCustomerIList = (diseaseId: number) =>
 export const saveCustomerI = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerI, params });
 
-// export const updateCustomerI = (params?: CustomerMHSaveParams) =>
-//   defHttp.post<any>({ url: Api.UpdateCustomerI, params });
+export const updateCustomerI = (params?: any) =>
+  defHttp.post<any>({ url: Api.UpdateCustomerI, params });
 
 // export const deleteCustomerI = (id: string | number) =>
 //   defHttp.post<any>({ url: Api.DeleteCustomerI, params: { id } });
@@ -315,8 +315,8 @@ export const getCustomerCList = (diseaseId: number) =>
 export const saveCustomerC = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerC, params });
 
-// export const updateCustomerC = (params?: CustomerMHSaveParams) =>
-//   defHttp.post<any>({ url: Api.UpdateCustomerC, params });
+export const updateCustomerC = (params?: any) =>
+  defHttp.post<any>({ url: Api.UpdateCustomerC, params });
 
 // export const deleteCustomerC = (id: string | number) =>
 //   defHttp.post<any>({ url: Api.DeleteCustomerC, params: { id } });

@@ -19,10 +19,7 @@
           @change="customerOnChange"
           v-model:value="currentCustomer.id"
         >
-          <SelectOption
-            v-for="item of dataSource"
-            :value="item.id"
-            >{{ item.name }}</SelectOption>
+          <SelectOption v-for="item of dataSource" :value="item.id">{{ item.name }}</SelectOption>
         </Select>
       </FormItem>
 
@@ -97,12 +94,19 @@
           <template #itemRender="{ file, actions }">
             <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
             <Space>
-              <!-- <Button type="link" @click="()=>{
-                handleDownload(file)
-              }">下载</Button> -->
               <Button
                 type="link"
-                :disabled="drawerInfo.type === 'scan'"
+                v-if="drawerInfo.type === 'scan'"
+                @click="
+                  () => {
+                    handleDownload(file);
+                  }
+                "
+                >下载</Button
+              >
+              <Button
+                v-if="drawerInfo.type !== 'scan'"
+                type="link"
                 @click="
                   () => {
                     handleRemove(file);
@@ -113,6 +117,7 @@
             </Space>
           </template>
         </Upload>
+
         <Button
           v-if="drawerInfo.type !== 'scan'"
           @click="handleUpload"
@@ -230,12 +235,10 @@
 
       const customerOnChange = (value: SelectValue) => {
         //@ts-ignore
-        const t = dataSource.value.find(
-          (item: CustomerInfo) => item.id === value,
-        );
-        if (t) currentCustomer.value = {...t}
+        const t = dataSource.value.find((item: CustomerInfo) => item.id === value);
+        if (t) currentCustomer.value = { ...t };
       };
-  
+
       const drawerOnClose = () => {
         emit('drawerOnClose');
       };
@@ -278,7 +281,6 @@
         fileList.value = newFileList;
       };
       const handleDownload = (file: any) => {
-        console.log(24545450, file);
         if (file?.url) window.open(file.url);
       };
 

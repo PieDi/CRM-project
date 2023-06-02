@@ -177,7 +177,7 @@
         }
         .btn {
           display: none;
-          padding: 0 64px;
+          padding: 0 59px;
         }
       }
       .file-item-border:hover {
