@@ -132,7 +132,12 @@
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
   import dayjs, { Dayjs } from 'dayjs';
-  import { getCustomerCList, saveCustomerC, fileCUpload } from '/@/api/demo/customer';
+  import {
+    getCustomerCList,
+    saveCustomerC,
+    updateCustomerC,
+    fileCUpload,
+  } from '/@/api/demo/customer';
 
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
@@ -178,17 +183,18 @@
                 consultationDate: item?.consultationDate
                   ? dayjs(item?.consultationDate)
                   : undefined,
+                files: item.files,
               });
               const t: any[] = [];
-              item.files?.forEach((file, j) => { 
+              item.files?.forEach((file, j) => {
                 t.push({
                   uid: j,
                   name: file.fileName,
                   status: 'done',
                   url: file.path,
                 });
-              })
-              fileListMap.value[i] = t
+              });
+              fileListMap.value[i] = t;
             });
             listInfo.value = list;
           }
@@ -204,19 +210,36 @@
       const submit = async () => {
         if (listInfo.value.length) {
           const params = listInfo.value.map((item, i) => {
-            return {
+            const t = {
+              id: item.id,
               diseaseId: props.drawerInfo.item,
               consultationContent: item.consultationContent,
               consultationExpert: item.consultationExpert,
               consultationDate: item.consultationDate ? item.consultationDate.valueOf() : undefined,
-              fileIds: filesIdMap.value[i]
-                ? filesIdMap.value[i].length
-                  ? filesIdMap.value[i]
-                  : undefined
-                : undefined,
             };
+            const mF = filesIdMap.value[i];
+            if (props.drawerInfo.type === 'edit') {
+              if (mF && mF.length) {
+                // @ts-ignore
+                t.newFiles = {
+                  id: item.id,
+                  fileIds: mF,
+                };
+              }
+            } else {
+              // @ts-ignore
+              t.fileIds = mF;
+            }
+            return t;
           });
-          const res = await saveCustomerC(params);
+
+          let res;
+          if (props.drawerInfo.type === 'edit') {
+            res = updateCustomerC(params);
+          } else {
+            res = await saveCustomerC(params);
+          }
+
           if (res) {
             message.success('会诊记录录入成功');
             emit('submit');
@@ -248,7 +271,7 @@
       const uploadingMap = ref<{ [number: string]: boolean }>({});
 
       const handleDownload = (file: any, i: number) => {
-        if (file.url) window.open(file.url)
+        if (file.url) window.open(file.url);
       };
 
       const handleRemove = (file: File, i: number) => {

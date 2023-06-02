@@ -56,7 +56,7 @@
                 :disabled="drawerInfo.type === 'scan'"
               >
                 <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
-                <template #itemRender="{ file, actions }">
+                <template #itemRender="{ file }">
                   <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
                   <Space>
                     <Button
@@ -129,7 +129,12 @@
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import dayjs, { Dayjs } from 'dayjs';
   import { DrawerItemType } from '/@/views/type';
-  import { getCustomerDList, saveCustomerD, fileDUpload } from '/@/api/demo/customer';
+  import {
+    getCustomerDList,
+    saveCustomerD,
+    updateCustomerD,
+    fileDUpload,
+  } from '/@/api/demo/customer';
 
   const FormItem = Form.Item;
   export default defineComponent({
@@ -159,6 +164,7 @@
           medicineName: string | undefined;
           useDose: string | undefined;
           useDate: Dayjs | undefined;
+          files: any[] | undefined;
         }>
       >([]);
       const dListReq = async () => {
@@ -171,6 +177,7 @@
                 id: item?.id,
                 medicineName: item?.medicineName,
                 useDose: item?.useDose,
+                files: item.files,
                 useDate: item?.useDate ? dayjs(item?.useDate, 'YYYY-MM-DD') : undefined,
               });
               const t: any[] = [];
@@ -198,20 +205,35 @@
       const submit = async () => {
         if (listInfo.value.length) {
           const params = listInfo.value.map((item, i) => {
-            return {
+            const t = {
+              id: item.id,
               diseaseId: props.drawerInfo.item,
               medicineName: item.medicineName,
               useDose: item.useDose,
               useDate: item.useDate ? item.useDate.format('YYYY-MM-DD') : undefined,
-              fileIds: filesIdMap.value[i]
-                ? filesIdMap.value[i].length
-                  ? filesIdMap.value[i]
-                  : undefined
-                : undefined,
             };
+            const mF = filesIdMap.value[i];
+            if (props.drawerInfo.type === 'edit') {
+              if (mF && mF.length) {
+                // @ts-ignore
+                t.newFiles = {
+                  id: item.id,
+                  fileIds: mF,
+                };
+              }
+            } else {
+              // @ts-ignore
+              t.fileIds = mF;
+            }
+            return t;
           });
-          console.log(1212121, params);
-          const res = await saveCustomerD(params);
+
+          let res;
+          if (props.drawerInfo.type === 'edit') {
+            res = updateCustomerD(params);
+          } else {
+            res = await saveCustomerD(params);
+          }
           if (res) {
             message.success('用药记录录入成功');
             emit('submit');
@@ -232,6 +254,7 @@
           medicineName: undefined,
           useDate: undefined,
           useDose: undefined,
+          files: undefined,
         });
       };
       const deleteRecord = (i: number) => {
@@ -241,11 +264,9 @@
       // 文件上传
       const fileListMap = ref<{ [number: string]: any }>({});
       const uploadingMap = ref<{ [number: string]: boolean }>({});
-
       const handleDownload = (file: any, i: number) => {
-        if (file.url) window.open(file.url)
+        if (file.url) window.open(file.url);
       };
-
       const handleRemove = (file: File, i: number) => {
         const fileList = fileListMap.value[i];
         //@ts-ignore
@@ -275,6 +296,7 @@
           if (res) {
             message.success('上传成功');
             filesIdMap.value[i] = res;
+            console.log(2345670, filesIdMap.value);
           }
         }
       };

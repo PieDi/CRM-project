@@ -15,6 +15,7 @@
         <Button>模板上传</Button>
       </Upload>
     </div>
+
     <div class="file-content">
       <div v-for="(item, i) in fileList" :key="i" class="file-item">
         <div class="file-item-border">
@@ -33,6 +34,15 @@
               type="link"
               @click="
                 () => {
+                  previewFile(item);
+                }
+              "
+              >预览</Button
+            >
+            <Button
+              type="link"
+              @click="
+                () => {
                   deleteFile(item);
                 }
               "
@@ -43,23 +53,34 @@
       </div>
     </div>
   </PageWrapper>
+  <Modal
+    v-model:visible="pdfShow"
+    title="预览"
+    width="100%"
+    wrap-class-name="full-modal"
+    :footer="null"
+  >
+    <div id="pdf-content"></div>
+  </Modal>
 </template>
 <script lang="ts">
   import { defineComponent, ref, onMounted, toRaw, computed, createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Button, Upload, message } from 'ant-design-vue';
+  import { Button, Upload, message, Modal } from 'ant-design-vue';
   import { useRoute } from 'vue-router';
-  import { uploadTemplate, getTemplateList,deleteTemplate } from '/@/api/demo/contact';
+  import { uploadTemplate, getTemplateList, deleteTemplate } from '/@/api/demo/contact';
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+  import pdfPreview from './pdfobject.js';
 
   export default defineComponent({
     components: {
       PageWrapper,
       Button,
       Upload,
+      Modal,
     },
     setup() {
       const userStore = useUserStore();
@@ -84,13 +105,22 @@
           }/${item}`,
         );
       };
+      const pdfShow = ref(false);
+      const previewFile = (item) => {
+        pdfShow.value = true;
+        // pdfPreview.embed(`http://129.204.202.223:8001/contract/template/download?path=/${
+        //     route.query.name as string
+        //   }/${item}`, '#pdf-content')
+        setTimeout(() => {
+          pdfPreview.embed('https://soft.xiaoz.org/office/hee%20hee.pdf', '#pdf-content');
+        }, 200);
+      };
       const deleteFile = (item) => {
         confirm(
           withConfirm({
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
             content: '确定删除该文件',
             async onOk() {
-              console.log(345678, item);
               const res = await deleteTemplate({ path: `/${route.query.name as string}/${item}` });
               if (res) {
                 message.success('删除文件');
@@ -115,8 +145,10 @@
         fileList,
         beforeUpload,
         downloadFile,
+        previewFile,
         deleteFile,
         authShow,
+        pdfShow,
       };
     },
   });
@@ -130,7 +162,7 @@
     .file-item {
       width: 200px;
       height: 200px;
-      padding: 10px;
+      padding: 5px;
       .file-item-border {
         width: auto;
         height: 100%;
@@ -144,7 +176,6 @@
         }
         .btn {
           display: none;
-          padding: 0 29px;
         }
       }
       .file-item-border:hover {
@@ -155,8 +186,31 @@
     }
   }
 </style>
+<style scoped>
+  /* 根据你的需要设置PDFObject样式，比如高度等 */
+  .pdfobject-container {
+    height: 680px;
+    border: 1rem solid rgba(0, 0, 0, 0.1);
+  }
+</style>
 <style lang="less">
   .ant-upload-list {
     display: none;
+  }
+  .full-modal {
+    .ant-modal {
+      max-width: 100%;
+      top: 0;
+      padding-bottom: 0;
+      margin: 0;
+    }
+    .ant-modal-content {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh);
+    }
+    .ant-modal-body {
+      flex: 1;
+    }
   }
 </style>

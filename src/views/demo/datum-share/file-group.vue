@@ -90,7 +90,6 @@
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
             content: '确定删除该文件',
             async onOk() {
-              console.log(345678, item);
               const res = await deleteShare({ path: `/${route.query.name as string}/${item}` });
               if (res) {
                 message.success('删除文件');

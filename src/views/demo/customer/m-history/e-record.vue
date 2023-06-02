@@ -117,12 +117,27 @@
 </template>
 <script lang="ts">
   import { defineComponent, ref, PropType, onMounted } from 'vue';
-  import { Table, Form, Input, Button, Drawer, DatePicker, Upload, Space,message } from 'ant-design-vue';
+  import {
+    Table,
+    Form,
+    Input,
+    Button,
+    Drawer,
+    DatePicker,
+    Upload,
+    Space,
+    message,
+  } from 'ant-design-vue';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
   import dayjs, { Dayjs } from 'dayjs';
-  import { saveCustomerE, fileEUpload, getCustomerEList } from '/@/api/demo/customer';
+  import {
+    saveCustomerE,
+    updateCustomerE,
+    fileEUpload,
+    getCustomerEList,
+  } from '/@/api/demo/customer';
 
   const FormItem = Form.Item;
   export default defineComponent({
@@ -136,7 +151,7 @@
       DatePicker,
       DeleteOutlined,
       Upload,
-      Space
+      Space,
     },
     props: {
       drawerInfo: {
@@ -164,17 +179,18 @@
                 checkMechanism: item?.checkMechanism,
                 checkType: item?.checkType,
                 checkDate: item?.checkDate ? dayjs(item?.checkDate) : undefined,
+                files: item.files,
               });
               const t: any[] = [];
-              item.files?.forEach((file, j) => { 
+              item.files?.forEach((file, j) => {
                 t.push({
                   uid: j,
                   name: file.fileName,
                   status: 'done',
                   url: file.path,
                 });
-              })
-              fileListMap.value[i] = t
+              });
+              fileListMap.value[i] = t;
             });
             listInfo.value = list;
           }
@@ -190,20 +206,35 @@
       const submit = async () => {
         if (listInfo.value.length) {
           const params = listInfo.value.map((item, i) => {
-            return {
+            const t = {
+              id: item.id,
               diseaseId: props.drawerInfo.item,
               checkMechanism: item.checkMechanism,
               checkType: item.checkType,
               checkDate: item.checkDate ? item.checkDate.valueOf() : undefined,
-              fileIds: filesIdMap.value[i]
-                ? filesIdMap.value[i].length
-                  ? filesIdMap.value[i]
-                  : undefined
-                : undefined,
             };
+            const mF = filesIdMap.value[i];
+            if (props.drawerInfo.type === 'edit') {
+              if (mF && mF.length) {
+                // @ts-ignore
+                t.newFiles = {
+                  id: item.id,
+                  fileIds: mF,
+                };
+              }
+            } else {
+              // @ts-ignore
+              t.fileIds = mF;
+            }
+            return t;
           });
-          console.log(1212121, params);
-          const res = await saveCustomerE(params);
+
+          let res;
+          if (props.drawerInfo.type === 'edit') {
+            res = updateCustomerE(params);
+          } else {
+            res = await saveCustomerE(params);
+          }
           if (res) {
             message.success('检验记录录入成功');
             emit('submit');
@@ -235,7 +266,7 @@
       const uploadingMap = ref<{ [number: string]: boolean }>({});
 
       const handleDownload = (file: any, i: number) => {
-        if (file.url) window.open(file.url)
+        if (file.url) window.open(file.url);
       };
       const handleRemove = (file: File, i: number) => {
         const fileList = fileListMap.value[i];

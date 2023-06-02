@@ -148,7 +148,7 @@
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
   import dayjs, { Dayjs } from 'dayjs';
-  import { getCustomerIList, saveCustomerI, fileIUpload } from '/@/api/demo/customer';
+  import { getCustomerIList, saveCustomerI, updateCustomerI,fileIUpload } from '/@/api/demo/customer';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -195,6 +195,7 @@
                 checkType: item?.checkType,
                 checkPart: item.checkPart,
                 checkDate: item?.checkDate ? dayjs(item?.checkDate) : undefined,
+                files: item.files,
               });
               const t: any[] = [];
               item.files?.forEach((file, j) => { 
@@ -220,21 +221,39 @@
       };
       const submit = async () => {
         if (listInfo.value.length) {
+          
           const params = listInfo.value.map((item, i) => {
-            return {
+
+            const t = {
+              id: item.id,
               diseaseId: props.drawerInfo.item,
               checkMechanism: item.checkMechanism,
               checkType: item.checkType,
               checkPart: item.checkPart,
               checkDate: item.checkDate ? item.checkDate.valueOf() : undefined,
-              fileIds: filesIdMap.value[i]
-                ? filesIdMap.value[i].length
-                  ? filesIdMap.value[i]
-                  : undefined
-                : undefined,
             };
+            const mF = filesIdMap.value[i];
+            if (props.drawerInfo.type === 'edit') {
+              if (mF && mF.length) {
+                // @ts-ignore
+                t.newFiles = {
+                  id: item.id,
+                  fileIds: mF,
+                };
+              }
+            } else {
+              // @ts-ignore
+              t.fileIds = mF;
+            }
+            return t;
           });
-          const res = await saveCustomerI(params);
+          let res;
+          if (props.drawerInfo.type === 'edit') {
+            res = updateCustomerI(params);
+          } else {
+            res = await saveCustomerI(params);
+          }
+
           if (res) {
             message.success('影像记录录入成功');
             emit('submit');
