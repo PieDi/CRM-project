@@ -220,7 +220,7 @@
           dataIndex: 'visitContent',
         },
         {
-          title: '下一步',
+          title: '下一步计划',
           dataIndex: 'nextPlan',
         },
         // {

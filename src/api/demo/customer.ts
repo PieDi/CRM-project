@@ -194,7 +194,7 @@ export const getCustomerMHPage = (params: CustomerMHListParams) =>
     url: Api.CustomerMHPage,
     params: { pageSize: 20, ...params },
   });
-export const getCustomerMHList = (name?: string) =>
+export const getCustomerMHList = (customerId?: number) =>
   defHttp.post<Array<CustomerMHInfo>>({
     url: Api.CustomerMHList,
     params: { name },

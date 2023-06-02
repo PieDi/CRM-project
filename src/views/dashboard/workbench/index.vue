@@ -36,8 +36,9 @@
     const res = await getVisitCalendar({});
     if (res) sourceData.value = res;
   });
-  const onPanelChange = (val: any) => {
-    getVisitCalendar({ year: val.format('YYYY'), month: val.format('MM') });
+const onPanelChange = async (val: any) => {
+  const res = await getVisitCalendar({ year: val.format('YYYY'), month: val.format('MM') });
+  if (res) sourceData.value = res;
   };
   const getListData = (value: Dayjs) => {
     let listData: Array<{ type: 'warning'; content: string; id: number }> = [];

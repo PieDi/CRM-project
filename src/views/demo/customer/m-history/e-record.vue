@@ -138,6 +138,7 @@
     fileEUpload,
     getCustomerEList,
   } from '/@/api/demo/customer';
+  import { CustomerEInfo } from '/@/api/demo/model/customer';
 
   const FormItem = Form.Item;
   export default defineComponent({
@@ -168,10 +169,12 @@
           checkDate: Dayjs | undefined;
         }>
       >([]);
+      const eDataSource = ref<Array<CustomerEInfo>>([]);
       const dListReq = async () => {
         if (props.drawerInfo.item) {
           const res = await getCustomerEList(props.drawerInfo.item);
           if (res) {
+            eDataSource.value = res;
             const list: Array<any> = [];
             res.forEach((item, i) => {
               list.push({
@@ -214,7 +217,7 @@
               checkDate: item.checkDate ? item.checkDate.valueOf() : undefined,
             };
             const mF = filesIdMap.value[i];
-            if (props.drawerInfo.type === 'edit') {
+            if (eDataSource.value.length) {
               if (mF && mF.length) {
                 // @ts-ignore
                 t.newFiles = {
@@ -230,8 +233,8 @@
           });
 
           let res;
-          if (props.drawerInfo.type === 'edit') {
-            res = updateCustomerE(params);
+          if (eDataSource.value.length) {
+            res = await updateCustomerE(params);
           } else {
             res = await saveCustomerE(params);
           }

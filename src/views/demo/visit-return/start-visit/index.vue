@@ -1,62 +1,45 @@
 <template>
-  <Modal
-    :visible="visible"
-    width="60%"
-    centered
-    :closable="false"
-    :maskClosable="false"
-    @cancel="onModalCancel"
-    @ok="onModalOk"
-  >
+  <Modal :visible="visible" width="70%" centered :maskClosable="false" @ok="onModalOk">
     <div style="overflow-y: scroll; padding: 20px; height: 500px">
-      <div style="display: flex; margin-bottom: 10px;">
-      <div>
-        <span>客户姓名:</span>
-        <span>{{ visitCustomer.name }}</span>
+      <div style="display: flex; margin-bottom: 10px">
+        <div>
+          <span>客户姓名:</span>
+          <span>{{ visitCustomer.name }}</span>
+        </div>
+        <div style="margin-left: 20px">
+          <span>联系电话:</span>
+          <span>{{ visitCustomer.mobile }}</span>
+        </div>
+        <div style="margin-left: 20px">
+          <span>年龄:</span>
+          <span>{{ visitCustomer.age }}</span>
+        </div>
+        <div style="margin-left: 20px">
+          <span>地址:</span>
+          <span>{{ visitCustomer.contactAddress }}</span>
+        </div>
+        <div style="margin-left: 20px">
+          <span>标签:</span>
+          <span>{{ visitCustomer.tag }}</span>
+        </div>
       </div>
-      <div style="margin-left: 20px;">
-        <span>联系电话:</span>
-        <span>{{ visitCustomer.mobile }}</span>
+      <div style="display: flex; margin-bottom: 10px">
+        <div>
+          <span>回访标题:</span>
+          <span>{{ visitPlan.title }}</span>
+        </div>
+        <div style="margin-left: 20px">
+          <span>回访项目:</span>
+          <span>{{ visitPlan.item }}</span>
+        </div>
+        <div style="margin-left: 20px">
+          <span>回访类型:</span>
+          <span>{{ visitTypeMap[visitPlan.type as number] }}</span>
+        </div>
       </div>
-      <div style="margin-left: 20px;">
-        <span>年龄:</span>
-        <span>{{ visitCustomer.age }}</span>
-      </div>
-      <div style="margin-left: 20px;">
-        <span>地址:</span>
-        <span>{{ visitCustomer.contactAddress }}</span>
-      </div>
-      <div style="margin-left: 20px;">
-        <span>标签:</span>
-        <span>{{ visitCustomer.tag }}</span>
-      </div>
- 
-    </div>
-    <div style="display: flex; margin-bottom: 10px;">
-      <div>
-        <span>回访标题:</span>
-        <span>{{ visitPlan.title }}</span>
-      </div>
-      <div style="margin-left: 20px;">
-        <span>回访项目:</span>
-        <span>{{ visitPlan.item }}</span>
-      </div>
-      <div style="margin-left: 20px;">
-        <span>回访类型:</span>
-        <span>{{ visitTypeMap[ visitPlan.type as number] }}</span>
-      </div>
-    </div>
-    <!-- <div>
-      <span>回访内容:</span>
-      <span>回访内容</span>
-    </div>
-    <div>
-      <span>回访说明:</span>
-      <span>无</span>
-    </div> -->
 
       <!-- 患者病史列表 -->
-      <medical-history-list />
+      <medical-history-list v-if="visitCustomer.id" :customerId="visitCustomer.id"/>
       <!-- 回访结果 -->
       <div style="margin-top: 20px">
         <p>回访结果</p>
@@ -88,7 +71,7 @@
         </Form>
       </div>
       <!-- 近期回访列表 -->
-      <recent-vist-list />
+      <recent-vist-list v-if="visitCustomer.id" :customerId="visitCustomer.id" />
     </div>
   </Modal>
 </template>
@@ -147,7 +130,7 @@
         onModalOk,
         visitCustomer: props.customerInfo,
         visitPlan: props.visitPlan,
-        visitTypeMap
+        visitTypeMap,
       };
     },
   });

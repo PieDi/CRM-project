@@ -108,11 +108,10 @@
       const pdfShow = ref(false);
       const previewFile = (item) => {
         pdfShow.value = true;
-        // pdfPreview.embed(`http://129.204.202.223:8001/contract/template/download?path=/${
-        //     route.query.name as string
-        //   }/${item}`, '#pdf-content')
         setTimeout(() => {
-          pdfPreview.embed('https://soft.xiaoz.org/office/hee%20hee.pdf', '#pdf-content');
+          pdfPreview.embed(`http://129.204.202.223:8001/contract/template/download?path=/${
+            route.query.name as string
+          }/${item}`, '#pdf-content');
         }, 200);
       };
       const deleteFile = (item) => {

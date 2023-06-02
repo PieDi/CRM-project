@@ -135,6 +135,7 @@
     updateCustomerD,
     fileDUpload,
   } from '/@/api/demo/customer';
+  import { CustomerDInfo } from '/@/api/demo/model/customer';
 
   const FormItem = Form.Item;
   export default defineComponent({
@@ -167,10 +168,12 @@
           files: any[] | undefined;
         }>
       >([]);
+      const dDataSource = ref<Array<CustomerDInfo>>([]);
       const dListReq = async () => {
         if (props.drawerInfo.item) {
           const res = await getCustomerDList(props.drawerInfo.item);
           if (res) {
+            dDataSource.value = res;
             const list: Array<any> = [];
             res.forEach((item, i) => {
               list.push({
@@ -213,7 +216,7 @@
               useDate: item.useDate ? item.useDate.format('YYYY-MM-DD') : undefined,
             };
             const mF = filesIdMap.value[i];
-            if (props.drawerInfo.type === 'edit') {
+            if (dDataSource.value.length) {
               if (mF && mF.length) {
                 // @ts-ignore
                 t.newFiles = {
@@ -229,8 +232,8 @@
           });
 
           let res;
-          if (props.drawerInfo.type === 'edit') {
-            res = updateCustomerD(params);
+          if (dDataSource.value.length) {
+            res = await updateCustomerD(params);
           } else {
             res = await saveCustomerD(params);
           }

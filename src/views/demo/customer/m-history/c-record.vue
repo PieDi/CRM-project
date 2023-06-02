@@ -138,6 +138,7 @@
     updateCustomerC,
     fileCUpload,
   } from '/@/api/demo/customer';
+  import { CustomerCInfo } from '/@/api/demo/model/customer';
 
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
@@ -170,10 +171,12 @@
           consultationDate: Dayjs | undefined;
         }>
       >([]);
+      const cDataSource = ref<Array<CustomerCInfo>>([]);
       const dListReq = async () => {
         if (props.drawerInfo.item) {
           const res = await getCustomerCList(props.drawerInfo.item);
           if (res) {
+            cDataSource.value = res;
             const list: Array<any> = [];
             res.forEach((item, i) => {
               list.push({
@@ -218,7 +221,7 @@
               consultationDate: item.consultationDate ? item.consultationDate.valueOf() : undefined,
             };
             const mF = filesIdMap.value[i];
-            if (props.drawerInfo.type === 'edit') {
+            if (cDataSource.value.length) {
               if (mF && mF.length) {
                 // @ts-ignore
                 t.newFiles = {
@@ -234,8 +237,8 @@
           });
 
           let res;
-          if (props.drawerInfo.type === 'edit') {
-            res = updateCustomerC(params);
+          if (cDataSource.value.length) {
+            res = await updateCustomerC(params);
           } else {
             res = await saveCustomerC(params);
           }

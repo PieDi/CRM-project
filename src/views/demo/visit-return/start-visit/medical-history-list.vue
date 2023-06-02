@@ -1,89 +1,110 @@
 <template>
   <div>
     <p>病史记录</p>
-    <Table
-      :columns="columns"
-      :dataSource="datas"
-      :bordered="true"
-      :pagination="false"
-    >
-      <template #bodyCell="{ column }">
+    <Table :columns="columns" :dataSource="customerMHList" :bordered="true" :pagination="false">
+      <template #bodyCell="{ column, _text, record }">
         <template v-if="column.dataIndex === 'operation'">
-          <Button type="link" @click="lookMedicalHistory">查看</Button>
+          <Button
+            type="link"
+            @click="
+              () => {
+                lookMedicalHistory(record);
+              }
+            "
+            >查看</Button
+          >
         </template>
       </template>
     </Table>
-    <medical-history-look :visible="visible" @confirm="onModalConfirm" @cancel="onModalCancel" />
+    <medical-history-look
+      v-if="recordTab.diseaseId"
+      :diseaseId="recordTab.diseaseId"
+      :visible="recordTab.visible"
+      @confirm="onModalConfirm"
+      @cancel="onModalCancel"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-import { Table, Button } from 'ant-design-vue'
-import MedicalHistoryLook from './medical-history-look.vue'
+  import { defineComponent, onMounted, ref } from 'vue';
+  import { Table, Button } from 'ant-design-vue';
+  import MedicalHistoryLook from './medical-history-look.vue';
+  import { getCustomerMHList } from '/@/api/demo/customer';
+  import { CustomerMHInfo } from '/@/api/demo/model/customer';
+  import { type ColumnsType } from 'ant-design-vue/lib/table';
 
-export default defineComponent({
-  components: {
-    Table,
-    Button,
-    MedicalHistoryLook
-  },
-  setup() {
-    const columns: any = ref([
-      {
-        title: '医院名称',
-        dataIndex: 'hospital'
+  export default defineComponent({
+    components: {
+      Table,
+      Button,
+      MedicalHistoryLook,
+    },
+    props: {
+      customerId: {
+        type: Number,
+        required: true,
       },
-      {
-        title: '科室',
-        dataIndex: 'departments'
-      },
-      {
-        title: '疾病名称',
-        dataIndex: 'illness'
-      },
-      {
-        title: '操作',
-        dataIndex: 'operation'
-      }
-    ])
-    const getDatas = () => {
-      const datas: any = []
-      for (let index = 0; index < 3; index++) {
-        datas.push({
-          hospital: '上海虹桥医院',
-          departments: '内科',
-          illness: '呼吸疾病'
-        })
-      }
-      return datas
-    }
+    },
+    setup(props) {
+      const customerMHList = ref<Array<CustomerMHInfo>>([]);
+      const customerMHListReq = async () => {
+        const res = await getCustomerMHList(props.customerId);
+        if (res) customerMHList.value = res;
+      };
+      onMounted(() => {
+        customerMHListReq();
+      });
+      const columns: ColumnsType<CustomerMHInfo> = [
+        {
+          title: '医院名称',
+          dataIndex: 'hospitalName',
+        },
+        {
+          title: '科室',
+          dataIndex: 'departmentName',
+        },
+        {
+          title: '疾病名称',
+          dataIndex: 'diseaseName',
+        },
+        {
+          title: '操作',
+          dataIndex: 'operation',
+        },
+      ];
 
-    const visible = ref(false)
-    const lookMedicalHistory = () => {
-      visible.value = true
-    }
+      const recordTab = ref<{ visible: boolean, diseaseId: number | undefined }>({
+        visible: false,
+        diseaseId: undefined
+      });
+      // const visible = ref(false);
+      const lookMedicalHistory = (o: CustomerMHInfo) => {
+        recordTab.value.visible = true
+        recordTab.value.diseaseId = o.id
+      };
 
-    const onModalConfirm = () => {
-      visible.value = false
-    }
+      const onModalConfirm = () => {
+        recordTab.value.visible = false
+        recordTab.value.diseaseId = undefined
+      };
 
-    const onModalCancel = () => {
-      visible.value = false
-    }
+      const onModalCancel = () => {
+        recordTab.value.visible = false
+        recordTab.value.diseaseId = undefined
+      };
 
-    return {
-      columns,
-      datas: getDatas(),
-      visible,
-      lookMedicalHistory,
-      onModalConfirm,
-      onModalCancel
-    }
-  }
-})
+      return {
+        columns,
+        recordTab,
+        customerMHList,
+        lookMedicalHistory,
+        onModalConfirm,
+        onModalCancel,
+        customerId: props.customerId,
+      };
+    },
+  });
 </script>
 
-<style lang="less" scoped>
-
-</style>
+<style lang="less" scoped></style>
