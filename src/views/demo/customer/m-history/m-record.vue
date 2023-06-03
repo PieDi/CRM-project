@@ -280,8 +280,9 @@
         newFileList.splice(index, 1);
         fileList.value = newFileList;
       };
-      const handleDownload = (file: any) => {
-        if (file?.url) window.open(file.url);
+      const handleDownload = async (file: any) => {
+        if (file?.url)
+          window.open(`http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`);
       };
 
       const beforeUpload: UploadProps['beforeUpload'] = (file) => {

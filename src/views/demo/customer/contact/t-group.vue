@@ -53,7 +53,7 @@
       </div>
     </div>
   </PageWrapper>
-  <Modal
+  <!-- <Modal
     v-model:visible="pdfShow"
     title="预览"
     width="100%"
@@ -61,19 +61,19 @@
     :footer="null"
   >
     <div id="pdf-content"></div>
-  </Modal>
+  </Modal> -->
 </template>
 <script lang="ts">
   import { defineComponent, ref, onMounted, toRaw, computed, createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Button, Upload, message, Modal } from 'ant-design-vue';
   import { useRoute } from 'vue-router';
-  import { uploadTemplate, getTemplateList, deleteTemplate } from '/@/api/demo/contact';
+  import { uploadTemplate, previewTemplate,getTemplateList, deleteTemplate } from '/@/api/demo/contact';
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import pdfPreview from './pdfobject.js';
+  // import pdfPreview from './pdfobject.js';
 
   export default defineComponent({
     components: {
@@ -100,19 +100,22 @@
 
       const downloadFile = (item) => {
         window.open(
-          `http://129.204.202.223:8001/contract/template/download?path=/${
+          `http://129.204.202.223:8001/basic-api/contract/template/download?path=/${
             route.query.name as string
           }/${item}`,
         );
       };
       const pdfShow = ref(false);
-      const previewFile = (item) => {
-        pdfShow.value = true;
-        setTimeout(() => {
-          pdfPreview.embed(`http://129.204.202.223:8001/contract/template/download?path=/${
-            route.query.name as string
-          }/${item}`, '#pdf-content');
-        }, 200);
+      const previewFile = async (item) => {
+        const res = await previewTemplate(`/${route.query.name as string}/${item}`)
+        if (res) window.open(res)
+      
+        // pdfShow.value = true;
+        // setTimeout(() => {
+        //   pdfPreview.embed(`http://129.204.202.223:8001/contract/template/download?path=/${
+        //     route.query.name as string
+        //   }/${item}`, '#pdf-content');
+        // }, 200);
       };
       const deleteFile = (item) => {
         confirm(

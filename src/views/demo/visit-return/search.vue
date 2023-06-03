@@ -74,15 +74,6 @@
             allowClear
             v-model:value="drawerInfo.item.item"
           />
-          <!-- <Select
-            :disabled="drawerInfo.type !== 'add'"
-            placeholder="请选择"
-            allow-clear
-            v-model:value="drawerInfo.item.item"
-          >
-            <SelectOption :value="1">回访项目1</SelectOption>
-            <SelectOption :value="2">回访项目2</SelectOption>
-          </Select> -->
         </FormItem>
 
         <FormItem label="回访类型">
@@ -90,28 +81,33 @@
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
             allow-clear
-            v-model:value="drawerInfo.item.type"
+            v-model:value="drawerInfo.item.way"
           >
             <SelectOption :value="1">电话回访</SelectOption>
             <SelectOption :value="2">线下回访</SelectOption>
             <SelectOption :value="3">其他</SelectOption>
           </Select>
         </FormItem>
-        <FormItem label="标题">
-          <Input
+
+        <FormItem label="回访结果">
+          <Select
+            placeholder="请选择"
+            style="width: 150px"
+            v-model:value="drawerInfo.item.result"
             :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.title"
-          />
+          >
+            <SelectOption :value="1">超过预期</SelectOption>
+            <SelectOption :value="2">达到预期</SelectOption>
+            <SelectOption :value="3">结果一般</SelectOption>
+          </Select>
         </FormItem>
 
-        <FormItem label="回访内容">
+        <FormItem label="结果补充">
           <TextArea
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
             allowClear
-            v-model:value="drawerInfo.item.visitContent"
+            v-model:value="drawerInfo.item.supplement"
           />
         </FormItem>
 
@@ -149,12 +145,18 @@
   import { CustomerInfo } from '/@/api/demo/model/customer';
   import dayjs from 'dayjs';
 
-const TextArea = Input.TextArea;
+  const TextArea = Input.TextArea;
   const visitTypeMap: Record<number, string> = {
     1: '电话回访',
     2: '线下回访',
     3: '其他',
   };
+  const visitResMap: Record<number, string> = {
+    1: '超过预期',
+    2: '达到预期',
+    3: '结果一般',
+  };
+
   export default defineComponent({
     components: {
       PageWrapper,
@@ -176,8 +178,9 @@ const TextArea = Input.TextArea;
           dataIndex: 'customerName',
         },
         {
-          title: '标题',
-          dataIndex: 'title',
+          title: '回访时间',
+          dataIndex: 'time',
+          customRender: (state) => dayjs(state.record.visitTime).format('YYYY-MM-DD HH:mm:ss'),
         },
         {
           title: '回访项目',
@@ -185,17 +188,17 @@ const TextArea = Input.TextArea;
         },
         {
           title: '回访类型',
-          dataIndex: 'type',
-          customRender: (state) => visitTypeMap[state.record.type as number],
+          dataIndex: 'way',
+          customRender: (state) => visitTypeMap[state.record.way as number],
         },
         {
-          title: '回访时间',
-          dataIndex: 'time',
-          customRender: (state) => dayjs(state.record.visitTime).format('YYYY-MM-DD HH:mm:ss'),
+          title: '回访结果',
+          dataIndex: 'result',
+          customRender: (state) => visitResMap[state.record.way as number],
         },
         {
-          title: '回访内容',
-          dataIndex: 'visitContent',
+          title: '结果补充',
+          dataIndex: 'supplement',
         },
         {
           title: '操作',
@@ -230,7 +233,7 @@ const TextArea = Input.TextArea;
           pageInfo.value.dataSource = res.data;
         }
       };
-    
+
       onMounted(() => {
         visitRListReq(1);
       });
@@ -248,14 +251,15 @@ const TextArea = Input.TextArea;
         visible: false,
         type: undefined,
         title: '',
+        //@ts-ignore
         item: {
           customerId: undefined,
           item: undefined,
           nextPlan: undefined,
           remark: undefined,
-          title: undefined,
-          type: undefined,
-          visitContent: undefined,
+          supplement: undefined,
+          way: undefined,
+          result: undefined,
           visitTime: undefined,
         },
       });
@@ -267,11 +271,11 @@ const TextArea = Input.TextArea;
         drawerInfo.value.type = 'add';
       };
 
-      const resetDrawer = () => { 
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = undefined
-        })
-      }
+      const resetDrawer = () => {
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = undefined;
+        });
+      };
       const scanReturnPlan = (item: VisitReturnInfo) => {
         customerReq();
         drawerInfo.value.visible = true;
@@ -282,46 +286,45 @@ const TextArea = Input.TextArea;
         drawerInfo.value.item.item = item.item;
         drawerInfo.value.item.nextPlan = item.nextPlan;
         drawerInfo.value.item.remark = item.remark;
-        drawerInfo.value.item.title = item.title;
-        drawerInfo.value.item.type = item.type;
-        drawerInfo.value.item.visitContent = item.visitContent;
+        drawerInfo.value.item.result = item.result;
+        drawerInfo.value.item.way = item.way;
+        drawerInfo.value.item.supplement = item.supplement;
         drawerInfo.value.item.visitTime = dayjs(item.visitTime);
       };
       const drawerEdit = () => {
         drawerInfo.value.title = '再次回访';
         drawerInfo.value.type = 'edit';
-        const customerId = drawerInfo.value.item.customerId
-        resetDrawer()
+        const customerId = drawerInfo.value.item.customerId;
+        resetDrawer();
         drawerInfo.value.item.customerId = customerId;
       };
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-        resetDrawer()
+        resetDrawer();
       };
 
       const submit = async () => {
         let res = await saveVisit({
-            ...drawerInfo.value.item,
-            visitTime: drawerInfo.value.item.visitTime
-              ? drawerInfo.value.item.visitTime.valueOf()
-              : undefined,
-          });
+          ...drawerInfo.value.item,
+          visitTime: drawerInfo.value.item.visitTime
+            ? drawerInfo.value.item.visitTime.valueOf()
+            : undefined,
+        });
         if (res) {
-          message.success('新建再次回访计划成功',);
+          message.success('新建再次回访计划成功');
           // visitRListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
           drawerOnClose();
         }
       };
-  
 
       const resetAction = () => {
         searchInfo.value.customerName = undefined;
         visitRListReq(1);
       };
       const searchAction = () => {
-        visitRListReq(1)
+        visitRListReq(1);
       };
       return {
         columns,
@@ -338,7 +341,6 @@ const TextArea = Input.TextArea;
         drawerOnClose,
         drawerEdit,
         submit,
-  
       };
     },
   });

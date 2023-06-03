@@ -97,18 +97,17 @@
               >
             </FormItem>
 
-            <template v-if="i !== 0">
-              <Button
-                type="link"
-                @click="
-                  () => {
-                    deleteRecord(i);
-                  }
-                "
-              >
-                <template #icon><DeleteOutlined /></template
-              ></Button>
-            </template>
+            <Button
+              v-if="drawerInfo.type !== 'scan'"
+              type="link"
+              @click="
+                () => {
+                  deleteRecord(i);
+                }
+              "
+            >
+              <template #icon><DeleteOutlined /></template
+            ></Button>
           </div>
         </template>
       </Form>
@@ -207,41 +206,36 @@
         emit('drawerOnClose');
       };
       const submit = async () => {
-        if (listInfo.value.length) {
-          const params = listInfo.value.map((item, i) => {
-            const t = {
-              id: item.id,
-              diseaseId: props.drawerInfo.item,
-              checkMechanism: item.checkMechanism,
-              checkType: item.checkType,
-              checkDate: item.checkDate ? item.checkDate.valueOf() : undefined,
-            };
-            const mF = filesIdMap.value[i];
-            if (eDataSource.value.length) {
-              if (mF && mF.length) {
-                // @ts-ignore
-                t.newFiles = {
-                  id: item.id,
-                  fileIds: mF,
-                };
-              }
-            } else {
-              // @ts-ignore
-              t.fileIds = mF;
-            }
-            return t;
-          });
-
-          let res;
-          if (eDataSource.value.length) {
-            res = await updateCustomerE(params);
-          } else {
-            res = await saveCustomerE(params);
-          }
-          if (res) {
-            message.success('检验记录录入成功');
-            emit('submit');
-          }
+        if (!eDataSource.value.length && !listInfo.value.length) { 
+          message.warn('暂未添加用药记录')
+          return
+        }
+        const list = listInfo.value.map((item, i) => {
+          const t = {
+            id: item.id,
+            diseaseId: props.drawerInfo.item,
+            checkMechanism: item.checkMechanism,
+            checkType: item.checkType,
+            checkDate: item.checkDate ? item.checkDate.valueOf() : undefined,
+          };
+          const mF = filesIdMap.value[i];
+          // @ts-ignore
+          t.fileIds = mF;
+          return t;
+        });
+        const params = {
+          list,
+          diseaseId: props.drawerInfo.item
+        }
+        let res;
+        if (eDataSource.value.length) {
+          res = await updateCustomerE(params);
+        } else {
+          res = await saveCustomerE(params);
+        }
+        if (res) {
+          message.success('检验记录录入成功');
+          emit('submit');
         }
       };
       const edit = () => {
@@ -269,7 +263,7 @@
       const uploadingMap = ref<{ [number: string]: boolean }>({});
 
       const handleDownload = (file: any, i: number) => {
-        if (file.url) window.open(file.url);
+        if (file?.url) window.open(`http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`);
       };
       const handleRemove = (file: File, i: number) => {
         const fileList = fileListMap.value[i];

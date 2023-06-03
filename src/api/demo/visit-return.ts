@@ -10,12 +10,13 @@ enum Api {
   DeleteVisit = '/customer/returnVisit/delete', // 删除
   HandleVisit = '/customer/returnVisit/delete', // 删除
   VisitDetail = '/customer/returnVisit/detail', //详情
+  VisitStart = '/customer/returnVisit/start', //详情
 }
 
 export const getVisitCalendar = (params: { month?: string; year?: string }) =>
   defHttp.post<Array<CalendarObject>>({
     url: Api.VisitCalendar,
-    params
+    params,
   });
 
 export const getVisitPage = (params: any) =>
@@ -38,3 +39,6 @@ export const deleteVisit = (id: string | number) =>
 
 export const getVisit = (id: string | number) =>
   defHttp.post<VisitReturnInfo>({ url: Api.VisitDetail, params: { id } });
+
+export const startVisit = (params: any) =>
+  defHttp.post<VisitReturnInfo>({ url: Api.VisitStart, params });

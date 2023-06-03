@@ -1,4 +1,5 @@
 export interface VisitReturnInfo {
+  id: number | undefined;
   customerId: number | undefined;
   item: string | undefined;
   nextPlan: string | undefined;
@@ -7,6 +8,9 @@ export interface VisitReturnInfo {
   type: number | undefined;
   visitTime: any;
   remark: string | undefined;
+  way: number | undefined;
+  result: number | undefined;
+  supplement: string | undefined;
 }
 
 export interface CalendarObject {
