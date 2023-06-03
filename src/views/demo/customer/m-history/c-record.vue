@@ -97,18 +97,17 @@
               >
             </FormItem>
 
-            <template v-if="i !== 0">
-              <Button
-                type="link"
-                @click="
-                  () => {
-                    deleteRecord(i);
-                  }
-                "
-              >
-                <template #icon><DeleteOutlined /></template
-              ></Button>
-            </template>
+            <Button
+              v-if="drawerInfo.type !== 'scan'"
+              type="link"
+              @click="
+                () => {
+                  deleteRecord(i);
+                }
+              "
+            >
+              <template #icon><DeleteOutlined /></template
+            ></Button>
           </div>
         </template>
       </Form>
@@ -173,34 +172,30 @@
       >([]);
       const cDataSource = ref<Array<CustomerCInfo>>([]);
       const dListReq = async () => {
-        if (props.drawerInfo.item) {
-          const res = await getCustomerCList(props.drawerInfo.item);
-          if (res) {
-            cDataSource.value = res;
-            const list: Array<any> = [];
-            res.forEach((item, i) => {
-              list.push({
-                id: item?.id,
-                consultationContent: item?.consultationContent,
-                consultationExpert: item?.consultationExpert,
-                consultationDate: item?.consultationDate
-                  ? dayjs(item?.consultationDate)
-                  : undefined,
-                files: item.files,
-              });
-              const t: any[] = [];
-              item.files?.forEach((file, j) => {
-                t.push({
-                  uid: j,
-                  name: file.fileName,
-                  status: 'done',
-                  url: file.path,
-                });
-              });
-              fileListMap.value[i] = t;
+        const res = await getCustomerCList(props.drawerInfo.item);
+        if (res) {
+          cDataSource.value = res;
+          const list: Array<any> = [];
+          res.forEach((item, i) => {
+            list.push({
+              id: item?.id,
+              consultationContent: item?.consultationContent,
+              consultationExpert: item?.consultationExpert,
+              consultationDate: item?.consultationDate ? dayjs(item?.consultationDate) : undefined,
+              files: item.files,
             });
-            listInfo.value = list;
-          }
+            const t: any[] = [];
+            item.files?.forEach((file, j) => {
+              t.push({
+                uid: j,
+                name: file.fileName,
+                status: 'done',
+                url: file.path,
+              });
+            });
+            fileListMap.value[i] = t;
+          });
+          listInfo.value = list;
         }
       };
       onMounted(() => {
@@ -211,42 +206,37 @@
         emit('drawerOnClose');
       };
       const submit = async () => {
-        if (listInfo.value.length) {
-          const params = listInfo.value.map((item, i) => {
-            const t = {
-              id: item.id,
-              diseaseId: props.drawerInfo.item,
-              consultationContent: item.consultationContent,
-              consultationExpert: item.consultationExpert,
-              consultationDate: item.consultationDate ? item.consultationDate.valueOf() : undefined,
-            };
-            const mF = filesIdMap.value[i];
-            if (cDataSource.value.length) {
-              if (mF && mF.length) {
-                // @ts-ignore
-                t.newFiles = {
-                  id: item.id,
-                  fileIds: mF,
-                };
-              }
-            } else {
-              // @ts-ignore
-              t.fileIds = mF;
-            }
-            return t;
-          });
+        if (!cDataSource.value.length && !listInfo.value.length) {
+          message.warn('暂未添加用药记录');
+          return;
+        }
+        const list = listInfo.value.map((item, i) => {
+          const t = {
+            id: item.id,
+            diseaseId: props.drawerInfo.item,
+            consultationContent: item.consultationContent,
+            consultationExpert: item.consultationExpert,
+            consultationDate: item.consultationDate ? item.consultationDate.valueOf() : undefined,
+          };
+          const mF = filesIdMap.value[i];
+          // @ts-ignore
+          t.fileIds = mF;
+          return t;
+        });
+        const params = {
+          list,
+          diseaseId: props.drawerInfo.item,
+        };
+        let res;
+        if (cDataSource.value.length) {
+          res = await updateCustomerC(params);
+        } else {
+          res = await saveCustomerC(params);
+        }
 
-          let res;
-          if (cDataSource.value.length) {
-            res = await updateCustomerC(params);
-          } else {
-            res = await saveCustomerC(params);
-          }
-
-          if (res) {
-            message.success('会诊记录录入成功');
-            emit('submit');
-          }
+        if (res) {
+          message.success('会诊记录录入成功');
+          emit('submit');
         }
       };
       const edit = () => {
@@ -274,7 +264,7 @@
       const uploadingMap = ref<{ [number: string]: boolean }>({});
 
       const handleDownload = (file: any, i: number) => {
-        if (file.url) window.open(file.url);
+        if (file?.url) window.open(`http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`);
       };
 
       const handleRemove = (file: File, i: number) => {

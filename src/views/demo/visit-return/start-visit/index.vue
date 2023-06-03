@@ -39,35 +39,39 @@
       </div>
 
       <!-- 患者病史列表 -->
-      <medical-history-list v-if="visitCustomer.id" :customerId="visitCustomer.id"/>
+      <medical-history-list v-if="visitCustomer.id" :customerId="visitCustomer.id" />
       <!-- 回访结果 -->
       <div style="margin-top: 20px">
         <p>回访结果</p>
         <Form>
-          <div style="display: flex">
-            <FormItem label="回访结果" required>
-              <Select placeholder="请选择" style="width: 150px">
-                <SelectOption key="1">回访结果1</SelectOption>
-                <SelectOption key="2">回访结果2</SelectOption>
-              </Select>
-            </FormItem>
-            <FormItem label="回访方式" required style="margin-left: 50px">
-              <Select placeholder="请选择" style="width: 150px">
-                <SelectOption key="1">回访方式1</SelectOption>
-                <SelectOption key="2">回访方式2</SelectOption>
-              </Select>
-            </FormItem>
-          </div>
-          <FormItem label="结果补充">
-            <TextArea placeholder="填写回访结果补充" />
+          <div style="display: flex;">
+            <FormItem label="回访方式">
+            <Select placeholder="请选择" style="width: 150px" v-model:value="formState.way">
+              <SelectOption :value="1">电话回访</SelectOption>
+              <SelectOption :value="2">线下回访</SelectOption>
+              <SelectOption :value="3">其他</SelectOption>
+            </Select>
           </FormItem>
-          <FormItem label="上传附件">
+          <FormItem label="回访结果" style="margin-left: 20px">
+            <Select placeholder="请选择" style="width: 150px" v-model:value="formState.result">
+              <SelectOption :value="1">超过预期</SelectOption>
+              <SelectOption :value="2">达到预期</SelectOption>
+              <SelectOption :value="3">结果一般</SelectOption>
+            </Select>
+          </FormItem>
+          </div>
+          
+
+          <FormItem label="结果补充">
+            <TextArea placeholder="填写回访结果补充" v-model:value="formState.supplement" />
+          </FormItem>
+          <!-- <FormItem label="上传附件">
             <Select placeholder="请选择" style="width: 150px; margin-right: 10px">
               <SelectOption key="1">文档</SelectOption>
               <SelectOption key="2">图片</SelectOption>
             </Select>
             <Button type="primary">上传文件</Button>
-          </FormItem>
+          </FormItem> -->
         </Form>
       </div>
       <!-- 近期回访列表 -->
@@ -77,7 +81,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from 'vue';
+  import { defineComponent, reactive } from 'vue';
   import { propTypes } from '/@/utils/propTypes';
   import { Modal, Form, Input, Select, Button } from 'ant-design-vue';
   import BaseInfo from './base-info.vue';
@@ -85,6 +89,7 @@
   import RecentVistList from './recent-vist-list.vue';
   import { CustomerInfo } from '/@/api/demo/model/customer';
   import { VisitReturnInfo } from '/@/api/demo/model/visit-return';
+  import { startVisit } from '/@/api/demo/visit-return';
 
   const visitTypeMap: Record<number, string> = {
     1: '电话回访',
@@ -118,14 +123,24 @@
       visible: propTypes.bool,
     },
     setup(props, { emit }) {
+      const formState = reactive({
+        visitId: props.visitPlan.id,
+        way: undefined,
+        result: undefined,
+        supplement: undefined,
+      });
       const onModalCancel = () => {
         emit('cancel');
       };
 
-      const onModalOk = () => {
+      const onModalOk = async () => {
+        const res = await startVisit({ ...formState });
+        if (res) {
+        }
         emit('confirm');
       };
       return {
+        formState,
         onModalCancel,
         onModalOk,
         visitCustomer: props.customerInfo,

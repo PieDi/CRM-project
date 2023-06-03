@@ -167,7 +167,7 @@
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { getCustomerList } from '/@/api/demo/customer';
   import { CustomerInfo } from '/@/api/demo/model/customer';
-  import dayjs, { Dayjs } from 'dayjs';
+  import dayjs from 'dayjs';
   import { useRoute } from 'vue-router';
   const TextArea = Input.TextArea;
 

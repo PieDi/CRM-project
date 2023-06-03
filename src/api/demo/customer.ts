@@ -26,7 +26,7 @@ enum Api {
   UpdateCustomer = '/customer/basic/update', // 修改
   DeleteCustomer = '/customer/basic/delete', // 删除
   CustomerDetail = '/customer/basic/detail', //详情
-  assignCustomer = '/customer/basic/assign', // 委派
+  AssignCustomer = '/customer/basic/assign', // 委派
 
   /**
    * 客户分组信息
@@ -45,6 +45,11 @@ enum Api {
   SaveCustomerS = '/customer/source/save', // 保存
   UpdateCustomerS = '/customer/source/update', // 修改
   DeleteCustomerS = '/customer/source/delete', // 删除
+
+  /**
+   * 客户附件下载
+   */
+  FileDownload = '/customer/file/download',
 
   /**
    * 客户病史信息
@@ -138,7 +143,10 @@ export const getCustomerDetail = (id: string | number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerDetail, params: { id } });
 
 export const assignCustomer = (params?: any) =>
-  defHttp.post<any>({ url: Api.assignCustomer, params });
+  defHttp.post<any>({ url: Api.AssignCustomer, params });
+
+export const getCustomerFileDownload = (path: string) =>
+  defHttp.get<any>({ url: Api.FileDownload, params: { path } });
 
 /**
  * 客户分组信息

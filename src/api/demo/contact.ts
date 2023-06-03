@@ -5,6 +5,7 @@ enum Api {
   TemplateUpload = '/contract/template/upload', // 删除
   TemplateCreate = '/contract/template/create', //详情
   TemplateDelete = '/contract/template/delete',
+  TemplateView = '/contract/template/view',
 }
 
 export const getTemplateList = (path?: string) =>
@@ -13,9 +14,14 @@ export const getTemplateList = (path?: string) =>
     params: { path },
   });
 
-export const createTemplate = (params?: any) => defHttp.post<any>({ url: Api.TemplateCreate, params });
+export const createTemplate = (params?: any) =>
+  defHttp.post<any>({ url: Api.TemplateCreate, params });
 
 export const uploadTemplate = (params?: any) =>
   defHttp.uploadFile<number[]>({ url: Api.TemplateUpload }, params);
 
-  export const deleteTemplate = (params?: any) => defHttp.post<any>({ url: Api.TemplateDelete, params });
+export const deleteTemplate = (params?: any) =>
+  defHttp.post<any>({ url: Api.TemplateDelete, params });
+
+export const previewTemplate = (path: string) =>
+  defHttp.post<any>({ url: Api.TemplateView, params: { path } });
