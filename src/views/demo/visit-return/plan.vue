@@ -84,15 +84,6 @@
             allowClear
             v-model:value="drawerInfo.item.item"
           />
-          <!-- <Select
-            :disabled="drawerInfo.type !== 'add'"
-            placeholder="请选择"
-            allow-clear
-            v-model:value="drawerInfo.item.item"
-          >
-            <SelectOption :value="1">回访项目1</SelectOption>
-            <SelectOption :value="2">回访项目2</SelectOption>
-          </Select> -->
         </FormItem>
 
         <FormItem label="回访类型">
@@ -107,6 +98,7 @@
             <SelectOption :value="3">其他</SelectOption>
           </Select>
         </FormItem>
+        
         <FormItem label="标题">
           <Input
             :disabled="drawerInfo.type === 'scan'"
@@ -162,7 +154,7 @@
   import { Form, Input, Button, Table, Drawer, DatePicker, Select, message } from 'ant-design-vue';
   import StartVisit from './start-visit/index.vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
-  import { getVisitPage, saveVisit } from '/@/api/demo/visit-return';
+  import { getVisitPage, saveVisit, updateVisit } from '/@/api/demo/visit-return';
   import { VisitReturnInfo } from '/@/api/demo/model/visit-return';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { getCustomerList } from '/@/api/demo/customer';
@@ -279,7 +271,9 @@
         visible: false,
         type: undefined,
         title: '',
+        // @ts-ignore
         item: {
+          id: undefined,
           customerId: undefined,
           item: undefined,
           nextPlan: undefined,
@@ -304,13 +298,7 @@
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = item[key];
         });
-        // drawerInfo.value.item.customerId = item.customerId;
-        // drawerInfo.value.item.item = item.item;
-        // drawerInfo.value.item.nextPlan = item.nextPlan;
-        // drawerInfo.value.item.remark = item.remark;
-        // drawerInfo.value.item.title = item.title;
-        // drawerInfo.value.item.type = item.type;
-        // drawerInfo.value.item.visitContent = item.visitContent;
+      
         drawerInfo.value.item.visitTime = dayjs(item.visitTime);
       };
       const drawerEdit = () => {
@@ -331,13 +319,25 @@
 
       const submit = async () => {
         let res;
-        if (drawerInfo.value.type === 'add')
+        if (drawerInfo.value.type === 'add') {
           res = await saveVisit({
             ...drawerInfo.value.item,
             visitTime: drawerInfo.value.item.visitTime
               ? drawerInfo.value.item.visitTime.valueOf()
               : undefined,
           });
+        } else { 
+          res = await updateVisit({
+            ...drawerInfo.value.item,
+            visitTime: drawerInfo.value.item.visitTime
+              ? drawerInfo.value.item.visitTime.valueOf()
+              : undefined,
+          });
+        }
+          
+
+
+          
         if (res) {
           message.success(
             drawerInfo.value.type === 'add' ? '新增回访计划成功' : '修改回访计划成功',

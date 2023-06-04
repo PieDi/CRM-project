@@ -3,14 +3,27 @@
  */
 export interface CustomerListParams {
   documentNumber?: string;
-  groupType?: number;
+  groupId?: number;
   assign?: number;
   name?: string;
   pageNum: number;
 }
 /**
- * 客户信息
+ * 客户信息看板
  */
+export interface CustomerBoard { /*  */
+  customerBasic: CustomerInfo/*  */
+  disease: Array<{
+    diseaseBasic: CustomerMHInfo
+    diseaseMedicine: Array<CustomerDInfo>
+    diseaseCheck: Array<CustomerEInfo>
+    diseaseImage:Array<CustomerIInfo>
+    diseaseConsultation:Array<CustomerCInfo>
+  }>
+  order: Array<CustomerOrderInfo>
+}
+
+
 export interface CustomerInfo {
   id: number | undefined;
   age: number | undefined;
@@ -147,25 +160,4 @@ export interface CustomerOrderInfo {
   next: { status: number; operate: string }[] | undefined;
   outStorage: boolean | undefined;
   status: number | undefined;
-}
-
-/**
- *  客户信息看板
- */
-export interface CustomerInfoBoard {
-  id: number | undefined;
-  age: number | undefined;
-  birth: string | undefined;
-  contactAddress: string | undefined;
-  documentNumber: string | undefined;
-  documentType: number | undefined;
-  groupId: number | undefined;
-  level: number | undefined;
-  mobile: string | undefined;
-  name: string | undefined;
-  remark: string | undefined;
-  sex: number | undefined;
-  sourceId: number | undefined;
-  tag: string | undefined;
-  files: Array<{ fileName: string; path: string }> | undefined;
 }

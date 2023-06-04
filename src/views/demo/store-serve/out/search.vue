@@ -91,18 +91,14 @@
 
         <FormItem label="客户信息">
           <Select
-            :show-search="true"
             :disabled="drawerInfo.type !== 'add'"
             placeholder="请选择"
-            :filter-option="cFilterOption"
             v-model:value="drawerInfo.item.customerId"
-            @change="cOnChange"
           >
             <SelectOption
               v-for="item of cDataSource"
-              :key="`${item.name}-${item.mobile}`"
               :value="item.id"
-              >{{ `${item.name}-${item.mobile}` }}</SelectOption
+              >{{ item.name }}</SelectOption
             >
           </Select>
         </FormItem>
@@ -126,17 +122,14 @@
 
         <FormItem label="订单ID">
           <Select
-            :show-search="true"
             placeholder="请选择"
-            :filter-option="oFilterOption"
             v-model:value="drawerInfo.item.orderId"
             :disabled="drawerInfo.type === 'scan'"
           >
             <SelectOption
               v-for="item of oDataSource"
-              :key="`${item.orderName}-${item.orderNumber}`"
               :value="item.id"
-              >{{ `${item.orderName}-${item.orderNumber}` }}</SelectOption
+              >{{ item.orderName }}</SelectOption
             >
           </Select>
 
@@ -311,34 +304,12 @@
 
       // 客户信息
       const cDataSource = ref<Array<CustomerInfo>>([]);
-      //@ts-ignore
-      const currentCustomer = ref<CustomerInfo>({
-        id: undefined,
-        birth: undefined,
-        documentNumber: undefined,
-        documentType: undefined,
-        mobile: undefined,
-        name: undefined,
-        sex: undefined,
-      });
-      const cOnChange = (value: SelectValue, option: any) => {
-        //@ts-ignore
-        currentCustomer.value = cDataSource.value.find(
-          (item: CustomerInfo) => item.mobile === (option.value as string),
-        );
-      };
+
       const customerReq = async () => {
         const res = await getCustomerList();
         if (res) {
           cDataSource.value = res;
         }
-      };
-
-      const cFilterOption = (input: string, option: any) => {
-        return (
-          option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
-          option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        );
       };
 
       const oDataSource = ref<Array<CustomerOrderInfo>>([]);
@@ -348,11 +319,7 @@
           oDataSource.value = res.filter(item => !item.outStorage);
         }
       };
-      const oFilterOption = (input: string, option: any) => {
-        return (
-          option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        );
-      };
+   
 
       const addStoreOut = () => {
         productReq();
@@ -390,7 +357,7 @@
         drawerInfo.value.title = '';
       };
       const submit = async () => {
-        const params = { ...drawerInfo.value.item, customerId: currentCustomer.value.id };
+        const params = { ...drawerInfo.value.item };
 
         let res;
         if (drawerInfo.value.type === 'add') {
@@ -424,11 +391,8 @@
         pFilterOption,
         // 客户信息
         cDataSource,
-        cFilterOption,
-        cOnChange,
         // 订单信息
         oDataSource,
-        oFilterOption
       };
     },
   });

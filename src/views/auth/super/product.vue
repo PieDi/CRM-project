@@ -277,7 +277,7 @@ const productTypeMap: Record<number, string> = {
           res = await updateProduct({...drawerInfo.value.item})
         }
         if (res) { 
-          message.success(drawerInfo.value.type === 'add' ? '新增客服成功' : '修改客服成功')
+          message.success(drawerInfo.value.type === 'add' ? '新增产品成功' : '修改产品成功')
           productListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
           drawerOnClose()
         }

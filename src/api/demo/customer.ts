@@ -14,6 +14,7 @@ import {
   CustomerOrderListParams,
   CustomerGroupInfo,
   CustomerSourceInfo,
+  CustomerBoard
 } from './model/customer';
 
 enum Api {
@@ -27,6 +28,7 @@ enum Api {
   DeleteCustomer = '/customer/basic/delete', // 删除
   CustomerDetail = '/customer/basic/detail', //详情
   AssignCustomer = '/customer/basic/assign', // 委派
+  BoardCustomer = '/customer/basic/board',
 
   /**
    * 客户分组信息
@@ -148,6 +150,9 @@ export const assignCustomer = (params?: any) =>
 export const getCustomerFileDownload = (path: string) =>
   defHttp.get<any>({ url: Api.FileDownload, params: { path } });
 
+  export const boardCustomer = (id: string) =>
+    defHttp.post<CustomerBoard>({ url: Api.BoardCustomer, params: {id} });
+  
 /**
  * 客户分组信息
  */
