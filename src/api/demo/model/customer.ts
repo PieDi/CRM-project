@@ -150,6 +150,7 @@ export interface CustomerOrderListParams {
 export interface CustomerOrderInfo {
   id?: number | undefined;
   orderAmount: number | undefined;
+  orderQuantity: number | undefined;
   orderDate: number | undefined;
   orderName: string | undefined;
   orderNumber: string | undefined;

@@ -85,11 +85,9 @@
             placeholder="请选择"
             v-model:value="drawerInfo.item.customerId"
           >
-            <SelectOption
-              v-for="item of cDataSource"
-              :value="item.id"
-              >{{ item.name }}</SelectOption
-            >
+            <SelectOption v-for="item of cDataSource" :value="item.id">{{
+              item.name
+            }}</SelectOption>
           </Select>
         </FormItem>
 
@@ -205,6 +203,7 @@
     getCustomerList,
     getCustomerOrderPage,
     saveCustomerOrder,
+    updateCustomerOrder,
     deleteCustomerOrder,
   } from '/@/api/demo/customer';
   import { ProductInfo } from '/@/api/demo/model/product';
@@ -316,11 +315,11 @@
           pageInfo.value.dataSource = res.data;
         }
       };
-      const resetAction = () => { 
-        searchInfo.value.customerName = undefined
-        searchInfo.value.orderNumber = undefined
+      const resetAction = () => {
+        searchInfo.value.customerName = undefined;
+        searchInfo.value.orderNumber = undefined;
         customerOrderListReq(1);
-      }
+      };
       const searchAction = () => {
         customerOrderListReq(1);
       };
@@ -395,6 +394,8 @@
         drawerInfo.value.item.customerId = item.customerId;
         drawerInfo.value.item.remark = item.remark;
         drawerInfo.value.item.responsiblePerson = item.responsiblePerson;
+        drawerInfo.value.item.orderQuantity = item.orderQuantity;
+        
 
         customerReq();
         productReq();
@@ -419,31 +420,36 @@
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-
-        drawerInfo.value.item.id = undefined;
-        drawerInfo.value.item.orderAmount = undefined;
-        drawerInfo.value.item.orderDate = undefined;
-        drawerInfo.value.item.orderName = undefined;
-        drawerInfo.value.item.productId = undefined;
-        drawerInfo.value.item.customerId = undefined;
-        drawerInfo.value.item.remark = undefined;
-        drawerInfo.value.item.responsiblePerson = undefined;
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = undefined;
+        });
       };
       const drawerEdit = () => {
         drawerInfo.value.title = '编辑订单信息';
         drawerInfo.value.type = 'edit';
       };
       const submit = async () => {
-        const res = await saveCustomerOrder({
-          ...drawerInfo.value.item,
-          orderDate: drawerInfo.value.item.orderDate
-            ? drawerInfo.value.item.orderDate.valueOf()
-            : undefined,
-        });
+        let res;
+        if (drawerInfo.value.type === 'add') {
+          res = await saveCustomerOrder({
+            ...drawerInfo.value.item,
+            orderDate: drawerInfo.value.item.orderDate
+              ? drawerInfo.value.item.orderDate.valueOf()
+              : undefined,
+          });
+        } else {
+          res = await updateCustomerOrder({
+            ...drawerInfo.value.item,
+            orderDate: drawerInfo.value.item.orderDate
+              ? drawerInfo.value.item.orderDate.valueOf()
+              : undefined,
+          });
+        }
+
         if (res) {
           message.success(drawerInfo.value.type === 'add' ? '新增订单成功' : '修改订单成功');
           customerOrderListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
-          drawerOnClose()
+          drawerOnClose();
         }
       };
       return {
