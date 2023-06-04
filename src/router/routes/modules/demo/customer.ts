@@ -58,6 +58,16 @@ const customer: AppRouteModule = {
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
           },
         },
+        {
+          path: 'dataCenter',
+          name: 'InfoDataCenter',
+          component: () => import('/@/views/demo/customer/info/dataCenter.vue'),
+          meta: {
+            // title: '客户信息看板',
+            title: t('routes.demo.customer.info.dataCenter'),
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN,RoleEnum.TEST],
+          },
+        },
       ],
     },
     {

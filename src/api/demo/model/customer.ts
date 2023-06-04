@@ -148,3 +148,24 @@ export interface CustomerOrderInfo {
   outStorage: boolean | undefined;
   status: number | undefined;
 }
+
+/**
+ *  客户信息看板
+ */
+export interface CustomerInfoBoard {
+  id: number | undefined;
+  age: number | undefined;
+  birth: string | undefined;
+  contactAddress: string | undefined;
+  documentNumber: string | undefined;
+  documentType: number | undefined;
+  groupId: number | undefined;
+  level: number | undefined;
+  mobile: string | undefined;
+  name: string | undefined;
+  remark: string | undefined;
+  sex: number | undefined;
+  sourceId: number | undefined;
+  tag: string | undefined;
+  files: Array<{ fileName: string; path: string }> | undefined;
+}

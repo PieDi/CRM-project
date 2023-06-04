@@ -96,6 +96,7 @@ export default {
       search: '客户信息查询',
       group: '客户分组',
       info: '客户基本信息',
+      dataCenter: '客户信息看板',
     },
     mHistory: {
       init: '客户病史管理',
