@@ -13,7 +13,7 @@
         <FormItem label="客户分组" style="margin-left: 10px">
           <Select
             placeholder="请选择"
-            v-model:value="searchInfo.groupType"
+            v-model:value="searchInfo.groupId"
             :style="{ width: '150px' }"
           >
             <SelectOption v-for="item in customerGroupList" :key="item.id">{{
@@ -55,6 +55,18 @@
       :pagination="pagination"
     >
       <template #bodyCell="{ column, _text, record }">
+        <template v-if="column.dataIndex === 'name'">
+          <Button
+            type="link"
+            @click="
+              () => {
+                boardCustomer(record.id);
+              }
+            "
+            >{{ record.name }}</Button
+          >
+        </template>
+
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
@@ -254,7 +266,7 @@
   import { CustomerInfo, CustomerGroupInfo, CustomerSourceInfo } from '/@/api/demo/model/customer';
   import dayjs, { Dayjs } from 'dayjs';
   import { sexMap, docTypeMap } from '/@/views/const';
-
+  import { useRouter } from 'vue-router';
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   const TextArea = Input.TextArea;
@@ -277,7 +289,7 @@
     setup() {
       const searchInfo = ref({
         name: undefined,
-        groupType: undefined,
+        groupId: undefined,
         sourceId: undefined,
         documentNumber: undefined,
       });
@@ -329,13 +341,13 @@
           pageInfo.value.dataSource = res.data;
         }
       };
-      const resetAction= () => { 
-        searchInfo.value.name = undefined
-        searchInfo.value.groupType = undefined
-        searchInfo.value.sourceId = undefined
-        searchInfo.value.documentNumber = undefined
+      const resetAction = () => {
+        searchInfo.value.name = undefined;
+        searchInfo.value.groupId = undefined;
+        searchInfo.value.sourceId = undefined;
+        searchInfo.value.documentNumber = undefined;
         customerListReq(1);
-      }
+      };
       const searchAction = () => {
         customerListReq(1);
       };
@@ -344,7 +356,10 @@
         getCustomerG();
         getCustomerS();
       });
-
+      const router = useRouter();
+      const boardCustomer = (id: number) => {
+        router.push({ path: '/customer/info/dataCenter', query: { id } });
+      };
       const columns: ColumnsType<CustomerInfo> = [
         {
           title: '姓名',
@@ -376,16 +391,12 @@
           title: '联系地址',
           dataIndex: 'contactAddress',
         },
-        // {
-        //   title: '负责人',
-        //   dataIndex: 'endTime',
-        // },
         {
           title: '所属分组',
-          dataIndex: 'groupType',
-          customRender: (state) => { 
-            const group = customerGroupList.value.find(item => item.id === state.record.groupId)
-            return group ? group.name: ''
+          dataIndex: 'groupId',
+          customRender: (state) => {
+            const group = customerGroupList.value.find((item) => item.id === state.record.groupId);
+            return group ? group.name : '';
           },
         },
         {
@@ -443,16 +454,16 @@
           }),
         );
       };
-      const resetDrawer = () => { 
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = undefined
-        })
-      }
+      const resetDrawer = () => {
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = undefined;
+        });
+      };
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-        resetDrawer()
+        resetDrawer();
         datePickerValue.value = undefined;
       };
       const drawerEdit = () => {
@@ -471,7 +482,7 @@
         if (res) {
           message.success(drawerInfo.value.type === 'add' ? '添加客户成功' : '修改用户信息成功');
           customerListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
-          drawerOnClose()
+          drawerOnClose();
         }
       };
 
@@ -482,6 +493,7 @@
         drawerInfo,
         datePickerValue,
         searchInfo,
+        boardCustomer,
         addCustomer,
         scanCustomer,
         deleteAction,

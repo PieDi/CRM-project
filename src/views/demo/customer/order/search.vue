@@ -127,14 +127,14 @@
           />
         </FormItem>
 
-        <FormItem label="订单编号">
+        <!-- <FormItem label="订单编号">
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
             allowClear
             v-model:value="drawerInfo.item.orderNumber"
           />
-        </FormItem>
+        </FormItem> -->
 
         <FormItem label="订单数量">
           <InputNumber

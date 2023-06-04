@@ -17,7 +17,7 @@ enum Api {
   Register = '/sys/user/save', //注册
   Login = '/sys/login', //登录
   Logout = '/sys/logout',
-  ModifyPwd = '/sys/modifyPwd',
+  ModifyPwd = '/sys/user/modifyPwd',
   GetUserInfo = '/sys/user/info', // 获取登录用户信息
   GetUserDetail = '/sys/user/detail', // 获取用户信息详情
   // 以及即为员工接口

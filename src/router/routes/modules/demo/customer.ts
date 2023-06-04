@@ -65,6 +65,7 @@ const customer: AppRouteModule = {
           meta: {
             // title: '客户信息看板',
             title: t('routes.demo.customer.info.dataCenter'),
+            hideMenu: true,
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN,RoleEnum.TEST],
           },
         },

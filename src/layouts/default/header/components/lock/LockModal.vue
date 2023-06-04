@@ -52,8 +52,9 @@
           {
             field: 'password',
             label: '旧密码',
+            labelWidth:'20%',
             colProps: {
-              span: 24,
+              span: 24
             },
             component: 'InputPassword',
             required: true,
@@ -61,19 +62,31 @@
           {
             field: 'newPassword',
             label: '新密码',
+            labelWidth:'20%',
             colProps: {
-              span: 24,
+              span: 24
             },
             component: 'InputPassword',
             required: true,
           },
+          // {
+          //   field: 'confirmNewPassword',
+          //   label: ' 确认密码',
+          //   labelWidth:'20%',
+          //   colProps: {
+          //     span: 24
+          //   },
+          //   component: 'InputPassword',
+          //   required: true,
+          // },
         ],
       });
 
       async function handleLock() {
         const values = (await validateFields()) as any;
-        const password = values.oldPassword;
+        const password = values.password;
         const newPassword = values.newPassword;
+        console.log(232323, values);
         if (password && newPassword) {
           const res = await modifyPwdApi({
             password: SHA256Encrypted(password),

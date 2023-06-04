@@ -76,40 +76,71 @@
           />
         </FormItem>
 
-        <FormItem label="回访类型">
-          <Select
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
-            allow-clear
-            v-model:value="drawerInfo.item.way"
-          >
-            <SelectOption :value="1">电话回访</SelectOption>
-            <SelectOption :value="2">线下回访</SelectOption>
-            <SelectOption :value="3">其他</SelectOption>
-          </Select>
-        </FormItem>
+        <template v-if="drawerInfo.type === 'edit'">
+          <FormItem label="回访类型">
+            <Select
+              placeholder="请选择"
+              allow-clear
+              v-model:value="drawerInfo.item.type"
+            >
+              <SelectOption :value="1">电话回访</SelectOption>
+              <SelectOption :value="2">线下回访</SelectOption>
+              <SelectOption :value="3">其他</SelectOption>
+            </Select>
+          </FormItem>
 
-        <FormItem label="回访结果">
-          <Select
-            placeholder="请选择"
-            style="width: 150px"
-            v-model:value="drawerInfo.item.result"
-            :disabled="drawerInfo.type === 'scan'"
-          >
-            <SelectOption :value="1">超过预期</SelectOption>
-            <SelectOption :value="2">达到预期</SelectOption>
-            <SelectOption :value="3">结果一般</SelectOption>
-          </Select>
-        </FormItem>
+          <FormItem label="标题">
+            <Input
+              placeholder="请输入"
+              allowClear
+              v-model:value="drawerInfo.item.title"
+            />
+          </FormItem>
 
-        <FormItem label="结果补充">
-          <TextArea
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.supplement"
-          />
-        </FormItem>
+          <FormItem label="回访内容">
+            <TextArea
+              placeholder="请输入"
+              allowClear
+              v-model:value="drawerInfo.item.visitContent"
+            />
+          </FormItem>
+        </template>
+        <template v-else>
+          <FormItem label="回访类型">
+            <Select
+              :disabled="drawerInfo.type === 'scan'"
+              placeholder="请选择"
+              allow-clear
+              v-model:value="drawerInfo.item.way"
+            >
+              <SelectOption :value="1">电话回访</SelectOption>
+              <SelectOption :value="2">线下回访</SelectOption>
+              <SelectOption :value="3">其他</SelectOption>
+            </Select>
+          </FormItem>
+
+          <FormItem label="回访结果">
+            <Select
+              placeholder="请选择"
+              style="width: 150px"
+              v-model:value="drawerInfo.item.result"
+              :disabled="drawerInfo.type === 'scan'"
+            >
+              <SelectOption :value="1">超过预期</SelectOption>
+              <SelectOption :value="2">达到预期</SelectOption>
+              <SelectOption :value="3">结果一般</SelectOption>
+            </Select>
+          </FormItem>
+
+          <FormItem label="结果补充">
+            <TextArea
+              :disabled="drawerInfo.type === 'scan'"
+              placeholder="请输入"
+              allowClear
+              v-model:value="drawerInfo.item.supplement"
+            />
+          </FormItem>
+        </template>
 
         <FormItem label="下一步计划">
           <Input
@@ -289,6 +320,10 @@
         drawerInfo.value.item.result = item.result;
         drawerInfo.value.item.way = item.way;
         drawerInfo.value.item.supplement = item.supplement;
+
+        drawerInfo.value.item.type = item.type;
+        drawerInfo.value.item.title = item.title;
+        drawerInfo.value.item.visitContent = item.visitContent;
         drawerInfo.value.item.visitTime = dayjs(item.visitTime);
       };
       const drawerEdit = () => {
