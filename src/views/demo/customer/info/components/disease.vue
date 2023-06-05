@@ -1,220 +1,177 @@
 <template>
-  <PageWrapper title="客户信息看板">
-    <div class="info-board">
-      <div class="info-basic"></div>
-      <div class="info-content">
-        <div class="disease"></div>
-        <div class="order"></div>
-      </div>
-    </div>
-    <!-- <div :style="{ display: 'flex', justifyContent: 'space-between' }">
-      <div :style="{ display: 'flex' }"
-        ><FormItem label="客户姓名">
-          <Input
-            placeholder="请输入"
-            allowClear
-            :style="{ width: '150px' }"
-            v-model:value="searchInfo.name"
-          />
-        </FormItem>
+  <div class="disease-item" v-for="item of diseaseObject">
+    <div class="basic">
+      <div class="header"
+        ><span>疾病名称:</span><span>{{ item.diseaseBasic.diseaseName }}</span></div
+      >
+      <div class="header"
+        ><span>医院名称:</span><span>{{ item.diseaseBasic.hospitalName }}</span></div
+      >
+      <div class="header"
+        ><span>科室:</span><span>{{ item.diseaseBasic.departmentName }}</span></div
+      >
 
-        <FormItem label="证件号码" style="margin-left: 10px">
-          <Input
-            placeholder="请输入"
-            allowClear
-            :style="{ width: '150px' }"
-            v-model:value="searchInfo.documentNumber"
-          />
-        </FormItem>
-        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
-        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
+      <div class="header"
+        ><span>会诊时间名称:</span><span>{{ dayjs( item.diseaseBasic.visitDate).format('YYYY-MM-DD') }}</span></div
       >
     </div>
-
-    <Table
-      :columns="columns"
-      :dataSource="pageInfo.dataSource"
-      :canResize="true"
-      :bordered="true"
-      :pagination="pagination"
-    >
-    </Table> -->
-  </PageWrapper>
+    <div style="display: flex">
+      <div class="content">
+        <div>用药记录</div>
+        <ItemTable
+          :data-source="item.diseaseMedicine"
+          :columns="[
+            {
+              title: '药品名称',
+              dataIndex: 'medicineName',
+            },
+            {
+              title: '用药剂量',
+              dataIndex: 'useDose',
+            },
+            {
+              title: '用药时间',
+              dataIndex: 'useDate',
+              customRender: (state) => dayjs(state.record.useDate).format('YYYY-MM-DD'),
+            },
+          ]"
+        />
+      </div>
+      <div class="content">
+        <div>检验记录</div>
+        <ItemTable
+          :data-source="item.diseaseCheck"
+          :columns="[
+            {
+              title: '检验时间',
+              dataIndex: 'name',
+              customRender: (state) => dayjs(state.record.checkDate).format('YYYY-MM-DD HH:mm:ss'),
+            },
+            {
+              title: '检验机构',
+              dataIndex: 'checkMechanism',
+            },
+            {
+              title: '检验类型',
+              dataIndex: 'checkType',
+            },
+          ]"
+        />
+      </div>
+    </div>
+    <div style="display: flex">
+      <div class="content">
+        <div>影像记录</div>
+        <ItemTable
+          :data-source="item.diseaseImage"
+          :columns="[
+            {
+              title: '检验时间',
+              dataIndex: 'checkDate',
+              customRender: (state) => dayjs(state.record.checkDate).format('YYYY-MM-DD HH:mm:ss'),
+            },
+            {
+              title: '检验机构',
+              dataIndex: 'checkMechanism',
+            },
+            {
+              title: '检验部位',
+              dataIndex: 'checkPart',
+            },
+            {
+              title: '检验类别',
+              dataIndex: 'checkType',
+              customRender: (state) => iCheckType[state.record.sex as number],
+              
+            },
+          ]"
+        />
+      </div>
+      <div class="content">
+        <div>就诊记录</div>
+        <ItemTable
+          :data-source="item.diseaseConsultation"
+          :columns="[
+            {
+              title: '会诊日期',
+              dataIndex: 'consultationDate',
+              customRender: (state) => dayjs(state.record.consultationDate).format('YYYY-MM-DD HH:mm:ss'),
+            },
+            {
+              title: '会诊专家',
+              dataIndex: 'consultationExpert',
+            },
+            {
+              title: '会诊内容',
+              dataIndex: 'consultationContent',
+            },
+          ]"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, createVNode, computed } from 'vue';
-  import { PageWrapper } from '/@/components/Page';
-  import {
-    Table,
-    Form,
-    Input,
-    Button,
-    Drawer,
-    Select,
-    InputNumber,
-    DatePicker,
-  } from 'ant-design-vue';
-  import { type PageListInfo } from '/@/views/type';
-  import { getCustomerPage, boardCustomer } from '/@/api/demo/customer';
-  import { type ColumnsType } from 'ant-design-vue/lib/table';
-  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { CustomerBoard } from '/@/api/demo/model/customer';
-  import { sexMap, docTypeMap } from '/@/views/const';
-  import { useRoute } from 'vue-router';
+  import { defineComponent, PropType } from 'vue';
+  import dayjs from 'dayjs';
 
-  const FormItem = Form.Item;
-  const SelectOption = Select.Option;
-  const TextArea = Input.TextArea;
+  import {
+    CustomerMHInfo,
+    CustomerDInfo,
+    CustomerEInfo,
+    CustomerIInfo,
+    CustomerCInfo,
+  } from '/@/api/demo/model/customer';
+  import ItemTable from './item-table.vue';
+
+  const iCheckType = {
+    1: 'CT',
+    2: 'MR',
+    3: 'PET-CT',
+    4: 'PET-MR',
+    6: '钼靶',
+    7: 'ECT',
+    8: 'DR',
+  };
   export default defineComponent({
     components: {
-      PageWrapper,
-      Table,
-      Form,
-      FormItem,
-      Input,
-      Button,
-      Drawer,
-      Select,
-      SelectOption,
-      InputNumber,
-      ExclamationCircleOutlined,
-      DatePicker,
-      TextArea,
+      ItemTable,
     },
-    setup() {
-      const route = useRoute();
-      const boardInfo = ref<CustomerBoard>()
-      const customerInfoBoard = async () => {
-        if (route.query?.id) {
-          const res = await boardCustomer(route.query.id as string);
-          if(res) boardInfo.value = res
-         }
-      };
-      onMounted(() => {
-        customerInfoBoard();
-        customerListReq(1);
-      });
-
-      const searchInfo = ref({
-        name: undefined,
-        documentNumber: undefined,
-      });
-
-      const pageInfo = ref<PageListInfo<any>>({
-        total: 0,
-        current: 1,
-        dataSource: [],
-      });
-      const pagination = computed(() => ({
-        total: pageInfo.value.total,
-        current: pageInfo.value.current,
-        pageSize: 10,
-        showTotal: (total: number) => `共${total}条`,
-        onChange: (page: number) => {
-          customerListReq(page);
-        },
-        showQuickJumper: false,
-        showSizeChanger: false,
-      }));
-      const customerListReq = async (pageNum: number) => {
-        const res = await getCustomerPage({ ...searchInfo.value, assign: 0, pageNum });
-        if (res) {
-          pageInfo.value.total = res.total;
-          pageInfo.value.current = res.pageNum;
-          pageInfo.value.dataSource = res.data;
-        }
-      };
-      const resetAction = () => {
-        searchInfo.value.name = undefined;
-        searchInfo.value.documentNumber = undefined;
-        customerListReq(1);
-      };
-      const searchAction = () => {
-        customerListReq(1);
-      };
-
-      const columns: ColumnsType<CustomerInfoBoard> = [
-        {
-          title: '姓名',
-          dataIndex: 'name',
-        },
-        {
-          title: '性别',
-          dataIndex: 'sex',
-          customRender: (state) => sexMap[state.record.sex as number],
-        },
-        {
-          title: '电话',
-          dataIndex: 'mobile',
-        },
-        {
-          title: '证件类型',
-          dataIndex: 'documentType',
-          customRender: (state) => docTypeMap[state.record.documentType as number],
-        },
-        {
-          title: '年龄',
-          dataIndex: 'age',
-        },
-        {
-          title: '联系地址',
-          dataIndex: 'contactAddress',
-        },
-
-        {
-          title: '诊疗记录',
-          dataIndex: 'zhenliao',
-        },
-        {
-          title: '检查记录',
-          dataIndex: 'jiancha',
-        },
-        {
-          title: '会诊记录',
-          dataIndex: 'huizhen',
-        },
-        {
-          title: '检验记录',
-          dataIndex: 'jianyan',
-        },
-        {
-          title: '操作',
-          dataIndex: 'operation',
-        },
-      ];
-
+    props: {
+      disease: {
+        type: Object as PropType<
+          Array<{
+            diseaseBasic: CustomerMHInfo;
+            diseaseMedicine: Array<CustomerDInfo>;
+            diseaseCheck: Array<CustomerEInfo>;
+            diseaseImage: Array<CustomerIInfo>;
+            diseaseConsultation: Array<CustomerCInfo>;
+          }>
+        >,
+      },
+    },
+    setup(props) {
       return {
-        columns,
-        pagination,
-        pageInfo,
-        searchInfo,
-        resetAction,
-        searchAction,
+        diseaseObject: props.disease,
+        iCheckType,
+        dayjs
       };
     },
   });
 </script>
 <style lang="less" scoped>
-  .info-board {
-    display: flex;
-    .info-basic {
-      background: #fff;
-      width: 200px;
-      min-height: 600px;
+  .disease-item {
+    .basic {
+      display: flex;
+      .header {
+        margin-right: 10px;
+      }
     }
-    .info-content {
-      
-      margin-left: 1px;
-      flex:1;
-      .disease {
-        background: #fff;
-        min-height: 400px;
-      }
-      .order {
-        margin-top: 1px;
-        background: #fff;
-        min-height: 300px;
-      }
+    .content {
+      width: 50%;
+      // height: 200px;
+      padding: 10px;
+      // overflow-y: auto;
     }
   }
 </style>

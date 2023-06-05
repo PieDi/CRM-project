@@ -13,7 +13,7 @@ export interface CustomerListParams {
  */
 export interface CustomerBoard { /*  */
   customerBasic: CustomerInfo/*  */
-  disease: Array<{
+  diseases: Array<{
     diseaseBasic: CustomerMHInfo
     diseaseMedicine: Array<CustomerDInfo>
     diseaseCheck: Array<CustomerEInfo>
