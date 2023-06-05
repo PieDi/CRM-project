@@ -3,8 +3,13 @@
     <div class="info-board">
       <div class="info-basic"></div>
       <div class="info-content">
-        <div class="disease"></div>
-        <div class="order"></div>
+        <div class="disease">
+          <h3>客户病史信息</h3>
+          <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases"/>
+        </div>
+        <div class="order">
+          <h3>客户订单</h3>
+        </div>
       </div>
     </div>
     <!-- <div :style="{ display: 'flex', justifyContent: 'space-between' }">
@@ -61,7 +66,7 @@
   import { CustomerBoard } from '/@/api/demo/model/customer';
   import { sexMap, docTypeMap } from '/@/views/const';
   import { useRoute } from 'vue-router';
-
+import Disease from './components/disease.vue';
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   const TextArea = Input.TextArea;
@@ -80,15 +85,18 @@
       ExclamationCircleOutlined,
       DatePicker,
       TextArea,
+      Disease
     },
     setup() {
       const route = useRoute();
-      const boardInfo = ref<CustomerBoard>()
+      const boardInfo = ref<CustomerBoard>();
       const customerInfoBoard = async () => {
         if (route.query?.id) {
           const res = await boardCustomer(route.query.id as string);
-          if(res) boardInfo.value = res
-         }
+          if (res) { 
+            boardInfo.value = res;
+          }
+        }
       };
       onMounted(() => {
         customerInfoBoard();
@@ -190,6 +198,7 @@
         searchInfo,
         resetAction,
         searchAction,
+        boardInfo
       };
     },
   });
@@ -203,12 +212,14 @@
       min-height: 600px;
     }
     .info-content {
-      
       margin-left: 1px;
-      flex:1;
+      flex: 1;
       .disease {
         background: #fff;
         min-height: 400px;
+        max-height: 500px;
+        padding: 10px;
+        overflow-y: scroll;
       }
       .order {
         margin-top: 1px;
