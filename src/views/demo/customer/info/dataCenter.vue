@@ -19,7 +19,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, createVNode, computed } from 'vue';
+  import { defineComponent, ref, onMounted, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import {
     Table,
@@ -33,10 +33,8 @@
   } from 'ant-design-vue';
   import { type PageListInfo } from '/@/views/type';
   import { getCustomerPage, boardCustomer } from '/@/api/demo/customer';
-  import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { CustomerBoard } from '/@/api/demo/model/customer';
-  import { sexMap, docTypeMap } from '/@/views/const';
   import { useRoute } from 'vue-router';
   import Disease from './components/disease.vue';
   import BasicInfo from './components/basicInfo.vue';
@@ -116,59 +114,7 @@
       const searchAction = () => {
         customerListReq(1);
       };
-
-      const columns: ColumnsType<CustomerInfoBoard> = [
-        {
-          title: '姓名',
-          dataIndex: 'name',
-        },
-        {
-          title: '性别',
-          dataIndex: 'sex',
-          customRender: (state) => sexMap[state.record.sex as number],
-        },
-        {
-          title: '电话',
-          dataIndex: 'mobile',
-        },
-        {
-          title: '证件类型',
-          dataIndex: 'documentType',
-          customRender: (state) => docTypeMap[state.record.documentType as number],
-        },
-        {
-          title: '年龄',
-          dataIndex: 'age',
-        },
-        {
-          title: '联系地址',
-          dataIndex: 'contactAddress',
-        },
-
-        {
-          title: '诊疗记录',
-          dataIndex: 'zhenliao',
-        },
-        {
-          title: '检查记录',
-          dataIndex: 'jiancha',
-        },
-        {
-          title: '会诊记录',
-          dataIndex: 'huizhen',
-        },
-        {
-          title: '检验记录',
-          dataIndex: 'jianyan',
-        },
-        {
-          title: '操作',
-          dataIndex: 'operation',
-        },
-      ];
-
       return {
-        columns,
         pagination,
         pageInfo,
         searchInfo,
