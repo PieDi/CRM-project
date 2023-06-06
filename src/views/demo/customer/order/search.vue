@@ -210,8 +210,8 @@
   import { getProductList } from '/@/api/demo/product';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-
   import dayjs, { Dayjs } from 'dayjs';
+  import { useRoute } from 'vue-router';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -306,9 +306,13 @@
           option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
         );
       };
-
+      const route = useRoute();
       const customerOrderListReq = async (pageNum: number) => {
-        const res = await getCustomerOrderPage({ ...searchInfo.value, pageNum });
+        const res = await getCustomerOrderPage({
+          ...searchInfo.value,
+          pageNum,
+          id: route?.query.id as string,
+        });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
@@ -395,7 +399,6 @@
         drawerInfo.value.item.remark = item.remark;
         drawerInfo.value.item.responsiblePerson = item.responsiblePerson;
         drawerInfo.value.item.orderQuantity = item.orderQuantity;
-        
 
         customerReq();
         productReq();

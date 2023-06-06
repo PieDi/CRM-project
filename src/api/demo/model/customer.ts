@@ -64,6 +64,7 @@ export interface CustomerMHListParams {
   diseaseName?: number;
   hospitalName?: string;
   pageNum: number;
+  id?: string
 }
 
 export interface CustomerMHInfo {
@@ -145,6 +146,7 @@ export interface CustomerOrderListParams {
   pageNum: number;
   source?: number;
   productType?: number;
+  id: string | undefined
 }
 
 export interface CustomerOrderInfo {

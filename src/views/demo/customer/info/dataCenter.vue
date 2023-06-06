@@ -130,7 +130,9 @@
     display: flex;
     .info-basic {
       background: #fff;
-      width: 200px;
+      padding-top: 10px;
+      padding-left: 10px;
+      width: 260px;
       min-height: 600px;
     }
     .info-content {
