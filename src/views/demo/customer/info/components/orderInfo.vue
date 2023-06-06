@@ -1,49 +1,43 @@
 <template>
-    <PageWrapper title="客户订单">
-        <Table
-        :columns="columns"
-        :dataSource="diseaseObject"
-        :canResize="false"
-        :striped="false"
-        :bordered="true"
-        >
-        <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'operation'">
-          <Button
-            type="link"
-            @click="
-              () => {
-                scanOrder(record);
-              }
-            "
-            >查看</Button
-          >
-        </template>
+  <Table
+    :columns="columns"
+    :dataSource="diseaseObject"
+    :canResize="false"
+    :striped="false"
+    :bordered="true"
+  >
+    <template #bodyCell="{ record, text, column }">
+      <template v-if="column.dataIndex === 'orderName'">
+        <Button type="link" @click="()=>{linkClick(record.id as number)}">{{ text }}</Button>
       </template>
+    </template>
+  </Table>
+</template>
 
+<script lang="ts">
+  import { defineComponent, PropType } from 'vue';
+  import dayjs from 'dayjs';
+  import { Table, Button } from 'ant-design-vue';
+  import { type ColumnsType } from 'ant-design-vue/lib/table';
+  import { useRouter } from 'vue-router';
+  import { CustomerOrderInfo } from '/@/api/demo/model/customer';
 
-    </Table>
-    </PageWrapper>
- 
- </template>
- 
- <script lang="ts">
-    import { defineComponent, PropType } from 'vue';
-    import dayjs from 'dayjs';
-    import { Table,Button } from 'ant-design-vue';
-    import { type ColumnsType } from 'ant-design-vue/lib/table';
-
-
-    import {
-        CustomerOrderInfo
-   } from '/@/api/demo/model/customer';
- 
-   const columns: ColumnsType<CustomerOrderInfo> = [
+  export default defineComponent({
+    components: {
+      Table,
+      Button,
+    },
+    props: {
+      disease: {
+        type: Object as PropType<Array<CustomerOrderInfo>>,
+      },
+    },
+    setup(props) {
+      const columns: ColumnsType<CustomerOrderInfo> = [
         {
           title: '订单名称',
           dataIndex: 'orderName',
         },
-        
         {
           title: '下单时间',
           dataIndex: 'orderDate',
@@ -69,37 +63,20 @@
           title: '其他',
           dataIndex: 'remark',
         },
-        {
-          title: '操作',
-          dataIndex: 'operation',
-        },
       ];
- 
-   export default defineComponent({
-     components: {
-       Table,
-       Button
-     },
-     props: {
-       disease: {
-         type: Object as PropType<
-            Array<CustomerOrderInfo>>,
-       },
-     },
-     setup(props) {
-        const scanOrder = (item: CustomerOrderInfo) => {
-        };
-       return {
-         diseaseObject: props.disease,
-         dayjs,
-         columns,
-         scanOrder,
-       };
-     },
-     
-   });
- 
- </script>
- <style lang="less" scoped>
-   
- </style>
+      const scanOrder = (item: CustomerOrderInfo) => {};
+      const router = useRouter();
+      const linkClick = (id: number) => {
+        router.push({ path: '/customer/order/search', query: { id } });
+      };
+      return {
+        linkClick,
+        diseaseObject: props.disease,
+        dayjs,
+        columns,
+        scanOrder,
+      };
+    },
+  });
+</script>
+<style lang="less" scoped></style>
