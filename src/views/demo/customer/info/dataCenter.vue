@@ -12,38 +12,6 @@
         </div>
       </div>
     </div>
-    <!-- <div :style="{ display: 'flex', justifyContent: 'space-between' }">
-      <div :style="{ display: 'flex' }"
-        ><FormItem label="客户姓名">
-          <Input
-            placeholder="请输入"
-            allowClear
-            :style="{ width: '150px' }"
-            v-model:value="searchInfo.name"
-          />
-        </FormItem>
-
-        <FormItem label="证件号码" style="margin-left: 10px">
-          <Input
-            placeholder="请输入"
-            allowClear
-            :style="{ width: '150px' }"
-            v-model:value="searchInfo.documentNumber"
-          />
-        </FormItem>
-        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
-        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
-      >
-    </div>
-
-    <Table
-      :columns="columns"
-      :dataSource="pageInfo.dataSource"
-      :canResize="true"
-      :bordered="true"
-      :pagination="pagination"
-    >
-    </Table> -->
   </PageWrapper>
 </template>
 <script lang="ts">
