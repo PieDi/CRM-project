@@ -1,14 +1,18 @@
 <template>
   <PageWrapper title="客户信息看板">
     <div class="info-board">
-      <div class="info-basic"></div>
+      <div class="info-basic">
+         <h3>基本信息</h3>
+         <BasicInfo v-if="boardInfo?.customerBasic" :disease="boardInfo?.customerBasic"/>
+      </div>
       <div class="info-content">
         <div class="disease">
           <h3>客户病史信息</h3>
           <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases"/>
         </div>
         <div class="order">
-          <h3>客户订单</h3>
+          <h3 style="margin-top: 10px;margin-left: 10px;">客户订单</h3>
+          <OrderInfo v-if="boardInfo?.order" :disease="boardInfo?.order"/>
         </div>
       </div>
     </div>
@@ -34,7 +38,9 @@
   import { CustomerBoard } from '/@/api/demo/model/customer';
   import { sexMap, docTypeMap } from '/@/views/const';
   import { useRoute } from 'vue-router';
-import Disease from './components/disease.vue';
+  import Disease from './components/disease.vue';
+  import BasicInfo from './components/basicInfo.vue';
+  import OrderInfo from './components/orderInfo.vue';
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   const TextArea = Input.TextArea;
@@ -53,7 +59,9 @@ import Disease from './components/disease.vue';
       ExclamationCircleOutlined,
       DatePicker,
       TextArea,
-      Disease
+      Disease,
+      BasicInfo,
+      OrderInfo
     },
     setup() {
       const route = useRoute();
