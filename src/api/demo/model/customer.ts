@@ -168,6 +168,9 @@ export interface CustomerOrderInfo {
   status: number | undefined;
 }
 
+/**
+ * 客户合同信息
+ */
 export interface CustomerContractInfo {
   id: number | undefined;
   orderId: number | undefined;
@@ -178,7 +181,9 @@ export interface CustomerContractInfo {
   effectiveEnd: number | undefined;
   description: string | undefined;
 }
-
+/**
+ * 客户发票信息
+ */
 export interface CustomerInvoiceInfo {
   id: number | undefined;
   orderId: number | undefined;
