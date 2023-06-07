@@ -12,7 +12,7 @@
         </div>
         <div class="order">
           <h3 style="margin-top: 10px;margin-left: 10px;">客户订单</h3>
-          <OrderInfo v-if="boardInfo?.order" :disease="boardInfo?.order"/>
+          <OrderInfo v-if="boardInfo?.orders" :disease="boardInfo?.orders"/>
         </div>
       </div>
     </div>
@@ -149,6 +149,7 @@
         margin-top: 1px;
         background: #fff;
         min-height: 300px;
+        padding: 10px;
       }
     }
     // 添加测试信息
