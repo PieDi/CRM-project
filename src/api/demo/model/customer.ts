@@ -11,18 +11,21 @@ export interface CustomerListParams {
 /**
  * 客户信息看板
  */
-export interface CustomerBoard { /*  */
-  customerBasic: CustomerInfo/*  */
+export interface CustomerBoard {
+  /*  */ customerBasic: CustomerInfo /*  */;
   diseases: Array<{
-    diseaseBasic: CustomerMHInfo
-    diseaseMedicine: Array<CustomerDInfo>
-    diseaseCheck: Array<CustomerEInfo>
-    diseaseImage:Array<CustomerIInfo>
-    diseaseConsultation:Array<CustomerCInfo>
-  }>
-  order: Array<CustomerOrderInfo>
+    diseaseBasic: CustomerMHInfo;
+    diseaseMedicine: Array<CustomerDInfo>;
+    diseaseCheck: Array<CustomerEInfo>;
+    diseaseImage: Array<CustomerIInfo>;
+    diseaseConsultation: Array<CustomerCInfo>;
+  }>;
+  orders: Array<{
+    order: CustomerOrderInfo;
+    orderContracts: Array<CustomerContractInfo>;
+    orderInvoices:Array<CustomerInvoiceInfo>
+  }>;
 }
-
 
 export interface CustomerInfo {
   id: number | undefined;
@@ -64,7 +67,7 @@ export interface CustomerMHListParams {
   diseaseName?: number;
   hospitalName?: string;
   pageNum: number;
-  id?: string
+  id?: string;
 }
 
 export interface CustomerMHInfo {
@@ -146,7 +149,7 @@ export interface CustomerOrderListParams {
   pageNum: number;
   source?: number;
   productType?: number;
-  id: string | undefined
+  id: string | undefined;
 }
 
 export interface CustomerOrderInfo {
@@ -157,10 +160,29 @@ export interface CustomerOrderInfo {
   orderName: string | undefined;
   orderNumber: string | undefined;
   productId: number | undefined;
-  customerId:number | undefined;
+  customerId: number | undefined;
   remark: string | undefined;
   responsiblePerson: string | undefined;
   next: { status: number; operate: string }[] | undefined;
   outStorage: boolean | undefined;
   status: number | undefined;
+}
+
+export interface CustomerContractInfo {
+  id: number | undefined;
+  orderId: number | undefined;
+  name: string | undefined;
+  firstParty: string | undefined;
+  secondParty: string | undefined;
+  effectiveStart: number | undefined;
+  effectiveEnd: number | undefined;
+  description: string | undefined;
+}
+
+export interface CustomerInvoiceInfo {
+  id: number | undefined;
+  orderId: number | undefined;
+  name: string | undefined;
+  number: string | undefined;
+  amount: number | undefined;
 }
