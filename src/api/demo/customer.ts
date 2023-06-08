@@ -14,7 +14,8 @@ import {
   CustomerOrderListParams,
   CustomerGroupInfo,
   CustomerSourceInfo,
-  CustomerBoard
+  CustomerBoard,
+  CustomerInvoiceInfo
 } from './model/customer';
 
 enum Api {
@@ -372,4 +373,15 @@ export const columnarCustomerOrder = (type: number) =>
   defHttp.post<Array<{ date: string; count: number }>>({
     url: Api.CustomerOrderColumnar,
     params: { type },
+  });
+
+
+
+/**
+ * 客户发票
+ */
+export const getCustomerInvoicePage = (params: {pageNum?: number,name?: string, id?: string}) =>
+  defHttp.post<{ total: number; pageNum: number; data: CustomerInvoiceInfo[] }>({
+    url: Api.CustomerOrderPage,
+    params: { pageSize: 20, ...params },
   });

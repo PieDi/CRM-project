@@ -129,7 +129,7 @@
   .info-board {
     display: flex;
     // height: calc(100vh - 184px);
-    background-image: url('@/assets/images/board-bg.jpg');
+    background-image: url('@/assets/images/board-bg-2.jpg');
     background-size: 100% 100%;
     .info-basic {
       background: rgba(255, 255, 255, 0.2);

@@ -2,22 +2,24 @@
   <PageWrapper title="客户发票管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
-        ><FormItem label="客户姓名">
-          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
+        ><FormItem label="发票名称">
+          <Input
+            placeholder="请输入"
+            allowClear
+            :style="{ width: '150px' }"
+            v-model:value="searchInfo.name"
+          />
         </FormItem>
-        <FormItem label="订单名称" style="margin-left: 10px">
-          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
-        </FormItem>
-        <Button type="primary" style="margin-left: 10px" >重置</Button>
-        <Button type="primary" style="margin-left: 10px">搜索</Button></div
-      >
+
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
+        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
+      </div>
     </div>
 
     <Table
       :columns="columns"
-      :dataSource="data"
+      :dataSource="pageInfo.dataSource"
       :canResize="false"
-      :loading="loading"
       :striped="false"
       :bordered="true"
       :pagination="pagination"
@@ -48,7 +50,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, computed, onMounted, ref } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import {
     Table,
@@ -60,11 +62,20 @@
     InputNumber,
     DatePicker,
   } from 'ant-design-vue';
-  import { getBasicData } from '../../table/tableData';
+  import { type ColumnsType } from 'ant-design-vue/lib/table';
+  import { PageListInfo } from '/@/views/type';
+  import { CustomerInvoiceInfo } from '/@/api/demo/model/customer';
+  import { getCustomerInvoicePage } from '/@/api/demo/customer';
+  import { useRoute } from 'vue-router';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
-  const TextArea = Input.TextArea;
+const TextArea = Input.TextArea;
+
+const productTypeMap: Record<number, string> = {
+  1: '标准订单',
+  2: '非标订单'
+}
   export default defineComponent({
     components: {
       PageWrapper,
@@ -81,57 +92,75 @@
       TextArea,
     },
     setup() {
-      const cInfo = ref<{ name: string; id?: number | string; des: string }>({
-        name: '',
-        id: undefined,
-        des: '',
+      const route = useRoute();
+      const invoiceOrderListReq = async (pageNum: number) => {
+        const res = await getCustomerInvoicePage({
+          ...searchInfo.value,
+          pageNum,
+          id: route?.query.id as string,
+        });
+        if (res) {
+          pageInfo.value.total = res.total;
+          pageInfo.value.current = res.pageNum;
+          pageInfo.value.dataSource = res.data;
+        }
+      };
+      const searchInfo = ref({
+        name: undefined,
       });
-      const loading = ref(false);
-      const pagination = ref({
-        total: 50,
+      const pageInfo = ref<PageListInfo<CustomerInvoiceInfo>>({
+        total: 0,
         current: 1,
+        dataSource: [],
+      });
+      const pagination = computed(() => ({
+        total: pageInfo.value.total,
+        current: pageInfo.value.current,
         pageSize: 10,
         showTotal: (total: number) => `共${total}条`,
         onChange: (page: number) => {
-          console.log(2132323, page);
+          invoiceOrderListReq(page);
         },
         showQuickJumper: false,
         showSizeChanger: false,
-      });
+      }));
 
-      const columns: any = [
+      const resetAction = () => {
+        searchInfo.value.name = undefined;
+        invoiceOrderListReq(1);
+      };
+      const searchAction = () => {
+        invoiceOrderListReq(1);
+      };
+      onMounted(() => {
+        invoiceOrderListReq(1);
+      });
+      const columns: ColumnsType<CustomerInvoiceInfo> = [
         {
-          title: '客户姓名',
+          title: '发票名称',
           dataIndex: 'name',
-          key: 'name',
         },
         {
           title: '订单名称',
-          dataIndex: 'address',
+          dataIndex: 'orderName',
         },
         {
-          title: '下单时间',
-          dataIndex: 'no',
+          title: '客户姓名',
+          dataIndex: 'customerName'
         },
+        
         {
-          title: '订单编号',
-          width: 150,
-          dataIndex: 'beginTime',
-        },
-        {
-          title: '订单类型',
-          width: 150,
-          dataIndex: 'endTime',
+          title: '订单数量',
+          dataIndex: 'orderQuantity',
         },
         {
           title: '订单金额',
-          width: 150,
-          dataIndex: 'endTime',
+          dataIndex: 'orderAmount',
         },
         {
-          title: '负责人',
-          width: 150,
-          dataIndex: 'endTime',
+          title: '订单类型',
+          dataIndex: 'productType',
+          customRender:(state) => productTypeMap[state.record.productType as number]
         },
         {
           title: '操作',
@@ -144,10 +173,13 @@
 
       return {
         columns,
-        data: getBasicData(),
-        loading,
         pagination,
-        cInfo,
+        searchInfo,
+        resetAction,
+        searchAction,
+        pageInfo,
+        // drawerInfo,
+
         downloadInvoice,
         previewInvoice,
       };

@@ -296,6 +296,7 @@
       }));
 
       const customerOrderListReq = async (pageNum: number) => {
+        //@ts-ignore
         const res = await getCustomerOrderPage({
           ...searchInfo.value,
           pageNum,
