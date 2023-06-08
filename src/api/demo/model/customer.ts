@@ -23,7 +23,7 @@ export interface CustomerBoard {
   orders: Array<{
     order: CustomerOrderInfo;
     orderContracts: Array<CustomerContractInfo>;
-    orderInvoices:Array<CustomerInvoiceInfo>
+    orderInvoices: Array<CustomerInvoiceInfo>;
   }>;
 }
 
@@ -190,4 +190,12 @@ export interface CustomerInvoiceInfo {
   name: string | undefined;
   number: string | undefined;
   amount: number | undefined;
+  productType: number | undefined;
+  customerId: number | undefined;
+  orderName: string | undefined;
+  orderTime: string | undefined;
+  orderNumber: string | undefined;
+  productId: number | undefined;
+  orderQuantity: number | undefined;
+  orderAmount: number | undefined;
 }
