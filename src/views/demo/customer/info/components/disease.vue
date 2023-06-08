@@ -182,3 +182,19 @@
     }
   }
 </style>
+<style lang="less">
+.ant-table {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+::v-deep .ant-table-tbody tr th{
+  background-color: transparent !important;
+}
+::v-deep.ant-table-cell {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+::v-deep.ant-table-cell-row-hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+</style>

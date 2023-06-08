@@ -69,7 +69,7 @@
     height: 60px;
     display: flex;
     .info-protial {
-      background: #fff;
+      background: transparent;
       width: 20%;
     }
     .info-content {
@@ -97,4 +97,9 @@
       }
     }
   }
+</style>
+<style lang="less">
+.ant-table {
+  background: rgba(255, 255, 255, 0.2);
+}
 </style>
