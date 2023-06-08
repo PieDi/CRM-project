@@ -168,6 +168,21 @@ export interface CustomerOrderInfo {
   status: number | undefined;
 }
 
+
+/**
+ * 客户合同查询
+ */
+export interface CustomerContractListParams {
+  customerName?: string;
+  pageNum: number;
+  pageSize:number;
+  id: string | undefined;  // 合同id
+  orderId:string | undefined; // 订单id
+  name:string | undefined ; //合同名称
+}
+
+
+
 /**
  * 客户合同信息
  */
@@ -180,6 +195,8 @@ export interface CustomerContractInfo {
   effectiveStart: number | undefined;
   effectiveEnd: number | undefined;
   description: string | undefined;
+  createUserId:number | undefined;
+  createTime:string | undefined;
 }
 /**
  * 客户发票信息

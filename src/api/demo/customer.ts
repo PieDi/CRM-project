@@ -15,7 +15,8 @@ import {
   CustomerGroupInfo,
   CustomerSourceInfo,
   CustomerBoard,
-  CustomerInvoiceInfo
+  CustomerInvoiceInfo,
+  CustomerContractInfo,
 } from './model/customer';
 
 enum Api {
@@ -117,6 +118,15 @@ enum Api {
   CustomerOrderDetail = '/customer/order/detail', // 订单详情
   CustomerOrderHandle = '/customer/order/handle', // 订单详情
   CustomerOrderColumnar = '/customer/order/columnar', // 订单详情
+
+
+  /**
+   * 客户合同管理
+   * 
+   */
+  
+   CustomerContractPage = '/customer/order/contract/page', // 合同分页查询列表
+   CustomerContractList = '/customer/order/contract/list', // 全部合同
 }
 
 /**
@@ -384,4 +394,26 @@ export const getCustomerInvoicePage = (params: {pageNum?: number,name?: string, 
   defHttp.post<{ total: number; pageNum: number; data: CustomerInvoiceInfo[] }>({
     url: Api.CustomerOrderPage,
     params: { pageSize: 20, ...params },
+  });
+
+/*
+ * 客户合同信息
+ */
+export const getCustomerContractPage = (params: {pageNum?: number,name?: string, id?: string}) =>
+defHttp.post<{ total: number; pageNum: number; data: CustomerContractInfo[] }>({
+  url: Api.CustomerContractPage,
+  params: { pageSize: 20, ...params },
+});
+  // defHttp.post<{ total: number; pageNum: number; data: CustomerContractInfo[] }>({
+  //   url: Api.CustomerContractPage,
+  //   // params: { pageSize: 20, ...params },
+  //   params:{params},
+  // });
+  
+
+
+export const getCustomerContractList = (name?: string) =>
+  defHttp.post<Array<CustomerContractInfo>>({
+    url: Api.CustomerContractList,
+    params: { name },
   });
