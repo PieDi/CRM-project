@@ -128,26 +128,27 @@
 <style lang="less" scoped>
   .info-board {
     display: flex;
+    // height: calc(100vh - 184px);
+    background-image: url('@/assets/images/board-bg.jpg');
+    background-size: 100% 100%;
     .info-basic {
-      background: #fff;
+      background: rgba(255, 255, 255, 0.2);
       padding-top: 10px;
       padding-left: 10px;
       width: 260px;
       min-height: 600px;
     }
     .info-content {
-      margin-left: 1px;
       flex: 1;
       .disease {
-        background: #fff;
+        background: rgba(255, 255, 255, 0.2);
         min-height: 400px;
         max-height: 500px;
         padding: 10px;
         overflow-y: scroll;
       }
       .order {
-        margin-top: 1px;
-        background: #fff;
+        background: rgba(255, 255, 255, 0.2);
         min-height: 300px;
         padding: 10px;
       }
