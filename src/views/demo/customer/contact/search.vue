@@ -7,17 +7,17 @@
           placeholder="请输入"
            allowClear 
            :style="{ width: '150px' }"
-           v-model:value="searchInfo.contractNumber" 
+           v-model:value="searchInfo.name" 
            />
         </FormItem>
-        <FormItem label="客户姓名" style="margin-left: 10px">
+        <!-- <FormItem label="客户姓名" style="margin-left: 10px">
           <Input 
           placeholder="请输入"
            allowClear 
            :style="{ width: '150px' }" 
            v-model:value="searchInfo.customerName"
            />
-        </FormItem>
+        </FormItem> -->
         <Button type="primary" style="margin-left: 10px" @click="resetAction" >重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
@@ -27,7 +27,6 @@
       :columns="columns"
       :dataSource="pageInfo.dataSource"
       :canResize="false"
-      :loading="loading"
       :striped="false"
       :bordered="true"
       :pagination="pagination"
@@ -63,11 +62,9 @@
   import { PageWrapper } from '/@/components/Page';
   import { PageListInfo } from '/@/views/type';
   import { CustomerContractInfo } from '/@/api/demo/model/customer';
-  import {
-    getCustomerContractPage,
-  } from '/@/api/demo/customer';
+  import {getCustomerContractPage} from '/@/api/demo/customer';
   import { useRoute } from 'vue-router';
-
+import dayjs from 'dayjs';
 
   import {
     Table,
@@ -99,21 +96,14 @@
       TextArea,
     },
     setup() {
-      const cInfo = ref<{ name: string; id?: number | string; des: string }>({
-        name: '',
-        id: undefined,
-        des: '',
-      });
       const searchInfo = ref({
-        customerName: undefined,
-        contractNumber: undefined,
+        name: undefined,
       });
       const pageInfo = ref<PageListInfo<CustomerContractInfo>>({
         total: 0,
         current: 1,
         dataSource: [],
       });
-      const loading = ref(false);
       const pagination = computed(() => ({
         total: pageInfo.value.total,
         current: pageInfo.value.current,
@@ -128,7 +118,7 @@
       const route = useRoute();
       const customerOrderListReq = async (pageNum: number) => {
         const res = await getCustomerContractPage({
-          name:searchInfo.value.contractNumber,
+          ...searchInfo.value,
           pageNum:pageNum,
           id: route?.query.id as string,
         });
@@ -141,8 +131,7 @@
         }
       };
       const resetAction = () => {
-        searchInfo.value.customerName = undefined;
-        searchInfo.value.contractNumber = undefined;
+        searchInfo.value.name = undefined;
         customerOrderListReq(1);
       };
       const searchAction = () => {
@@ -154,39 +143,32 @@
       });
 
       const columns: ColumnsType<CustomerContractInfo> = [
-        // {
-        //   title: '客户姓名',
-        //   dataIndex: 'name',
-        //   key: 'name',
-        // },
         {
           title: '合同名称',
           width: 150,
           dataIndex: 'name',
         },
         {
-          title: '下单时间',
-          dataIndex: 'createTime',
+          title: '订单ID',
+          dataIndex: 'orderId',
         },
         {
-          title: '订单编号',
-          width: 150,
-          dataIndex: 'no',
+          title: '甲方',
+          dataIndex: 'firstParty'
         },
         {
-          title: '订单类型',
-          width: 150,
-          dataIndex: 'endTime',
+          title: '乙方',
+          dataIndex: 'secondParty'
         },
         {
-          title: '订单金额',
-          width: 150,
-          dataIndex: 'endTime',
+          title: '生效时间',
+          dataIndex: 'effectiveStart',
+          customRender: (state) => dayjs(state.record.effectiveStart).format('YYYY-MM-DD HH:mm:ss')
         },
         {
-          title: '负责人',
-          width: 150,
-          dataIndex: 'endTime',
+          title: '截止时间',
+          dataIndex: 'effectiveEnd',
+          customRender: (state) => dayjs(state.record.effectiveEnd).format('YYYY-MM-DD HH:mm:ss')
         },
         {
           title: '操作',
@@ -199,10 +181,7 @@
 
       return {
         columns,
-        // data: getBasicData(),
-        loading,
         pagination,
-        cInfo,
         downloadContact,
         previewContact,
         pageInfo,
