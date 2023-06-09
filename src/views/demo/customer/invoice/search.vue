@@ -141,26 +141,17 @@ const productTypeMap: Record<number, string> = {
           dataIndex: 'name',
         },
         {
-          title: '订单名称',
-          dataIndex: 'orderName',
+          title: '发票编号',
+          dataIndex: 'number',
         },
         {
-          title: '客户姓名',
-          dataIndex: 'customerName'
+          title: '订单ID',
+          dataIndex: 'orderId'
         },
         
         {
-          title: '订单数量',
-          dataIndex: 'orderQuantity',
-        },
-        {
-          title: '订单金额',
-          dataIndex: 'orderAmount',
-        },
-        {
-          title: '订单类型',
-          dataIndex: 'productType',
-          customRender:(state) => productTypeMap[state.record.productType as number]
+          title: '发票金额',
+          dataIndex: 'amount',
         },
         {
           title: '操作',

@@ -118,15 +118,18 @@ enum Api {
   CustomerOrderDetail = '/customer/order/detail', // 订单详情
   CustomerOrderHandle = '/customer/order/handle', // 订单详情
   CustomerOrderColumnar = '/customer/order/columnar', // 订单详情
-
-
   /**
    * 客户合同管理
    * 
    */
-  
    CustomerContractPage = '/customer/order/contract/page', // 合同分页查询列表
-   CustomerContractList = '/customer/order/contract/list', // 全部合同
+  CustomerContractList = '/customer/order/contract/list', // 全部合同
+   /**
+   * 客户发票管理
+   * 
+   */
+   CustomerInvoicePage = '/customer/order/invoice/page', // 合同分页查询列表
+   CustomerInvoiceList = '/customer/order/invoice/list', // 全部合同
 }
 
 /**
@@ -392,7 +395,7 @@ export const columnarCustomerOrder = (type: number) =>
  */
 export const getCustomerInvoicePage = (params: {pageNum?: number,name?: string, id?: string}) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerInvoiceInfo[] }>({
-    url: Api.CustomerOrderPage,
+    url: Api.CustomerInvoicePage,
     params: { pageSize: 20, ...params },
   });
 
