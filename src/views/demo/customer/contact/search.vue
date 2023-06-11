@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="客户合同管理">
+  <PageWrapper title="客户合同管理" :back-show="showGoBack">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="合同名称">
@@ -182,6 +182,7 @@ import dayjs from 'dayjs';
       return {
         columns,
         pagination,
+        showGoBack: !!route?.query.id,
         downloadContact,
         previewContact,
         pageInfo,

@@ -1,18 +1,18 @@
 <template>
-  <PageWrapper title="客户信息看板">
+  <PageWrapper title="客户信息看板" :back-show="true">
     <div class="info-board">
       <div class="info-basic">
-         <h3>基本信息</h3>
-         <BasicInfo v-if="boardInfo?.customerBasic" :disease="boardInfo?.customerBasic"/>
+        <h3>基本信息</h3>
+        <BasicInfo v-if="boardInfo?.customerBasic" :disease="boardInfo?.customerBasic" />
       </div>
       <div class="info-content">
         <div class="disease">
           <h3>客户病史信息</h3>
-          <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases"/>
+          <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases" />
         </div>
         <div class="order">
-          <h3 style="margin-top: 10px;margin-left: 10px;">客户订单</h3>
-          <OrderInfo v-if="boardInfo?.orders" :disease="boardInfo?.orders"/>
+          <h3 style="margin-top: 10px; margin-left: 10px">客户订单</h3>
+          <OrderInfo v-if="boardInfo?.orders" :disease="boardInfo?.orders" />
         </div>
       </div>
     </div>
@@ -59,7 +59,7 @@
       TextArea,
       Disease,
       BasicInfo,
-      OrderInfo
+      OrderInfo,
     },
     setup() {
       const route = useRoute();
@@ -67,7 +67,7 @@
       const customerInfoBoard = async () => {
         if (route.query?.id) {
           const res = await boardCustomer(route.query.id as string);
-          if (res) { 
+          if (res) {
             boardInfo.value = res;
           }
         }
@@ -120,7 +120,7 @@
         searchInfo,
         resetAction,
         searchAction,
-        boardInfo
+        boardInfo,
       };
     },
   });

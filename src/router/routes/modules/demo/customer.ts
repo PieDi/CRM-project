@@ -183,39 +183,6 @@ const customer: AppRouteModule = {
     },
   ],
 };
-const customerBoard: AppRouteModule = {
-  path: '/customer-board',
-  name: 'CustomerA',
-  meta: {
-    title:t('routes.demo.customer.info.dataCenter'),
-    hideMenu: true,
-    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
-  },
-  component: () => import('/@/views/demo/customer/info/dataCenter.vue'),
-  // children: [
-  //   {
-  //     path: 'info',
-  //     name: 'Info',
-  //     meta: {
-  //       title: t('routes.demo.customer.info.init'),
-  //     },
-  //     children: [
-  //       {
-  //         path: 'dataCenter',
-  //         name: 'InfoDataCenter',
-  //         component: () => import('/@/views/demo/customer/info/dataCenter.vue'),
-  //         meta: {
-  //           // title: '客户信息看板',
-  //           title: t('routes.demo.customer.info.dataCenter'),
-  //           hideMenu: true,
-  //           roles: [RoleEnum.SUPER, RoleEnum.ADMIN,RoleEnum.TEST],
-  //         },
-  //       },
-  //     ],
-  //   },
-  // ],
-};
 export default {
   ...customer,
-  customerBoard
 };
