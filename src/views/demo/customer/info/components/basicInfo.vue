@@ -1,17 +1,16 @@
 <template>
-  <div class="info-board">
-    <div class="info-protial">
+  <!-- <div class="info-protial">
       <img src="@/assets/images/portail.png" alt="" />
+    </div> -->
+  <div class="info-content">
+    <div class="disease">
+      <span>{{ diseaseObject?.name }}</span>
     </div>
-    <div class="info-content">
-      <div class="disease">
-        <span>{{ diseaseObject?.name }}</span>
-      </div>
-      <div class="order">
-        <span>{{ sex }}</span>
-      </div>
+    <div class="order">
+      <span>{{ sex }}</span>
     </div>
   </div>
+
   <div class="content">
     <span class="label">生日:</span>
     <span>{{ diseaseObject?.birth }}</span>
@@ -57,7 +56,7 @@
         diseaseObject: props.disease,
         sex: props.disease?.sex != 1 ? '女' : '男',
         dayjs,
-        docTypeMap
+        docTypeMap,
       };
     },
   });
@@ -91,7 +90,7 @@
       padding-left: 10px;
       padding-right: 10px;
       margin-bottom: 10px;
-      .label{
+      .label {
         display: inline-block;
         width: 80px;
       }
@@ -99,7 +98,7 @@
   }
 </style>
 <style lang="less">
-.ant-table {
-  background: rgba(255, 255, 255, 0.2);
-}
+  .ant-table {
+    background: rgba(255, 255, 255, 0.2);
+  }
 </style>
