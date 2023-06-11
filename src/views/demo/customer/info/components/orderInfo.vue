@@ -5,17 +5,18 @@
     :pagination="false"
     :canResize="false"
     :striped="false"
-    :bordered="true"
+    :bordered="false"
+    class="bbbb"
   >
     <template #bodyCell="{ record, column }">
       <template v-if="column.dataIndex === 'orderName'">
-        <Button type="link" @click="()=>{linkClick(record.order.id as number)}">{{
+        <Button type="link" style="color: rgb(0, 255, 250);" @click="()=>{linkClick(record.order.id as number)}">{{
           record.order.orderName
         }}</Button>
       </template>
       <template v-if="column.dataIndex === 'contracts'">
         <div style="display: flex; flex-direction: column;">
-          <Button type="link" @click="()=>{cLinkClick(c.id as number)}" v-for="c of record.orderContracts">{{
+          <Button type="link" style="color: rgb(0, 255, 250);" @click="()=>{cLinkClick(c.id as number)}" v-for="c of record.orderContracts">{{
           c.name
         }}</Button>
         </div>
@@ -23,7 +24,7 @@
       </template>
       <template v-if="column.dataIndex === 'invoices'">
         <div style="display: flex; flex-direction: column;">
-          <Button type="link" @click="()=>{iLinkClick(c.id as number)}" v-for="c of record.orderInvoices">{{
+          <Button type="link" style="color: rgb(0, 255, 250);" @click="()=>{iLinkClick(c.id as number)}" v-for="c of record.orderInvoices">{{
           c.name
         }}</Button>
         </div>
@@ -124,4 +125,22 @@
     },
   });
 </script>
-<style lang="less" scoped></style>
+<style lang="less" >
+.bbbb {
+    .ant-table-thead > tr > th {
+      color: #fff;
+      background: transparent;
+      border-right: none;
+    }
+    .ant-table-cell-scrollbar {
+      // box-shadow: none;
+      opacity: 0;
+    }
+    .ant-table {
+      background: transparent;
+      color: #fff;
+    }
+    .ant-table-tbody > tr.ant-table-row:hover > td  {
+      background: transparent;
+    }
+  }</style>

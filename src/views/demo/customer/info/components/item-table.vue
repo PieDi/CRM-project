@@ -1,10 +1,11 @@
 <template>
   <Table
+    class="aaaa"
     :scroll="{ y: 180 }"
     :columns="columns"
     :dataSource="dataSource"
     :canResize="true"
-    :bordered="true"
+    :bordered="false"
     :pagination="false"
   >
     <template #bodyCell="{ record, text, column }">
@@ -15,7 +16,7 @@
           column.dataIndex === 'consultationExpert'
         "
       >
-        <Button type="link" @click="()=>{linkClick(record.diseaseId as number)}">{{ text }}</Button>
+        <Button type="link" style="color: rgb(0, 255, 250);" @click="()=>{linkClick(record.diseaseId as number)}">{{ text }}</Button>
       </template>
     </template>
   </Table>
@@ -51,4 +52,23 @@
     },
   });
 </script>
-<style lang="less" scoped></style>
+<style lang="less">
+  .aaaa {
+    .ant-table-thead > tr > th {
+      color: #fff;
+      background: transparent;
+      border-right: none;
+    }
+    .ant-table-cell-scrollbar {
+      // box-shadow: none;
+      opacity: 0;
+    }
+    .ant-table {
+      background: transparent;
+      color: #fff;
+    }
+    .ant-table-tbody > tr.ant-table-row:hover > td  {
+      background: transparent;
+    }
+  }
+</style>

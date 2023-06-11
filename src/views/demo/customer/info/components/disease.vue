@@ -24,7 +24,7 @@
           :columns="[
             {
               title: '药品名称',
-              dataIndex: 'medicineName',
+              dataIndex: 'medicineName'
             },
             {
               title: '用药剂量',
@@ -77,11 +77,12 @@
             {
               title: '检验类别',
               dataIndex: 'checkType',
-              customRender: (state) => iCheckType[state.record.sex as number],
+              customRender: (state) => iCheckType[state.record.checkType as number],
             },
             {
               title: '检验时间',
               dataIndex: 'checkDate',
+              width: 180,
               customRender: (state) => dayjs(state.record.checkDate).format('YYYY-MM-DD HH:mm:ss'),
             },
             
