@@ -40,6 +40,7 @@
               >预览</Button
             >
             <Button
+              v-if="authShow"
               type="link"
               @click="
                 () => {
@@ -68,7 +69,12 @@
   import { PageWrapper } from '/@/components/Page';
   import { Button, Upload, message, Modal } from 'ant-design-vue';
   import { useRoute } from 'vue-router';
-  import { uploadTemplate, previewTemplate,getTemplateList, deleteTemplate } from '/@/api/demo/contact';
+  import {
+    uploadTemplate,
+    previewTemplate,
+    getTemplateList,
+    deleteTemplate,
+  } from '/@/api/demo/contact';
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
@@ -107,9 +113,9 @@
       };
       const pdfShow = ref(false);
       const previewFile = async (item) => {
-        const res = await previewTemplate(`/${route.query.name as string}/${item}`)
-        if (res) window.open(res)
-      
+        const res = await previewTemplate(`/${route.query.name as string}/${item}`);
+        if (res) window.open(res);
+
         // pdfShow.value = true;
         // setTimeout(() => {
         //   pdfPreview.embed(`http://129.204.202.223:8001/contract/template/download?path=/${
@@ -178,6 +184,7 @@
         }
         .btn {
           display: none;
+          text-align: center;
         }
       }
       .file-item-border:hover {

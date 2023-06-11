@@ -58,17 +58,17 @@ const customer: AppRouteModule = {
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
           },
         },
-        {
-          path: 'dataCenter',
-          name: 'InfoDataCenter',
-          component: () => import('/@/views/demo/customer/info/dataCenter.vue'),
-          meta: {
-            // title: '客户信息看板',
-            title: t('routes.demo.customer.info.dataCenter'),
-            hideMenu: true,
-            roles: [RoleEnum.SUPER, RoleEnum.ADMIN,RoleEnum.TEST],
-          },
-        },
+        // {
+        //   path: 'dataCenter',
+        //   name: 'InfoDataCenter',
+        //   component: () => import('/@/views/demo/customer/info/dataCenter.vue'),
+        //   meta: {
+        //     // title: '客户信息看板',
+        //     title: t('routes.demo.customer.info.dataCenter'),
+        //     hideMenu: true,
+        //     roles: [RoleEnum.SUPER, RoleEnum.ADMIN,RoleEnum.TEST],
+        //   },
+        // },
       ],
     },
     {
@@ -102,15 +102,6 @@ const customer: AppRouteModule = {
           component: () => import('/@/views/demo/customer/order/search.vue'),
           meta: {
             title: t('routes.demo.customer.order.init'),
-            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
-          },
-        },
-        {
-          path: 'statistics',
-          name: 'OrderStatistics',
-          component: () => import('/@/views/demo/customer/order/statistics.vue'),
-          meta: {
-            title: t('routes.demo.customer.order.statistics'),
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
@@ -184,7 +175,7 @@ const customer: AppRouteModule = {
           name: 'InvoiceSearch',
           component: () => import('/@/views/demo/customer/invoice/search.vue'),
           meta: {
-            title: t('routes.demo.customer.invoice.search'),
+            title: '客户发票管理',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
@@ -192,5 +183,39 @@ const customer: AppRouteModule = {
     },
   ],
 };
-
-export default customer;
+const customerBoard: AppRouteModule = {
+  path: '/customer-board',
+  name: 'CustomerA',
+  meta: {
+    title:t('routes.demo.customer.info.dataCenter'),
+    hideMenu: true,
+    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+  },
+  component: () => import('/@/views/demo/customer/info/dataCenter.vue'),
+  // children: [
+  //   {
+  //     path: 'info',
+  //     name: 'Info',
+  //     meta: {
+  //       title: t('routes.demo.customer.info.init'),
+  //     },
+  //     children: [
+  //       {
+  //         path: 'dataCenter',
+  //         name: 'InfoDataCenter',
+  //         component: () => import('/@/views/demo/customer/info/dataCenter.vue'),
+  //         meta: {
+  //           // title: '客户信息看板',
+  //           title: t('routes.demo.customer.info.dataCenter'),
+  //           hideMenu: true,
+  //           roles: [RoleEnum.SUPER, RoleEnum.ADMIN,RoleEnum.TEST],
+  //         },
+  //       },
+  //     ],
+  //   },
+  // ],
+};
+export default {
+  ...customer,
+  customerBoard
+};
