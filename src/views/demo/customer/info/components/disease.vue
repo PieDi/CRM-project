@@ -19,92 +19,114 @@
       <div class="content">
         <div class="item-title">用药记录</div>
         <div class="item-content">
-          <div
-            v-for="d of item.diseaseMedicine"
-            class="block"
-            @click="
+          <template v-if="item.diseaseMedicine.length">
+            <div
+              v-for="d of item.diseaseMedicine"
+              class="block"
+              @click="
               () => {
                 linkClick(d.diseaseId as number);
               }
             "
+            >
+              <div class="block-content">
+                <div>
+                  <div> <span>用药时间:</span>{{ dayjs(d.useDate).format('YYYY-MM-DD') }}</div>
+                  <div> <span>药品名称:</span>{{ d.useDose }}</div>
+                </div>
+                <div>
+                  <div><span>用药剂量:</span>{{ d.medicineName }}</div>
+                </div>
+              </div>
+            </div></template
           >
-            <div class="block-content">
-              <div>
-                <div> <span>用药时间:</span>{{ dayjs(d.useDate).format('YYYY-MM-DD') }}</div>
-                <div> <span>药品名称:</span>{{ d.useDose }}</div>
-              </div>
-              <div>
-                <div><span>用药剂量:</span>{{ d.medicineName }}</div>
-              </div>
-            </div>
-          </div>
+          <div v-else>暂无数据</div>
         </div>
       </div>
       <div class="content">
         <div class="item-title">检验记录</div>
         <div class="item-content">
-          <div v-for="d of item.diseaseCheck" class="block" @click="
+          <template v-if="item.diseaseMedicine.length">
+            <div
+              v-for="d of item.diseaseCheck"
+              class="block"
+              @click="
               () => {
                 linkClick(d.diseaseId as number);
               }
-            ">
-            <div class="block-content">
-              <div>
-                <div> <span>检验时间:</span>{{ dayjs(d.checkDate).format('YYYY-MM-DD') }}</div>
-                <div> <span>检验机构:</span>{{ d.checkMechanism }}</div>
+            "
+            >
+              <div class="block-content">
+                <div>
+                  <div> <span>检验时间:</span>{{ dayjs(d.checkDate).format('YYYY-MM-DD') }}</div>
+                  <div> <span>检验机构:</span>{{ d.checkMechanism }}</div>
+                </div>
+                <div>
+                  <div><span>检验类型:</span>{{ d.checkType }}</div>
+                </div>
               </div>
-              <div>
-                <div><span>检验类型:</span>{{ d.checkType }}</div>
-              </div>
-            </div>
-          </div>
+            </div></template
+          >
+          <div v-else>暂无数据</div>
         </div>
       </div>
     </div>
     <div style="display: flex">
       <div class="content">
         <div class="item-title">影像记录</div>
-
         <div class="item-content">
-          <div v-for="d of item.diseaseImage" class="block" @click="
+          <template v-if="item.diseaseMedicine.length">
+            <div
+              v-for="d of item.diseaseImage"
+              class="block"
+              @click="
               () => {
                 linkClick(d.diseaseId as number);
               }
-            ">
-            <div class="block-content">
-              <div>
-                <div> <span>检验时间:</span>{{ dayjs(d.checkDate).format('YYYY-MM-DD') }}</div>
-                <div> <span>检验机构:</span>{{ d.checkMechanism }}</div>
+            "
+            >
+              <div class="block-content">
+                <div>
+                  <div> <span>检验时间:</span>{{ dayjs(d.checkDate).format('YYYY-MM-DD') }}</div>
+                  <div> <span>检验机构:</span>{{ d.checkMechanism }}</div>
+                </div>
+                <div>
+                  <div><span>检验类型:</span>{{ iCheckType[d.checkType as number] }}</div>
+                  <div><span>检验部位:</span>{{ d.checkPart }}</div>
+                </div>
               </div>
-              <div>
-                <div><span>检验类型:</span>{{ iCheckType[d.checkType as number] }}</div>
-                <div><span>检验部位:</span>{{ d.checkPart }}</div>
-              </div>
-            </div>
-          </div>
+            </div></template
+          >
+          <div v-else>暂无数据</div>
         </div>
       </div>
       <div class="content">
         <div class="item-title">就诊记录</div>
-
         <div class="item-content">
-          <div v-for="d of item.diseaseConsultation" class="block" @click="
+          <template v-if="item.diseaseMedicine.length">
+            <div
+              v-for="d of item.diseaseConsultation"
+              class="block"
+              @click="
               () => {
                 linkClick(d.diseaseId as number);
               }
-            ">
-            <div class="block-content">
-              <div>
+            "
+            >
+              <div class="block-content">
                 <div>
-                  <span>会诊日期:</span>{{ dayjs(d.consultationDate).format('YYYY-MM-DD') }}</div
-                >
-                <div> <span>会诊内容:</span>{{ d.consultationContent }}</div>
-              </div>
-              <div>
-                <div><span>会诊专家:</span>{{ d.consultationExpert }}</div>
+                  <div>
+                    <span>会诊日期:</span>{{ dayjs(d.consultationDate).format('YYYY-MM-DD') }}</div
+                  >
+                  <div> <span>会诊内容:</span>{{ d.consultationContent }}</div>
+                </div>
+                <div>
+                  <div><span>会诊专家:</span>{{ d.consultationExpert }}</div>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
+          <div v-else>暂无数据</div>
         </div>
       </div>
     </div>
@@ -181,8 +203,7 @@
         font-weight: 600;
       }
       .item-content {
-        max-height: 300px;
-        min-height: 150px;
+        height: 180px;
         overflow-y: auto;
         .block {
           padding: 15px;
@@ -192,7 +213,7 @@
             justify-content: space-between;
           }
           span {
-            margin-right: 10px;
+            margin-right: 6px;
           }
         }
         .block + .block {
