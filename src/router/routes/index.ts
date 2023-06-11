@@ -1,8 +1,6 @@
 import type { AppRouteRecordRaw, AppRouteModule } from '/@/router/types';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
-
-import { mainOutRoutes } from './mainOut';
 import { PageEnum } from '/@/enums/pageEnum';
 import { t } from '/@/hooks/web/useI18n';
 
@@ -41,12 +39,22 @@ export const LoginRoute: AppRouteRecordRaw = {
   },
 };
 
+export const customerBoard: AppRouteModule = {
+  path: '/customer-board',
+  name: 'CustomerA',
+  meta: {
+    title:t('routes.demo.customer.info.dataCenter'),
+    // hideMenu: true,
+    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+  },
+  component: () => import('/@/views/demo/customer/info/dataCenter.vue'),
+};
 // Basic routing without permission
 // 未经许可的基本路由
 export const basicRoutes = [
   LoginRoute,
   RootRoute,
-  ...mainOutRoutes,
+  customerBoard,
   REDIRECT_ROUTE,
   PAGE_NOT_FOUND_ROUTE,
 ];

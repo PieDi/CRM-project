@@ -2,7 +2,9 @@
   <PageWrapper title="资料分类">
     <div :style="{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }">
       <div :style="{ display: 'flex' }"></div>
-      <Button v-if="authShow" type="primary" style="margin-left: 10px" @click="addFile">新建文件夹</Button>
+      <Button v-if="authShow" type="primary" style="margin-left: 10px" @click="addFile"
+        >新建文件夹</Button
+      >
     </div>
     <div class="file-content">
       <div v-for="(item, i) in fileList" :key="i" class="file-item">
@@ -16,14 +18,20 @@
         >
           <p>{{ item }}</p>
           <div class="btn">
-           <!--  <Button type="link" @click="(e:MouseEvent)=>{
+            <!--  <Button type="link" @click="(e:MouseEvent)=>{
               editFile(item)
               e.stopPropagation()
             }">编辑</Button>-->
-            <Button type="link" @click="(e:MouseEvent)=>{
+            <Button
+              type="link"
+              v-if="authShow"
+              @click="(e:MouseEvent)=>{
               deleteFile(item)
               e.stopPropagation()
-            }">删除</Button></div> 
+            }"
+              >删除</Button
+            ></div
+          >
         </div>
       </div>
     </div>
@@ -50,10 +58,10 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, toRaw, computed,createVNode } from 'vue';
+  import { defineComponent, ref, onMounted, toRaw, computed, createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Drawer, message } from 'ant-design-vue';
-  import { createShare, getShareList,deleteShare } from '/@/api/demo/datum-share';
+  import { createShare, getShareList, deleteShare } from '/@/api/demo/datum-share';
   import { type DrawerItemType } from '/@/views/type';
   import { useRouter } from 'vue-router';
   import { useUserStore } from '/@/store/modules/user';
@@ -113,7 +121,7 @@
               const res = await deleteShare({ path: `/${item}` });
               if (res) {
                 message.success('删除文件夹');
-                datumListReq('')
+                datumListReq('');
               }
             },
           }),
@@ -142,7 +150,7 @@
         deleteFile,
         drawerOnClose,
         submit,
-        authShow
+        authShow,
       };
     },
   });

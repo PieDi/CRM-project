@@ -23,6 +23,7 @@
               e.stopPropagation()
             }">编辑</Button> -->
             <Button
+              v-if="authShow"
               type="link"
               @click="(e:MouseEvent)=>{
               deleteFile(item)
@@ -178,6 +179,7 @@
         .btn {
           display: none;
           padding: 0 59px;
+          text-align: center;
         }
       }
       .file-item-border:hover {

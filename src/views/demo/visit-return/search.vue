@@ -132,7 +132,7 @@
             </Select>
           </FormItem>
 
-          <FormItem label="结果补充">
+          <FormItem label="结果">
             <TextArea
               :disabled="drawerInfo.type === 'scan'"
               placeholder="请输入"
@@ -228,7 +228,7 @@
           customRender: (state) => visitResMap[state.record.way as number],
         },
         {
-          title: '结果补充',
+          title: '结果',
           dataIndex: 'supplement',
         },
         {

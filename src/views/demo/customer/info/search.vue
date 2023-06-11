@@ -358,7 +358,7 @@
       });
       const router = useRouter();
       const boardCustomer = (id: number) => {
-        router.push({ path: '/customer/info/dataCenter', query: { id } });
+        router.push({ path: '/customer-board', query: { id } });
       };
       const columns: ColumnsType<CustomerInfo> = [
         {

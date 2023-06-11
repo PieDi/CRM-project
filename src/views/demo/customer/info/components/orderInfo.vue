@@ -2,6 +2,7 @@
   <Table
     :columns="columns"
     :dataSource="diseaseObject"
+    :pagination="false"
     :canResize="false"
     :striped="false"
     :bordered="true"

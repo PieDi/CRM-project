@@ -30,6 +30,7 @@
               >下载</Button
             >
             <Button
+              v-if="authShow"
               type="link"
               @click="
                 () => {
@@ -144,6 +145,7 @@
         .btn {
           display: none;
           padding: 0 29px;
+          text-align: center;
         }
       }
       .file-item-border:hover {

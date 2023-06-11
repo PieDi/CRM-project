@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="客户病史管理">
+  <PageWrapper title="客户病史管理" :back-show="showGoBack">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客户姓名">
@@ -176,7 +176,7 @@
   import dayjs from 'dayjs';
   import confirm from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
 
   const FormItem = Form.Item;
   export default defineComponent({
@@ -246,7 +246,10 @@
       onMounted(() => {
         customerMHListReq(1);
       });
-
+      const router = useRouter()
+      const goBack = () => {
+        router.back()
+       }
       const columns: ColumnsType<CustomerMHInfo> = [
         {
           title: '姓名',
@@ -469,6 +472,8 @@
         resetAction,
         searchAction,
         addMHistory,
+        showGoBack: !!route?.query.id,
+        goBack,
 
         mRecordDrawerInfo,
         mRecordClose,
@@ -504,3 +509,9 @@
     },
   });
 </script>
+<style lang="less" scoped>
+.go-back {
+  color: #0960bd;
+  cursor: pointer;
+}
+</style>
