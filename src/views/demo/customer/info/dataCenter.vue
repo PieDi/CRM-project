@@ -164,29 +164,35 @@
     .content {
       display: flex;
       height: calc(100% - 65px);
+      font-size: 18px;
       h3 {
         color: #fff;
+        font-weight: 600;
       }
 
       .info-basic {
-        padding-top: 10px;
-        padding-left: 10px;
-        width: 260px;
+        padding-top: 20px;
+        padding-left: 30px;
+        width: 350px;
         height: 100%;
         background: rgb(18, 77, 129);
       }
       .info-content {
         flex: 1;
-        padding: 10px;
-        padding-top: 0;
+        padding: 0 10px;
         height: 100%;
         .disease {
-          height: 60%;
+          // height: 60%;
           background: rgb(18, 77, 129);
           overflow-y: scroll;
+          padding-left: 20px;
+          padding-top: 20px;
         }
         .order {
-          height: calc(40% - 10px);
+          margin-top: 10px;
+          padding-left: 20px;
+          padding-top: 15px;
+          height: calc(40% - 15px);
           background: rgb(18, 77, 129);
         }
       }

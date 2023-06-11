@@ -10,7 +10,6 @@
       <div class="header"
         ><span>科室:</span><span>{{ item.diseaseBasic.departmentName }}</span></div
       >
-
       <div class="header"
         ><span>会诊时间名称:</span
         ><span>{{ dayjs(item.diseaseBasic.visitDate).format('YYYY-MM-DD') }}</span></div
@@ -18,99 +17,95 @@
     </div>
     <div style="display: flex">
       <div class="content">
-        <div>用药记录</div>
-        <ItemTable
-          :data-source="item.diseaseMedicine"
-          :columns="[
-            {
-              title: '药品名称',
-              dataIndex: 'medicineName'
-            },
-            {
-              title: '用药剂量',
-              dataIndex: 'useDose',
-            },
-            {
-              title: '用药时间',
-              dataIndex: 'useDate',
-              customRender: (state) => dayjs(state.record.useDate).format('YYYY-MM-DD'),
-            },
-          ]"
-        />
+        <div class="item-title">用药记录</div>
+        <div class="item-content">
+          <div
+            v-for="d of item.diseaseMedicine"
+            class="block"
+            @click="
+              () => {
+                linkClick(d.diseaseId as number);
+              }
+            "
+          >
+            <div class="block-content">
+              <div>
+                <div> <span>用药时间:</span>{{ dayjs(d.useDate).format('YYYY-MM-DD') }}</div>
+                <div> <span>药品名称:</span>{{ d.useDose }}</div>
+              </div>
+              <div>
+                <div><span>用药剂量:</span>{{ d.medicineName }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="content">
-        <div>检验记录</div>
-        <ItemTable
-          :data-source="item.diseaseCheck"
-          :columns="[
-            {
-              title: '检验机构',
-              dataIndex: 'checkMechanism',
-            },
-            {
-              title: '检验类型',
-              dataIndex: 'checkType',
-            },
-            {
-              title: '检验时间',
-              dataIndex: 'checkDate',
-              customRender: (state) => dayjs(state.record.checkDate).format('YYYY-MM-DD HH:mm:ss'),
-            },
-          ]"
-        />
+        <div class="item-title">检验记录</div>
+        <div class="item-content">
+          <div v-for="d of item.diseaseCheck" class="block" @click="
+              () => {
+                linkClick(d.diseaseId as number);
+              }
+            ">
+            <div class="block-content">
+              <div>
+                <div> <span>检验时间:</span>{{ dayjs(d.checkDate).format('YYYY-MM-DD') }}</div>
+                <div> <span>检验机构:</span>{{ d.checkMechanism }}</div>
+              </div>
+              <div>
+                <div><span>检验类型:</span>{{ d.checkType }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div style="display: flex">
       <div class="content">
-        <div>影像记录</div>
-        <ItemTable
-          :data-source="item.diseaseImage"
-          :columns="[
-            {
-              title: '检验机构',
-              dataIndex: 'checkMechanism',
-            },
-            {
-              title: '检验部位',
-              dataIndex: 'checkPart',
-            },
-            {
-              title: '检验类别',
-              dataIndex: 'checkType',
-              customRender: (state) => iCheckType[state.record.checkType as number],
-            },
-            {
-              title: '检验时间',
-              dataIndex: 'checkDate',
-              width: 180,
-              customRender: (state) => dayjs(state.record.checkDate).format('YYYY-MM-DD HH:mm:ss'),
-            },
-            
-          ]"
-        />
+        <div class="item-title">影像记录</div>
+
+        <div class="item-content">
+          <div v-for="d of item.diseaseImage" class="block" @click="
+              () => {
+                linkClick(d.diseaseId as number);
+              }
+            ">
+            <div class="block-content">
+              <div>
+                <div> <span>检验时间:</span>{{ dayjs(d.checkDate).format('YYYY-MM-DD') }}</div>
+                <div> <span>检验机构:</span>{{ d.checkMechanism }}</div>
+              </div>
+              <div>
+                <div><span>检验类型:</span>{{ iCheckType[d.checkType as number] }}</div>
+                <div><span>检验部位:</span>{{ d.checkPart }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="content">
-        <div>就诊记录</div>
-        <ItemTable
-          :data-source="item.diseaseConsultation"
-          :columns="[
-            {
-              title: '会诊专家',
-              dataIndex: 'consultationExpert',
-              
-            },
-            {
-              title: '会诊内容',
-              dataIndex: 'consultationContent',
-            },
-            {
-              title: '会诊日期',
-              dataIndex: 'consultationDate',
-              customRender: (state) =>
-                dayjs(state.record.consultationDate).format('YYYY-MM-DD HH:mm:ss'),
-            }
-          ]"
-        />
+        <div class="item-title">就诊记录</div>
+
+        <div class="item-content">
+          <div v-for="d of item.diseaseConsultation" class="block" @click="
+              () => {
+                linkClick(d.diseaseId as number);
+              }
+            ">
+            <div class="block-content">
+              <div>
+                <div>
+                  <span>会诊日期:</span>{{ dayjs(d.consultationDate).format('YYYY-MM-DD') }}</div
+                >
+                <div> <span>会诊内容:</span>{{ d.consultationContent }}</div>
+              </div>
+              <div>
+                <div><span>会诊专家:</span>{{ d.consultationExpert }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -126,7 +121,7 @@
     CustomerIInfo,
     CustomerCInfo,
   } from '/@/api/demo/model/customer';
-  import ItemTable from './item-table.vue';
+  import { useRouter } from 'vue-router';
 
   const iCheckType = {
     1: 'CT',
@@ -139,7 +134,6 @@
   };
   export default defineComponent({
     components: {
-      ItemTable,
       Button,
       Table,
     },
@@ -157,11 +151,14 @@
       },
     },
     setup(props) {
-    
-     
+      const router = useRouter();
+      const linkClick = (id: number) => {
+        router.push({ path: '/customer/mHistory/search', query: { id } });
+      };
       return {
         diseaseObject: props.disease,
         iCheckType,
+        linkClick,
         dayjs,
       };
     },
@@ -177,25 +174,47 @@
     }
     .content {
       width: 50%;
-      // height: 200px;
       padding: 10px;
-      // overflow-y: auto;
+      padding-left: 0;
+      .item-title {
+        font-size: 20px;
+        font-weight: 600;
+      }
+      .item-content {
+        max-height: 300px;
+        min-height: 150px;
+        overflow-y: auto;
+        .block {
+          padding: 15px;
+          background: rgba(255, 255, 255, 0.05);
+          .block-content {
+            display: flex;
+            justify-content: space-between;
+          }
+          span {
+            margin-right: 10px;
+          }
+        }
+        .block + .block {
+          margin-top: 5px;
+        }
+      }
     }
   }
 </style>
 <style lang="less">
-.ant-table {
-  background: rgba(255, 255, 255, 0.2);
-}
+  .ant-table {
+    background: rgba(255, 255, 255, 0.2);
+  }
 
-::v-deep .ant-table-tbody tr th{
-  background-color: transparent !important;
-}
-::v-deep.ant-table-cell {
-  background: rgba(255, 255, 255, 0.2);
-}
+  ::v-deep .ant-table-tbody tr th {
+    background-color: transparent !important;
+  }
+  ::v-deep.ant-table-cell {
+    background: rgba(255, 255, 255, 0.2);
+  }
 
-::v-deep.ant-table-cell-row-hover {
-  background: rgba(255, 255, 255, 0.2);
-}
+  ::v-deep.ant-table-cell-row-hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
 </style>

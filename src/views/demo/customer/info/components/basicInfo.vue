@@ -2,15 +2,11 @@
   <!-- <div class="info-protial">
       <img src="@/assets/images/portail.png" alt="" />
     </div> -->
-  <div class="info-content">
-    <div class="disease">
-      <span>{{ diseaseObject?.name }}</span>
-    </div>
-    <div class="order">
-      <span>{{ sex }}</span>
-    </div>
+  <div class="info-content">{{ diseaseObject?.name }}</div>
+  <div class="content">
+    <span class="label">性别:</span>
+    <span>{{ sex }}</span>
   </div>
-
   <div class="content">
     <span class="label">生日:</span>
     <span>{{ diseaseObject?.birth }}</span>
@@ -63,7 +59,7 @@
 </script>
 <style lang="less" scoped>
   .info-board {
-    margin-left: 10px;
+    margin-left: 20px;
     margin-top: 30px;
     height: 60px;
     display: flex;
@@ -72,24 +68,13 @@
       width: 20%;
     }
     .info-content {
-      margin-left: 1px;
-      flex: 1;
-      .disease {
-        margin-left: 10px;
-        width: 60%;
-        height: 40%;
-      }
-      .order {
-        margin-left: 10px;
-        width: 60%;
-        height: 40%;
-      }
+      font-size: 20px;
+      font-weight: 600;
     }
     // 添加测试信息
     .content {
-      padding-left: 10px;
+      margin: 10px 0;
       padding-right: 10px;
-      margin-bottom: 10px;
       .label {
         display: inline-block;
         width: 80px;
