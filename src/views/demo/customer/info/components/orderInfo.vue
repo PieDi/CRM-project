@@ -10,23 +10,31 @@
   >
     <template #bodyCell="{ record, column }">
       <template v-if="column.dataIndex === 'orderName'">
-        <Button type="link" style="color: rgb(0, 255, 250);" @click="()=>{linkClick(record.order.id as number)}">{{
-          record.order.orderName
-        }}</Button>
+        <span
+          type="link"
+          style="color: rgb(0, 255, 250); cursor: pointer;"
+          @click="()=>{linkClick(record.order.id as number)}"
+          >{{ record.order.orderName }}</span
+        >
       </template>
       <template v-if="column.dataIndex === 'contracts'">
-        <div style="display: flex; flex-direction: column;">
-          <Button type="link" style="color: rgb(0, 255, 250);" @click="()=>{cLinkClick(c.id as number)}" v-for="c of record.orderContracts">{{
-          c.name
-        }}</Button>
+        <div style="display: flex; flex-direction: column">
+          <span
+            style="color: rgb(0, 255, 250); cursor: pointer;"
+            @click="()=>{cLinkClick(c.id as number)}"
+            v-for="c of record.orderContracts"
+            >{{ c.name }}</span
+          >
         </div>
-        
       </template>
       <template v-if="column.dataIndex === 'invoices'">
-        <div style="display: flex; flex-direction: column;">
-          <Button type="link" style="color: rgb(0, 255, 250);" @click="()=>{iLinkClick(c.id as number)}" v-for="c of record.orderInvoices">{{
-          c.name
-        }}</Button>
+        <div style="display: flex; flex-direction: column">
+          <span
+            style="color: rgb(0, 255, 250)"
+            @click="()=>{iLinkClick(c.id as number)}"
+            v-for="c of record.orderInvoices"
+            >{{ c.name }}</span
+          >
         </div>
       </template>
     </template>
@@ -63,10 +71,10 @@
     },
     setup(props) {
       const columns: ColumnsType<{
-            order: CustomerOrderInfo;
-            orderContracts: Array<CustomerContractInfo>;
-            orderInvoices: Array<CustomerInvoiceInfo>;
-          }> = [
+        order: CustomerOrderInfo;
+        orderContracts: Array<CustomerContractInfo>;
+        orderInvoices: Array<CustomerInvoiceInfo>;
+      }> = [
         {
           title: '订单名称',
           dataIndex: 'orderName',
@@ -112,7 +120,7 @@
       const iLinkClick = (id: number) => {
         router.push({ path: '/customer/invoice/search', query: { id } });
       };
-      
+
       return {
         linkClick,
         cLinkClick,
@@ -125,12 +133,14 @@
     },
   });
 </script>
-<style lang="less" >
-.bbbb {
+<style lang="less">
+  .bbbb {
     .ant-table-thead > tr > th {
       color: #fff;
       background: transparent;
       border-right: none;
+      font-size: 20px;
+      padding: 10px 5px;
     }
     .ant-table-cell-scrollbar {
       // box-shadow: none;
@@ -140,7 +150,11 @@
       background: transparent;
       color: #fff;
     }
-    .ant-table-tbody > tr.ant-table-row:hover > td  {
+    .ant-table-tbody > tr > td {
+      font-size: 18px;
+    }
+    .ant-table-tbody > tr.ant-table-row:hover > td {
       background: transparent;
     }
-  }</style>
+  }
+</style>

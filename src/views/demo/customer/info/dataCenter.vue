@@ -163,24 +163,23 @@
     }
     .content {
       display: flex;
-      height: calc(100% - 65px);
+      min-height: calc(100% - 65px);
       font-size: 18px;
+      background: inherit;
       h3 {
         color: #fff;
         font-weight: 600;
       }
 
       .info-basic {
-        padding-top: 15px;
-        padding-left: 30px;
+        padding: 20px 20px;
+
         width: 350px;
-        height: 100%;
         background: rgb(18, 77, 129);
       }
       .info-content {
         flex: 1;
-        margin-left: 10px;
-        height: 100%;
+        padding: 0 10px;
         .disease {
           height: 550px;
           background: rgb(18, 77, 129);
