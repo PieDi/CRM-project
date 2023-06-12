@@ -173,6 +173,7 @@
 
       .info-basic {
         padding: 20px 20px;
+
         width: 350px;
         background: rgb(18, 77, 129);
       }
@@ -180,13 +181,14 @@
         flex: 1;
         padding: 0 10px;
         .disease {
-          // height: 60%;
+          height: 550px;
           background: rgb(18, 77, 129);
           overflow-y: scroll;
           padding-left: 20px;
-          padding-top: 20px;
+          padding-top: 15px;
         }
         .order {
+          height: calc(100% - 560px);
           margin-top: 10px;
           padding-left: 20px;
           padding-top: 15px;

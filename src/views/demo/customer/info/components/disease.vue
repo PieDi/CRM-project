@@ -19,10 +19,11 @@
       <div class="content">
         <div class="item-title">用药记录</div>
         <div class="item-content">
-          <div
-            v-for="d of item.diseaseMedicine"
-            class="block"
-            @click="
+          <template v-if="item.diseaseMedicine.length">
+            <div
+              v-for="d of item.diseaseMedicine"
+              class="block"
+              @click="
               () => {
                 linkClick(d.diseaseId as number);
               }
@@ -35,15 +36,21 @@
               </div>
               <div>
                 <div class="content-label"><span>用药剂量:</span>{{ d.useDose }}</div>
+
               </div>
-            </div>
-          </div>
+            </div></template
+          >
+          <div v-else>暂无数据</div>
         </div>
       </div>
       <div class="content">
         <div class="item-title">检验记录</div>
         <div class="item-content">
-          <div v-for="d of item.diseaseCheck" class="block" @click="
+          <template v-if="item.diseaseMedicine.length">
+            <div
+              v-for="d of item.diseaseCheck"
+              class="block"
+              @click="
               () => {
                 linkClick(d.diseaseId as number);
               }
@@ -55,18 +62,23 @@
               </div>
               <div>
                 <div class="content-label"><span>检验类型:</span>{{ d.checkType }}</div>
+
               </div>
-            </div>
-          </div>
+            </div></template
+          >
+          <div v-else>暂无数据</div>
         </div>
       </div>
     </div>
     <div style="display: flex">
       <div class="content">
         <div class="item-title">影像记录</div>
-
         <div class="item-content">
-          <div v-for="d of item.diseaseImage" class="block" @click="
+          <template v-if="item.diseaseMedicine.length">
+            <div
+              v-for="d of item.diseaseImage"
+              class="block"
+              @click="
               () => {
                 linkClick(d.diseaseId as number);
               }
@@ -80,15 +92,19 @@
                 <div class="content-label"><span>检验类型:</span>{{ iCheckType[d.checkType as number] }}</div>
                 <div class="content-label"><span>检验部位:</span>{{ d.checkPart }}</div>
               </div>
-            </div>
-          </div>
+            </div></template
+          >
+          <div v-else>暂无数据</div>
         </div>
       </div>
       <div class="content">
         <div class="item-title">就诊记录</div>
-
         <div class="item-content">
-          <div v-for="d of item.diseaseConsultation" class="block" @click="
+          <template v-if="item.diseaseMedicine.length">
+            <div
+              v-for="d of item.diseaseConsultation"
+              class="block"
+              @click="
               () => {
                 linkClick(d.diseaseId as number);
               }
@@ -104,7 +120,8 @@
                 <div class="content-label"><span>会诊专家:</span>{{ d.consultationExpert }}</div>
               </div>
             </div>
-          </div>
+          </template>
+          <div v-else>暂无数据</div>
         </div>
       </div>
     </div>
@@ -195,7 +212,7 @@
             }
           }
           span {
-            margin-right: 10px;
+            margin-right: 6px;
           }
         }
         .block + .block {
