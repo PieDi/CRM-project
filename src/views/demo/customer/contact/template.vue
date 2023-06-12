@@ -7,34 +7,29 @@
       >
     </div>
     <div class="file-content">
-      <div v-for="(item, i) in fileList" :key="i" class="file-item">
-
-        <div
-          class="file-item-border"
-          @click="
-            () => {
-              fileClick(item);
-            }
-          "
-        >
-        <FolderOutlined />
-          <p>{{ item }}</p>
-          <div class="btn">
-            <!-- <Button type="link" @click="(e:MouseEvent)=>{
-              editFile(item)
-              e.stopPropagation()
-            }">编辑</Button> -->
-            <Button
-              v-if="authShow"
-              type="link"
-              @click="(e:MouseEvent)=>{
+      <div
+        v-for="(item, i) in fileList"
+        :key="i"
+        class="file-item"
+        @click="
+          () => {
+            fileClick(item);
+          }
+        "
+      >
+        <FolderTwoTone style="font-size: 80px" />
+        <div>{{ item }}</div>
+        <div class="btn"
+          ><Button
+            v-if="authShow"
+            type="link"
+            @click="(e:MouseEvent)=>{
               deleteFile(item)
               e.stopPropagation()
             }"
-              >删除</Button
-            ></div
-          >
-        </div>
+            >删除</Button
+          ></div
+        >
       </div>
     </div>
     <Drawer
@@ -69,8 +64,8 @@
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
-  import { ExclamationCircleOutlined, FolderOutlined } from '@ant-design/icons-vue';
-  
+  import { ExclamationCircleOutlined, FolderTwoTone } from '@ant-design/icons-vue';
+
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   export default defineComponent({
@@ -83,8 +78,7 @@
       Button,
       Drawer,
       TextArea,
-      FolderOutlined
-
+      FolderTwoTone,
     },
     setup() {
       const userStore = useUserStore();
@@ -166,30 +160,23 @@
     min-height: calc(100vh - 226px);
     background: #fff;
     .file-item {
-      width: 200px;
-      height: 200px;
       padding: 10px;
-      .file-item-border {
-        width: auto;
-        height: 100%;
-        border: 1px solid #eee;
-        p {
-          width: 100%;
-          margin-top: 20px;
-          text-align: center;
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
-        .btn {
-          display: none;
-          padding: 0 59px;
-          text-align: center;
-        }
+      height: 120px;
+      div {
+        margin-top: -10px;
+        width: 100%;
+        text-align: center;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
-      .file-item-border:hover {
-        .btn {
-          display: block;
-        }
+      .btn {
+        display: none;
+        text-align: center;
+      }
+    }
+    .file-item:hover {
+      .btn {
+        display: block;
       }
     }
   }

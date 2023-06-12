@@ -28,19 +28,20 @@
                 linkClick(d.diseaseId as number);
               }
             "
-          >
-            <div class="block-content">
-              <div>
-                <div class="content-label"> <span>用药时间:</span>{{ dayjs(d.useDate).format('YYYY-MM-DD') }}</div>
-                <div class="content-label"> <span>药品名称:</span>{{ d.medicineName }}</div>
+            >
+              <div class="block-content">
+                <div>
+                  <div class="content-label">
+                    <span>用药时间:</span>{{ dayjs(d.useDate).format('YYYY-MM-DD') }}</div
+                  >
+                  <div class="content-label"> <span>药品名称:</span>{{ d.medicineName }}</div>
+                </div>
+                <div>
+                  <div class="content-label"><span>用药剂量:</span>{{ d.useDose }}</div>
+                </div>
               </div>
-              <div>
-                <div class="content-label"><span>用药剂量:</span>{{ d.useDose }}</div>
-
-              </div>
-            </div></template
-          >
-          <div v-else>暂无数据</div>
+            </div> </template
+          ><div v-else>暂无数据</div>
         </div>
       </div>
       <div class="content">
@@ -54,19 +55,21 @@
               () => {
                 linkClick(d.diseaseId as number);
               }
-            ">
-            <div class="block-content">
-              <div>
-                <div class="content-label"> <span>检验时间:</span>{{ dayjs(d.checkDate).format('YYYY-MM-DD') }}</div>
-                <div class="content-label"> <span>检验机构:</span>{{ d.checkMechanism }}</div>
+            "
+            >
+              <div class="block-content">
+                <div>
+                  <div class="content-label">
+                    <span>检验时间:</span>{{ dayjs(d.checkDate).format('YYYY-MM-DD') }}</div
+                  >
+                  <div class="content-label"> <span>检验机构:</span>{{ d.checkMechanism }}</div>
+                </div>
+                <div>
+                  <div class="content-label"><span>检验类型:</span>{{ d.checkType }}</div>
+                </div>
               </div>
-              <div>
-                <div class="content-label"><span>检验类型:</span>{{ d.checkType }}</div>
-
-              </div>
-            </div></template
-          >
-          <div v-else>暂无数据</div>
+            </div> </template
+          ><div v-else>暂无数据</div>
         </div>
       </div>
     </div>
@@ -82,18 +85,24 @@
               () => {
                 linkClick(d.diseaseId as number);
               }
-            ">
-            <div class="block-content">
-              <div >
-                <div class="content-label"> <span>检验时间:</span>{{ dayjs(d.checkDate).format('YYYY-MM-DD') }}</div>
-                <div> <span>检验机构:</span>{{ d.checkMechanism }}</div>
-              </div>
-              <div>
-                <div class="content-label"><span>检验类型:</span>{{ iCheckType[d.checkType as number] }}</div>
-                <div class="content-label"><span>检验部位:</span>{{ d.checkPart }}</div>
-              </div>
-            </div></template
-          >
+            "
+            >
+              <div class="block-content">
+                <div>
+                  <div class="content-label">
+                    <span>检验时间:</span>{{ dayjs(d.checkDate).format('YYYY-MM-DD') }}</div
+                  >
+                  <div> <span>检验机构:</span>{{ d.checkMechanism }}</div>
+                </div>
+                <div>
+                  <div class="content-label"
+                    ><span>检验类型:</span>{{ iCheckType[d.checkType as number] }}</div
+                  >
+                  <div class="content-label"><span>检验部位:</span>{{ d.checkPart }}</div>
+                </div>
+              </div></div
+            >
+          </template>
           <div v-else>暂无数据</div>
         </div>
       </div>
@@ -108,16 +117,20 @@
               () => {
                 linkClick(d.diseaseId as number);
               }
-            ">
-            <div class="block-content">
-              <div>
-                <div class="content-label">
-                  <span>会诊日期:</span>{{ dayjs(d.consultationDate).format('YYYY-MM-DD') }}</div
-                >
-                <div class="content-label"> <span>会诊内容:</span>{{ d.consultationContent }}</div>
-              </div>
-              <div>
-                <div class="content-label"><span>会诊专家:</span>{{ d.consultationExpert }}</div>
+            "
+            >
+              <div class="block-content">
+                <div>
+                  <div class="content-label">
+                    <span>会诊日期:</span>{{ dayjs(d.consultationDate).format('YYYY-MM-DD') }}</div
+                  >
+                  <div class="content-label">
+                    <span>会诊内容:</span>{{ d.consultationContent }}</div
+                  >
+                </div>
+                <div>
+                  <div class="content-label"><span>会诊专家:</span>{{ d.consultationExpert }}</div>
+                </div>
               </div>
             </div>
           </template>
