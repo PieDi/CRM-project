@@ -8,6 +8,7 @@
     </div>
     <div class="file-content">
       <div v-for="(item, i) in fileList" :key="i" class="file-item">
+
         <div
           class="file-item-border"
           @click="
@@ -16,6 +17,7 @@
             }
           "
         >
+        <FolderOutlined />
           <p>{{ item }}</p>
           <div class="btn">
             <!-- <Button type="link" @click="(e:MouseEvent)=>{
@@ -67,8 +69,8 @@
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
-  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-
+  import { ExclamationCircleOutlined, FolderOutlined } from '@ant-design/icons-vue';
+  
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   export default defineComponent({
@@ -81,6 +83,8 @@
       Button,
       Drawer,
       TextArea,
+      FolderOutlined
+
     },
     setup() {
       const userStore = useUserStore();
