@@ -171,7 +171,7 @@
       }
 
       .info-basic {
-        padding-top: 20px;
+        padding-top: 15px;
         padding-left: 30px;
         width: 350px;
         height: 100%;
@@ -179,20 +179,20 @@
       }
       .info-content {
         flex: 1;
-        padding: 0 10px;
+        margin-left: 10px;
         height: 100%;
         .disease {
-          // height: 60%;
+          height: 550px;
           background: rgb(18, 77, 129);
           overflow-y: scroll;
           padding-left: 20px;
-          padding-top: 20px;
+          padding-top: 15px;
         }
         .order {
+          height: calc(100% - 560px);
           margin-top: 10px;
           padding-left: 20px;
           padding-top: 15px;
-          height: calc(40% - 15px);
           background: rgb(18, 77, 129);
         }
       }
