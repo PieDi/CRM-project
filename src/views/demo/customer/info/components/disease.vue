@@ -1,6 +1,7 @@
 <template>
-  <div class="disease-item" v-for="item of diseaseObject">
+  <div class="disease-item" v-for="(item, i) of diseaseObject">
     <div class="basic">
+      <div>{{ `${i + 1}、` }}</div>
       <div class="header"
         ><span>疾病名称:</span><span>{{ item.diseaseBasic.diseaseName }}</span></div
       >
@@ -212,7 +213,7 @@
         font-weight: 600;
       }
       .item-content {
-        max-height: 110px;
+        height: 110px;
         overflow-y: auto;
         .block {
           padding: 15px;
