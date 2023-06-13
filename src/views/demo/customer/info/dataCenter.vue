@@ -12,10 +12,12 @@
         <div class="disease">
           <h3>客户病史信息</h3>
           <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases" />
+          <div v-else>暂无病史数据</div>
         </div>
         <div class="order">
           <h3 style="margin-top: 10px">客户订单</h3>
           <OrderInfo v-if="boardInfo?.orders" :disease="boardInfo?.orders" />
+          <div v-else>暂无订单数据</div>
         </div>
       </div>
     </div>
