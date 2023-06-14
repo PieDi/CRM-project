@@ -206,13 +206,9 @@ export interface CustomerInvoiceInfo {
   orderId: number | undefined;
   name: string | undefined;
   number: string | undefined;
+  serial: string | undefined;
   amount: number | undefined;
-  productType: number | undefined;
-  customerId: number | undefined;
-  orderName: string | undefined;
-  orderTime: string | undefined;
-  orderNumber: string | undefined;
-  productId: number | undefined;
-  orderQuantity: number | undefined;
-  orderAmount: number | undefined;
+  agent: string | undefined;
+  invoiceTime: number | undefined;
+  status: number | undefined;
 }

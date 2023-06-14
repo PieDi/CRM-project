@@ -24,7 +24,7 @@
       :bordered="true"
       :pagination="pagination"
     >
-      <template #bodyCell="{ column,  record }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
@@ -67,15 +67,16 @@
   import { CustomerInvoiceInfo } from '/@/api/demo/model/customer';
   import { getCustomerInvoicePage } from '/@/api/demo/customer';
   import { useRoute } from 'vue-router';
+  import dayjs from 'dayjs';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
-const TextArea = Input.TextArea;
+  const TextArea = Input.TextArea;
 
-const productTypeMap: Record<number, string> = {
-  1: '标准订单',
-  2: '非标订单'
-}
+  const productTypeMap: Record<number, string> = {
+    1: '标准订单',
+    2: '非标订单',
+  };
   export default defineComponent({
     components: {
       PageWrapper,
@@ -146,12 +147,29 @@ const productTypeMap: Record<number, string> = {
         },
         {
           title: '订单ID',
-          dataIndex: 'orderId'
+          dataIndex: 'orderId',
         },
-        
+        {
+          title: '经手人',
+          dataIndex: 'agent',
+        },
         {
           title: '发票金额',
           dataIndex: 'amount',
+        },
+        {
+          title: '发票号',
+          dataIndex: 'serial',
+        },
+        {
+          title: '开票日期',
+          dataIndex: 'invoiceTime',
+          customRender: (state) => dayjs(state.record.invoiceTime).format('YYYY-MM-DD HH:mm:ss'),
+        },
+        {
+          title: '发票状态',
+          dataIndex: 'status',
+          customRender: (state) => (state.record.status === 1 ? '待确认' : '已确认'),
         },
         {
           title: '操作',

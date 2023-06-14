@@ -2,7 +2,6 @@
   <div class="disease-item" v-for="(item, i) of diseaseObject">
     <h3 class="header">{{ `客户病史信息${i + 1}` }}</h3>
     <div class="basic">
-      
       <div class="header"
         ><span>疾病名称:</span><span>{{ item.diseaseBasic.diseaseName }}</span></div
       >
@@ -27,9 +26,16 @@
               }"
             >用药记录</div
           >
-          <div style="cursor: pointer">查看全部</div>
+          <div
+            style="cursor: pointer"
+            @click="
+              () => {
+                viewAll(1);
+              }
+            "
+            >查看全部</div
+          >
         </div>
-
         <div class="item-content">
           <template v-if="item.diseaseMedicine.length">
             <div v-for="d of item.diseaseMedicine" class="block">
@@ -57,9 +63,16 @@
               }"
             >检验记录</div
           >
-          <div style="cursor: pointer">查看全部</div>
+          <div
+            style="cursor: pointer"
+            @click="
+              () => {
+                viewAll(2);
+              }
+            "
+            >查看全部</div
+          >
         </div>
-
         <div class="item-content">
           <template v-if="item.diseaseMedicine.length">
             <div v-for="d of item.diseaseCheck" class="block">
@@ -81,7 +94,6 @@
     </div>
     <div style="display: flex">
       <div class="content">
-
         <div class="item-title">
           <div
             @click="
@@ -90,10 +102,16 @@
               }"
             >影像记录</div
           >
-          <div style="cursor: pointer">查看全部</div>
+          <div
+            style="cursor: pointer"
+            @click="
+              () => {
+                viewAll(3);
+              }
+            "
+            >查看全部</div
+          >
         </div>
-
-  
         <div class="item-content">
           <template v-if="item.diseaseMedicine.length">
             <div v-for="d of item.diseaseImage" class="block">
@@ -125,10 +143,16 @@
               }"
             >就诊记录</div
           >
-          <div style="cursor: pointer">查看全部</div>
+          <div
+            style="cursor: pointer"
+            @click="
+              () => {
+                viewAll(4);
+              }
+            "
+            >查看全部</div
+          >
         </div>
-
-
         <div class="item-content">
           <template v-if="item.diseaseMedicine.length">
             <div v-for="d of item.diseaseConsultation" class="block">
@@ -152,9 +176,10 @@
       </div>
     </div>
   </div>
+  <ItemTable :modal-config="modalConfig" @close="modalClose" />
 </template>
 <script lang="ts">
-  import { defineComponent, PropType } from 'vue';
+  import { defineComponent, reactive, PropType } from 'vue';
   import dayjs from 'dayjs';
   import { Button, Table } from 'ant-design-vue';
   import {
@@ -164,6 +189,7 @@
     CustomerIInfo,
     CustomerCInfo,
   } from '/@/api/demo/model/customer';
+  import ItemTable from './item-table.vue';
   import { useRouter } from 'vue-router';
 
   const iCheckType = {
@@ -179,6 +205,7 @@
     components: {
       Button,
       Table,
+      ItemTable,
     },
     props: {
       disease: {
@@ -198,11 +225,114 @@
       const linkClick = (id: number) => {
         router.push({ path: '/customer/mHistory/search', query: { id } });
       };
+      const modalConfig = reactive<{
+        dataSource: any[];
+        columns: any[];
+        visible: boolean;
+        title: string;
+      }>({ title: '', visible: false, dataSource: [], columns: [] });
+      const viewAll = (type: number) => {
+        modalConfig.visible = true;
+        switch (type) {
+          case 1:
+            modalConfig.title = '用药记录';
+            modalConfig.columns = [
+              {
+                title: '药品名称',
+                dataIndex: 'medicineName',
+              },
+              {
+                title: '用药剂量',
+                dataIndex: 'useDose',
+              },
+              {
+                title: '用药时间',
+                dataIndex: 'useDate',
+                customRender: (state) => dayjs(state.record.useDate).format('YYYY-MM-DD'),
+              },
+            ];
+            break;
+          case 2:
+            modalConfig.title = '检验记录';
+            modalConfig.columns = [
+              {
+                title: '检验机构',
+                dataIndex: 'checkMechanism',
+              },
+              {
+                title: '检验类型',
+                dataIndex: 'checkType',
+              },
+              {
+                title: '检验时间',
+                dataIndex: 'checkDate',
+                customRender: (state) =>
+                  dayjs(state.record.checkDate).format('YYYY-MM-DD HH:mm:ss'),
+              },
+            ];
+            break;
+          case 3:
+            modalConfig.title = '影像记录';
+            modalConfig.columns = [
+              {
+                title: '检验机构',
+                dataIndex: 'checkMechanism',
+              },
+              {
+                title: '检验部位',
+                dataIndex: 'checkPart',
+              },
+              {
+                title: '检验类别',
+                dataIndex: 'checkType',
+                customRender: (state) => iCheckType[state.record.checkType as number],
+              },
+              {
+                title: '检验时间',
+                dataIndex: 'checkDate',
+                width: 180,
+                customRender: (state) =>
+                  dayjs(state.record.checkDate).format('YYYY-MM-DD HH:mm:ss'),
+              },
+            ];
+            break;
+          case 4:
+            modalConfig.title = '就诊记录';
+            modalConfig.columns = [
+              {
+                title: '会诊专家',
+                dataIndex: 'consultationExpert',
+              },
+              {
+                title: '会诊内容',
+                dataIndex: 'consultationContent',
+              },
+              {
+                title: '会诊日期',
+                dataIndex: 'consultationDate',
+                customRender: (state) =>
+                  dayjs(state.record.consultationDate).format('YYYY-MM-DD HH:mm:ss'),
+              },
+            ];
+            break;
+          default:
+            break;
+        }
+      };
+      const modalClose = () => {
+        modalConfig.title = '';
+        modalConfig.visible = false;
+        modalConfig.columns = [];
+        modalConfig.dataSource = [];
+      };
       return {
         diseaseObject: props.disease,
+        modalConfig,
         iCheckType,
         linkClick,
         dayjs,
+        viewAll,
+        modalClose,
       };
     },
   });
@@ -210,14 +340,13 @@
 <style lang="less" scoped>
   .disease-item {
     .header {
-        color: #fff;
-        margin-right: 10px;
-        font-size: 20px;
-        font-weight: 600;
-      }
+      color: #fff;
+      margin-right: 10px;
+      font-size: 20px;
+      font-weight: 600;
+    }
     .basic {
       display: flex;
- 
     }
     .content {
       width: 50%;

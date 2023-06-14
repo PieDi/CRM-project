@@ -1,49 +1,52 @@
 <template>
-  <Drawer
+  <Modal
     :mask-closable="false"
     :destroy-on-close="true"
     :title="drawerInfo.title"
-    placement="right"
-    @close="drawerOnClose"
+    @cancel="drawerOnClose"
+    @ok="submit"
     :visible="drawerInfo.visible"
+    width="60%"
   >
-    <template #extra>
+    <!-- <template #extra>
       <Button v-if="drawerInfo.type === 'scan'" type="link" @click="edit">编辑</Button>
       <Button v-if="drawerInfo.type !== 'scan'" type="link" @click="add">新增</Button>
       <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
     </template>
     <template v-if="listInfo.length === 0">
       <div>{{ `暂时没有相关记录${editAble ? '' : '，请点击编辑后开始新增'}` }} </div>
+    </template> -->
+    <div style="overflow: hidden">
+      <Button style="float: right" type="link" @click="add">新增</Button>
+    </div>
+    <template v-if="listInfo.length === 0">
+      <div>暂时没有相关记录</div>
     </template>
     <template v-else>
-      <Form :labelCol="{ span: 6 }">
+      <Form :labelCol="{ span: 4 }">
         <template v-for="(item, i) in listInfo">
           <div>
-            <FormItem label="会诊日期">
-              <DatePicker
-                :show-time="true"
-                allowClear
-                v-model:value="item.consultationDate"
-                :disabled="drawerInfo.type === 'scan'"
-              />
+            <FormItem label="检查日期">
+              <DatePicker :show-time="true" v-model:value="item.checkDate" />
+            </FormItem>
+            <FormItem label="检查机构">
+              <Input placeholder="请输入" allowClear v-model:value="item.checkMechanism" />
+            </FormItem>
+            <FormItem label="检查部位">
+              <Input placeholder="请输入" allowClear v-model:value="item.checkPart" />
             </FormItem>
 
-            <FormItem label="会诊专家">
-              <TextArea
-                placeholder="请输入"
-                allowClear
-                v-model:value="item.consultationExpert"
-                :disabled="drawerInfo.type === 'scan'"
-              />
-            </FormItem>
-
-            <FormItem label="会诊内容">
-              <TextArea
-                placeholder="请输入"
-                allowClear
-                v-model:value="item.consultationContent"
-                :disabled="drawerInfo.type === 'scan'"
-              />
+            <FormItem label="检查类别">
+              <Select placeholder="请选择" allowClear v-model:value="item.checkType">
+                <SelectOption :key="1">CT</SelectOption>
+                <SelectOption :key="2">MR</SelectOption>
+                <SelectOption :key="3">PET-CT</SelectOption>
+                <SelectOption :key="4">PET-MR</SelectOption>
+                <SelectOption :key="5">超声</SelectOption>
+                <SelectOption :key="6">钼靶</SelectOption>
+                <SelectOption :key="7">ECT</SelectOption>
+                <SelectOption :key="8">DR</SelectOption>
+              </Select>
             </FormItem>
 
             <FormItem label="附件">
@@ -55,15 +58,13 @@
                     return false;
                   }
                 "
-                :disabled="drawerInfo.type === 'scan'"
               >
-                <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
-                <template #itemRender="{ file, actions }">
+                <Button>选择</Button>
+                <template #itemRender="{ file }">
                   <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
                   <Space>
                     <Button
                       type="link"
-                      v-if="drawerInfo.type === 'scan'"
                       @click="
                         () => {
                           handleDownload(file, i);
@@ -72,7 +73,6 @@
                       >下载</Button
                     >
                     <Button
-                      v-if="drawerInfo.type !== 'scan'"
                       type="link"
                       @click="
                         () => {
@@ -85,7 +85,6 @@
                 </template>
               </Upload>
               <Button
-                v-if="drawerInfo.type !== 'scan'"
                 @click="
                   () => {
                     handleUpload(i);
@@ -97,22 +96,24 @@
               >
             </FormItem>
 
-            <Button
-              v-if="drawerInfo.type !== 'scan'"
-              type="link"
-              @click="
-                () => {
-                  deleteRecord(i);
-                }
-              "
-            >
-              <template #icon><DeleteOutlined /></template
-            ></Button>
+            <div style="overflow: hidden; margin-top: -20px">
+              <Button
+                style="float: right"
+                type="link"
+                @click="
+                  () => {
+                    deleteRecord(i);
+                  }
+                "
+              >
+                <template #icon><DeleteOutlined /></template
+              ></Button>
+            </div>
           </div>
         </template>
       </Form>
     </template>
-  </Drawer>
+  </Modal>
 </template>
 <script lang="ts">
   import { defineComponent, ref, PropType, onMounted } from 'vue';
@@ -121,26 +122,26 @@
     Form,
     Input,
     Button,
-    Drawer,
+    Modal,
+    Select,
     DatePicker,
-    Upload,
     Space,
     message,
+    Upload,
   } from 'ant-design-vue';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
   import dayjs, { Dayjs } from 'dayjs';
   import {
-    getCustomerCList,
-    saveCustomerC,
-    updateCustomerC,
-    fileCUpload,
+    getCustomerIList,
+    saveCustomerI,
+    updateCustomerI,
+    fileIUpload,
   } from '/@/api/demo/customer';
-  import { CustomerCInfo } from '/@/api/demo/model/customer';
-
+  import { CustomerIInfo } from '/@/api/demo/model/customer';
   const FormItem = Form.Item;
-  const TextArea = Input.TextArea;
+  const SelectOption = Select.Option;
   export default defineComponent({
     components: {
       Table,
@@ -148,10 +149,11 @@
       FormItem,
       Input,
       Button,
-      Drawer,
+      Modal,
+      Select,
+      SelectOption,
       DatePicker,
       DeleteOutlined,
-      TextArea,
       Upload,
       Space,
     },
@@ -165,37 +167,41 @@
       const listInfo = ref<
         Array<{
           id: number | string | undefined;
-          consultationContent: string | undefined;
-          consultationExpert: string | undefined;
-          consultationDate: Dayjs | undefined;
+          checkMechanism: string | undefined;
+          checkPart: string | undefined;
+          checkType: string | undefined;
+          checkDate: Dayjs | undefined;
         }>
       >([]);
-      const cDataSource = ref<Array<CustomerCInfo>>([]);
+      const iDataSource = ref<Array<CustomerIInfo>>([]);
       const dListReq = async () => {
-        const res = await getCustomerCList(props.drawerInfo.item);
-        if (res) {
-          cDataSource.value = res;
-          const list: Array<any> = [];
-          res.forEach((item, i) => {
-            list.push({
-              id: item?.id,
-              consultationContent: item?.consultationContent,
-              consultationExpert: item?.consultationExpert,
-              consultationDate: item?.consultationDate ? dayjs(item?.consultationDate) : undefined,
-              files: item.files,
-            });
-            const t: any[] = [];
-            item.files?.forEach((file, j) => {
-              t.push({
-                uid: j,
-                name: file.fileName,
-                status: 'done',
-                url: file.path,
+        if (props.drawerInfo.item) {
+          const res = await getCustomerIList(props.drawerInfo.item);
+          if (res) {
+            iDataSource.value = res;
+            const list: Array<any> = [];
+            res.forEach((item, i) => {
+              list.push({
+                id: item?.id,
+                checkMechanism: item?.checkMechanism,
+                checkType: item?.checkType,
+                checkPart: item.checkPart,
+                checkDate: item?.checkDate ? dayjs(item?.checkDate) : undefined,
+                files: item.files,
               });
+              const t: any[] = [];
+              item.files?.forEach((file, j) => {
+                t.push({
+                  uid: j,
+                  name: file.fileName,
+                  status: 'done',
+                  url: file.path,
+                });
+              });
+              fileListMap.value[i] = t;
             });
-            fileListMap.value[i] = t;
-          });
-          listInfo.value = list;
+            listInfo.value = list;
+          }
         }
       };
       onMounted(() => {
@@ -206,7 +212,7 @@
         emit('drawerOnClose');
       };
       const submit = async () => {
-        if (!cDataSource.value.length && !listInfo.value.length) {
+        if (!iDataSource.value.length && !listInfo.value.length) {
           message.warn('暂未添加用药记录');
           return;
         }
@@ -214,9 +220,10 @@
           const t = {
             id: item.id,
             diseaseId: props.drawerInfo.item,
-            consultationContent: item.consultationContent,
-            consultationExpert: item.consultationExpert,
-            consultationDate: item.consultationDate ? item.consultationDate.valueOf() : undefined,
+            checkMechanism: item.checkMechanism,
+            checkType: item.checkType,
+            checkPart: item.checkPart,
+            checkDate: item.checkDate ? item.checkDate.valueOf() : undefined,
           };
           const mF = filesIdMap.value[i];
           // @ts-ignore
@@ -228,14 +235,14 @@
           diseaseId: props.drawerInfo.item,
         };
         let res;
-        if (cDataSource.value.length) {
-          res = await updateCustomerC(params);
+        if (iDataSource.value.length) {
+          res = await updateCustomerI(params);
         } else {
-          res = await saveCustomerC(params);
+          res = await saveCustomerI(params);
         }
 
         if (res) {
-          message.success('会诊记录录入成功');
+          message.success('影像记录录入成功');
           emit('submit');
         }
       };
@@ -250,9 +257,10 @@
         fileListMap.value[listInfo.value.length] = [];
         listInfo.value.push({
           id: undefined,
-          consultationContent: undefined,
-          consultationDate: undefined,
-          consultationExpert: undefined,
+          checkMechanism: undefined,
+          checkPart: undefined,
+          checkType: undefined,
+          checkDate: undefined,
         });
       };
       const deleteRecord = (i: number) => {
@@ -262,11 +270,12 @@
       // 文件上传
       const fileListMap = ref<{ [number: string]: UploadProps['fileList'] }>({});
       const uploadingMap = ref<{ [number: string]: boolean }>({});
-
       const handleDownload = (file: any, i: number) => {
-        if (file?.url) window.open(`http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`);
+        if (file?.url)
+          window.open(
+            `http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`,
+          );
       };
-
       const handleRemove = (file: File, i: number) => {
         const fileList = fileListMap.value[i];
         //@ts-ignore
@@ -292,7 +301,7 @@
             // @ts-ignore
             formData.append('files', file);
           });
-          const res = await fileCUpload(formData);
+          const res = await fileIUpload(formData);
           if (res) {
             message.success('上传成功');
             filesIdMap.value[i] = res;
