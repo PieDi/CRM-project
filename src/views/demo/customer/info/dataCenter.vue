@@ -1,7 +1,7 @@
 <template>
   <div class="info-board">
     <div class="title" @click="goBack">
-      <ArrowLeftOutlined style="color: #fff; margin-right: 10px" /> <span>客户信息看板</span></div
+      <ArrowLeftOutlined style="color: #fff; margin-right: 10px" /> <span>客户信息</span></div
     >
     <div class="content">
       <div class="info-basic">
@@ -10,7 +10,7 @@
       </div>
       <div class="info-content">
         <div class="disease">
-          <h3>客户病史信息</h3>
+          
           <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases" />
           <div v-else>暂无病史数据</div>
         </div>
@@ -175,7 +175,6 @@
 
       .info-basic {
         padding: 20px 20px;
-
         width: 350px;
         background: rgb(18, 77, 129);
       }
@@ -183,14 +182,15 @@
         flex: 1;
         padding: 0 10px;
         .disease {
-          height: 550px;
+          height: 610px;
           background: rgb(18, 77, 129);
           overflow-y: scroll;
           padding-left: 20px;
           padding-top: 15px;
         }
         .order {
-          height: calc(100% - 560px);
+          min-height: 300px;
+          // height: calc(100% - 560px);
           margin-top: 10px;
           padding-left: 20px;
           padding-top: 15px;

@@ -1,7 +1,8 @@
 <template>
   <div class="disease-item" v-for="(item, i) of diseaseObject">
+    <h3 class="header">{{ `客户病史信息${i + 1}` }}</h3>
     <div class="basic">
-      <div>{{ `${i + 1}、` }}</div>
+      
       <div class="header"
         ><span>疾病名称:</span><span>{{ item.diseaseBasic.diseaseName }}</span></div
       >
@@ -18,18 +19,20 @@
     </div>
     <div style="display: flex">
       <div class="content">
-        <div class="item-title">用药记录</div>
+        <div class="item-title">
+          <div
+            @click="
+              () => {
+                linkClick(item.diseaseBasic.id as number);
+              }"
+            >用药记录</div
+          >
+          <div style="cursor: pointer">查看全部</div>
+        </div>
+
         <div class="item-content">
           <template v-if="item.diseaseMedicine.length">
-            <div
-              v-for="d of item.diseaseMedicine"
-              class="block"
-              @click="
-              () => {
-                linkClick(d.diseaseId as number);
-              }
-            "
-            >
+            <div v-for="d of item.diseaseMedicine" class="block">
               <div class="block-content">
                 <div>
                   <div class="content-label">
@@ -42,22 +45,24 @@
                 </div>
               </div>
             </div> </template
-          ><div v-else>暂无数据</div>
+          ><div v-else class="block-content">暂无数据</div>
         </div>
       </div>
       <div class="content">
-        <div class="item-title">检验记录</div>
+        <div class="item-title">
+          <div
+            @click="
+              () => {
+                linkClick(item.diseaseBasic.id as number);
+              }"
+            >检验记录</div
+          >
+          <div style="cursor: pointer">查看全部</div>
+        </div>
+
         <div class="item-content">
           <template v-if="item.diseaseMedicine.length">
-            <div
-              v-for="d of item.diseaseCheck"
-              class="block"
-              @click="
-              () => {
-                linkClick(d.diseaseId as number);
-              }
-            "
-            >
+            <div v-for="d of item.diseaseCheck" class="block">
               <div class="block-content">
                 <div>
                   <div class="content-label">
@@ -70,24 +75,28 @@
                 </div>
               </div>
             </div> </template
-          ><div v-else>暂无数据</div>
+          ><div v-else class="block-content">暂无数据</div>
         </div>
       </div>
     </div>
     <div style="display: flex">
       <div class="content">
-        <div class="item-title">影像记录</div>
+
+        <div class="item-title">
+          <div
+            @click="
+              () => {
+                linkClick(item.diseaseBasic.id as number);
+              }"
+            >影像记录</div
+          >
+          <div style="cursor: pointer">查看全部</div>
+        </div>
+
+  
         <div class="item-content">
           <template v-if="item.diseaseMedicine.length">
-            <div
-              v-for="d of item.diseaseImage"
-              class="block"
-              @click="
-              () => {
-                linkClick(d.diseaseId as number);
-              }
-            "
-            >
+            <div v-for="d of item.diseaseImage" class="block">
               <div class="block-content">
                 <div>
                   <div class="content-label">
@@ -104,22 +113,25 @@
               </div></div
             >
           </template>
-          <div v-else>暂无数据</div>
+          <div v-else class="block-content">暂无数据</div>
         </div>
       </div>
       <div class="content">
-        <div class="item-title">就诊记录</div>
+        <div class="item-title">
+          <div
+            @click="
+              () => {
+                linkClick(item.diseaseBasic.id as number);
+              }"
+            >就诊记录</div
+          >
+          <div style="cursor: pointer">查看全部</div>
+        </div>
+
+
         <div class="item-content">
           <template v-if="item.diseaseMedicine.length">
-            <div
-              v-for="d of item.diseaseConsultation"
-              class="block"
-              @click="
-              () => {
-                linkClick(d.diseaseId as number);
-              }
-            "
-            >
+            <div v-for="d of item.diseaseConsultation" class="block">
               <div class="block-content">
                 <div>
                   <div class="content-label">
@@ -135,7 +147,7 @@
               </div>
             </div>
           </template>
-          <div v-else>暂无数据</div>
+          <div v-else class="block-content">暂无数据</div>
         </div>
       </div>
     </div>
@@ -197,12 +209,15 @@
 </script>
 <style lang="less" scoped>
   .disease-item {
-    .basic {
-      display: flex;
-      .header {
+    .header {
+        color: #fff;
         margin-right: 10px;
         font-size: 20px;
+        font-weight: 600;
       }
+    .basic {
+      display: flex;
+ 
     }
     .content {
       width: 50%;
@@ -211,10 +226,13 @@
       .item-title {
         font-size: 20px;
         font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
       .item-content {
         height: 110px;
-        overflow-y: auto;
+        overflow: hidden;
         .block {
           padding: 15px;
           background: rgba(255, 255, 255, 0.05);
