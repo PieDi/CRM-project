@@ -1,17 +1,14 @@
 <template>
-  <Drawer
+  <Modal
     :mask-closable="false"
     :destroy-on-close="true"
     :title="drawerInfo.title"
-    placement="right"
-    @close="drawerOnClose"
+    @cancel="drawerOnClose"
+    @ok="submit"
     :visible="drawerInfo.visible"
+    width="60%"
   >
-    <template #extra>
-      <Button v-if="drawerInfo.type === 'scan'" type="link" @click="edit">编辑</Button>
-      <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-    </template>
-    <Form :labelCol="{ span: 6 }">
+    <Form :labelCol="{ span: 4 }">
       <FormItem label="客户姓名">
         <Select
           :disabled="drawerInfo.type !== 'add'"
@@ -59,14 +56,7 @@
           :disabled="drawerInfo.type === 'scan'"
         />
       </FormItem>
-      <FormItem label="会诊日期">
-        <DatePicker
-          :show-time="true"
-          v-model:value="mInfo.visitDate"
-          :disabled="drawerInfo.type === 'scan'"
-        />
-      </FormItem>
-
+      
       <FormItem label="科室">
         <Input
           placeholder="请输入"
@@ -83,6 +73,15 @@
           :disabled="drawerInfo.type === 'scan'"
         />
       </FormItem>
+
+      <FormItem label="会诊日期">
+        <DatePicker
+          :show-time="true"
+          v-model:value="mInfo.visitDate"
+          :disabled="drawerInfo.type === 'scan'"
+        />
+      </FormItem>
+
       <FormItem label="附件">
         <Upload
           :file-list="fileList"
@@ -91,7 +90,7 @@
         >
           <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
 
-          <template #itemRender="{ file, actions }">
+          <template #itemRender="{ file }">
             <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
             <Space>
               <Button
@@ -127,16 +126,16 @@
         >
       </FormItem>
     </Form>
-  </Drawer>
+  </Modal>
 </template>
 <script lang="ts">
   import { defineComponent, ref, PropType, onMounted } from 'vue';
-  import {
+import {
+  Modal,
     Table,
     Form,
     Input,
     Button,
-    Drawer,
     Select,
     DatePicker,
     Upload,
@@ -160,12 +159,12 @@
   const SelectOption = Select.Option;
   export default defineComponent({
     components: {
+      Modal,
       Table,
       Form,
       FormItem,
       Input,
       Button,
-      Drawer,
       Select,
       SelectOption,
       DatePicker,
@@ -243,6 +242,10 @@
         emit('drawerOnClose');
       };
       const submit = async () => {
+        if (props.drawerInfo.type === 'scan') { 
+          drawerOnClose()
+          return
+        }
         if (currentCustomer.value.id) {
           const params = {
             customerId: currentCustomer.value.id,
@@ -273,12 +276,14 @@
       const uploading = ref<boolean>(false);
 
       const handleRemove = (file: any) => {
+        console.log(344444, file)
         //@ts-ignore
         const index = fileList.value.indexOf(file);
         //@ts-ignore
         const newFileList = fileList.value.slice();
         newFileList.splice(index, 1);
         fileList.value = newFileList;
+        if (file.url) { }
       };
       const handleDownload = async (file: any) => {
         if (file?.url)
@@ -296,7 +301,7 @@
           const formData = new FormData();
           fileList.value?.forEach((file) => {
             // @ts-ignore
-            formData.append('files', file);
+            if (!file?.url) formData.append('files', file);
           });
           const res = await fileMHUpload(formData);
           if (res) {

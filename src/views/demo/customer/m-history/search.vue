@@ -40,7 +40,7 @@
       :bordered="true"
       :pagination="pagination"
     >
-      <template #bodyCell="{ column, _text, record }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
@@ -50,6 +50,15 @@
               }
             "
             >查看</Button
+          >
+          <Button
+            type="link"
+            @click="
+              () => {
+                mRecordEdit(record);
+              }
+            "
+            >编辑</Button
           >
           <Button
             type="link"
@@ -166,11 +175,11 @@
   import { Table, Form, Input, Button, message } from 'ant-design-vue';
   import { getCustomerMHPage, deleteCustomerMH } from '/@/api/demo/customer';
   import { CustomerMHInfo } from '/@/api/demo/model/customer';
-  import mRecord from './m-record.vue';
-  import dRecord from './d-record.vue';
-  import eRecord from './e-record.vue';
-  import iRecord from './i-record.vue';
-  import cRecord from './c-record.vue';
+  import mRecord from './component/m-record.vue';
+  import dRecord from './component/d-record.vue';
+  import eRecord from './component/e-record.vue';
+  import iRecord from './component/i-record.vue';
+  import cRecord from './component/c-record.vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import dayjs from 'dayjs';
@@ -315,27 +324,25 @@
         mRecordDrawerInfo.value.title = '';
         mRecordDrawerInfo.value.visible = false;
         mRecordDrawerInfo.value.type = undefined;
-        mRecordDrawerInfo.value.item.departmentName = undefined;
-        mRecordDrawerInfo.value.item.diseaseName = undefined;
-        mRecordDrawerInfo.value.item.hospitalName = undefined;
-        mRecordDrawerInfo.value.item.visitDate = undefined;
-        mRecordDrawerInfo.value.item.customerId = undefined;
+        Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
+          mRecordDrawerInfo.value.item[key] = undefined
+        })
       };
-      const mRecordEdit = (item: any) => {
+      const mRecordEdit = (item: CustomerMHInfo) => {
         mRecordDrawerInfo.value.title = '编辑客户病史';
         mRecordDrawerInfo.value.type = 'edit';
+        mRecordDrawerInfo.value.visible = true;
+        Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
+          mRecordDrawerInfo.value.item[key] = item[key]
+        })
       };
       const scanMRecord = (item: CustomerMHInfo) => {
         mRecordDrawerInfo.value.title = '查看客户病史';
         mRecordDrawerInfo.value.visible = true;
         mRecordDrawerInfo.value.type = 'scan';
-
-        mRecordDrawerInfo.value.item.departmentName = item.departmentName;
-        mRecordDrawerInfo.value.item.diseaseName = item.diseaseName;
-        mRecordDrawerInfo.value.item.hospitalName = item.hospitalName;
-        mRecordDrawerInfo.value.item.visitDate = item.visitDate;
-        mRecordDrawerInfo.value.item.customerId = item.customerId;
-        mRecordDrawerInfo.value.item.id = item.id;
+        Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
+          mRecordDrawerInfo.value.item[key] = item[key]
+        })
       };
       const deleteMRecord = (item: CustomerMHInfo) => {
         confirm({
@@ -371,7 +378,7 @@
       const dRecordClick = (item: CustomerMHInfo) => {
         dRecordDrawerInfo.value.title = '用药记录';
         dRecordDrawerInfo.value.visible = true;
-        dRecordDrawerInfo.value.type = 'scan';
+        // dRecordDrawerInfo.value.type = 'scan';
         dRecordDrawerInfo.value.item = item.id;
       };
       const dRecordEdit = () => {
@@ -399,7 +406,7 @@
         eRecordDrawerInfo.value.title = '检查记录';
         eRecordDrawerInfo.value.visible = true;
         eRecordDrawerInfo.value.item = item.id;
-        eRecordDrawerInfo.value.type = 'scan';
+        // eRecordDrawerInfo.value.type = 'scan';
       };
       const eRecordEdit = () => {
         eRecordDrawerInfo.value.title = '编辑检查记录';
@@ -426,7 +433,7 @@
         iRecordDrawerInfo.value.title = '影像记录';
         iRecordDrawerInfo.value.visible = true;
         iRecordDrawerInfo.value.item = item.id;
-        iRecordDrawerInfo.value.type = 'scan';
+        // iRecordDrawerInfo.value.type = 'scan';
       };
       const iRecordEdit = () => {
         iRecordDrawerInfo.value.title = '编辑影像记录';
@@ -453,7 +460,7 @@
         cRecordDrawerInfo.value.title = '就诊记录';
         cRecordDrawerInfo.value.visible = true;
         cRecordDrawerInfo.value.item = item.id;
-        cRecordDrawerInfo.value.type = 'scan';
+        // cRecordDrawerInfo.value.type = 'scan';
       };
       const cRecordEdit = () => {
         cRecordDrawerInfo.value.title = '编辑其他记录';

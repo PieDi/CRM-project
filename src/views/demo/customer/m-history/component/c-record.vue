@@ -1,47 +1,41 @@
 <template>
-  <Drawer
+  <Modal
     :mask-closable="false"
     :destroy-on-close="true"
     :title="drawerInfo.title"
-    placement="right"
-    @close="drawerOnClose"
+    @cancel="drawerOnClose"
+    @ok="submit"
     :visible="drawerInfo.visible"
+    width="60%"
   >
-    <template #extra>
+    <!-- <template #extra>
       <Button v-if="drawerInfo.type === 'scan'" type="link" @click="edit">编辑</Button>
       <Button v-if="drawerInfo.type !== 'scan'" type="link" @click="add">新增</Button>
       <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
     </template>
     <template v-if="listInfo.length === 0">
       <div>{{ `暂时没有相关记录${editAble ? '' : '，请点击编辑后开始新增'}` }} </div>
+    </template> -->
+    <div style="overflow: hidden">
+      <Button style="float: right" type="link" @click="add">新增</Button>
+    </div>
+    <template v-if="listInfo.length === 0">
+      <div>暂时没有相关记录</div>
     </template>
     <template v-else>
-      <Form :labelCol="{ span: 6 }">
+      <Form :labelCol="{ span: 4 }">
         <template v-for="(item, i) in listInfo">
           <div>
-            <FormItem label="药物名称">
-              <Input
-                placeholder="请输入"
-                allowClear
-                v-model:value="item.medicineName"
-                :disabled="drawerInfo.type === 'scan'"
-              />
-            </FormItem>
-            <FormItem label="用药计量">
-              <Input
-                placeholder="请输入"
-                allowClear
-                v-model:value="item.useDose"
-                :disabled="drawerInfo.type === 'scan'"
-              />
+            <FormItem label="会诊日期">
+              <DatePicker :show-time="true" allowClear v-model:value="item.consultationDate" />
             </FormItem>
 
-            <FormItem label="用药时间">
-              <DatePicker
-                allowClear
-                v-model:value="item.useDate"
-                :disabled="drawerInfo.type === 'scan'"
-              />
+            <FormItem label="会诊专家">
+              <TextArea placeholder="请输入" allowClear v-model:value="item.consultationExpert" />
+            </FormItem>
+
+            <FormItem label="会诊内容">
+              <TextArea placeholder="请输入" allowClear v-model:value="item.consultationContent" />
             </FormItem>
 
             <FormItem label="附件">
@@ -53,15 +47,13 @@
                     return false;
                   }
                 "
-                :disabled="drawerInfo.type === 'scan'"
               >
-                <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
+                <Button>选择</Button>
                 <template #itemRender="{ file }">
                   <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
                   <Space>
                     <Button
                       type="link"
-                      v-if="drawerInfo.type === 'scan'"
                       @click="
                         () => {
                           handleDownload(file, i);
@@ -70,7 +62,6 @@
                       >下载</Button
                     >
                     <Button
-                      v-if="drawerInfo.type !== 'scan'"
                       type="link"
                       @click="
                         () => {
@@ -83,7 +74,6 @@
                 </template>
               </Upload>
               <Button
-                v-if="drawerInfo.type !== 'scan'"
                 @click="
                   () => {
                     handleUpload(i);
@@ -95,22 +85,24 @@
               >
             </FormItem>
 
-            <Button
-              v-if="drawerInfo.type !== 'scan'"
-              type="link"
-              @click="
-                () => {
-                  deleteRecord(i);
-                }
-              "
-            >
-              <template #icon><DeleteOutlined /></template
-            ></Button>
+            <div style="overflow: hidden; margin-top: -20px">
+              <Button
+                style="float: right"
+                type="link"
+                @click="
+                  () => {
+                    deleteRecord(i);
+                  }
+                "
+              >
+                <template #icon><DeleteOutlined /></template
+              ></Button>
+            </div>
           </div>
         </template>
       </Form>
     </template>
-  </Drawer>
+  </Modal>
 </template>
 <script lang="ts">
   import { defineComponent, ref, PropType, onMounted } from 'vue';
@@ -119,24 +111,26 @@
     Form,
     Input,
     Button,
-    Drawer,
+    Modal,
     DatePicker,
     Upload,
     Space,
     message,
   } from 'ant-design-vue';
   import { DeleteOutlined } from '@ant-design/icons-vue';
-  import dayjs, { Dayjs } from 'dayjs';
   import { DrawerItemType } from '/@/views/type';
+  import type { UploadProps } from 'ant-design-vue';
+  import dayjs, { Dayjs } from 'dayjs';
   import {
-    getCustomerDList,
-    saveCustomerD,
-    updateCustomerD,
-    fileDUpload,
+    getCustomerCList,
+    saveCustomerC,
+    updateCustomerC,
+    fileCUpload,
   } from '/@/api/demo/customer';
-  import { CustomerDInfo } from '/@/api/demo/model/customer';
+  import { CustomerCInfo } from '/@/api/demo/model/customer';
 
   const FormItem = Form.Item;
+  const TextArea = Input.TextArea;
   export default defineComponent({
     components: {
       Table,
@@ -144,14 +138,14 @@
       FormItem,
       Input,
       Button,
-      Drawer,
+      Modal,
       DatePicker,
       DeleteOutlined,
+      TextArea,
       Upload,
       Space,
     },
     props: {
-      // 用药记录是用 customerId
       drawerInfo: {
         type: Object as PropType<DrawerItemType<any>>,
         default: () => ({ visible: false, title: '' }),
@@ -160,41 +154,38 @@
     setup(props, { emit }) {
       const listInfo = ref<
         Array<{
-          id: number | undefined;
-          medicineName: string | undefined;
-          useDose: string | undefined;
-          useDate: Dayjs | undefined;
-          files: any[] | undefined;
+          id: number | string | undefined;
+          consultationContent: string | undefined;
+          consultationExpert: string | undefined;
+          consultationDate: Dayjs | undefined;
         }>
       >([]);
-      const dDataSource = ref<Array<CustomerDInfo>>([]);
+      const cDataSource = ref<Array<CustomerCInfo>>([]);
       const dListReq = async () => {
-        if (props.drawerInfo.item) {
-          const res = await getCustomerDList(props.drawerInfo.item);
-          if (res) {
-            dDataSource.value = res;
-            const list: Array<any> = [];
-            res.forEach((item, i) => {
-              list.push({
-                id: item?.id,
-                medicineName: item?.medicineName,
-                useDose: item?.useDose,
-                files: item.files,
-                useDate: item?.useDate ? dayjs(item?.useDate, 'YYYY-MM-DD') : undefined,
-              });
-              const t: any[] = [];
-              item.files?.forEach((file, j) => {
-                t.push({
-                  uid: j,
-                  name: file.fileName,
-                  status: 'done',
-                  url: file.path,
-                });
-              });
-              fileListMap.value[i] = t;
+        const res = await getCustomerCList(props.drawerInfo.item);
+        if (res) {
+          cDataSource.value = res;
+          const list: Array<any> = [];
+          res.forEach((item, i) => {
+            list.push({
+              id: item?.id,
+              consultationContent: item?.consultationContent,
+              consultationExpert: item?.consultationExpert,
+              consultationDate: item?.consultationDate ? dayjs(item?.consultationDate) : undefined,
+              files: item.files,
             });
-            listInfo.value = list;
-          }
+            const t: any[] = [];
+            item.files?.forEach((file, j) => {
+              t.push({
+                uid: j,
+                name: file.fileName,
+                status: 'done',
+                url: file.path,
+              });
+            });
+            fileListMap.value[i] = t;
+          });
+          listInfo.value = list;
         }
       };
       onMounted(() => {
@@ -205,16 +196,17 @@
         emit('drawerOnClose');
       };
       const submit = async () => {
-        if (!dDataSource.value.length && !listInfo.value.length) { 
-          message.warn('暂未添加用药记录')
-          return
+        if (!cDataSource.value.length && !listInfo.value.length) {
+          message.warn('暂未添加用药记录');
+          return;
         }
         const list = listInfo.value.map((item, i) => {
           const t = {
             id: item.id,
-            medicineName: item.medicineName,
-            useDose: item.useDose,
-            useDate: item.useDate ? item.useDate.format('YYYY-MM-DD') : undefined,
+            diseaseId: props.drawerInfo.item,
+            consultationContent: item.consultationContent,
+            consultationExpert: item.consultationExpert,
+            consultationDate: item.consultationDate ? item.consultationDate.valueOf() : undefined,
           };
           const mF = filesIdMap.value[i];
           // @ts-ignore
@@ -223,17 +215,17 @@
         });
         const params = {
           list,
-          diseaseId: props.drawerInfo.item
-        }
-   
+          diseaseId: props.drawerInfo.item,
+        };
         let res;
-        if (dDataSource.value.length) {
-          res = await updateCustomerD(params);
+        if (cDataSource.value.length) {
+          res = await updateCustomerC(params);
         } else {
-          res = await saveCustomerD(params);
+          res = await saveCustomerC(params);
         }
+
         if (res) {
-          message.success('用药记录录入成功');
+          message.success('会诊记录录入成功');
           emit('submit');
         }
       };
@@ -248,10 +240,9 @@
         fileListMap.value[listInfo.value.length] = [];
         listInfo.value.push({
           id: undefined,
-          medicineName: undefined,
-          useDate: undefined,
-          useDose: undefined,
-          files: undefined,
+          consultationContent: undefined,
+          consultationDate: undefined,
+          consultationExpert: undefined,
         });
       };
       const deleteRecord = (i: number) => {
@@ -259,11 +250,16 @@
         delete fileListMap.value[i];
       };
       // 文件上传
-      const fileListMap = ref<{ [number: string]: any }>({});
+      const fileListMap = ref<{ [number: string]: UploadProps['fileList'] }>({});
       const uploadingMap = ref<{ [number: string]: boolean }>({});
+
       const handleDownload = (file: any, i: number) => {
-        if (file?.url) window.open(`http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`);
+        if (file?.url)
+          window.open(
+            `http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`,
+          );
       };
+
       const handleRemove = (file: File, i: number) => {
         const fileList = fileListMap.value[i];
         //@ts-ignore
@@ -289,7 +285,7 @@
             // @ts-ignore
             formData.append('files', file);
           });
-          const res = await fileDUpload(formData);
+          const res = await fileCUpload(formData);
           if (res) {
             message.success('上传成功');
             filesIdMap.value[i] = res;
@@ -308,8 +304,8 @@
         // 文件上传
         fileListMap,
         uploadingMap,
-        handleRemove,
         handleDownload,
+        handleRemove,
         beforeUpload,
         handleUpload,
       };

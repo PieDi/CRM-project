@@ -1,49 +1,40 @@
 <template>
-  <Drawer
+  <Modal
     :mask-closable="false"
     :destroy-on-close="true"
     :title="drawerInfo.title"
-    placement="right"
-    @close="drawerOnClose"
+    @cancel="drawerOnClose"
+    @ok="submit"
     :visible="drawerInfo.visible"
+    width="60%"
   >
-    <template #extra>
+    <!-- <template #extra>
       <Button v-if="drawerInfo.type === 'scan'" type="link" @click="edit">编辑</Button>
       <Button v-if="drawerInfo.type !== 'scan'" type="link" @click="add">新增</Button>
       <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
     </template>
-
     <template v-if="listInfo.length === 0">
       <div>{{ `暂时没有相关记录${editAble ? '' : '，请点击编辑后开始新增'}` }} </div>
+    </template> -->
+    <div style="overflow: hidden">
+      <Button style="float: right" type="link" @click="add">新增</Button>
+    </div>
+    <template v-if="listInfo.length === 0">
+      <div>暂时没有相关记录</div>
     </template>
     <template v-else>
-      <Form :labelCol="{ span: 6 }">
+      <Form :labelCol="{ span: 4 }">
         <template v-for="(item, i) in listInfo">
           <div>
             <FormItem label="检查日期">
-              <DatePicker
-                :show-time="true"
-                allowClear
-                v-model:value="item.checkDate"
-                :disabled="drawerInfo.type === 'scan'"
-              />
+              <DatePicker :show-time="true" allowClear v-model:value="item.checkDate" />
             </FormItem>
             <FormItem label="检查机构">
-              <Input
-                placeholder="请输入"
-                allowClear
-                v-model:value="item.checkMechanism"
-                :disabled="drawerInfo.type === 'scan'"
-              />
+              <Input placeholder="请输入" allowClear v-model:value="item.checkMechanism" />
             </FormItem>
 
             <FormItem label="检验类型">
-              <Input
-                placeholder="请输入"
-                allowClear
-                v-model:value="item.checkType"
-                :disabled="drawerInfo.type === 'scan'"
-              />
+              <Input placeholder="请输入" allowClear v-model:value="item.checkType" />
             </FormItem>
 
             <FormItem label="附件">
@@ -55,15 +46,13 @@
                     return false;
                   }
                 "
-                :disabled="drawerInfo.type === 'scan'"
               >
-                <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
-                <template #itemRender="{ file, actions }">
+                <Button>选择</Button>
+                <template #itemRender="{ file }">
                   <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
                   <Space>
                     <Button
                       type="link"
-                      v-if="drawerInfo.type === 'scan'"
                       @click="
                         () => {
                           handleDownload(file, i);
@@ -72,7 +61,6 @@
                       >下载</Button
                     >
                     <Button
-                      v-if="drawerInfo.type !== 'scan'"
                       type="link"
                       @click="
                         () => {
@@ -85,7 +73,6 @@
                 </template>
               </Upload>
               <Button
-                v-if="drawerInfo.type !== 'scan'"
                 @click="
                   () => {
                     handleUpload(i);
@@ -97,22 +84,24 @@
               >
             </FormItem>
 
-            <Button
-              v-if="drawerInfo.type !== 'scan'"
-              type="link"
-              @click="
-                () => {
-                  deleteRecord(i);
-                }
-              "
-            >
-              <template #icon><DeleteOutlined /></template
-            ></Button>
+            <div style="overflow: hidden; margin-top: -20px">
+              <Button
+                style="float: right"
+                type="link"
+                @click="
+                  () => {
+                    deleteRecord(i);
+                  }
+                "
+              >
+                <template #icon><DeleteOutlined /></template
+              ></Button>
+            </div>
           </div>
         </template>
       </Form>
     </template>
-  </Drawer>
+  </Modal>
 </template>
 <script lang="ts">
   import { defineComponent, ref, PropType, onMounted } from 'vue';
@@ -121,7 +110,7 @@
     Form,
     Input,
     Button,
-    Drawer,
+    Modal,
     DatePicker,
     Upload,
     Space,
@@ -147,7 +136,7 @@
       FormItem,
       Input,
       Button,
-      Drawer,
+      Modal,
       DatePicker,
       DeleteOutlined,
       Upload,
@@ -206,9 +195,9 @@
         emit('drawerOnClose');
       };
       const submit = async () => {
-        if (!eDataSource.value.length && !listInfo.value.length) { 
-          message.warn('暂未添加用药记录')
-          return
+        if (!eDataSource.value.length && !listInfo.value.length) {
+          message.warn('暂未添加用药记录');
+          return;
         }
         const list = listInfo.value.map((item, i) => {
           const t = {
@@ -225,8 +214,8 @@
         });
         const params = {
           list,
-          diseaseId: props.drawerInfo.item
-        }
+          diseaseId: props.drawerInfo.item,
+        };
         let res;
         if (eDataSource.value.length) {
           res = await updateCustomerE(params);
@@ -263,7 +252,10 @@
       const uploadingMap = ref<{ [number: string]: boolean }>({});
 
       const handleDownload = (file: any, i: number) => {
-        if (file?.url) window.open(`http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`);
+        if (file?.url)
+          window.open(
+            `http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`,
+          );
       };
       const handleRemove = (file: File, i: number) => {
         const fileList = fileListMap.value[i];
