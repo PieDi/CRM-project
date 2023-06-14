@@ -67,6 +67,7 @@
   import { CustomerInvoiceInfo } from '/@/api/demo/model/customer';
   import { getCustomerInvoicePage } from '/@/api/demo/customer';
   import { useRoute } from 'vue-router';
+  import dayjs from 'dayjs';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -148,10 +149,26 @@ const productTypeMap: Record<number, string> = {
           title: '订单ID',
           dataIndex: 'orderId'
         },
-        
+        {
+          title: '经手人',
+          dataIndex: 'agent'
+        },
         {
           title: '发票金额',
           dataIndex: 'amount',
+        },
+        {
+          title: '发票号',
+          dataIndex: 'serial',
+        },
+        {
+          title: '开票日期',
+          dataIndex: 'invoiceTime',
+          customRender: (state) => dayjs(state.record.invoiceTime).format('YYYY-MM-DD HH:mm:ss')
+        },
+        {
+          title: '发票状态',
+          dataIndex: 'status',
         },
         {
           title: '操作',
