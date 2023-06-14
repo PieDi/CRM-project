@@ -24,7 +24,7 @@
       :bordered="true"
       :pagination="pagination"
     >
-      <template #bodyCell="{ column,  record }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
@@ -71,12 +71,12 @@
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
-const TextArea = Input.TextArea;
+  const TextArea = Input.TextArea;
 
-const productTypeMap: Record<number, string> = {
-  1: '标准订单',
-  2: '非标订单'
-}
+  const productTypeMap: Record<number, string> = {
+    1: '标准订单',
+    2: '非标订单',
+  };
   export default defineComponent({
     components: {
       PageWrapper,
@@ -147,11 +147,11 @@ const productTypeMap: Record<number, string> = {
         },
         {
           title: '订单ID',
-          dataIndex: 'orderId'
+          dataIndex: 'orderId',
         },
         {
           title: '经手人',
-          dataIndex: 'agent'
+          dataIndex: 'agent',
         },
         {
           title: '发票金额',
@@ -164,11 +164,12 @@ const productTypeMap: Record<number, string> = {
         {
           title: '开票日期',
           dataIndex: 'invoiceTime',
-          customRender: (state) => dayjs(state.record.invoiceTime).format('YYYY-MM-DD HH:mm:ss')
+          customRender: (state) => dayjs(state.record.invoiceTime).format('YYYY-MM-DD HH:mm:ss'),
         },
         {
           title: '发票状态',
           dataIndex: 'status',
+          customRender: (state) => (state.record.status === 1 ? '待确认' : '已确认'),
         },
         {
           title: '操作',
