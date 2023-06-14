@@ -54,8 +54,10 @@
       :bordered="true"
       :pagination="pagination"
     >
-      <template #bodyCell="{ column, _text, record }">
-        <template v-if="column.dataIndex === 'name'">
+      <template #bodyCell="{ column, record }">
+    
+
+        <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
             @click="
@@ -63,11 +65,8 @@
                 boardCustomer(record.id);
               }
             "
-            >{{ record.name }}</Button
+            >查看</Button
           >
-        </template>
-
-        <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
             @click="
@@ -75,7 +74,7 @@
                 scanCustomer(record);
               }
             "
-            >查看</Button
+            >编辑</Button
           >
           <Button
             type="link"
