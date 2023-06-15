@@ -18,9 +18,11 @@
            v-model:value="searchInfo.customerName"
            />
         </FormItem> -->
-        <Button type="primary" style="margin-left: 10px" @click="resetAction" >重置</Button>
-        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
-      >
+          <Button type="primary" style="margin-left: 10px" @click="resetAction" >重置</Button>
+          <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
+        </div>
+        <Button type="primary" style="margin-left: 10px" @click="addMHistory">新增合同</Button>
+
     </div>
 
     <Table
@@ -54,17 +56,31 @@
         </template>
       </template>
     </Table>
+    <template v-if="mRecordDrawerInfo.visible">
+      <m-record
+        :drawer-info="mRecordDrawerInfo"
+        @drawerOnClose="mRecordClose"
+        @edit="mRecordEdit"
+        @submit="mRecordSubmit"
+      >
+      </m-record>
+    </template>
   </PageWrapper>
 </template>
+
 <script lang="ts">
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { defineComponent, ref ,onMounted, computed} from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { PageListInfo } from '/@/views/type';
+  import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { CustomerContractInfo } from '/@/api/demo/model/customer';
   import {getCustomerContractPage} from '/@/api/demo/customer';
   import { useRoute } from 'vue-router';
-import dayjs from 'dayjs';
+  
+  import dayjs from 'dayjs';
+
+  import mRecord from './components/addContract.vue';
+
 
   import {
     Table,
@@ -94,6 +110,7 @@ import dayjs from 'dayjs';
       InputNumber,
       DatePicker,
       TextArea,
+      mRecord,
     },
     setup() {
       const searchInfo = ref({
@@ -138,6 +155,10 @@ import dayjs from 'dayjs';
         customerOrderListReq(1);
       };
 
+      const addCustomer = ()  => {
+
+      };
+
       onMounted(() => {
         customerOrderListReq(1);
       });
@@ -176,6 +197,57 @@ import dayjs from 'dayjs';
         },
       ];
 
+      // 新增记录
+      const addMHistory = () => {
+        mRecordDrawerInfo.value.title = '新增客户病史';
+        mRecordDrawerInfo.value.visible = true;
+        mRecordDrawerInfo.value.type = 'add';
+      };
+
+      // 弹框关闭
+      const mRecordClose = () => {
+        mRecordDrawerInfo.value.title = '';
+        mRecordDrawerInfo.value.visible = false;
+        mRecordDrawerInfo.value.type = undefined;
+        Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
+          mRecordDrawerInfo.value.item[key] = undefined
+        })
+      };
+
+       // 提交
+      const mRecordSubmit = (reload: boolean) => {
+        // customerMHListReq(reload ? 1 : pageInfo.value.current);
+        mRecordClose();
+      };
+      // 编辑
+      const mRecordEdit = (item: CustomerContractInfo) => {
+        mRecordDrawerInfo.value.title = '编辑客户病史';
+        mRecordDrawerInfo.value.type = 'edit';
+        mRecordDrawerInfo.value.visible = true;
+        Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
+          mRecordDrawerInfo.value.item[key] = item[key]
+        })
+      };
+
+
+      // 记录
+      const mRecordDrawerInfo = ref<DrawerItemType<any>>({
+        visible: false,
+        title: '',
+        item: {
+          name:  undefined,
+          firstParty:  undefined,
+          secondParty:  undefined,
+          effectiveStart:  undefined,
+          effectiveEnd:  undefined,
+          orderId: undefined,
+        },
+      });
+
+      
+
+
+
       const downloadContact = (item) => {};
       const previewContact = (item) => {};
 
@@ -191,6 +263,13 @@ import dayjs from 'dayjs';
         searchAction,
         onMounted,
         searchInfo,
+        addMHistory,
+        addCustomer,
+
+        mRecordClose,
+        mRecordSubmit,
+        mRecordEdit,
+        mRecordDrawerInfo,
       };
     },
   });
