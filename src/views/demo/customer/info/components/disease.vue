@@ -30,7 +30,7 @@
             style="cursor: pointer"
             @click="
               () => {
-                viewAll(1);
+                viewAll(1, item.diseaseBasic.id as number);
               }
             "
             >查看全部</div
@@ -67,7 +67,7 @@
             style="cursor: pointer"
             @click="
               () => {
-                viewAll(2);
+                viewAll(2, item.diseaseBasic.id as number);
               }
             "
             >查看全部</div
@@ -106,7 +106,7 @@
             style="cursor: pointer"
             @click="
               () => {
-                viewAll(3);
+                viewAll(3, item.diseaseBasic.id as number);
               }
             "
             >查看全部</div
@@ -147,7 +147,7 @@
             style="cursor: pointer"
             @click="
               () => {
-                viewAll(4);
+                viewAll(4, item.diseaseBasic.id as number);
               }
             "
             >查看全部</div
@@ -188,7 +188,14 @@
     CustomerEInfo,
     CustomerIInfo,
     CustomerCInfo,
-  } from '/@/api/demo/model/customer';
+} from '/@/api/demo/model/customer';
+import {
+  getCustomerDList,
+  getCustomerEList,
+  getCustomerIList,
+    getCustomerCList
+  } from '/@/api/demo/customer';
+  
   import ItemTable from './item-table.vue';
   import { useRouter } from 'vue-router';
 
@@ -231,10 +238,12 @@
         visible: boolean;
         title: string;
       }>({ title: '', visible: false, dataSource: [], columns: [] });
-      const viewAll = (type: number) => {
+      const viewAll = async (type: number,diseaseId: number) => {
         modalConfig.visible = true;
+        let res 
         switch (type) {
           case 1:
+            res = await getCustomerDList(diseaseId)
             modalConfig.title = '用药记录';
             modalConfig.columns = [
               {
@@ -253,6 +262,7 @@
             ];
             break;
           case 2:
+          res = await getCustomerEList(diseaseId)
             modalConfig.title = '检验记录';
             modalConfig.columns = [
               {
@@ -272,6 +282,7 @@
             ];
             break;
           case 3:
+          res = await getCustomerIList(diseaseId)
             modalConfig.title = '影像记录';
             modalConfig.columns = [
               {
@@ -297,6 +308,7 @@
             ];
             break;
           case 4:
+          res = await getCustomerCList(diseaseId)
             modalConfig.title = '就诊记录';
             modalConfig.columns = [
               {
@@ -318,6 +330,7 @@
           default:
             break;
         }
+        if (res) modalConfig.dataSource = res
       };
       const modalClose = () => {
         modalConfig.title = '';

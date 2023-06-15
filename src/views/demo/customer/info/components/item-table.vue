@@ -24,7 +24,7 @@
         >
           <Button
             type="link"
-            style="color: rgb(0, 255, 250)"
+            style="color: #0960bd"
             @click="()=>{linkClick(record.diseaseId as number)}"
             >{{ text }}</Button
           >

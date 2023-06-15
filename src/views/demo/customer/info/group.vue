@@ -33,6 +33,15 @@
                 editGroup(record);
               }
             "
+            >查看</Button
+          >
+          <Button
+            type="link"
+            @click="
+              () => {
+                drawerEdit(record);
+              }
+            "
             >编辑</Button
           >
           <Button
@@ -47,67 +56,67 @@
         </template></template
       >
     </Table>
-    <Drawer
+    <Modal
+      :mask-closable="false"
+      :destroy-on-close="true"
       :title="drawerInfo.title"
-      placement="right"
-      @close="drawerOnClose"
+      @cancel="drawerOnClose"
+      @ok="submit"
+      width="60%"
       :visible="drawerInfo.visible"
     >
-      <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
+      <Form :labelCol="{ span: 4 }">
+        <FormItem label="小组分类">
+          <Select
+            placeholder="请选择"
+            v-model:value="drawerInfo.item.type"
+            :disabled="drawerInfo.type === 'scan'"
+          >
+            <SelectOption :key="1">个人客户</SelectOption>
+            <SelectOption :key="2">企业客户</SelectOption>
+            <SelectOption :key="3">其他</SelectOption>
+          </Select>
+        </FormItem>
 
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template>
-      <FormItem label="小组分类">
-        <Select
-          placeholder="请选择"
-          v-model:value="drawerInfo.item.type"
-          :disabled="drawerInfo.type === 'scan'"
-        >
-          <SelectOption :key="1">个人客户</SelectOption>
-          <SelectOption :key="2">企业客户</SelectOption>
-          <SelectOption :key="3">其他</SelectOption>
-        </Select>
-      </FormItem>
+        <FormItem label="分组名称">
+          <Input
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
 
-      <FormItem label="分组名称">
-        <Input
-          placeholder="请输入"
-          allowClear
-          v-model:value="drawerInfo.item.name"
-          :disabled="drawerInfo.type === 'scan'"
-        />
-      </FormItem>
-
-      <FormItem label="分组描述" v-if="drawerInfo.item.type">
-        <TextArea
-          v-if="drawerInfo.item.type === 3"
-          placeholder="请输入"
-          allowClear
-          v-model:value="drawerInfo.item.description"
-          :disabled="drawerInfo.type === 'scan'"
-        />
-        <Select
-          v-else
-          placeholder="请选择"
-          v-model:value="drawerInfo.item.description"
-          :disabled="drawerInfo.type === 'scan'"
-        >
-          <SelectOption :key="1.1" value="干细胞客户">干细胞客户</SelectOption>
-          <SelectOption :key="1.2" value="免疫细胞客户">免疫细胞客户</SelectOption>
-          <SelectOption :key="1.3" value="其他细胞客户">其他细胞客户</SelectOption>
-          <SelectOption :key="2" value="就医服务客户">就医服务客户</SelectOption>
-          <SelectOption :key="3" value="体验客户">体验客户</SelectOption>
-          <SelectOption :key="4" value="其他">其他</SelectOption>
-        </Select>
-      </FormItem>
-    </Drawer>
+        <FormItem label="分组描述" v-if="drawerInfo.item.type">
+          <TextArea
+            v-if="drawerInfo.item.type === 3"
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.description"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+          <Select
+            v-else
+            placeholder="请选择"
+            v-model:value="drawerInfo.item.description"
+            :disabled="drawerInfo.type === 'scan'"
+          >
+            <SelectOption :key="1.1" value="干细胞客户">干细胞客户</SelectOption>
+            <SelectOption :key="1.2" value="免疫细胞客户">免疫细胞客户</SelectOption>
+            <SelectOption :key="1.3" value="其他细胞客户">其他细胞客户</SelectOption>
+            <SelectOption :key="2" value="就医服务客户">就医服务客户</SelectOption>
+            <SelectOption :key="3" value="体验客户">体验客户</SelectOption>
+            <SelectOption :key="4" value="其他">其他</SelectOption>
+          </Select>
+        </FormItem>
+      </Form>
+    </Modal>
   </PageWrapper>
 </template>
 <script lang="ts">
   import { defineComponent, ref, onMounted, createVNode, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Drawer, Select, message } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Modal, Select, message } from 'ant-design-vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import {
     getCustomerGPage,
@@ -132,10 +141,11 @@
     components: {
       PageWrapper,
       Table,
+      Form,
       FormItem,
       Input,
       Button,
-      Drawer,
+      Modal,
       TextArea,
       Select,
       SelectOption,
@@ -190,10 +200,10 @@
           pageInfo.value.dataSource = res.data;
         }
       };
-      const resetAction = () => { 
-        searchInfo.value.name = undefined
+      const resetAction = () => {
+        searchInfo.value.name = undefined;
         customerListReq(1);
-      }
+      };
       const searchAction = () => {
         customerListReq(1);
       };
@@ -215,16 +225,6 @@
           title: '分组描述',
           dataIndex: 'description',
         },
-        // {
-        //   title: '创建时间',
-        //   width: 300,
-        //   dataIndex: 'beginTime',
-        // },
-        // {
-        //   title: '创建人',
-        //   width: 150,
-        //   dataIndex: 'endTime',
-        // },
         {
           title: '操作',
           dataIndex: 'operation',
@@ -239,15 +239,17 @@
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '查看分组';
         drawerInfo.value.type = 'scan';
-
-        drawerInfo.value.item.id = item.id;
-        drawerInfo.value.item.type = item.type;
-        drawerInfo.value.item.name = item.name;
-        drawerInfo.value.item.description = item.description;
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
       };
-      const drawerEdit = () => {
+      const drawerEdit = (item: CustomerGroupInfo) => {
         drawerInfo.value.title = '编辑分组';
         drawerInfo.value.type = 'edit';
+        drawerInfo.value.visible = true;
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
       };
       const submit = async () => {
         let res;
@@ -257,9 +259,11 @@
           res = await updateCustomerG({ ...drawerInfo.value.item });
         }
         if (res) {
-          message.success(drawerInfo.value.type === 'add' ? '添加客户分组成功' : '修改客户分组成功');
+          message.success(
+            drawerInfo.value.type === 'add' ? '添加客户分组成功' : '修改客户分组成功',
+          );
           customerListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
-          drawerOnClose()
+          drawerOnClose();
         }
       };
 
@@ -282,11 +286,9 @@
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-        
-        drawerInfo.value.item.id = undefined;
-        drawerInfo.value.item.type = undefined;
-        drawerInfo.value.item.name = undefined;
-        drawerInfo.value.item.description = undefined;
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = undefined;
+        });
       };
       return {
         columns,

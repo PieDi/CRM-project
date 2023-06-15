@@ -34,7 +34,7 @@
       :bordered="true"
       :pagination="pagination"
     >
-      <template #bodyCell="{ column, _text, record }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
@@ -44,6 +44,15 @@
               }
             "
             >查看</Button
+          >
+          <Button
+            type="link"
+            @click="
+              () => {
+                editProduct(record);
+              }
+            "
+            >编辑</Button
           >
           <!-- <Button
             type="link"
@@ -57,22 +66,25 @@
         </template>
       </template>
     </Table>
-    <Drawer
+
+    <Modal
       :mask-closable="false"
       :destroy-on-close="true"
       :title="drawerInfo.title"
       placement="right"
-      @close="drawerOnClose"
+      @cancel="drawerOnClose"
+      @ok="submit"
       :visible="drawerInfo.visible"
+      width="60%"
     >
-      <template #extra>
+      <!-- <template #extra>
         <Button v-if="drawerInfo.type === 'scan'" type="link" @click="editProduct"
           >编辑</Button
         >
         <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template>
+      </template> -->
 
-      <Form :labelCol="{ span: 6 }">
+      <Form :labelCol="{ span: 4 }">
         <FormItem label="产品名称">
           <Input
             placeholder="请输入"
@@ -113,13 +125,13 @@
           />
         </FormItem>
       </Form>
-    </Drawer>
+    </Modal>
   </PageWrapper>
 </template>
 <script lang="ts">
   import { defineComponent, ref, computed, onMounted,createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Drawer, Select,message } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Modal,Select,message } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { getProductPage, saveProduct, updateProduct, removalProduct } from '/@/api/demo/product';
@@ -143,7 +155,7 @@ const productTypeMap: Record<number, string> = {
       FormItem,
       Input,
       Button,
-      Drawer,
+      Modal,
       TextArea,
       Select,
       SelectOption
@@ -232,16 +244,17 @@ const productTypeMap: Record<number, string> = {
         drawerInfo.value.type = 'scan';
         drawerInfo.value.title = '查看产品';
 
-        drawerInfo.value.item.id = item.id;
-        drawerInfo.value.item.name = item.name;
-        drawerInfo.value.item.number = item.number;
-        drawerInfo.value.item.type = item.type;
-        drawerInfo.value.item.introduction = item.introduction;
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = item[key]  
+        })
       };
-      const editProduct = () => {
+      const editProduct = (item: ProductInfo) => {
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'edit';
         drawerInfo.value.title = '编辑产品';
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = item[key]  
+        })
       };
       const deleteProduct = (item: ProductInfo) => {
         confirm(
@@ -261,12 +274,10 @@ const productTypeMap: Record<number, string> = {
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
-
-        drawerInfo.value.item.id = undefined;
-        drawerInfo.value.item.name = undefined;
-        drawerInfo.value.item.type = undefined;
-        drawerInfo.value.item.number = undefined;
-        drawerInfo.value.item.introduction = undefined;
+        drawerInfo.value.type = undefined;
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = undefined  
+        })
       };
       const submit = async () => {
         let res 
