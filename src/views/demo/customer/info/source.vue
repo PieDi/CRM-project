@@ -24,13 +24,22 @@
       :bordered="true"
       :pagination="pagination"
     >
-      <template #bodyCell="{ column, _text, record }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
             @click="
               () => {
                 editGroup(record);
+              }
+            "
+            >查看</Button
+          >
+          <Button
+            type="link"
+            @click="
+              () => {
+                drawerEdit(record);
               }
             "
             >编辑</Button
@@ -47,44 +56,41 @@
         </template></template
       >
     </Table>
-    <Drawer
+
+    <Modal
+      :mask-closable="false"
+      :destroy-on-close="true"
       :title="drawerInfo.title"
-      placement="right"
-      @close="drawerOnClose"
+      @cancel="drawerOnClose"
+      @ok="submit"
+      width="60%"
       :visible="drawerInfo.visible"
     >
-      <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
+      <Form :labelCol="{ span: 4 }">
+        <FormItem label="分组名称">
+          <Input
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.name"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
 
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template>
-
-
-      <FormItem label="分组名称">
-        <Input
-          placeholder="请输入"
-          allowClear
-          v-model:value="drawerInfo.item.name"
-          :disabled="drawerInfo.type === 'scan'"
-        />
-      </FormItem>
-
-      <FormItem label="分组描述" >
-        <TextArea
-          placeholder="请输入"
-          allowClear
-          v-model:value="drawerInfo.item.description"
-          :disabled="drawerInfo.type === 'scan'"
-        />
-
-      </FormItem>
-    </Drawer>
+        <FormItem label="分组描述">
+          <TextArea
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.description"
+            :disabled="drawerInfo.type === 'scan'"
+          /> </FormItem
+      ></Form>
+    </Modal>
   </PageWrapper>
 </template>
 <script lang="ts">
   import { defineComponent, ref, onMounted, createVNode, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Drawer, message } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Modal, message } from 'ant-design-vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import {
     getCustomerSPage,
@@ -104,11 +110,12 @@
     components: {
       PageWrapper,
       Table,
+      Form,
       FormItem,
       Input,
       Button,
-      Drawer,
-      TextArea
+      Modal,
+      TextArea,
     },
     setup() {
       const drawerInfo = ref<DrawerItemType<CustomerSourceInfo>>({
@@ -157,10 +164,10 @@
           pageInfo.value.dataSource = res.data;
         }
       };
-      const resetAction = () => { 
-        searchInfo.value.name = undefined
+      const resetAction = () => {
+        searchInfo.value.name = undefined;
         customerSourceReq(1);
-      }
+      };
       const searchAction = () => {
         customerSourceReq(1);
       };
@@ -191,14 +198,17 @@
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '查看来源';
         drawerInfo.value.type = 'scan';
-
-        drawerInfo.value.item.id = item.id;
-        drawerInfo.value.item.name = item.name;
-        drawerInfo.value.item.description = item.description;
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
       };
-      const drawerEdit = () => {
+      const drawerEdit = (item: CustomerSourceInfo) => {
         drawerInfo.value.title = '编辑来源';
         drawerInfo.value.type = 'edit';
+        drawerInfo.value.visible = true;
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
       };
       const submit = async () => {
         let res;
@@ -208,9 +218,11 @@
           res = await updateCustomerS({ ...drawerInfo.value.item });
         }
         if (res) {
-          message.success(drawerInfo.value.type === 'add' ? '新增客户分组成功' : '修改客户分组成功');
+          message.success(
+            drawerInfo.value.type === 'add' ? '新增客户分组成功' : '修改客户分组成功',
+          );
           customerSourceReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
-          drawerOnClose()
+          drawerOnClose();
         }
       };
 
@@ -233,10 +245,9 @@
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-        
-        drawerInfo.value.item.id = undefined;
-        drawerInfo.value.item.name = undefined;
-        drawerInfo.value.item.description = undefined;
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = undefined;
+        });
       };
       return {
         columns,

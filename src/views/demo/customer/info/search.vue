@@ -71,7 +71,7 @@
             type="link"
             @click="
               () => {
-                scanCustomer(record);
+                drawerEdit(record);
               }
             "
             >编辑</Button
@@ -88,21 +88,22 @@
         </template>
       </template>
     </Table>
-    <Drawer
+    <Modal
+    :mask-closable="false"
       :destroy-on-close="true"
       :title="drawerInfo.title"
-      placement="right"
-      @close="drawerOnClose"
+      @cancel="drawerOnClose"
+      @ok="submit"
+      width="60%"
       :visible="drawerInfo.visible"
-      :pagination="pagination"
     >
-      <template #extra>
+      <!-- <template #extra>
         <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
 
         <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template>
+      </template> -->
 
-      <Form :labelCol="{ span: 6 }">
+      <Form :labelCol="{ span: 4 }">
         <FormItem label="客户姓名">
           <Input
             :disabled="drawerInfo.type === 'scan'"
@@ -233,7 +234,7 @@
           />
         </FormItem>
       </Form>
-    </Drawer>
+    </Modal>
   </PageWrapper>
 </template>
 <script lang="ts">
@@ -244,7 +245,7 @@
     Form,
     Input,
     Button,
-    Drawer,
+    Modal,
     Select,
     InputNumber,
     DatePicker,
@@ -277,7 +278,7 @@
       FormItem,
       Input,
       Button,
-      Drawer,
+      Modal,
       Select,
       SelectOption,
       InputNumber,
@@ -418,25 +419,14 @@
         drawerInfo.value.title = '新增客户';
         drawerInfo.value.type = 'add';
       };
-      const scanCustomer = (item: CustomerInfo) => {
-        drawerInfo.value.item.age = item.age;
-        drawerInfo.value.item.birth = item.birth;
-        drawerInfo.value.item.contactAddress = item.contactAddress;
-        drawerInfo.value.item.documentNumber = item.documentNumber;
-        drawerInfo.value.item.documentType = item.documentType;
-        drawerInfo.value.item.groupId = item.groupId;
-        drawerInfo.value.item.level = item.level;
-        drawerInfo.value.item.mobile = item.mobile;
-        drawerInfo.value.item.name = item.name;
-        drawerInfo.value.item.remark = item.remark;
-        drawerInfo.value.item.sex = item.sex;
-        drawerInfo.value.item.sourceId = item.sourceId;
-        drawerInfo.value.item.tag = item.tag;
-        if (item.birth) datePickerValue.value = dayjs(item.birth, 'YYYY-MM-DD');
-
+      const drawerEdit = (item: CustomerInfo) => {
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '查看客户信息';
-        drawerInfo.value.type = 'scan';
+        drawerInfo.value.title = '编辑客户信息';
+        drawerInfo.value.type = 'edit';
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = item[key]
+        })
+        if (item.birth) datePickerValue.value = dayjs(item.birth, 'YYYY-MM-DD');
       };
       const deleteAction = (item: CustomerInfo) => {
         confirm(
@@ -453,22 +443,16 @@
           }),
         );
       };
-      const resetDrawer = () => {
-        Object.keys(drawerInfo.value.item).forEach((key) => {
-          drawerInfo.value.item[key] = undefined;
-        });
-      };
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-        resetDrawer();
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = undefined;
+        });
         datePickerValue.value = undefined;
       };
-      const drawerEdit = () => {
-        drawerInfo.value.title = '编辑客户信息';
-        drawerInfo.value.type = 'edit';
-      };
+
       const submit = async () => {
         if (datePickerValue.value)
           drawerInfo.value.item.birth = dayjs(datePickerValue.value).format('YYYY-MM-DD');
@@ -494,7 +478,6 @@
         searchInfo,
         boardCustomer,
         addCustomer,
-        scanCustomer,
         deleteAction,
         drawerOnClose,
         drawerEdit,

@@ -25,7 +25,7 @@
       :bordered="true"
       :pagination="pagination"
     >
-      <template #bodyCell="{ column, _text, record }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
@@ -35,6 +35,15 @@
               }
             "
             >查看</Button
+          >
+          <Button
+            type="link"
+            @click="
+              () => {
+                editStoreIn(record);
+              }
+            "
+            >编辑</Button
           >
           <!-- <Button
             type="link"
@@ -49,20 +58,21 @@
       </template>
     </Table>
 
-    <Drawer
+    <Modal
       :mask-closable="false"
       :destroy-on-close="true"
       :title="drawerInfo.title"
-      placement="right"
-      @close="drawerOnClose"
+      @cancel="drawerOnClose"
+      @ok="submit"
+      width="60%"
       :visible="drawerInfo.visible"
     >
-      <template #extra>
+      <!-- <template #extra>
         <Button v-if="drawerInfo.type === 'scan'" type="link" @click="editStoreIn">编辑</Button>
         <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template>
+      </template> -->
 
-      <Form :labelCol="{ span: 6 }">
+      <Form :labelCol="{ span: 4 }">
         <FormItem label="订单产品">
           <Select
             :show-search="true"
@@ -113,13 +123,13 @@
           />
         </FormItem>
       </Form>
-    </Drawer>
+    </Modal>
   </PageWrapper>
 </template>
 <script lang="ts">
   import { defineComponent, ref,computed, onMounted,createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Drawer, InputNumber,Select, message } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Modal, InputNumber,Select, message } from 'ant-design-vue';
   import { DrawerItemType,PageListInfo } from '/@/views/type';
   import { ProductInfo,ProductInInfo } from '/@/api/demo/model/product';
   import { getProductList,getProductInPage,updateProductIn,saveProductIn, deleteProductIn } from '/@/api/demo/product';
@@ -138,7 +148,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
       FormItem,
       Input,
       Button,
-      Drawer,
+      Modal,
       TextArea,
       Select,
       SelectOption,
@@ -203,6 +213,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
       };
       onMounted(() => {
         pInListReq(1);
+        productReq()
       });
 
       const columns: ColumnsType<ProductInInfo> = [
@@ -255,41 +266,34 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
         );
       };
       const addStoreIn = () => {
-        productReq()
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'add';
         drawerInfo.value.title = '新增入库';
         
       };
       const scanStoreIn = (item: ProductInInfo) => {
-        productReq()
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'scan';
         drawerInfo.value.title = '查看入库';
-
-        drawerInfo.value.item.id = item.id;
-        drawerInfo.value.item.amount = item.amount;
-        drawerInfo.value.item.batch = item.batch;
-        drawerInfo.value.item.productId = item.productId;
-        drawerInfo.value.item.unit = item.unit;
-        drawerInfo.value.item.remark = item.remark;
-
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = item[key]  
+        })
       };
-      const editStoreIn = () => {
+      const editStoreIn = (item: ProductInInfo) => {
         drawerInfo.value.type = 'edit';
         drawerInfo.value.title = '编辑入库';
+        drawerInfo.value.visible = true;
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = item[key]  
+        })
       };
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined
-
-        drawerInfo.value.item.id = undefined;
-        drawerInfo.value.item.amount = undefined;
-        drawerInfo.value.item.batch = undefined;
-        drawerInfo.value.item.productId = undefined;
-        drawerInfo.value.item.unit = undefined;
-        drawerInfo.value.item.remark = undefined;
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = undefined  
+        })
       };
       const deleteIn = (item: ProductInInfo) => {
         confirm(

@@ -27,7 +27,7 @@
       :bordered="true"
       :pagination="pagination"
     >
-      <template #bodyCell="{ column, _text, record }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
@@ -42,6 +42,15 @@
             type="link"
             @click="
               () => {
+                editCustomerServe(record);
+              }
+            "
+            >编辑</Button
+          >
+          <Button
+            type="link"
+            @click="
+              () => {
                 deleteCServe(record);
               }
             "
@@ -50,22 +59,16 @@
         </template>
       </template>
     </Table>
-    <Drawer
+    <Modal
       :mask-closable="false"
       :destroy-on-close="true"
       :title="drawerInfo.title"
-      placement="right"
-      @close="drawerOnClose"
+      @cancel="drawerOnClose"
+      @ok="submit"
+      width="60%"
       :visible="drawerInfo.visible"
     >
-      <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="editCustomerServe"
-          >编辑</Button
-        >
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template>
-
-      <Form :labelCol="{ span: 6 }">
+      <Form :labelCol="{ span: 4 }">
         <FormItem label="客服名称">
           <Input
             placeholder="请输入"
@@ -117,13 +120,13 @@
           />
         </FormItem>
       </Form>
-    </Drawer>
+    </Modal>
   </PageWrapper>
 </template>
 <script lang="ts">
   import { defineComponent, ref, computed, onMounted,createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Drawer, message } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Modal, message } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { getCustomerServePage, saveCustomerServe,updateCustomerServe, deleteCustomerServe } from '/@/api/demo/customer-serve';
@@ -142,7 +145,7 @@
       FormItem,
       Input,
       Button,
-      Drawer,
+      Modal,
       TextArea,
     },
     setup() {
@@ -235,19 +238,17 @@
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'scan';
         drawerInfo.value.title = '查看客服';
-
-        drawerInfo.value.item.id = item.id;
-        drawerInfo.value.item.name = item.name;
-        drawerInfo.value.item.email = item.email;
-        drawerInfo.value.item.mobile = item.mobile;
-        drawerInfo.value.item.fax = item.fax;
-        drawerInfo.value.item.contactAddress = item.contactAddress;
-        drawerInfo.value.item.remark = item.remark;
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = item[key]  
+        })
       };
-      const editCustomerServe = () => {
+      const editCustomerServe = (item: CServeInfo) => {
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'edit';
         drawerInfo.value.title = '编辑客服';
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = item[key]  
+        })
       };
       const deleteCServe = (item: CServeInfo) => {
         confirm(
@@ -267,14 +268,11 @@
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
+        drawerInfo.value.type = undefined;
 
-        drawerInfo.value.item.id = undefined;
-        drawerInfo.value.item.name = undefined;
-        drawerInfo.value.item.email = undefined;
-        drawerInfo.value.item.mobile = undefined;
-        drawerInfo.value.item.fax = undefined;
-        drawerInfo.value.item.contactAddress = undefined;
-        drawerInfo.value.item.remark = undefined;
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = undefined  
+        })
       };
       const submit = async () => {
         let res 

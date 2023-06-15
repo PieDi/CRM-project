@@ -16,7 +16,6 @@
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
-      <!-- <Button type="primary" @click="addReturnPlan">新建回访</Button> -->
     </div>
 
     <Table
@@ -29,23 +28,23 @@
         <template v-if="column.dataIndex === 'operation'">
           <div style="display: flex">
             <Button type="link" @click="scanReturnPlan(record)">查看</Button>
+            <Button type="link" @click="drawerEdit(record)">再次回访</Button>
           </div>
         </template>
       </template>
     </Table>
 
-    <Drawer
-      :visible="drawerInfo.visible"
+    <Modal
+    :mask-closable="false"
+      :destroy-on-close="true"
       :title="drawerInfo.title"
-      placement="right"
-      @close="drawerOnClose"
+      @cancel="drawerOnClose"
+      @ok="submit"
+      width="60%"
+      :visible="drawerInfo.visible"
     >
-      <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">再次回访</Button>
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template>
 
-      <Form :labelCol="{ span: 6 }">
+      <Form :labelCol="{ span: 4 }">
         <FormItem label="客户姓名">
           <Select
             :disabled="drawerInfo.type !== 'add'"
@@ -160,14 +159,14 @@
           />
         </FormItem>
       </Form>
-    </Drawer>
+    </Modal>
   </PageWrapper>
 </template>
 
 <script lang="ts">
   import { defineComponent, ref, computed, onMounted } from 'vue';
   import { PageWrapper } from '@/components/Page';
-  import { Form, Input, Button, Table, Drawer, DatePicker, Select, message } from 'ant-design-vue';
+  import { Form, Input, Button, Table, Modal, DatePicker, Select, message } from 'ant-design-vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import { getVisitPage, saveVisit } from '/@/api/demo/visit-return';
   import { VisitReturnInfo } from '/@/api/demo/model/visit-return';
@@ -196,7 +195,7 @@
       Input,
       Button,
       Table,
-      Drawer,
+      Modal,
       DatePicker,
       Select,
       SelectOption: Select.Option,
@@ -267,6 +266,7 @@
 
       onMounted(() => {
         visitRListReq(1);
+        customerReq();
       });
       // 客户
       const dataSource = ref<Array<CustomerInfo>>([]);
@@ -296,7 +296,6 @@
       });
 
       const addReturnPlan = () => {
-        customerReq();
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新建回访';
         drawerInfo.value.type = 'add';
@@ -308,30 +307,20 @@
         });
       };
       const scanReturnPlan = (item: VisitReturnInfo) => {
-        customerReq();
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '查看回访';
         drawerInfo.value.type = 'scan';
-
-        drawerInfo.value.item.customerId = item.customerId;
-        drawerInfo.value.item.item = item.item;
-        drawerInfo.value.item.nextPlan = item.nextPlan;
-        drawerInfo.value.item.remark = item.remark;
-        drawerInfo.value.item.result = item.result;
-        drawerInfo.value.item.way = item.way;
-        drawerInfo.value.item.supplement = item.supplement;
-
-        drawerInfo.value.item.type = item.type;
-        drawerInfo.value.item.title = item.title;
-        drawerInfo.value.item.visitContent = item.visitContent;
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
         drawerInfo.value.item.visitTime = dayjs(item.visitTime);
       };
-      const drawerEdit = () => {
+      const drawerEdit = (item: VisitReturnInfo) => {
         drawerInfo.value.title = '再次回访';
         drawerInfo.value.type = 'edit';
-        const customerId = drawerInfo.value.item.customerId;
+        drawerInfo.value.visible = true;
         resetDrawer();
-        drawerInfo.value.item.customerId = customerId;
+        drawerInfo.value.item.customerId = item.customerId;
       };
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;

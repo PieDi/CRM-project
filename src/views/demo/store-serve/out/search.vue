@@ -46,6 +46,15 @@
             "
             >查看</Button
           >
+          <Button
+            type="link"
+            @click="
+              () => {
+                editStoreOut(record);
+              }
+            "
+            >编辑</Button
+          >
           <!-- <Button
             type="link"
             @click="
@@ -58,20 +67,22 @@
         </template>
       </template>
     </Table>
-    <Drawer
+
+    <Modal
       :mask-closable="false"
       :destroy-on-close="true"
       :title="drawerInfo.title"
-      placement="right"
-      @close="drawerOnClose"
+      @cancel="drawerOnClose"
+      @ok="submit"
+      width="60%"
       :visible="drawerInfo.visible"
     >
-      <template #extra>
+      <!-- <template #extra>
         <Button v-if="drawerInfo.type === 'scan'" type="link" @click="editStoreOut">编辑</Button>
         <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template>
+      </template> -->
 
-      <Form :labelCol="{ span: 6 }">
+      <Form :labelCol="{ span: 4 }">
         <FormItem label="订单产品">
           <Select
             :show-search="true"
@@ -150,13 +161,13 @@
           />
         </FormItem>
       </Form>
-    </Drawer>
+    </Modal>
   </PageWrapper>
 </template>
 <script lang="ts">
   import { defineComponent, ref, computed, onMounted } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Drawer, InputNumber, Select, message } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Modal, InputNumber, Select, message } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { ProductInfo, ProductOutInfo } from '/@/api/demo/model/product';
   import {
@@ -168,7 +179,6 @@
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { getCustomerList, getCustomerOrderList } from '/@/api/demo/customer';
   import { CustomerInfo, CustomerOrderInfo } from '/@/api/demo/model/customer';
-  import { SelectValue } from 'ant-design-vue/lib/select';
 
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
@@ -181,7 +191,7 @@
       FormItem,
       Input,
       Button,
-      Drawer,
+      Modal,
       TextArea,
       Select,
       SelectOption,
@@ -249,6 +259,10 @@
       };
       onMounted(() => {
         pOutListReq(1);
+
+        productReq();
+        customerReq();
+        orderListReq();
       });
 
       const columns: ColumnsType<ProductOutInfo> = [
@@ -322,39 +336,37 @@
    
 
       const addStoreOut = () => {
-        productReq();
-        customerReq();
-        orderListReq();
+       
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'add';
         drawerInfo.value.title = '新增出库';
       };
-      const scanStoreOut = (item) => {
-        productReq();
-        customerReq();
-        orderListReq();
-
+      const scanStoreOut = (item:ProductOutInfo) => {
+      
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'scan';
         drawerInfo.value.title = '查看出库';
 
-        drawerInfo.value.item.id = item.id;
-        drawerInfo.value.item.amount = item.amount;
-        drawerInfo.value.item.batch = item.batch;
-        drawerInfo.value.item.customerId = item.customerId;
-        drawerInfo.value.item.orderId = item.orderId;
-        drawerInfo.value.item.productId = item.productId;
-        drawerInfo.value.item.unit = item.unit;
-        drawerInfo.value.item.remark = item.remark;        
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = item[key]  
+        })       
       };
-      const editStoreOut = () => {
+      const editStoreOut = (item:ProductOutInfo) => {
         drawerInfo.value.type = 'edit';
         drawerInfo.value.title = '编辑出库';
+        drawerInfo.value.visible = true;
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = item[key]  
+        })
       };
 
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
+        drawerInfo.value.type = undefined
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = undefined  
+        })
       };
       const submit = async () => {
         const params = { ...drawerInfo.value.item };

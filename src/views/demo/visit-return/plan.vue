@@ -29,6 +29,7 @@
         <template v-if="column.dataIndex === 'operation'">
           <div style="display: flex">
             <Button type="link" @click="scanReturnPlan(record)">查看</Button>
+            <Button type="link" @click="drawerEdit(record)">编辑</Button>
             <Button
               type="link"
               style="margin-left: 10px"
@@ -44,18 +45,16 @@
       </template>
     </Table>
 
-    <Drawer
-      :visible="drawerInfo.visible"
+    <Modal
+      :mask-closable="false"
+      :destroy-on-close="true"
       :title="drawerInfo.title"
-      placement="right"
-      @close="drawerOnClose"
+      @cancel="drawerOnClose"
+      @ok="submit"
+      width="60%"
+      :visible="drawerInfo.visible"
     >
-      <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template>
-
-      <Form :labelCol="{ span: 6 }">
+      <Form :labelCol="{ span: 4 }">
         <FormItem label="客户姓名">
           <Select
             :disabled="drawerInfo.type !== 'add'"
@@ -135,7 +134,7 @@
           />
         </FormItem>
       </Form>
-    </Drawer>
+    </Modal>
     <template v-if="showModal && visitInfo.info && visitInfo.plan">
       <StartVisit
         :visible="showModal"
@@ -151,7 +150,7 @@
 <script lang="ts">
   import { defineComponent, ref, computed, onMounted } from 'vue';
   import { PageWrapper } from '@/components/Page';
-  import { Form, Input, Button, Table, Drawer, DatePicker, Select, message } from 'ant-design-vue';
+  import { Form, Input, Button, Table, Modal, DatePicker, Select, message } from 'ant-design-vue';
   import StartVisit from './start-visit/index.vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import { getVisitPage, saveVisit, updateVisit } from '/@/api/demo/visit-return';
@@ -176,7 +175,7 @@
       Input,
       Button,
       Table,
-      Drawer,
+      Modal,
       DatePicker,
       Select,
       SelectOption: Select.Option,
@@ -298,23 +297,25 @@
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = item[key];
         });
-      
         drawerInfo.value.item.visitTime = dayjs(item.visitTime);
       };
-      const drawerEdit = () => {
+      const drawerEdit = (item: VisitReturnInfo) => {
         drawerInfo.value.title = '编辑回访';
         drawerInfo.value.type = 'edit';
-      };
-      const resetDrawer = () => {
+        drawerInfo.value.visible = true;
         Object.keys(drawerInfo.value.item).forEach((key) => {
-          drawerInfo.value.item[key] = undefined;
+          drawerInfo.value.item[key] = item[key];
         });
+        drawerInfo.value.item.visitTime = dayjs(item.visitTime);
       };
+
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-        resetDrawer();
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = undefined;
+        });
       };
 
       const submit = async () => {

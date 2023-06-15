@@ -42,7 +42,7 @@
       :bordered="true"
       :pagination="pagination"
     >
-      <template #bodyCell="{ column, _text, record }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
@@ -57,6 +57,15 @@
             type="link"
             @click="
               () => {
+                drawerEdit(record);
+              }
+            "
+            >编辑</Button
+          >
+          <Button
+            type="link"
+            @click="
+              () => {
                 deleteOrder(record);
               }
             "
@@ -65,19 +74,16 @@
         </template>
       </template>
     </Table>
-    <Drawer
+    <Modal
+    :mask-closable="false"
       :destroy-on-close="true"
       :title="drawerInfo.title"
-      placement="right"
-      @close="drawerOnClose"
+      @cancel="drawerOnClose"
+      @ok="submit"
+      width="60%"
       :visible="drawerInfo.visible"
     >
-      <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template>
-
-      <Form :labelCol="{ span: 6 }">
+      <Form :labelCol="{ span: 4 }">
         <FormItem label="客户姓名">
           <Select
             :show-search="true"
@@ -179,7 +185,7 @@
           />
         </FormItem>
       </Form>
-    </Drawer>
+    </Modal>
   </PageWrapper>
 </template>
 <script lang="ts">
@@ -190,7 +196,7 @@
     Form,
     Input,
     Button,
-    Drawer,
+    Modal,
     Select,
     InputNumber,
     DatePicker,
@@ -225,7 +231,7 @@
       FormItem,
       Input,
       Button,
-      Drawer,
+      Modal,
       Select,
       SelectOption,
       InputNumber,
@@ -329,6 +335,8 @@
       };
       onMounted(() => {
         customerOrderListReq(1);
+        customerReq();
+        productReq();
       });
 
       const columns: ColumnsType<CustomerOrderInfo> = [
@@ -382,26 +390,15 @@
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新增订单';
         drawerInfo.value.type = 'add';
-        customerReq();
-        productReq();
       };
       const scanOrder = (item: CustomerOrderInfo) => {
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '订单信息';
         drawerInfo.value.type = 'scan';
-
-        drawerInfo.value.item.id = item.id;
-        drawerInfo.value.item.orderAmount = item.orderAmount;
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = item[key]  
+        })
         drawerInfo.value.item.orderDate = dayjs(item.orderDate);
-        drawerInfo.value.item.orderName = item.orderName;
-        drawerInfo.value.item.productId = item.productId;
-        drawerInfo.value.item.customerId = item.customerId;
-        drawerInfo.value.item.remark = item.remark;
-        drawerInfo.value.item.responsiblePerson = item.responsiblePerson;
-        drawerInfo.value.item.orderQuantity = item.orderQuantity;
-
-        customerReq();
-        productReq();
       };
       const deleteOrder = (item: CustomerOrderInfo) => {
         confirm(
@@ -427,9 +424,14 @@
           drawerInfo.value.item[key] = undefined;
         });
       };
-      const drawerEdit = () => {
-        drawerInfo.value.title = '编辑订单信息';
+      const drawerEdit = (item: CustomerOrderInfo) => {
+        drawerInfo.value.title = '编辑订单';
         drawerInfo.value.type = 'edit';
+        drawerInfo.value.visible = true;
+        Object.keys(drawerInfo.value.item).forEach(key => { 
+          drawerInfo.value.item[key] = item[key]  
+        })
+        drawerInfo.value.item.orderDate = dayjs(item.orderDate);
       };
       const submit = async () => {
         let res;
