@@ -102,7 +102,9 @@
 
         <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
       </template> -->
+  
 
+      
       <Form :labelCol="{ span: 4 }">
         <FormItem label="客户姓名">
           <Input
