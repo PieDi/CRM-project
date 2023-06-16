@@ -53,6 +53,24 @@
             "
             >预览</Button
           >
+          <Button
+            type="link"
+            @click="
+              () => {
+                mRecordEdit(record);
+              }
+            "
+            >编辑</Button
+          >
+          <Button
+            type="link"
+            @click="
+              () => {
+                scanRecord(record);
+              }
+            "
+            >查看</Button
+            >
         </template>
       </template>
     </Table>
@@ -221,11 +239,20 @@
       };
       // 编辑
       const mRecordEdit = (item: CustomerContractInfo) => {
-        mRecordDrawerInfo.value.title = '编辑客户病史';
+        mRecordDrawerInfo.value.title = '编辑合同';
         mRecordDrawerInfo.value.type = 'edit';
         mRecordDrawerInfo.value.visible = true;
         Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
           mRecordDrawerInfo.value.item[key] = item[key]
+        })
+      };
+       
+      const scanRecord = (item: CustomerContractInfo) => {
+        mRecordDrawerInfo.value.visible = true;
+        mRecordDrawerInfo.value.title = '合同信息';
+        mRecordDrawerInfo.value.type = 'scan';
+        Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
+          mRecordDrawerInfo.value.item[key] = item[key]  
         })
       };
 
@@ -269,6 +296,7 @@
         mRecordClose,
         mRecordSubmit,
         mRecordEdit,
+        scanRecord,
         mRecordDrawerInfo,
       };
     },
