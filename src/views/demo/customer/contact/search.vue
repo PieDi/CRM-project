@@ -217,7 +217,7 @@
 
       // 新增记录
       const addMHistory = () => {
-        mRecordDrawerInfo.value.title = '新增客户病史';
+        mRecordDrawerInfo.value.title = '新增合同';
         mRecordDrawerInfo.value.visible = true;
         mRecordDrawerInfo.value.type = 'add';
       };
@@ -234,7 +234,6 @@
 
        // 提交
       const mRecordSubmit = (reload: boolean) => {
-        // customerMHListReq(reload ? 1 : pageInfo.value.current);
         mRecordClose();
       };
       // 编辑
@@ -249,7 +248,7 @@
        
       const scanRecord = (item: CustomerContractInfo) => {
         mRecordDrawerInfo.value.visible = true;
-        mRecordDrawerInfo.value.title = '合同信息';
+        mRecordDrawerInfo.value.title = '查看合同';
         mRecordDrawerInfo.value.type = 'scan';
         Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
           mRecordDrawerInfo.value.item[key] = item[key]  
@@ -271,10 +270,7 @@
         },
       });
 
-      
-
-
-
+    
       const downloadContact = (item) => {};
       const previewContact = (item) => {};
 

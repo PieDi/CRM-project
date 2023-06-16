@@ -16,6 +16,7 @@
         ><span>{{ dayjs(item.diseaseBasic.visitDate).format('YYYY-MM-DD') }}</span></div
       >
     </div>
+
     <div style="display: flex">
       <div class="content">
         <div class="item-title">
@@ -33,24 +34,25 @@
                 viewAll(1, item.diseaseBasic.id as number);
               }
             "
-            >查看全部</div
+            >{{ `查看全部(${item.diseaseMedicine?.count || 0})` }}</div
           >
         </div>
         <div class="item-content">
-          <template v-if="item.diseaseMedicine.length">
-            <div v-for="d of item.diseaseMedicine" class="block">
+          <template v-if="item.diseaseMedicine.last">
+            <!-- <div v-for="d of item.diseaseMedicine" class="block"> -->
               <div class="block-content">
                 <div>
                   <div class="content-label">
-                    <span>用药时间:</span>{{ dayjs(d.useDate).format('YYYY-MM-DD') }}</div
+                    <span>用药时间:</span>{{ dayjs(item.diseaseMedicine.last.useDate).format('YYYY-MM-DD') }}</div
                   >
-                  <div class="content-label"> <span>药品名称:</span>{{ d.medicineName }}</div>
+                  <div class="content-label"> <span>药品名称:</span>{{ item.diseaseMedicine.last.medicineName }}</div>
                 </div>
                 <div>
-                  <div class="content-label"><span>用药剂量:</span>{{ d.useDose }}</div>
+                  <div class="content-label"><span>用药剂量:</span>{{ item.diseaseMedicine.last.useDose }}</div>
                 </div>
               </div>
-            </div> </template
+            <!-- </div>  -->
+            </template
           ><div v-else class="block-content">暂无数据</div>
         </div>
       </div>
@@ -70,25 +72,25 @@
                 viewAll(2, item.diseaseBasic.id as number);
               }
             "
-            >查看全部</div
+            >{{ `查看全部(${item.diseaseCheck?.count || 0})` }}</div
           >
         </div>
         <div class="item-content">
-          <template v-if="item.diseaseMedicine.length">
-            <div v-for="d of item.diseaseCheck" class="block">
+          <template v-if="item.diseaseCheck.last">
+            <!-- <div v-for="d of item.diseaseCheck" class="block"> -->
               <div class="block-content">
                 <div>
                   <div class="content-label">
-                    <span>检验时间:</span>{{ dayjs(d.checkDate).format('YYYY-MM-DD') }}</div
+                    <span>检验时间:</span>{{ dayjs(item.diseaseCheck.last.checkDate).format('YYYY-MM-DD') }}</div
                   >
-                  <div class="content-label"> <span>检验机构:</span>{{ d.checkMechanism }}</div>
+                  <div class="content-label"> <span>检验机构:</span>{{ item.diseaseCheck.last.checkMechanism }}</div>
                 </div>
                 <div>
-                  <div class="content-label"><span>检验类型:</span>{{ d.checkType }}</div>
+                  <div class="content-label"><span>检验类型:</span>{{ item.diseaseCheck.last.checkType }}</div>
                 </div>
               </div>
-            </div> </template
-          ><div v-else class="block-content">暂无数据</div>
+            <!-- </div>  -->
+            </template><div v-else class="block-content">暂无数据</div>
         </div>
       </div>
     </div>
@@ -109,27 +111,27 @@
                 viewAll(3, item.diseaseBasic.id as number);
               }
             "
-            >查看全部</div
+            >{{ `查看全部(${item.diseaseImage?.count || 0})` }}</div
           >
         </div>
         <div class="item-content">
-          <template v-if="item.diseaseMedicine.length">
-            <div v-for="d of item.diseaseImage" class="block">
+          <template v-if="item.diseaseImage.last">
+            <!-- <div v-for="d of item.diseaseImage" class="block"> -->
               <div class="block-content">
                 <div>
                   <div class="content-label">
-                    <span>检验时间:</span>{{ dayjs(d.checkDate).format('YYYY-MM-DD') }}</div
+                    <span>检验时间:</span>{{ dayjs(item.diseaseImage.last.checkDate).format('YYYY-MM-DD') }}</div
                   >
-                  <div> <span>检验机构:</span>{{ d.checkMechanism }}</div>
+                  <div> <span>检验机构:</span>{{ item.diseaseImage.last.checkMechanism }}</div>
                 </div>
                 <div>
                   <div class="content-label"
-                    ><span>检验类型:</span>{{ iCheckType[d.checkType as number] }}</div
+                    ><span>检验类型:</span>{{ iCheckType[item.diseaseImage.last.checkType as number] }}</div
                   >
-                  <div class="content-label"><span>检验部位:</span>{{ d.checkPart }}</div>
+                  <div class="content-label"><span>检验部位:</span>{{ item.diseaseImage.last.checkPart }}</div>
                 </div>
-              </div></div
-            >
+              </div>
+              <!-- </div> -->
           </template>
           <div v-else class="block-content">暂无数据</div>
         </div>
@@ -150,26 +152,26 @@
                 viewAll(4, item.diseaseBasic.id as number);
               }
             "
-            >查看全部</div
+            >{{ `查看全部(${item.diseaseConsultation?.count || 0})` }}</div
           >
         </div>
         <div class="item-content">
-          <template v-if="item.diseaseMedicine.length">
-            <div v-for="d of item.diseaseConsultation" class="block">
+          <template v-if="item.diseaseConsultation.last">
+            <!-- <div v-for="d of item.diseaseConsultation" class="block"> -->
               <div class="block-content">
                 <div>
                   <div class="content-label">
-                    <span>会诊日期:</span>{{ dayjs(d.consultationDate).format('YYYY-MM-DD') }}</div
+                    <span>会诊日期:</span>{{ dayjs(item.diseaseConsultation.last.consultationDate).format('YYYY-MM-DD') }}</div
                   >
                   <div class="content-label">
-                    <span>会诊内容:</span>{{ d.consultationContent }}</div
+                    <span>会诊内容:</span>{{ item.diseaseConsultation.last.consultationContent }}</div
                   >
                 </div>
                 <div>
-                  <div class="content-label"><span>会诊专家:</span>{{ d.consultationExpert }}</div>
+                  <div class="content-label"><span>会诊专家:</span>{{ item.diseaseConsultation.last.consultationExpert }}</div>
                 </div>
               </div>
-            </div>
+            <!-- </div> -->
           </template>
           <div v-else class="block-content">暂无数据</div>
         </div>
@@ -219,10 +221,22 @@ import {
         type: Object as PropType<
           Array<{
             diseaseBasic: CustomerMHInfo;
-            diseaseMedicine: Array<CustomerDInfo>;
-            diseaseCheck: Array<CustomerEInfo>;
-            diseaseImage: Array<CustomerIInfo>;
-            diseaseConsultation: Array<CustomerCInfo>;
+            diseaseMedicine: {
+              count: number
+              last: CustomerDInfo
+            };
+            diseaseCheck: {
+              count: number
+              last: CustomerEInfo
+            };
+            diseaseImage: {
+              count: number
+              last: CustomerIInfo
+            };
+            diseaseConsultation: {
+              count: number
+              last: CustomerCInfo
+            };
           }>
         >,
       },

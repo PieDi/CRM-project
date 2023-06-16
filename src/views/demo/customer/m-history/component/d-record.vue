@@ -8,11 +8,6 @@
     :visible="drawerInfo.visible"
     width="60%"
   >
-    <!-- <template #extra>
-      <Button v-if="drawerInfo.type === 'scan'" type="link" @click="edit">编辑</Button>
-      <Button v-if="drawerInfo.type !== 'scan'" type="link" @click="add">新增</Button>
-      <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-    </template> -->
     <div style="overflow: hidden">
       <Button style="float: right" type="link" @click="add">新增</Button>
     </div>
@@ -123,6 +118,7 @@
     saveCustomerD,
     updateCustomerD,
     fileDUpload,
+    fileDDelete,
   } from '/@/api/demo/customer';
   import { CustomerDInfo } from '/@/api/demo/model/customer';
 
@@ -176,6 +172,7 @@
               item.files?.forEach((file, j) => {
                 t.push({
                   uid: j,
+                  id: file.id,
                   name: file.fileName,
                   status: 'done',
                   url: file.path,
@@ -264,7 +261,6 @@
         newFileList.splice(index, 1);
         fileListMap.value[i] = newFileList;
       };
-
       const beforeUpload = (file: File, i: number) => {
         const fileList = fileListMap.value[i];
         //@ts-ignore
@@ -274,11 +270,12 @@
       const filesIdMap = ref<{ [number: string]: number[] }>({});
       const handleUpload = async (i: number) => {
         const fileList = fileListMap.value[i];
+        console.log(345678, fileList)
         if (fileList?.length) {
           const formData = new FormData();
           fileList?.forEach((file) => {
             // @ts-ignore
-            formData.append('files', file);
+            if (!file?.url) formData.append('files', file);
           });
           const res = await fileDUpload(formData);
           if (res) {

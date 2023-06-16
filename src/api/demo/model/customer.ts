@@ -15,10 +15,22 @@ export interface CustomerBoard {
   /*  */ customerBasic: CustomerInfo /*  */;
   diseases: Array<{
     diseaseBasic: CustomerMHInfo;
-    diseaseMedicine: Array<CustomerDInfo>;
-    diseaseCheck: Array<CustomerEInfo>;
-    diseaseImage: Array<CustomerIInfo>;
-    diseaseConsultation: Array<CustomerCInfo>;
+    diseaseMedicine: {
+      count: number;
+      last: CustomerDInfo;
+    };
+    diseaseCheck: {
+      count: number;
+      last: CustomerEInfo;
+    };
+    diseaseImage: {
+      count: number;
+      last: CustomerIInfo;
+    };
+    diseaseConsultation: {
+      count: number;
+      last: CustomerCInfo;
+    };
   }>;
   orders: Array<{
     order: CustomerOrderInfo;
@@ -100,7 +112,10 @@ export interface CustomerDInfo {
   useDate: string | undefined;
   fileIds: number[] | undefined;
   newFiles: any[] | undefined;
-  files: Array<{ fileName: string; path: string }> | undefined;
+  files: Array<{
+    id: number,
+    fileName: string; path: string
+  }> | undefined;
 }
 /**
  * 客户检验
@@ -168,20 +183,17 @@ export interface CustomerOrderInfo {
   status: number | undefined;
 }
 
-
 /**
  * 客户合同查询
  */
 export interface CustomerContractListParams {
   customerName?: string;
   pageNum: number;
-  pageSize:number;
-  id: string | undefined;  // 合同id
-  orderId:string | undefined; // 订单id
-  name:string | undefined ; //合同名称
+  pageSize: number;
+  id: string | undefined; // 合同id
+  orderId: string | undefined; // 订单id
+  name: string | undefined; //合同名称
 }
-
-
 
 /**
  * 客户合同信息
@@ -195,8 +207,8 @@ export interface CustomerContractInfo {
   effectiveStart: number | undefined;
   effectiveEnd: number | undefined;
   description: string | undefined;
-  createUserId:number | undefined;
-  createTime:string | undefined;
+  createUserId: number | undefined;
+  createTime: string | undefined;
 }
 /**
  * 客户发票信息
