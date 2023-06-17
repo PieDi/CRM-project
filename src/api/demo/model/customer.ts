@@ -54,7 +54,7 @@ export interface CustomerInfo {
   sex: number | undefined;
   sourceId: number | undefined;
   tag: string | undefined;
-  files: Array<{ fileName: string; path: string }> | undefined;
+  files: Array<{ id: number,fileName: string; path: string }> | undefined;
 }
 
 export interface CustomerGroupInfo {

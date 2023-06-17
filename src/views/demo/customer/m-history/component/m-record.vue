@@ -56,7 +56,7 @@
           :disabled="drawerInfo.type === 'scan'"
         />
       </FormItem>
-      
+
       <FormItem label="科室">
         <Input
           placeholder="请输入"
@@ -85,7 +85,7 @@
       <FormItem label="附件">
         <Upload
           :file-list="fileList"
-          :before-upload="beforeUpload"
+          :customRequest="uploadAction"
           :disabled="drawerInfo.type === 'scan'"
         >
           <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
@@ -117,21 +117,21 @@
           </template>
         </Upload>
 
-        <Button
+        <!-- <Button
           v-if="drawerInfo.type !== 'scan'"
           @click="handleUpload"
           type="link"
           :loading="uploading"
           >{{ uploading ? '上传中' : '上传' }}</Button
-        >
+        > -->
       </FormItem>
     </Form>
   </Modal>
 </template>
 <script lang="ts">
   import { defineComponent, ref, PropType, onMounted } from 'vue';
-import {
-  Modal,
+  import {
+    Modal,
     Table,
     Form,
     Input,
@@ -146,7 +146,8 @@ import {
     getCustomerList,
     saveCustomerMH,
     updateCustomerMH,
-    fileMHUpload,
+  fileMHUpload,
+  fileMHDelete,
     getCustomerMHDetail,
   } from '/@/api/demo/customer';
   import { CustomerMHInfo, CustomerInfo } from '/@/api/demo/model/customer';
@@ -221,7 +222,9 @@ import {
                   name: file.fileName,
                   status: 'done',
                   url: file.path,
+                  id: file.id
                 });
+                filesId.value.push(null)
               });
               fileList.value = t;
             }
@@ -242,9 +245,9 @@ import {
         emit('drawerOnClose');
       };
       const submit = async () => {
-        if (props.drawerInfo.type === 'scan') { 
-          drawerOnClose()
-          return
+        if (props.drawerInfo.type === 'scan') {
+          drawerOnClose();
+          return;
         }
         if (currentCustomer.value.id) {
           const params = {
@@ -252,7 +255,7 @@ import {
             id: props.drawerInfo.item.id,
             ...mInfo.value,
             visitDate: mInfo.value.visitDate ? mInfo.value.visitDate.valueOf() : undefined,
-            fileIds: filesId.value.length ? filesId.value : undefined,
+            fileIds: filesId.value.filter(id => !!id)
           };
 
           let res;
@@ -274,42 +277,41 @@ import {
       // 文件上传
       const fileList = ref<UploadProps['fileList']>([]);
       const uploading = ref<boolean>(false);
-
-      const handleRemove = (file: any) => {
-        console.log(344444, file)
+      const handleRemove = async (file: any) => {
+        if (file?.url) {
+          const res = await fileMHDelete(file?.id)
+          if(res) message.success('删除成功')
+        }
         //@ts-ignore
         const index = fileList.value.indexOf(file);
         //@ts-ignore
         const newFileList = fileList.value.slice();
         newFileList.splice(index, 1);
         fileList.value = newFileList;
-        if (file.url) { }
+
+        const newFilesId = filesId.value.slice();
+        newFilesId.splice(index, 1);
+        filesId.value = newFilesId
       };
       const handleDownload = async (file: any) => {
         if (file?.url)
-          window.open(`http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`);
+          window.open(
+            `http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`,
+          );
       };
-
-      const beforeUpload: UploadProps['beforeUpload'] = (file) => {
-        //@ts-ignore
-        fileList.value = [...fileList.value, file];
-        return false;
-      };
-      const filesId = ref<number[]>([]);
-      const handleUpload = async () => {
-        if (fileList.value?.length) {
-          const formData = new FormData();
-          fileList.value?.forEach((file) => {
-            // @ts-ignore
-            if (!file?.url) formData.append('files', file);
-          });
-          const res = await fileMHUpload(formData);
-          if (res) {
-            message.success('上传成功');
-            filesId.value = res;
-          }
+      const filesId = ref<any[]>([]);
+      const uploadAction = async (o: any) => {
+        const fileData = new FormData();
+        fileData.append('files', o.file);
+        const res = await fileMHUpload(fileData);
+        if (res) {
+          //@ts-ignore
+          fileList.value = [...fileList.value, o.file];
+          filesId.value.push(res[0])
         }
       };
+      
+
       return {
         drawerInfo: props.drawerInfo,
         customerOnChange,
@@ -322,10 +324,9 @@ import {
         // 文件上传
         fileList,
         uploading,
+        uploadAction,
         handleRemove,
         handleDownload,
-        beforeUpload,
-        handleUpload,
       };
     },
   });

@@ -309,15 +309,17 @@
       ];
 
       // 病史记录
-      const mRecordDrawerInfo = ref<DrawerItemType<any>>({
+      const mRecordDrawerInfo = ref<DrawerItemType<CustomerMHInfo>>({
         visible: false,
         title: '',
         item: {
+          id: undefined,
           departmentName: undefined,
           diseaseName: undefined,
           hospitalName: undefined,
           visitDate: undefined,
           customerId: undefined,
+          remark: undefined
         },
       });
       const mRecordClose = () => {
