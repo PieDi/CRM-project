@@ -8,14 +8,6 @@
     :visible="drawerInfo.visible"
     width="60%"
   >
-    <!-- <template #extra>
-      <Button v-if="drawerInfo.type === 'scan'" type="link" @click="edit">编辑</Button>
-      <Button v-if="drawerInfo.type !== 'scan'" type="link" @click="add">新增</Button>
-      <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-    </template>
-    <template v-if="listInfo.length === 0">
-      <div>{{ `暂时没有相关记录${editAble ? '' : '，请点击编辑后开始新增'}` }} </div>
-    </template> -->
     <div style="overflow: hidden">
       <Button style="float: right" type="link" @click="add">新增</Button>
     </div>
@@ -52,12 +44,12 @@
             <FormItem label="附件">
               <Upload
                 :file-list="fileListMap[i]"
-                :before-upload="
+                :customRequest="
                   (file) => {
-                    beforeUpload(file, i);
-                    return false;
+                    uploadAction(file, i);
                   }
                 "
+                :disabled="drawerInfo.type === 'scan'"
               >
                 <Button>选择</Button>
                 <template #itemRender="{ file }">
@@ -84,16 +76,6 @@
                   </Space>
                 </template>
               </Upload>
-              <Button
-                @click="
-                  () => {
-                    handleUpload(i);
-                  }
-                "
-                type="link"
-                :loading="uploadingMap[i]"
-                >{{ uploadingMap[i] ? '上传中' : '上传' }}</Button
-              >
             </FormItem>
 
             <div style="overflow: hidden; margin-top: -20px">
@@ -131,13 +113,13 @@
   } from 'ant-design-vue';
   import { DeleteOutlined } from '@ant-design/icons-vue';
   import { DrawerItemType } from '/@/views/type';
-  import type { UploadProps } from 'ant-design-vue';
   import dayjs, { Dayjs } from 'dayjs';
   import {
     getCustomerIList,
     saveCustomerI,
     updateCustomerI,
     fileIUpload,
+    fileIDelete,
   } from '/@/api/demo/customer';
   import { CustomerIInfo } from '/@/api/demo/model/customer';
   const FormItem = Form.Item;
@@ -190,6 +172,7 @@
                 files: item.files,
               });
               const t: any[] = [];
+              const p: any[] = [];
               item.files?.forEach((file, j) => {
                 t.push({
                   uid: j,
@@ -197,8 +180,10 @@
                   status: 'done',
                   url: file.path,
                 });
+                p.push(null);
               });
               fileListMap.value[i] = t;
+              filesIdMap.value[i] = p;
             });
             listInfo.value = list;
           }
@@ -225,7 +210,7 @@
             checkPart: item.checkPart,
             checkDate: item.checkDate ? item.checkDate.valueOf() : undefined,
           };
-          const mF = filesIdMap.value[i];
+          const mF = filesIdMap.value[i].filter((id) => !!id);
           // @ts-ignore
           t.fileIds = mF;
           return t;
@@ -268,15 +253,19 @@
         delete fileListMap.value[i];
       };
       // 文件上传
-      const fileListMap = ref<{ [number: string]: UploadProps['fileList'] }>({});
-      const uploadingMap = ref<{ [number: string]: boolean }>({});
+      const fileListMap = ref<{ [number: string]: any }>({});
       const handleDownload = (file: any, i: number) => {
         if (file?.url)
           window.open(
             `http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`,
           );
       };
-      const handleRemove = (file: File, i: number) => {
+      const handleRemove = async (file: any, i: number) => {
+        if (file?.url) {
+          const res = await fileIDelete(file?.id);
+          if (res) message.success('删除成功');
+        }
+
         const fileList = fileListMap.value[i];
         //@ts-ignore
         const index = fileList.indexOf(file);
@@ -284,28 +273,22 @@
         const newFileList = fileList.slice();
         newFileList.splice(index, 1);
         fileListMap.value[i] = newFileList;
+
+        const filesId = filesIdMap.value[i];
+        const newFilesId = filesId.slice();
+        newFilesId.splice(index, 1);
+        filesIdMap.value[i] = newFilesId;
       };
 
-      const beforeUpload = (file: File, i: number) => {
-        const fileList = fileListMap.value[i];
-        //@ts-ignore
-        fileListMap.value[i] = [...fileList, file];
-        return false;
-      };
       const filesIdMap = ref<{ [number: string]: number[] }>({});
-      const handleUpload = async (i: number) => {
-        const fileList = fileListMap.value[i];
-        if (fileList?.length) {
-          const formData = new FormData();
-          fileList?.forEach((file) => {
-            // @ts-ignore
-            formData.append('files', file);
-          });
-          const res = await fileIUpload(formData);
-          if (res) {
-            message.success('上传成功');
-            filesIdMap.value[i] = res;
-          }
+      const uploadAction = async (o: any, i: number) => {
+        const fileData = new FormData();
+        fileData.append('files', o.file);
+        const res = await fileIUpload(fileData);
+        if (res) {
+          const fileList = fileListMap.value[i];
+          fileListMap.value[i] = [...fileList, o.file];
+          filesIdMap.value[i].push(res[0]);
         }
       };
       return {
@@ -319,11 +302,9 @@
         deleteRecord,
         // 文件上传
         fileListMap,
-        uploadingMap,
         handleDownload,
         handleRemove,
-        beforeUpload,
-        handleUpload,
+        uploadAction,
       };
     },
   });
