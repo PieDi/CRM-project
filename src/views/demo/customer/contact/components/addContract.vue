@@ -19,7 +19,7 @@
           <SelectOption v-for="item of dataSource" :value="item.id">{{ item.name }}</SelectOption>
         </Select>
       </FormItem>
-      <FormItem label="订单ID">
+      <FormItem label="订单名称">
         <Select
           :disabled="drawerInfo.type == 'scan'"
           placeholder="请选择"
@@ -118,7 +118,7 @@
           placeholder="请输入"
           allowClear
           :disabled="drawerInfo.type == 'scan'"
-          v-model:value="mInfo.orderId"
+          v-model:value="mInfo.description"
         />
       </FormItem>
     </Form>
@@ -215,14 +215,16 @@
 
       const dataSource = ref<Array<CustomerInfo>>([]);
       const customerReq = async () => {
-        const res = await getCustomerList();
-        if (res) {
-          dataSource.value = res;
+        const res1 = await getCustomerList();
+        if (res1) dataSource.value = res1;
+        if (props.drawerInfo?.item?.customerId) {
+          const res2 = await getCustomerOrderList(undefined, props.drawerInfo?.item?.customerId);
+          if (res2) orderDataSource.value = res2;
         }
       };
       const orderDataSource = ref<Array<CustomerOrderInfo>>([]);
       const customerOnChange = async (value: any) => {
-        mInfo.value.orderId = undefined
+        mInfo.value.orderId = undefined;
         const res = await getCustomerOrderList(undefined, value);
         if (res) orderDataSource.value = res;
       };
@@ -258,6 +260,7 @@
           effectiveEnd: mInfo.value.effectiveEnd ? mInfo.value.effectiveEnd.valueOf() : undefined,
           fileIds: filesId.value.filter((id) => !!id),
         };
+        delete params.customerId;
         let res;
         if (props.drawerInfo.type === 'add') res = await saveCustomerContract(params);
         if (props.drawerInfo.type === 'edit') res = await updateCustomerContract(params);

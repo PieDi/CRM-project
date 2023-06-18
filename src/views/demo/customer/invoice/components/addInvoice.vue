@@ -19,7 +19,7 @@
           <SelectOption v-for="item of dataSource" :value="item.id">{{ item.name }}</SelectOption>
         </Select>
       </FormItem>
-      <FormItem label="订单ID">
+      <FormItem label="订单名称">
         <Select
           :disabled="drawerInfo.type == 'scan'"
           placeholder="请选择"
@@ -116,6 +116,14 @@
           </template>
         </Upload>
       </FormItem>
+      <FormItem label="描述">
+        <InputTextArea
+          placeholder="请输入"
+          allowClear
+          :disabled="drawerInfo.type == 'scan'"
+          v-model:value="mInfo.description"
+        />
+      </FormItem>
     </Form>
   </Modal>
 </template>
@@ -149,6 +157,8 @@
   import dayjs, { Dayjs } from 'dayjs';
   const FormItem = Form.Item;
   const InputTextArea = Input.TextArea;
+  const SelectOption = Select.Option;
+
   export default defineComponent({
     components: {
       Modal,
@@ -163,6 +173,7 @@
       Upload,
       Space,
       InputNumber,
+      SelectOption,
     },
     props: {
       drawerInfo: {
@@ -182,6 +193,7 @@
         amount: number | undefined;
         status: number | undefined;
         invoiceTime: Dayjs | undefined;
+        description: string | undefined;
       }>({
         id: props.drawerInfo.item.id,
         orderId: props.drawerInfo.item.orderId,
@@ -192,6 +204,7 @@
         serial: props.drawerInfo.item.serial,
         amount: props.drawerInfo?.item?.amount,
         status: props.drawerInfo?.item?.status,
+        description: props.drawerInfo?.item?.description,
         invoiceTime: props.drawerInfo?.item?.invoiceTime
           ? dayjs(props.drawerInfo.item.invoiceTime)
           : undefined,
@@ -199,14 +212,16 @@
 
       const dataSource = ref<Array<CustomerInfo>>([]);
       const customerReq = async () => {
-        const res = await getCustomerList();
-        if (res) {
-          dataSource.value = res;
+        const res1 = await getCustomerList();
+        if (res1) dataSource.value = res1;
+        if (props.drawerInfo?.item?.customerId) {
+          const res2 = await getCustomerOrderList(undefined, props.drawerInfo?.item?.customerId);
+          if (res2) orderDataSource.value = res2;
         }
       };
       const orderDataSource = ref<Array<CustomerOrderInfo>>([]);
       const customerOnChange = async (value: any) => {
-        mInfo.value.orderId = undefined
+        mInfo.value.orderId = undefined;
         const res = await getCustomerOrderList(undefined, value);
         if (res) orderDataSource.value = res;
       };
