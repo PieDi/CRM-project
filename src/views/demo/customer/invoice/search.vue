@@ -27,24 +27,6 @@
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
-          <!-- <Button
-            type="link"
-            @click="
-              () => {
-                downloadInvoice(record);
-              }
-            "
-            >下载</Button
-          >
-          <Button
-            type="link"
-            @click="
-              () => {
-                previewInvoice(record);
-              }
-            "
-            >预览</Button
-          > -->
           <Button
             type="link"
             @click="
@@ -172,8 +154,8 @@
           dataIndex: 'number',
         },
         {
-          title: '订单ID',
-          dataIndex: 'orderId',
+          title: '订单名称',
+          dataIndex: 'orderName',
         },
         {
           title: '经手人',
@@ -249,8 +231,10 @@
         visible: false,
         title: '',
         item: {
-          id:  undefined,
-          orderId:  undefined,
+          id: undefined,
+          customerId: undefined,
+          orderId: undefined,
+          orderName: undefined,
           name:  undefined,
           number: undefined,
           serial:  undefined,

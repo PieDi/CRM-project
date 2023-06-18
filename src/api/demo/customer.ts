@@ -162,7 +162,6 @@ export const getCustomerList = (name?: string) =>
     url: Api.CustomerList,
     params: { name },
   });
-
 export const saveCustomer = (params?: CustomerSaveParams) =>
   defHttp.post<any>({ url: Api.SaveCustomer, params });
 
@@ -172,7 +171,7 @@ export const updateCustomer = (params?: CustomerSaveParams) =>
 export const deleteCustomer = (id: string | number) =>
   defHttp.post<any>({ url: Api.DeleteCustomer, params: { id } });
 
-export const getCustomerDetail = (id: string | number) =>
+export const getCustomerDetail = (id: number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerDetail, params: { id } });
 
 export const assignCustomer = (params?: any) =>
@@ -344,10 +343,10 @@ export const getCustomerOrderPage = (params: CustomerOrderListParams) =>
     url: Api.CustomerOrderPage,
     params: { pageSize: 20, ...params },
   });
-export const getCustomerOrderList = (name?: string) =>
+export const getCustomerOrderList = (name?: string, customerId?: number) =>
   defHttp.post<Array<CustomerOrderInfo>>({
     url: Api.CustomerOrderList,
-    params: { name },
+    params: { name, customerId },
   });
 
 export const saveCustomerOrder = (params?: any) =>

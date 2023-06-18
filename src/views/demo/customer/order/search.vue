@@ -10,16 +10,7 @@
             v-model:value="searchInfo.customerName"
           />
         </FormItem>
-        <!-- <FormItem label="负责人" style="margin-left: 10px">
-          <Select
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
-            :style="{ width: '150px' }"
-          >
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
-          </Select>
-        </FormItem> -->
+      
         <FormItem label="订单编号" style="margin-left: 10px">
           <Input
             placeholder="请输入"

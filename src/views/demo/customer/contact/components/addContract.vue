@@ -9,6 +9,27 @@
     width="60%"
   >
     <Form :labelCol="{ span: 4 }">
+      <FormItem label="客户姓名">
+        <Select
+          :disabled="drawerInfo.type == 'scan'"
+          placeholder="请选择"
+          @change="customerOnChange"
+          v-model:value="mInfo.customerId"
+        >
+          <SelectOption v-for="item of dataSource" :value="item.id">{{ item.name }}</SelectOption>
+        </Select>
+      </FormItem>
+      <FormItem label="订单ID">
+        <Select
+          :disabled="drawerInfo.type == 'scan'"
+          placeholder="请选择"
+          v-model:value="mInfo.orderId"
+        >
+          <SelectOption v-for="item of orderDataSource" :value="item.id">{{
+            item.orderName
+          }}</SelectOption>
+        </Select>
+      </FormItem>
       <FormItem label="合同名称">
         <Input
           placeholder="请输入"
@@ -25,15 +46,6 @@
           v-model:value="mInfo.number"
         />
       </FormItem>
-      <FormItem label="订单ID">
-        <Input
-          placeholder="请输入"
-          allowClear
-          :disabled="drawerInfo.type == 'scan'"
-          v-model:value="mInfo.orderId"
-        />
-      </FormItem>
-
       <FormItem label="金额">
         <InputNumber
           placeholder="请输入"
@@ -128,18 +140,24 @@
     InputNumber,
   } from 'ant-design-vue';
   import {
+    getCustomerList,
+    getCustomerOrderList,
     saveCustomerContract,
     updateCustomerContract,
     fileContractUpload,
     fileContractDelete,
   } from '/@/api/demo/customer';
-  import { CustomerContractInfo, CustomerInfo } from '/@/api/demo/model/customer';
+  import {
+    CustomerContractInfo,
+    CustomerInfo,
+    CustomerOrderInfo,
+  } from '/@/api/demo/model/customer';
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
-
   import dayjs, { Dayjs } from 'dayjs';
   const FormItem = Form.Item;
   const InputTextArea = Input.TextArea;
+  const SelectOption = Select.Option;
   export default defineComponent({
     components: {
       Modal,
@@ -149,6 +167,7 @@
       Input,
       Button,
       Select,
+      SelectOption,
       InputTextArea,
       DatePicker,
       Upload,
@@ -168,6 +187,7 @@
         name: string | undefined;
         number: string | undefined;
         price: number | undefined;
+        customerId: number | undefined;
         status: number | undefined;
         signTime: Dayjs | undefined;
         effectiveStart: Dayjs | undefined;
@@ -178,6 +198,7 @@
         orderId: props.drawerInfo?.item?.orderId,
         name: props.drawerInfo?.item?.name,
         number: props.drawerInfo?.item?.number,
+        customerId: props.drawerInfo?.item?.customerId,
         price: props.drawerInfo?.item?.price,
         status: props.drawerInfo?.item?.status,
         signTime: props.drawerInfo?.item?.effectiveStart
@@ -192,17 +213,21 @@
           : undefined,
       });
 
-      //@ts-ignore
-      const currentCustomer = ref<CustomerInfo>({
-        id: undefined,
-        birth: undefined,
-        documentNumber: undefined,
-        documentType: undefined,
-        mobile: undefined,
-        name: undefined,
-        sex: undefined,
-      });
+      const dataSource = ref<Array<CustomerInfo>>([]);
+      const customerReq = async () => {
+        const res = await getCustomerList();
+        if (res) {
+          dataSource.value = res;
+        }
+      };
+      const orderDataSource = ref<Array<CustomerOrderInfo>>([]);
+      const customerOnChange = async (value: any) => {
+        mInfo.value.orderId = undefined
+        const res = await getCustomerOrderList(undefined, value);
+        if (res) orderDataSource.value = res;
+      };
       onMounted(() => {
+        customerReq();
         const t: any[] = [];
         props.drawerInfo?.item?.files?.forEach((f, i) => {
           t.push({
@@ -281,7 +306,6 @@
       };
       return {
         drawerInfo: props.drawerInfo,
-        currentCustomer,
         mInfo,
         drawerOnClose,
         submit,
@@ -290,6 +314,10 @@
         handleRemove,
         handleDownload,
         uploadAction,
+        // 客户信息
+        dataSource,
+        customerOnChange,
+        orderDataSource,
       };
     },
   });
