@@ -227,4 +227,5 @@ export interface CustomerInvoiceInfo {
   agent: string | undefined;
   invoiceTime: number | undefined;
   status: number | undefined;
+  files: Array<{ id: number,fileName: string; path: string }> | undefined;
 }

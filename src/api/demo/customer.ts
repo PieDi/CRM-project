@@ -130,9 +130,9 @@ enum Api {
    */
   CustomerContractPage = '/customer/order/contract/page', // 合同分页查询列表
   CustomerContractList = '/customer/order/contract/list', // 全部合同
-  SaveCustomerContract = '/customer/order/contract/save', // 保存会诊
-  UpdateCustomerContract = '/customer/order/contract/update', // 修改会诊
-  DeleteCustomerContract = '/customer/order/contract/delete', // 删除会诊
+  SaveCustomerContract = '/customer/order/contract/save', // 保存合同
+  UpdateCustomerContract = '/customer/order/contract/update', // 修改合同
+  DeleteCustomerContract = '/customer/order/contract/delete', // 删除合同
   CustomerContractFUpload = '/customer/order/contract/upload', //上传
   CustomerContractFDelete = '/customer/order/contract/removeFile', //删除
 
@@ -142,6 +142,11 @@ enum Api {
    */
   CustomerInvoicePage = '/customer/order/invoice/page', // 合同分页查询列表
   CustomerInvoiceList = '/customer/order/invoice/list', // 全部合同
+  SaveCustomerInvoice = '/customer/order/invoice/save', // 保存合同
+  UpdateCustomerInvoice = '/customer/order/invoice/update', // 修改合同
+  DeleteCustomerInvoice = '/customer/order/invoice/delete', // 删除合同
+  CustomerInvoiceFUpload = '/customer/order/invoice/upload', //上传
+  CustomerInvoiceFDelete = '/customer/order/invoice/removeFile', //删除
 }
 
 /**
@@ -366,14 +371,7 @@ export const columnarCustomerOrder = (type: number) =>
     params: { type },
   });
 
-/**
- * 客户发票
- */
-export const getCustomerInvoicePage = (params: { pageNum?: number; name?: string; id?: string }) =>
-  defHttp.post<{ total: number; pageNum: number; data: CustomerInvoiceInfo[] }>({
-    url: Api.CustomerInvoicePage,
-    params: { pageSize: 20, ...params },
-  });
+
 
 /*
  * 客户合同信息
@@ -402,3 +400,33 @@ export const fileContractUpload = (params: any) =>
 
 export const fileContractDelete = (fileId: number) =>
   defHttp.post<number[]>({ url: Api.CustomerContractFDelete, params: { fileId } });
+
+
+
+
+
+
+  /**
+ * 客户发票
+ */
+export const getCustomerInvoicePage = (params: { pageNum?: number; name?: string; id?: string }) =>
+  defHttp.post<{ total: number; pageNum: number; data: CustomerInvoiceInfo[] }>({
+    url: Api.CustomerInvoicePage,
+    params: { pageSize: 20, ...params },
+});
+
+export const saveCustomerInvoice = (params?: any) =>
+  defHttp.post<any>({ url: Api.SaveCustomerInvoice, params });
+
+export const updateCustomerInvoice = (params?: any) =>
+  defHttp.post<any>({ url: Api.UpdateCustomerInvoice, params });
+
+export const deleteCustomerInvoice= (id: string | number) =>
+  defHttp.post<any>({ url: Api.DeleteCustomerInvoice, params: { id } });
+
+export const fileInvoiceUpload = (params: any) =>
+  defHttp.uploadFile<number[]>({ url: Api.CustomerInvoiceFUpload }, params);
+
+export const fileInvoiceDelete = (fileId: number) =>
+  defHttp.post<number[]>({ url: Api.CustomerInvoiceFDelete, params: { fileId } });
+

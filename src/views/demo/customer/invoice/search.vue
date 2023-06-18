@@ -14,6 +14,7 @@
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
+      <Button type="primary" style="margin-left: 10px" @click="addMHistory">新增发票</Button>
     </div>
 
     <Table
@@ -26,7 +27,7 @@
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
-          <Button
+          <!-- <Button
             type="link"
             @click="
               () => {
@@ -43,10 +44,37 @@
               }
             "
             >预览</Button
+          > -->
+          <Button
+            type="link"
+            @click="
+              () => {
+                mRecordEdit(record);
+              }
+            "
+            >编辑</Button
+          >
+          <Button
+            type="link"
+            @click="
+              () => {
+                scanRecord(record);
+              }
+            "
+            >查看</Button
           >
         </template>
       </template>
     </Table>
+    <template v-if="mRecordDrawerInfo.visible">
+      <m-record
+        :drawer-info="mRecordDrawerInfo"
+        @drawerOnClose="mRecordClose"
+        @edit="mRecordEdit"
+        @submit="mRecordSubmit"
+      >
+      </m-record>
+    </template>
   </PageWrapper>
 </template>
 <script lang="ts">
@@ -63,20 +91,17 @@
     DatePicker,
   } from 'ant-design-vue';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
-  import { PageListInfo } from '/@/views/type';
+  import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { CustomerInvoiceInfo } from '/@/api/demo/model/customer';
   import { getCustomerInvoicePage } from '/@/api/demo/customer';
   import { useRoute } from 'vue-router';
   import dayjs from 'dayjs';
+  import mRecord from './components/addInvoice.vue';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   const TextArea = Input.TextArea;
 
-  const productTypeMap: Record<number, string> = {
-    1: '标准订单',
-    2: '非标订单',
-  };
   export default defineComponent({
     components: {
       PageWrapper,
@@ -91,6 +116,7 @@
       InputNumber,
       DatePicker,
       TextArea,
+      mRecord
     },
     setup() {
       const route = useRoute();
@@ -177,6 +203,65 @@
         },
       ];
 
+       // 新增记录
+       const addMHistory = () => {
+        mRecordDrawerInfo.value.title = '新增合同';
+        mRecordDrawerInfo.value.visible = true;
+        mRecordDrawerInfo.value.type = 'add';
+      };
+
+      // 弹框关闭
+      const mRecordClose = () => {
+        mRecordDrawerInfo.value.title = '';
+        mRecordDrawerInfo.value.visible = false;
+        mRecordDrawerInfo.value.type = undefined;
+        Object.keys(mRecordDrawerInfo.value.item).forEach((key) => {
+          mRecordDrawerInfo.value.item[key] = undefined;
+        });
+      };
+
+      // 提交
+      const mRecordSubmit = (reload: boolean) => {
+        invoiceOrderListReq(reload ? 1 : pageInfo.value.current);
+        mRecordClose();
+      };
+      // 编辑
+      const mRecordEdit = (item: CustomerInvoiceInfo) => {
+        mRecordDrawerInfo.value.title = '编辑发票';
+        mRecordDrawerInfo.value.type = 'edit';
+        mRecordDrawerInfo.value.visible = true;
+        Object.keys(mRecordDrawerInfo.value.item).forEach((key) => {
+          mRecordDrawerInfo.value.item[key] = item[key];
+        });
+      };
+
+      const scanRecord = (item: CustomerInvoiceInfo) => {
+        mRecordDrawerInfo.value.visible = true;
+        mRecordDrawerInfo.value.title = '查看发票';
+        mRecordDrawerInfo.value.type = 'scan';
+        Object.keys(mRecordDrawerInfo.value.item).forEach((key) => {
+          mRecordDrawerInfo.value.item[key] = item[key];
+        });
+      };
+
+      // 记录
+      const mRecordDrawerInfo = ref<DrawerItemType<CustomerInvoiceInfo>>({
+        visible: false,
+        title: '',
+        item: {
+          id:  undefined,
+          orderId:  undefined,
+          name:  undefined,
+          number: undefined,
+          serial:  undefined,
+          amount:  undefined,
+          agent:  undefined,
+          invoiceTime: undefined,
+          status: undefined,
+          files: undefined,
+        },
+      });
+
       const downloadInvoice = (item) => {};
       const previewInvoice = (item) => {};
 
@@ -191,6 +276,13 @@
 
         downloadInvoice,
         previewInvoice,
+        addMHistory,
+        mRecordClose,
+        mRecordSubmit,
+        mRecordEdit,
+        scanRecord,
+        mRecordDrawerInfo,
+
       };
     },
   });
