@@ -55,8 +55,6 @@
       :pagination="pagination"
     >
       <template #bodyCell="{ column, record }">
-    
-
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
@@ -89,7 +87,7 @@
       </template>
     </Table>
     <Modal
-    :mask-closable="false"
+      :mask-closable="false"
       :destroy-on-close="true"
       :title="drawerInfo.title"
       @cancel="drawerOnClose"
@@ -97,14 +95,6 @@
       width="60%"
       :visible="drawerInfo.visible"
     >
-      <!-- <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="drawerEdit">编辑</Button>
-
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template> -->
-  
-
-      
       <Form :labelCol="{ span: 4 }">
         <FormItem label="客户姓名">
           <Input
@@ -256,6 +246,7 @@
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import {
     getCustomerPage,
+    getCustomerDetail,
     saveCustomer,
     updateCustomer,
     deleteCustomer,
@@ -421,14 +412,17 @@
         drawerInfo.value.title = '新增客户';
         drawerInfo.value.type = 'add';
       };
-      const drawerEdit = (item: CustomerInfo) => {
-        drawerInfo.value.visible = true;
-        drawerInfo.value.title = '编辑客户信息';
-        drawerInfo.value.type = 'edit';
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = item[key]
-        })
-        if (item.birth) datePickerValue.value = dayjs(item.birth, 'YYYY-MM-DD');
+      const drawerEdit = async (item: CustomerInfo) => {
+        const res = await getCustomerDetail(item.id as number);
+        if (res) {
+          drawerInfo.value.visible = true;
+          drawerInfo.value.title = '编辑客户信息';
+          drawerInfo.value.type = 'edit';
+          Object.keys(drawerInfo.value.item).forEach((key) => {
+            drawerInfo.value.item[key] = res[key];
+          });
+          if (item.birth) datePickerValue.value = dayjs(res.birth, 'YYYY-MM-DD');
+        }
       };
       const deleteAction = (item: CustomerInfo) => {
         confirm(

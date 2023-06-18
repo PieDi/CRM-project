@@ -9,6 +9,27 @@
     width="60%"
   >
     <Form :labelCol="{ span: 4 }">
+      <FormItem label="客户姓名">
+        <Select
+          :disabled="drawerInfo.type == 'scan'"
+          placeholder="请选择"
+          @change="customerOnChange"
+          v-model:value="mInfo.customerId"
+        >
+          <SelectOption v-for="item of dataSource" :value="item.id">{{ item.name }}</SelectOption>
+        </Select>
+      </FormItem>
+      <FormItem label="订单ID">
+        <Select
+          :disabled="drawerInfo.type == 'scan'"
+          placeholder="请选择"
+          v-model:value="mInfo.orderId"
+        >
+          <SelectOption v-for="item of orderDataSource" :value="item.id">{{
+            item.orderName
+          }}</SelectOption>
+        </Select>
+      </FormItem>
       <FormItem label="发票名称">
         <Input
           placeholder="请输入"
@@ -25,14 +46,6 @@
           v-model:value="mInfo.number"
         />
       </FormItem>
-      <FormItem label="订单ID">
-        <Input
-          placeholder="请输入"
-          allowClear
-          :disabled="drawerInfo.type == 'scan'"
-          v-model:value="mInfo.orderId"
-        />
-      </FormItem>
 
       <FormItem label="经手人">
         <Input
@@ -42,7 +55,6 @@
           v-model:value="mInfo.agent"
         />
       </FormItem>
-
 
       <FormItem label="金额">
         <InputNumber
@@ -123,12 +135,14 @@
     InputNumber,
   } from 'ant-design-vue';
   import {
+    getCustomerList,
+    getCustomerOrderList,
     saveCustomerInvoice,
     updateCustomerInvoice,
     fileInvoiceUpload,
     fileInvoiceDelete,
   } from '/@/api/demo/customer';
-  import { CustomerInvoiceInfo, CustomerInfo } from '/@/api/demo/model/customer';
+  import { CustomerInvoiceInfo, CustomerInfo, CustomerOrderInfo } from '/@/api/demo/model/customer';
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
 
@@ -160,6 +174,7 @@
       const mInfo = ref<{
         id?: number | undefined;
         orderId: number | undefined;
+        customerId: number | undefined;
         name: string | undefined;
         number: string | undefined;
         agent: string | undefined;
@@ -169,11 +184,12 @@
         invoiceTime: Dayjs | undefined;
       }>({
         id: props.drawerInfo.item.id,
-        orderId:props.drawerInfo.item.orderId,
+        orderId: props.drawerInfo.item.orderId,
+        customerId: props.drawerInfo?.item?.customerId,
         name: props.drawerInfo?.item?.name,
         number: props.drawerInfo?.item?.number,
-        agent:props.drawerInfo.item.agent,
-        serial:props.drawerInfo.item.serial,
+        agent: props.drawerInfo.item.agent,
+        serial: props.drawerInfo.item.serial,
         amount: props.drawerInfo?.item?.amount,
         status: props.drawerInfo?.item?.status,
         invoiceTime: props.drawerInfo?.item?.invoiceTime
@@ -181,28 +197,21 @@
           : undefined,
       });
 
-      const stateList = [
-        {
-          id:1,
-          value:"待确认"
-        },
-        {
-          id:2,
-          value:"已确认"
+      const dataSource = ref<Array<CustomerInfo>>([]);
+      const customerReq = async () => {
+        const res = await getCustomerList();
+        if (res) {
+          dataSource.value = res;
         }
-      ]
-
-      //@ts-ignore
-      const currentCustomer = ref<CustomerInfo>({
-        id: undefined,
-        birth: undefined,
-        documentNumber: undefined,
-        documentType: undefined,
-        mobile: undefined,
-        name: undefined,
-        sex: undefined,
-      });
+      };
+      const orderDataSource = ref<Array<CustomerOrderInfo>>([]);
+      const customerOnChange = async (value: any) => {
+        mInfo.value.orderId = undefined
+        const res = await getCustomerOrderList(undefined, value);
+        if (res) orderDataSource.value = res;
+      };
       onMounted(() => {
+        customerReq();
         const t: any[] = [];
         props.drawerInfo?.item?.files?.forEach((f, i) => {
           t.push({
@@ -277,7 +286,6 @@
       };
       return {
         drawerInfo: props.drawerInfo,
-        currentCustomer,
         mInfo,
         drawerOnClose,
         submit,
@@ -286,7 +294,10 @@
         handleRemove,
         handleDownload,
         uploadAction,
-        stateList,
+        // 客户信息
+        dataSource,
+        customerOnChange,
+        orderDataSource,
       };
     },
   });

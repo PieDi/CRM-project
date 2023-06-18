@@ -201,9 +201,11 @@ export interface CustomerContractListParams {
  */
 export interface CustomerContractInfo {
   id?: number | undefined;
+  customerId: number | undefined;
   orderId: string | undefined;
   name: string | undefined;
   number: string | undefined;
+  orderName: string | undefined;
   price: number | undefined;
   status: number | undefined;
   signTime:number | undefined;
@@ -220,6 +222,8 @@ export interface CustomerContractInfo {
 export interface CustomerInvoiceInfo {
   id: number | undefined;
   orderId: number | undefined;
+  orderName: string | undefined;
+  customerId: number | undefined;
   name: string | undefined;
   number: string | undefined;
   serial: string | undefined;
