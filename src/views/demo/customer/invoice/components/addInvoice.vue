@@ -69,13 +69,6 @@
           :disabled="drawerInfo.type === 'scan'"
         />
       </FormItem>
-
-      <FormItem label="发票状态">
-        
-          
-            
-       </FormItem>
-
       <FormItem label="附件">
         <Upload
           :file-list="fileList"
