@@ -130,6 +130,12 @@ enum Api {
    */
   CustomerContractPage = '/customer/order/contract/page', // 合同分页查询列表
   CustomerContractList = '/customer/order/contract/list', // 全部合同
+  SaveCustomerContract = '/customer/order/contract/save', // 保存会诊
+  UpdateCustomerContract = '/customer/order/contract/update', // 修改会诊
+  DeleteCustomerContract = '/customer/order/contract/delete', // 删除会诊
+  CustomerContractFUpload = '/customer/order/contract/upload', //上传
+  CustomerContractFDelete = '/customer/order/contract/removeFile', //删除
+
   /**
    * 客户发票管理
    *
@@ -377,14 +383,22 @@ export const getCustomerContractPage = (params: { pageNum?: number; name?: strin
     url: Api.CustomerContractPage,
     params: { pageSize: 20, ...params },
   });
-// defHttp.post<{ total: number; pageNum: number; data: CustomerContractInfo[] }>({
-//   url: Api.CustomerContractPage,
-//   // params: { pageSize: 20, ...params },
-//   params:{params},
-// });
-
 export const getCustomerContractList = (name?: string) =>
   defHttp.post<Array<CustomerContractInfo>>({
     url: Api.CustomerContractList,
     params: { name },
   });
+export const saveCustomerContract = (params?: any) =>
+  defHttp.post<any>({ url: Api.SaveCustomerContract, params });
+
+export const updateCustomerContract = (params?: any) =>
+  defHttp.post<any>({ url: Api.UpdateCustomerContract, params });
+
+export const deleteCustomerContract = (id: string | number) =>
+  defHttp.post<any>({ url: Api.DeleteCustomerContract, params: { id } });
+
+export const fileContractUpload = (params: any) =>
+  defHttp.uploadFile<number[]>({ url: Api.CustomerContractFUpload }, params);
+
+export const fileContractDelete = (fileId: number) =>
+  defHttp.post<number[]>({ url: Api.CustomerContractFDelete, params: { fileId } });

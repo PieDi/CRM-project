@@ -116,14 +116,6 @@
             </Space>
           </template>
         </Upload>
-
-        <!-- <Button
-          v-if="drawerInfo.type !== 'scan'"
-          @click="handleUpload"
-          type="link"
-          :loading="uploading"
-          >{{ uploading ? '上传中' : '上传' }}</Button
-        > -->
       </FormItem>
     </Form>
   </Modal>
@@ -269,14 +261,8 @@
           }
         }
       };
-      const edit = () => {
-        // 编辑附件时  视为准备重新上传附件
-        fileList.value = [];
-        emit('edit');
-      };
       // 文件上传
       const fileList = ref<UploadProps['fileList']>([]);
-      const uploading = ref<boolean>(false);
       const handleRemove = async (file: any) => {
         if (file?.url) {
           const res = await fileMHDelete(file?.id)
@@ -320,10 +306,8 @@
         dataSource,
         drawerOnClose,
         submit,
-        edit,
         // 文件上传
         fileList,
-        uploading,
         uploadAction,
         handleRemove,
         handleDownload,
