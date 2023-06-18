@@ -114,7 +114,8 @@ export interface CustomerDInfo {
   newFiles: any[] | undefined;
   files: Array<{
     id: number,
-    fileName: string; path: string
+    fileName: string;
+    path: string
   }> | undefined;
 }
 /**
@@ -127,7 +128,7 @@ export interface CustomerEInfo {
   checkType: string | undefined;
   checkDate: number | undefined;
   fileIds: number[] | undefined;
-  files: Array<{ fileName: string; path: string }> | undefined;
+  files: Array<{ id: number, fileName: string; path: string }> | undefined;
 }
 /**
  * 客户影像
@@ -140,7 +141,7 @@ export interface CustomerIInfo {
   checkDate: number | undefined;
   checkPart: string | undefined;
   fileIds: number[] | undefined;
-  files: Array<{ fileName: string; path: string }> | undefined;
+  files: Array<{ id: number, fileName: string; path: string }> | undefined;
 }
 /**
  * 客户会诊
@@ -152,7 +153,7 @@ export interface CustomerCInfo {
   consultationExpert: string | undefined;
   consultationDate: number | undefined;
   fileIds: number[] | undefined;
-  files: Array<{ fileName: string; path: string }> | undefined;
+  files: Array<{ id: number,fileName: string; path: string }> | undefined;
 }
 
 /**
@@ -199,16 +200,19 @@ export interface CustomerContractListParams {
  * 客户合同信息
  */
 export interface CustomerContractInfo {
-  id: number | undefined;
-  orderId: number | undefined;
+  id?: number | undefined;
+  orderId: string | undefined;
   name: string | undefined;
-  firstParty: string | undefined;
-  secondParty: string | undefined;
+  number: string | undefined;
+  price: number | undefined;
+  status: number | undefined;
+  signTime:number | undefined;
   effectiveStart: number | undefined;
   effectiveEnd: number | undefined;
   description: string | undefined;
-  createUserId: number | undefined;
-  createTime: string | undefined;
+  firstParty?: string | undefined;
+  secondParty?: string | undefined;
+  files: Array<{ id: number,fileName: string; path: string }> | undefined;
 }
 /**
  * 客户发票信息

@@ -3,26 +3,17 @@
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="合同名称">
-          <Input 
-          placeholder="请输入"
-           allowClear 
-           :style="{ width: '150px' }"
-           v-model:value="searchInfo.name" 
-           />
+          <Input
+            placeholder="请输入"
+            allowClear
+            :style="{ width: '150px' }"
+            v-model:value="searchInfo.name"
+          />
         </FormItem>
-        <!-- <FormItem label="客户姓名" style="margin-left: 10px">
-          <Input 
-          placeholder="请输入"
-           allowClear 
-           :style="{ width: '150px' }" 
-           v-model:value="searchInfo.customerName"
-           />
-        </FormItem> -->
-          <Button type="primary" style="margin-left: 10px" @click="resetAction" >重置</Button>
-          <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
-        </div>
-        <Button type="primary" style="margin-left: 10px" @click="addMHistory">新增合同</Button>
-
+        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
+        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
+      </div>
+      <Button type="primary" style="margin-left: 10px" @click="addMHistory">新增合同</Button>
     </div>
 
     <Table
@@ -35,7 +26,7 @@
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
-          <Button
+          <!-- <Button
             type="link"
             @click="
               () => {
@@ -52,7 +43,7 @@
               }
             "
             >预览</Button
-          >
+          > -->
           <Button
             type="link"
             @click="
@@ -70,7 +61,7 @@
               }
             "
             >查看</Button
-            >
+          >
         </template>
       </template>
     </Table>
@@ -88,32 +79,22 @@
 
 <script lang="ts">
   import { type ColumnsType } from 'ant-design-vue/lib/table';
-  import { defineComponent, ref ,onMounted, computed} from 'vue';
+  import { defineComponent, ref, onMounted, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { CustomerContractInfo } from '/@/api/demo/model/customer';
-  import {getCustomerContractPage} from '/@/api/demo/customer';
+  import { getCustomerContractPage } from '/@/api/demo/customer';
   import { useRoute } from 'vue-router';
-  
   import dayjs from 'dayjs';
-
   import mRecord from './components/addContract.vue';
-
-
   import {
     Table,
     Form,
     Input,
     Button,
-    Drawer,
-    Select,
-    InputNumber,
-    DatePicker,
   } from 'ant-design-vue';
 
   const FormItem = Form.Item;
-  const SelectOption = Select.Option;
-  const TextArea = Input.TextArea;
   export default defineComponent({
     components: {
       PageWrapper,
@@ -122,12 +103,6 @@
       FormItem,
       Input,
       Button,
-      Drawer,
-      Select,
-      SelectOption,
-      InputNumber,
-      DatePicker,
-      TextArea,
       mRecord,
     },
     setup() {
@@ -154,15 +129,13 @@
       const customerOrderListReq = async (pageNum: number) => {
         const res = await getCustomerContractPage({
           ...searchInfo.value,
-          pageNum:pageNum,
+          pageNum: pageNum,
           id: route?.query.id as string,
         });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
           pageInfo.value.dataSource = res.data;
-
-          console.log(res.data);
         }
       };
       const resetAction = () => {
@@ -173,9 +146,7 @@
         customerOrderListReq(1);
       };
 
-      const addCustomer = ()  => {
-
-      };
+      const addCustomer = () => {};
 
       onMounted(() => {
         customerOrderListReq(1);
@@ -188,26 +159,31 @@
           dataIndex: 'name',
         },
         {
+          title: '合同编号',
+          dataIndex: 'number',
+        },
+        {
           title: '订单ID',
           dataIndex: 'orderId',
         },
         {
-          title: '甲方',
-          dataIndex: 'firstParty'
-        },
-        {
-          title: '乙方',
-          dataIndex: 'secondParty'
+          title: '金额',
+          dataIndex: 'price',
         },
         {
           title: '生效时间',
           dataIndex: 'effectiveStart',
-          customRender: (state) => dayjs(state.record.effectiveStart).format('YYYY-MM-DD HH:mm:ss')
+          customRender: (state) => dayjs(state.record.effectiveStart).format('YYYY-MM-DD HH:mm:ss'),
         },
         {
           title: '截止时间',
           dataIndex: 'effectiveEnd',
-          customRender: (state) => dayjs(state.record.effectiveEnd).format('YYYY-MM-DD HH:mm:ss')
+          customRender: (state) => dayjs(state.record.effectiveEnd).format('YYYY-MM-DD HH:mm:ss'),
+        },
+        {
+          title: '签约时间',
+          dataIndex: 'effectiveEnd',
+          customRender: (state) => dayjs(state.record.signTime).format('YYYY-MM-DD HH:mm:ss'),
         },
         {
           title: '操作',
@@ -227,13 +203,14 @@
         mRecordDrawerInfo.value.title = '';
         mRecordDrawerInfo.value.visible = false;
         mRecordDrawerInfo.value.type = undefined;
-        Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
-          mRecordDrawerInfo.value.item[key] = undefined
-        })
+        Object.keys(mRecordDrawerInfo.value.item).forEach((key) => {
+          mRecordDrawerInfo.value.item[key] = undefined;
+        });
       };
 
-       // 提交
+      // 提交
       const mRecordSubmit = (reload: boolean) => {
+        customerOrderListReq(reload ? 1 : pageInfo.value.current);
         mRecordClose();
       };
       // 编辑
@@ -241,45 +218,48 @@
         mRecordDrawerInfo.value.title = '编辑合同';
         mRecordDrawerInfo.value.type = 'edit';
         mRecordDrawerInfo.value.visible = true;
-        Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
-          mRecordDrawerInfo.value.item[key] = item[key]
-        })
+        Object.keys(mRecordDrawerInfo.value.item).forEach((key) => {
+          mRecordDrawerInfo.value.item[key] = item[key];
+        });
       };
-       
+
       const scanRecord = (item: CustomerContractInfo) => {
         mRecordDrawerInfo.value.visible = true;
         mRecordDrawerInfo.value.title = '查看合同';
         mRecordDrawerInfo.value.type = 'scan';
-        Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
-          mRecordDrawerInfo.value.item[key] = item[key]  
-        })
+        Object.keys(mRecordDrawerInfo.value.item).forEach((key) => {
+          mRecordDrawerInfo.value.item[key] = item[key];
+        });
       };
 
-
       // 记录
-      const mRecordDrawerInfo = ref<DrawerItemType<any>>({
+      const mRecordDrawerInfo = ref<DrawerItemType<CustomerContractInfo>>({
         visible: false,
         title: '',
         item: {
-          name:  undefined,
-          firstParty:  undefined,
-          secondParty:  undefined,
-          effectiveStart:  undefined,
-          effectiveEnd:  undefined,
+          id: undefined,
           orderId: undefined,
+          name: undefined,
+          number: undefined,
+          price: undefined,
+          status: undefined,
+          signTime: undefined,
+          description: undefined,
+          effectiveStart: undefined,
+          effectiveEnd: undefined,
+          files: undefined
         },
       });
 
-    
-      const downloadContact = (item) => {};
-      const previewContact = (item) => {};
+      // const downloadContact = (item) => {};
+      // const previewContact = (item) => {};
 
       return {
         columns,
         pagination,
         showGoBack: !!route?.query.id,
-        downloadContact,
-        previewContact,
+        // downloadContact,
+        // previewContact,
         pageInfo,
         customerOrderListReq,
         resetAction,
@@ -288,7 +268,6 @@
         searchInfo,
         addMHistory,
         addCustomer,
-
         mRecordClose,
         mRecordSubmit,
         mRecordEdit,
