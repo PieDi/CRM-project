@@ -21,6 +21,7 @@
       <div class="content">
         <div class="item-title">
           <div
+            class="record-title"
             @click="
               () => {
                 linkClick(item.diseaseBasic.id as number);
@@ -39,26 +40,29 @@
         </div>
         <div class="item-content">
           <template v-if="item.diseaseMedicine.last">
-            <!-- <div v-for="d of item.diseaseMedicine" class="block"> -->
-              <div class="block-content">
-                <div>
-                  <div class="content-label">
-                    <span>用药时间:</span>{{ dayjs(item.diseaseMedicine.last.useDate).format('YYYY-MM-DD') }}</div
-                  >
-                  <div class="content-label"> <span>药品名称:</span>{{ item.diseaseMedicine.last.medicineName }}</div>
-                </div>
-                <div>
-                  <div class="content-label"><span>用药剂量:</span>{{ item.diseaseMedicine.last.useDose }}</div>
-                </div>
+            <div class="block-content">
+              <div>
+                <div class="content-label">
+                  <span>用药时间:</span
+                  >{{ dayjs(item.diseaseMedicine.last.useDate).format('YYYY-MM-DD') }}</div
+                >
+                <div class="content-label">
+                  <span>药品名称:</span>{{ item.diseaseMedicine.last.medicineName }}</div
+                >
               </div>
-            <!-- </div>  -->
-            </template
+              <div>
+                <div class="content-label"
+                  ><span>用药剂量:</span>{{ item.diseaseMedicine.last.useDose }}</div
+                >
+              </div>
+            </div> </template
           ><div v-else class="block-content">暂无数据</div>
         </div>
       </div>
       <div class="content">
         <div class="item-title">
           <div
+            class="record-title"
             @click="
               () => {
                 linkClick(item.diseaseBasic.id as number);
@@ -77,20 +81,23 @@
         </div>
         <div class="item-content">
           <template v-if="item.diseaseCheck.last">
-            <!-- <div v-for="d of item.diseaseCheck" class="block"> -->
-              <div class="block-content">
-                <div>
-                  <div class="content-label">
-                    <span>检验时间:</span>{{ dayjs(item.diseaseCheck.last.checkDate).format('YYYY-MM-DD') }}</div
-                  >
-                  <div class="content-label"> <span>检验机构:</span>{{ item.diseaseCheck.last.checkMechanism }}</div>
-                </div>
-                <div>
-                  <div class="content-label"><span>检验类型:</span>{{ item.diseaseCheck.last.checkType }}</div>
-                </div>
+            <div class="block-content">
+              <div>
+                <div class="content-label">
+                  <span>检验时间:</span
+                  >{{ dayjs(item.diseaseCheck.last.checkDate).format('YYYY-MM-DD') }}</div
+                >
+                <div class="content-label">
+                  <span>检验机构:</span>{{ item.diseaseCheck.last.checkMechanism }}</div
+                >
               </div>
-            <!-- </div>  -->
-            </template><div v-else class="block-content">暂无数据</div>
+              <div>
+                <div class="content-label"
+                  ><span>检验类型:</span>{{ item.diseaseCheck.last.checkType }}</div
+                >
+              </div>
+            </div> </template
+          ><div v-else class="block-content">暂无数据</div>
         </div>
       </div>
     </div>
@@ -98,6 +105,7 @@
       <div class="content">
         <div class="item-title">
           <div
+            class="record-title"
             @click="
               () => {
                 linkClick(item.diseaseBasic.id as number);
@@ -116,22 +124,24 @@
         </div>
         <div class="item-content">
           <template v-if="item.diseaseImage.last">
-            <!-- <div v-for="d of item.diseaseImage" class="block"> -->
-              <div class="block-content">
-                <div>
-                  <div class="content-label">
-                    <span>检验时间:</span>{{ dayjs(item.diseaseImage.last.checkDate).format('YYYY-MM-DD') }}</div
-                  >
-                  <div> <span>检验机构:</span>{{ item.diseaseImage.last.checkMechanism }}</div>
-                </div>
-                <div>
-                  <div class="content-label"
-                    ><span>检验类型:</span>{{ iCheckType[item.diseaseImage.last.checkType as number] }}</div
-                  >
-                  <div class="content-label"><span>检验部位:</span>{{ item.diseaseImage.last.checkPart }}</div>
-                </div>
+            <div class="block-content">
+              <div>
+                <div class="content-label">
+                  <span>检验时间:</span
+                  >{{ dayjs(item.diseaseImage.last.checkDate).format('YYYY-MM-DD') }}</div
+                >
+                <div> <span>检验机构:</span>{{ item.diseaseImage.last.checkMechanism }}</div>
               </div>
-              <!-- </div> -->
+              <div>
+                <div class="content-label"
+                  ><span>检验类型:</span
+                  >{{ iCheckType[item.diseaseImage.last.checkType as number] }}</div
+                >
+                <div class="content-label"
+                  ><span>检验部位:</span>{{ item.diseaseImage.last.checkPart }}</div
+                >
+              </div>
+            </div>
           </template>
           <div v-else class="block-content">暂无数据</div>
         </div>
@@ -139,6 +149,7 @@
       <div class="content">
         <div class="item-title">
           <div
+            class="record-title"
             @click="
               () => {
                 linkClick(item.diseaseBasic.id as number);
@@ -157,21 +168,24 @@
         </div>
         <div class="item-content">
           <template v-if="item.diseaseConsultation.last">
-            <!-- <div v-for="d of item.diseaseConsultation" class="block"> -->
-              <div class="block-content">
-                <div>
-                  <div class="content-label">
-                    <span>会诊日期:</span>{{ dayjs(item.diseaseConsultation.last.consultationDate).format('YYYY-MM-DD') }}</div
-                  >
-                  <div class="content-label">
-                    <span>会诊内容:</span>{{ item.diseaseConsultation.last.consultationContent }}</div
-                  >
-                </div>
-                <div>
-                  <div class="content-label"><span>会诊专家:</span>{{ item.diseaseConsultation.last.consultationExpert }}</div>
-                </div>
+            <div class="block-content">
+              <div>
+                <div class="content-label">
+                  <span>会诊日期:</span
+                  >{{
+                    dayjs(item.diseaseConsultation.last.consultationDate).format('YYYY-MM-DD')
+                  }}</div
+                >
+                <div class="content-label">
+                  <span>会诊内容:</span>{{ item.diseaseConsultation.last.consultationContent }}</div
+                >
               </div>
-            <!-- </div> -->
+              <div>
+                <div class="content-label"
+                  ><span>会诊专家:</span>{{ item.diseaseConsultation.last.consultationExpert }}</div
+                >
+              </div>
+            </div>
           </template>
           <div v-else class="block-content">暂无数据</div>
         </div>
@@ -190,14 +204,14 @@
     CustomerEInfo,
     CustomerIInfo,
     CustomerCInfo,
-} from '/@/api/demo/model/customer';
-import {
-  getCustomerDList,
-  getCustomerEList,
-  getCustomerIList,
-    getCustomerCList
+  } from '/@/api/demo/model/customer';
+  import {
+    getCustomerDList,
+    getCustomerEList,
+    getCustomerIList,
+    getCustomerCList,
   } from '/@/api/demo/customer';
-  
+
   import ItemTable from './item-table.vue';
   import { useRouter } from 'vue-router';
 
@@ -222,20 +236,20 @@ import {
           Array<{
             diseaseBasic: CustomerMHInfo;
             diseaseMedicine: {
-              count: number
-              last: CustomerDInfo
+              count: number;
+              last: CustomerDInfo;
             };
             diseaseCheck: {
-              count: number
-              last: CustomerEInfo
+              count: number;
+              last: CustomerEInfo;
             };
             diseaseImage: {
-              count: number
-              last: CustomerIInfo
+              count: number;
+              last: CustomerIInfo;
             };
             diseaseConsultation: {
-              count: number
-              last: CustomerCInfo
+              count: number;
+              last: CustomerCInfo;
             };
           }>
         >,
@@ -252,12 +266,12 @@ import {
         visible: boolean;
         title: string;
       }>({ title: '', visible: false, dataSource: [], columns: [] });
-      const viewAll = async (type: number,diseaseId: number) => {
+      const viewAll = async (type: number, diseaseId: number) => {
         modalConfig.visible = true;
-        let res 
+        let res;
         switch (type) {
           case 1:
-            res = await getCustomerDList(diseaseId)
+            res = await getCustomerDList(diseaseId);
             modalConfig.title = '用药记录';
             modalConfig.columns = [
               {
@@ -276,7 +290,7 @@ import {
             ];
             break;
           case 2:
-          res = await getCustomerEList(diseaseId)
+            res = await getCustomerEList(diseaseId);
             modalConfig.title = '检验记录';
             modalConfig.columns = [
               {
@@ -296,7 +310,7 @@ import {
             ];
             break;
           case 3:
-          res = await getCustomerIList(diseaseId)
+            res = await getCustomerIList(diseaseId);
             modalConfig.title = '影像记录';
             modalConfig.columns = [
               {
@@ -322,7 +336,7 @@ import {
             ];
             break;
           case 4:
-          res = await getCustomerCList(diseaseId)
+            res = await getCustomerCList(diseaseId);
             modalConfig.title = '就诊记录';
             modalConfig.columns = [
               {
@@ -344,7 +358,7 @@ import {
           default:
             break;
         }
-        if (res) modalConfig.dataSource = res
+        if (res) modalConfig.dataSource = res;
       };
       const modalClose = () => {
         modalConfig.title = '';
@@ -376,7 +390,7 @@ import {
       display: flex;
     }
     .content {
-      width: 50%;
+      width: calc(50% - 20px);
       padding: 10px;
       padding-left: 0;
       .item-title {
@@ -385,6 +399,9 @@ import {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        .record-title {
+          color: #00fffa;
+        }
       }
       .item-content {
         height: 110px;
@@ -407,6 +424,9 @@ import {
           margin-top: 8px;
         }
       }
+    }
+    .content + .content {
+      margin-left: 40px;
     }
   }
 </style>
