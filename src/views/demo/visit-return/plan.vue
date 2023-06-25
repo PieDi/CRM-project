@@ -191,10 +191,14 @@
         {
           title: '标题',
           dataIndex: 'title',
+          width: 120,
+          ellipsis: true
         },
         {
           title: '回访项目',
           dataIndex: 'item',
+          width: 120,
+          ellipsis: true
         },
         {
           title: '回访类型',

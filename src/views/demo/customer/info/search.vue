@@ -128,6 +128,7 @@
           <Select
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
+            @change="documentChange"
             v-model:value="drawerInfo.item.documentType"
           >
             <SelectOption :key="1">身份证</SelectOption>
@@ -143,6 +144,7 @@
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
             allowClear
+            @change="documentChange"
             v-model:value="drawerInfo.item.documentNumber"
           />
         </FormItem>
@@ -464,7 +466,14 @@
           drawerOnClose();
         }
       };
-
+      const documentChange = () => {
+        if (drawerInfo.value.item.documentType === 1 && drawerInfo.value.item.documentNumber?.length === 18) {
+          const t = drawerInfo.value.item.documentNumber.slice(6, 14)
+          datePickerValue.value = dayjs(t, 'YYYYMMDD');
+          drawerInfo.value.item.birth = datePickerValue.value.format('YYYY-MM-DD')
+          drawerInfo.value.item.age = dayjs().year() - Number(t.slice(0, 4))
+        }
+      }
       return {
         columns,
         pagination,
@@ -482,6 +491,7 @@
         submit,
         customerGroupList,
         customerSourceList,
+        documentChange
       };
     },
   });
