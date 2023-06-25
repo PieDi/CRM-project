@@ -193,7 +193,7 @@
             consultationExpert: item.consultationExpert,
             consultationDate: item.consultationDate ? item.consultationDate.valueOf() : undefined,
           };
-          const mF = filesIdMap.value[i].filter((id) => !!id);
+          const mF = filesIdMap.value[i]?.filter((id) => !!id);
           // @ts-ignore
           t.fileIds = mF;
           return t;
@@ -223,6 +223,7 @@
       };
       const add = () => {
         fileListMap.value[listInfo.value.length] = [];
+        filesIdMap.value[listInfo.value.length] = [];
         listInfo.value.push({
           id: undefined,
           consultationContent: undefined,
