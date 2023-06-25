@@ -54,6 +54,7 @@ enum Api {
    * 客户附件下载
    */
   FileDownload = '/customer/file/download',
+  FileView = '/customer/file/VIEW',
 
   /**
    * 客户病史信息
@@ -180,6 +181,9 @@ export const assignCustomer = (params?: any) =>
 export const getCustomerFileDownload = (path: string) =>
   defHttp.get<any>({ url: Api.FileDownload, params: { path } });
 
+export const getCustomerFileView = (id: number) =>
+  defHttp.post<any>({ url: Api.FileView, params: { id } });
+  
 export const boardCustomer = (id: string) =>
   defHttp.post<CustomerBoard>({ url: Api.BoardCustomer, params: { id } });
 
@@ -370,8 +374,6 @@ export const columnarCustomerOrder = (type: number) =>
     params: { type },
   });
 
-
-
 /*
  * 客户合同信息
  */
@@ -400,19 +402,14 @@ export const fileContractUpload = (params: any) =>
 export const fileContractDelete = (fileId: number) =>
   defHttp.post<number[]>({ url: Api.CustomerContractFDelete, params: { fileId } });
 
-
-
-
-
-
-  /**
+/**
  * 客户发票
  */
 export const getCustomerInvoicePage = (params: { pageNum?: number; name?: string; id?: string }) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerInvoiceInfo[] }>({
     url: Api.CustomerInvoicePage,
     params: { pageSize: 20, ...params },
-});
+  });
 
 export const saveCustomerInvoice = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomerInvoice, params });
@@ -420,7 +417,7 @@ export const saveCustomerInvoice = (params?: any) =>
 export const updateCustomerInvoice = (params?: any) =>
   defHttp.post<any>({ url: Api.UpdateCustomerInvoice, params });
 
-export const deleteCustomerInvoice= (id: string | number) =>
+export const deleteCustomerInvoice = (id: string | number) =>
   defHttp.post<any>({ url: Api.DeleteCustomerInvoice, params: { id } });
 
 export const fileInvoiceUpload = (params: any) =>
@@ -428,4 +425,3 @@ export const fileInvoiceUpload = (params: any) =>
 
 export const fileInvoiceDelete = (fileId: number) =>
   defHttp.post<number[]>({ url: Api.CustomerInvoiceFDelete, params: { fileId } });
-
