@@ -43,8 +43,9 @@ const onPanelChange = async (val: any) => {
   const getListData = (value: Dayjs) => {
     let listData: Array<{ type: 'warning'; content: string; id: number }> = [];
     sourceData.value.forEach((o) => {
-      const d = o.date.split('-')[2];
-      if (value.format('DD') === d) {
+      // const d = o.date.split('-')[2];
+      // console.log(32232323, o.date)
+      if (value.format('YYYY-MM-DD') === o.date) {
         o.visits.forEach((i) => {
           // @ts-ignore
           listData.push({ type: 'warning', content: i.title, id: i.id });
