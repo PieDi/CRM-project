@@ -96,7 +96,7 @@
       :visible="drawerInfo.visible"
     >
       <Form :labelCol="{ span: 4 }">
-        <FormItem label="客户姓名">
+        <FormItem label="客户姓名" v-bind="validateInfos.name">
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -105,7 +105,7 @@
           />
         </FormItem>
 
-        <FormItem label="客户电话">
+        <FormItem label="客户电话" v-bind="validateInfos.mobile">
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -113,7 +113,7 @@
             v-model:value="drawerInfo.item.mobile"
           />
         </FormItem>
-        <FormItem label="性别">
+        <FormItem label="性别" v-bind="validateInfos.sex">
           <Select
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
@@ -124,7 +124,7 @@
           </Select>
         </FormItem>
 
-        <FormItem label="证件类型">
+        <FormItem label="证件类型" v-bind="validateInfos.documentType">
           <Select
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
@@ -139,7 +139,7 @@
           </Select>
         </FormItem>
 
-        <FormItem label="证件号码">
+        <FormItem label="证件号码" v-bind="validateInfos.documentNumber">
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -149,16 +149,17 @@
           />
         </FormItem>
 
-        <FormItem label="出生日期">
+        <FormItem label="出生日期" v-bind="validateInfos.birth">
           <DatePicker
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
             allowClear
             v-model:value="datePickerValue"
+            @change="birthChange"
           />
         </FormItem>
 
-        <FormItem label="年龄">
+        <FormItem label="年龄" v-bind="validateInfos.age">
           <InputNumber
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -168,17 +169,7 @@
             v-model:value="drawerInfo.item.age"
           />
         </FormItem>
-        <FormItem label="客户等级">
-          <InputNumber
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            min="1"
-            :precision="0"
-            allowClear
-            v-model:value="drawerInfo.item.level"
-          />
-        </FormItem>
-        <FormItem label="客户来源">
+        <FormItem label="客户来源" v-bind="validateInfos.sourceId">
           <Select
             placeholder="请选择"
             :disabled="drawerInfo.type === 'scan'"
@@ -190,15 +181,8 @@
             }}</SelectOption>
           </Select>
         </FormItem>
-        <FormItem label="联系地址">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.contactAddress"
-          />
-        </FormItem>
-        <FormItem label="所属分组">
+
+        <FormItem label="所属分组" v-bind="validateInfos.groupId">
           <Select
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
@@ -208,6 +192,26 @@
               item.name
             }}</SelectOption>
           </Select>
+        </FormItem>
+
+        <FormItem label="客户等级">
+          <InputNumber
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            min="1"
+            :precision="0"
+            allowClear
+            v-model:value="drawerInfo.item.level"
+          />
+        </FormItem>
+
+        <FormItem label="联系地址">
+          <Input
+            :disabled="drawerInfo.type === 'scan'"
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.contactAddress"
+          />
         </FormItem>
 
         <FormItem label="客户标签">
@@ -232,7 +236,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, createVNode, computed } from 'vue';
+  import { defineComponent, ref, onMounted, createVNode, computed, reactive } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import {
     Table,
@@ -265,6 +269,8 @@
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   const TextArea = Input.TextArea;
+  const useForm = Form.useForm;
+
   export default defineComponent({
     components: {
       PageWrapper,
@@ -451,29 +457,93 @@
         datePickerValue.value = undefined;
       };
 
+      const rulesRef = reactive({
+        name: [
+          {
+            required: true,
+            message: '请输入名字',
+          },
+        ],
+        mobile: [
+          {
+            required: true,
+            message: '请输入电话',
+          },
+        ],
+        sex: [
+          {
+            required: true,
+            message: '请选择性别',
+          },
+        ],
+        documentType: [
+          {
+            required: true,
+            message: '请选择证件类型',
+          },
+        ],
+        documentNumber: [
+          {
+            required: true,
+            message: '请输入证件号码',
+          },
+        ],
+        age: [
+          {
+            required: true,
+            message: '请输入年龄',
+          },
+        ],
+        birth: [
+          {
+            required: true,
+            message: '请输入出生日期',
+          },
+        ],
+        groupId: [
+          {
+            required: true,
+            message: '请选择分组',
+          },
+        ],
+        sourceId: [
+          {
+            required: true,
+            message: '请选择来源',
+          },
+        ],
+      });
+      const { validate, validateInfos } = useForm(drawerInfo.value.item, rulesRef);
       const submit = async () => {
+        validate().then(async () => {
+          let res;
+          if (drawerInfo.value.type === 'add') {
+            res = await saveCustomer({ ...drawerInfo.value.item });
+          } else {
+            res = await updateCustomer({ ...drawerInfo.value.item });
+          }
+          if (res) {
+            message.success(drawerInfo.value.type === 'add' ? '添加客户成功' : '修改用户信息成功');
+            customerListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+            drawerOnClose();
+          }
+        });
+      };
+      const birthChange = () => { 
         if (datePickerValue.value)
           drawerInfo.value.item.birth = dayjs(datePickerValue.value).format('YYYY-MM-DD');
-        let res;
-        if (drawerInfo.value.type === 'add') {
-          res = await saveCustomer({ ...drawerInfo.value.item });
-        } else {
-          res = await updateCustomer({ ...drawerInfo.value.item });
-        }
-        if (res) {
-          message.success(drawerInfo.value.type === 'add' ? '添加客户成功' : '修改用户信息成功');
-          customerListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
-          drawerOnClose();
+      }
+      const documentChange = () => {
+        if (
+          drawerInfo.value.item.documentType === 1 &&
+          drawerInfo.value.item.documentNumber?.length === 18
+        ) {
+          const t = drawerInfo.value.item.documentNumber.slice(6, 14);
+          datePickerValue.value = dayjs(t, 'YYYYMMDD');
+          drawerInfo.value.item.birth = datePickerValue.value.format('YYYY-MM-DD');
+          drawerInfo.value.item.age = dayjs().year() - Number(t.slice(0, 4));
         }
       };
-      const documentChange = () => {
-        if (drawerInfo.value.item.documentType === 1 && drawerInfo.value.item.documentNumber?.length === 18) {
-          const t = drawerInfo.value.item.documentNumber.slice(6, 14)
-          datePickerValue.value = dayjs(t, 'YYYYMMDD');
-          drawerInfo.value.item.birth = datePickerValue.value.format('YYYY-MM-DD')
-          drawerInfo.value.item.age = dayjs().year() - Number(t.slice(0, 4))
-        }
-      }
       return {
         columns,
         pagination,
@@ -491,7 +561,9 @@
         submit,
         customerGroupList,
         customerSourceList,
-        documentChange
+        documentChange,
+        birthChange,
+        validateInfos,
       };
     },
   });
