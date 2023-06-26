@@ -54,7 +54,7 @@ enum Api {
    * 客户附件下载
    */
   FileDownload = '/customer/file/download',
-  FileView = '/customer/file/VIEW',
+  FileView = '/customer/file/view',
 
   /**
    * 客户病史信息
@@ -90,7 +90,7 @@ enum Api {
   DeleteCustomerE = '/customer/disease/check/delete', // 删除检验
   CustomerEDetail = '/customer/disease/check/detail', // 检验详情
   CustomerEFUpload = '/customer/disease/check/upload', //上传
-  CustomerEFDelete = '/customer/disease/medicine/removeFile', //删除
+  CustomerEFDelete = '/customer/disease/check/removeFile', //删除
   /**
    * 客户影像记录
    */
@@ -181,8 +181,8 @@ export const assignCustomer = (params?: any) =>
 export const getCustomerFileDownload = (path: string) =>
   defHttp.get<any>({ url: Api.FileDownload, params: { path } });
 
-export const getCustomerFileView = (id: number) =>
-  defHttp.post<any>({ url: Api.FileView, params: { id } });
+export const getCustomerFileView = (fileId: number) =>
+  defHttp.post<string>({ url: Api.FileView, params: { fileId } });
   
 export const boardCustomer = (id: string) =>
   defHttp.post<CustomerBoard>({ url: Api.BoardCustomer, params: { id } });

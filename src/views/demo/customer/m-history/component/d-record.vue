@@ -46,13 +46,24 @@
                   <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
                   <Space>
                     <Button
+                      v-if="file?.url"
                       type="link"
                       @click="
                         () => {
-                          handleDownload(file, i);
+                          handleDownload(file);
                         }
                       "
                       >下载</Button
+                    >
+                    <Button
+                      type="link"
+                      v-if="file?.url"
+                      @click="
+                        () => {
+                          handlePreView(file);
+                        }
+                      "
+                      >预览</Button
                     >
                     <Button
                       type="link"
@@ -109,6 +120,7 @@
     updateCustomerD,
     fileDUpload,
     fileDDelete,
+    getCustomerFileView,
   } from '/@/api/demo/customer';
   import { CustomerDInfo } from '/@/api/demo/model/customer';
 
@@ -168,10 +180,10 @@
                   status: 'done',
                   url: file.path,
                 });
-                p.push(null)
+                p.push(null);
               });
               fileListMap.value[i] = t;
-              filesIdMap.value[i] = p
+              filesIdMap.value[i] = p;
             });
             listInfo.value = list;
           }
@@ -195,7 +207,7 @@
             useDose: item.useDose,
             useDate: item.useDate ? item.useDate.format('YYYY-MM-DD') : undefined,
           };
-          const mF = filesIdMap.value[i]?.filter(id => !!id);
+          const mF = filesIdMap.value[i]?.filter((id) => !!id);
           // @ts-ignore
           t.fileIds = mF;
           return t;
@@ -233,16 +245,22 @@
       };
       // 文件上传
       const fileListMap = ref<{ [number: string]: any }>({});
-      const handleDownload = (file: any, i: number) => {
+      const handleDownload = (file: any) => {
         if (file?.url)
           window.open(
             `http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`,
           );
       };
+      const handlePreView = async (file: any) => {
+        const res = await getCustomerFileView(file?.id);
+        if (res) {
+          window.open(res);
+        }
+      };
       const handleRemove = async (file: any, i: number) => {
         if (file?.url) {
-          const res = await fileDDelete(file?.id)
-          if(res) message.success('删除成功')
+          const res = await fileDDelete(file?.id);
+          if (res) message.success('删除成功');
         }
 
         const fileList = fileListMap.value[i];
@@ -253,10 +271,10 @@
         newFileList.splice(index, 1);
         fileListMap.value[i] = newFileList;
 
-        const filesId =  filesIdMap.value[i]
+        const filesId = filesIdMap.value[i];
         const newFilesId = filesId.slice();
         newFilesId.splice(index, 1);
-        filesIdMap.value[i] = newFilesId
+        filesIdMap.value[i] = newFilesId;
       };
       const filesIdMap = ref<{ [number: string]: number[] }>({});
       const uploadAction = async (o: any, i: number) => {
@@ -281,6 +299,7 @@
         fileListMap,
         handleRemove,
         handleDownload,
+        handlePreView,
         uploadAction,
       };
     },

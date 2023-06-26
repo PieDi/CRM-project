@@ -103,6 +103,16 @@
                 >下载</Button
               >
               <Button
+                type="link"
+                v-if="drawerInfo.type === 'scan'"
+                @click="
+                  () => {
+                    handlePreView(file);
+                  }
+                "
+                >预览</Button
+              >
+              <Button
                 v-if="drawerInfo.type !== 'scan'"
                 type="link"
                 @click="
@@ -148,7 +158,8 @@
     saveCustomerInvoice,
     updateCustomerInvoice,
     fileInvoiceUpload,
-    fileInvoiceDelete,
+  fileInvoiceDelete,
+  getCustomerFileView
   } from '/@/api/demo/customer';
   import { CustomerInvoiceInfo, CustomerInfo, CustomerOrderInfo } from '/@/api/demo/model/customer';
   import { DrawerItemType } from '/@/views/type';
@@ -287,6 +298,12 @@
             `http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`,
           );
       };
+      const handlePreView = async (file: any) => {
+        const res = await getCustomerFileView(file?.id)
+        if (res) { 
+          window.open(res);
+        }
+      };
 
       const filesId = ref<any[]>([]);
       const uploadAction = async (o: any) => {
@@ -308,6 +325,7 @@
         fileList,
         handleRemove,
         handleDownload,
+        handlePreView,
         uploadAction,
         // 客户信息
         dataSource,

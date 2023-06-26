@@ -45,13 +45,24 @@
                   <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
                   <Space>
                     <Button
+                      v-if="file?.url"
                       type="link"
                       @click="
                         () => {
-                          handleDownload(file, i);
+                          handleDownload(file);
                         }
                       "
                       >下载</Button
+                    >
+                    <Button
+                      type="link"
+                      v-if="file?.url"
+                      @click="
+                        () => {
+                          handlePreView(file);
+                        }
+                      "
+                      >预览</Button
                     >
                     <Button
                       type="link"
@@ -107,7 +118,8 @@
     saveCustomerC,
     updateCustomerC,
     fileCUpload,
-    fileCDelete,
+  fileCDelete,
+  getCustomerFileView
   } from '/@/api/demo/customer';
   import { CustomerCInfo } from '/@/api/demo/model/customer';
 
@@ -237,13 +249,18 @@
       };
       // 文件上传
       const fileListMap = ref<{ [number: string]: any }>({});
-      const handleDownload = (file: any, i: number) => {
+      const handleDownload = (file: any) => {
         if (file?.url)
           window.open(
             `http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`,
           );
       };
-
+      const handlePreView = async (file: any) => {
+        const res = await getCustomerFileView(file?.id);
+        if (res) {
+          window.open(res);
+        }
+      };
       const handleRemove = async (file: any, i: number) => {
         if (file?.url) {
           const res = await fileCDelete(file?.id);
@@ -287,6 +304,7 @@
         // 文件上传
         fileListMap,
         handleDownload,
+        handlePreView,
         handleRemove,
         uploadAction,
       };
