@@ -1,19 +1,26 @@
 <template>
   <PageWrapper title="入库管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
-      <div :style="{ display: 'flex' }"
-        ><FormItem label="产品名称" >
-          <Input placeholder="请输入" allowClear :style="{ width: '150px' }"  v-model:value="searchInfo.productName"/>
+      <div :style="{ display: 'flex' }">
+        <FormItem label="产品名称">
+          <Input
+            placeholder="请输入"
+            allowClear
+            :style="{ width: '150px' }"
+            v-model:value="searchInfo.productName"
+          />
         </FormItem>
         <FormItem label="产品编号" style="margin-left: 10px">
-          <Input placeholder="请输入" allowClear :style="{ width: '150px' }"  v-model:value="searchInfo.productNumber"/>
+          <Input
+            placeholder="请输入"
+            allowClear
+            :style="{ width: '150px' }"
+            v-model:value="searchInfo.productNumber"
+          />
         </FormItem>
-        <!-- <FormItem label="客户标签" style="margin-left: 10px">
-          <Input placeholder="请输入" allowClear />
-        </FormItem> -->
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
-        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
-      >
+        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
+      </div>
       <Button type="primary" style="margin-left: 10px" @click="addStoreIn">新增入库</Button>
     </div>
 
@@ -45,15 +52,6 @@
             "
             >编辑</Button
           >
-          <!-- <Button
-            type="link"
-            @click="
-              () => {
-                deleteIn(record);
-              }
-            "
-            >删除</Button
-          > -->
         </template>
       </template>
     </Table>
@@ -67,13 +65,8 @@
       width="60%"
       :visible="drawerInfo.visible"
     >
-      <!-- <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="editStoreIn">编辑</Button>
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template> -->
-
       <Form :labelCol="{ span: 4 }">
-        <FormItem label="产品名称">
+        <FormItem label="产品名称" v-bind="validateInfos.productId">
           <Select
             :show-search="true"
             :disabled="drawerInfo.type !== 'add'"
@@ -90,7 +83,7 @@
           </Select>
         </FormItem>
 
-        <FormItem label="商品货号">
+        <FormItem label="商品货号" v-bind="validateInfos.artNo">
           <Input
             placeholder="请输入"
             allowClear
@@ -99,7 +92,7 @@
           />
         </FormItem>
 
-        <FormItem label="入库数量">
+        <FormItem label="入库数量" v-bind="validateInfos.amount">
           <InputNumber
             placeholder="请输入"
             allowClear
@@ -107,14 +100,6 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-        <!-- <FormItem label="单位">
-          <Input
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.unit"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem> -->
         <FormItem label="其他">
           <TextArea
             placeholder="请输入"
@@ -128,19 +113,26 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref,computed, onMounted,createVNode } from 'vue';
+  import { defineComponent, ref, computed, onMounted, createVNode, reactive } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Modal, InputNumber,Select, message } from 'ant-design-vue';
-  import { DrawerItemType,PageListInfo } from '/@/views/type';
-  import { ProductInfo,ProductInInfo } from '/@/api/demo/model/product';
-  import { getProductList,getProductInPage,updateProductIn,saveProductIn, deleteProductIn } from '/@/api/demo/product';
+  import { Table, Form, Input, Button, Modal, InputNumber, Select, message } from 'ant-design-vue';
+  import { DrawerItemType, PageListInfo } from '/@/views/type';
+  import { ProductInfo, ProductInInfo } from '/@/api/demo/model/product';
+  import {
+    getProductList,
+    getProductInPage,
+    updateProductIn,
+    saveProductIn,
+    deleteProductIn,
+  } from '/@/api/demo/product';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   const SelectOption = Select.Option;
+  const useForm = Form.useForm;
+
   export default defineComponent({
     components: {
       PageWrapper,
@@ -153,7 +145,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
       TextArea,
       Select,
       SelectOption,
-      InputNumber
+      InputNumber,
     },
     setup() {
       const drawerInfo = ref<
@@ -176,7 +168,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
           // unit: undefined,
           remark: undefined,
         },
-      });    
+      });
 
       const pageInfo = ref<PageListInfo<ProductInInfo>>({
         total: 0,
@@ -194,7 +186,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
       }));
       const searchInfo = ref({
         productName: undefined,
-        productNumber: undefined
+        productNumber: undefined,
       });
       const pInListReq = async (pageNum: number) => {
         const res = await getProductInPage({ ...searchInfo.value, pageNum });
@@ -204,17 +196,17 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
           pageInfo.value.dataSource = res.data;
         }
       };
-      const resetAction = () => { 
-        searchInfo.value.productName = undefined
-        searchInfo.value.productNumber = undefined
+      const resetAction = () => {
+        searchInfo.value.productName = undefined;
+        searchInfo.value.productNumber = undefined;
         pInListReq(1);
-      }
+      };
       const searchAction = () => {
         pInListReq(1);
       };
       onMounted(() => {
         pInListReq(1);
-        productReq()
+        productReq();
       });
 
       const columns: ColumnsType<ProductInInfo> = [
@@ -234,10 +226,6 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
           title: '商品货号',
           dataIndex: 'artNo',
         },
-        // {
-        //   title: '单位',
-        //   dataIndex: 'unit',
-        // },
         {
           title: '其他',
           dataIndex: 'remark',
@@ -265,31 +253,30 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'add';
         drawerInfo.value.title = '新增入库';
-        
       };
       const scanStoreIn = (item: ProductInInfo) => {
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'scan';
         drawerInfo.value.title = '查看入库';
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = item[key]  
-        })
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
       };
       const editStoreIn = (item: ProductInInfo) => {
         drawerInfo.value.type = 'edit';
         drawerInfo.value.title = '编辑入库';
         drawerInfo.value.visible = true;
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = item[key]  
-        })
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
       };
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
-        drawerInfo.value.type = undefined
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = undefined  
-        })
+        drawerInfo.value.type = undefined;
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = undefined;
+        });
       };
       const deleteIn = (item: ProductInInfo) => {
         confirm(
@@ -306,20 +293,45 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
           }),
         );
       };
-      const submit =async () => {
-        let res 
-        if (drawerInfo.value.type === 'add') {
-          // 新增客服
-          res = await saveProductIn({...drawerInfo.value.item})
-        } else {
-          res = await updateProductIn({...drawerInfo.value.item})
-        }
-        if (res) { 
-          message.success(drawerInfo.value.type === 'add' ? '新增入库成功' : '修改入库成功')
-          pInListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
-          drawerOnClose()
-        }
+      const submit = async () => {
+        validate().then(async () => {
+          let res;
+          if (drawerInfo.value.type === 'add') {
+            // 新增客服
+            res = await saveProductIn({ ...drawerInfo.value.item });
+          } else {
+            res = await updateProductIn({ ...drawerInfo.value.item });
+          }
+          if (res) {
+            message.success(drawerInfo.value.type === 'add' ? '新增入库成功' : '修改入库成功');
+            pInListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+            drawerOnClose();
+          }
+        });
       };
+
+      const rulesRef = reactive({
+        productId: [
+          {
+            required: true,
+            message: '请选择产品名称',
+          },
+        ],
+        artNo: [
+          {
+            required: true,
+            message: '请输入商品货号',
+          },
+        ],
+        amount: [
+          {
+            required: true,
+            message: '请输入入库数量',
+          },
+        ],
+      });
+      const { validate, validateInfos } = useForm(drawerInfo.value.item, rulesRef);
+
       return {
         columns,
         resetAction,
@@ -336,6 +348,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
         submit,
         pDataSource,
         pFilterOption,
+        validateInfos,
       };
     },
   });

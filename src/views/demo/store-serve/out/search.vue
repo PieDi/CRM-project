@@ -18,9 +18,6 @@
             v-model:value="searchInfo.productNumber"
           />
         </FormItem>
-        <!-- <FormItem label="客户标签" style="margin-left: 10px">
-          <Input placeholder="请输入" allowClear />
-        </FormItem> -->
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
@@ -55,15 +52,6 @@
             "
             >编辑</Button
           >
-          <!-- <Button
-            type="link"
-            @click="
-              () => {
-                deleteStoreOut(record);
-              }
-            "
-            >删除</Button
-          > -->
         </template>
       </template>
     </Table>
@@ -77,13 +65,8 @@
       width="60%"
       :visible="drawerInfo.visible"
     >
-      <!-- <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="editStoreOut">编辑</Button>
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template> -->
-
       <Form :labelCol="{ span: 4 }">
-        <FormItem label="产品名称">
+        <FormItem label="产品名称" v-bind="validateInfos.productId">
           <Select
             :show-search="true"
             :disabled="drawerInfo.type !== 'add'"
@@ -100,7 +83,7 @@
           </Select>
         </FormItem>
 
-        <FormItem label="客户信息">
+        <FormItem label="客户信息" v-bind="validateInfos.customerId">
           <Select
             :disabled="drawerInfo.type !== 'add'"
             placeholder="请选择"
@@ -112,20 +95,7 @@
           </Select>
         </FormItem>
 
-        <!-- <FormItem label="出库批次">
-          <Input placeholder="请输入" v-model:value="drawerInfo.item.batch" allowClear
-            :disabled="drawerInfo.type === 'scan'" />
-        </FormItem> -->
-        <FormItem label="出库数量">
-          <InputNumber
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.amount"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
-
-        <FormItem label="订单名称">
+        <FormItem label="订单名称" v-bind="validateInfos.orderId">
           <Select
             placeholder="请选择"
             v-model:value="drawerInfo.item.orderId"
@@ -135,13 +105,14 @@
               item.orderName
             }}</SelectOption>
           </Select>
-
-          <!-- <Input
-            v-model:value="drawerInfo.item.orderId"
+        </FormItem>
+        <FormItem label="出库数量" v-bind="validateInfos.amount">
+          <InputNumber
             placeholder="请输入"
             allowClear
+            v-model:value="drawerInfo.item.amount"
             :disabled="drawerInfo.type === 'scan'"
-          /> -->
+          />
         </FormItem>
 
         <FormItem label="其他">
@@ -157,7 +128,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, computed, onMounted } from 'vue';
+  import { defineComponent, ref, computed, onMounted, reactive } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Modal, InputNumber, Select, message } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
@@ -171,10 +142,10 @@
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { getCustomerList, getCustomerOrderList } from '/@/api/demo/customer';
   import { CustomerInfo, CustomerOrderInfo } from '/@/api/demo/model/customer';
-
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   const SelectOption = Select.Option;
+  const useForm = Form.useForm;
   export default defineComponent({
     components: {
       PageWrapper,
@@ -249,7 +220,6 @@
       };
       onMounted(() => {
         pOutListReq(1);
-
         productReq();
         customerReq();
         orderListReq();
@@ -268,10 +238,6 @@
           title: '出库数量',
           dataIndex: 'amount',
         },
-        // {
-        //   title: '出库批次',
-        //   dataIndex: 'batch',
-        // },
         {
           title: '购买人员',
           dataIndex: 'customerName',
@@ -285,7 +251,6 @@
           dataIndex: 'operation',
         },
       ];
-
       const pDataSource = ref<Array<ProductInfo>>([]);
       const productReq = async () => {
         const res = await getProductList();
@@ -293,24 +258,20 @@
           pDataSource.value = res;
         }
       };
-
       const pFilterOption = (input: string, option: any) => {
         return (
           option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
           option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
         );
       };
-
       // 客户信息
       const cDataSource = ref<Array<CustomerInfo>>([]);
-
       const customerReq = async () => {
         const res = await getCustomerList();
         if (res) {
           cDataSource.value = res;
         }
       };
-
       const oDataSource = ref<Array<CustomerOrderInfo>>([]);
       const orderListReq = async () => {
         const res = await getCustomerOrderList();
@@ -318,7 +279,6 @@
           oDataSource.value = res.filter((item) => !item.outStorage);
         }
       };
-
       const addStoreOut = () => {
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'add';
@@ -328,7 +288,6 @@
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'scan';
         drawerInfo.value.title = '查看出库';
-
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = item[key];
         });
@@ -341,7 +300,6 @@
           drawerInfo.value.item[key] = item[key];
         });
       };
-
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
@@ -351,21 +309,49 @@
         });
       };
       const submit = async () => {
-        const params = { ...drawerInfo.value.item };
-
-        let res;
-        if (drawerInfo.value.type === 'add') {
-          // 新增客服
-          res = await saveProductOut(params);
-        } else {
-          res = await updateProductOut(params);
-        }
-        if (res) {
-          message.success(drawerInfo.value.type === 'add' ? '新增出库成功' : '修改出库成功');
-          pOutListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
-          drawerOnClose();
-        }
+        validate().then(async () => {
+          const params = { ...drawerInfo.value.item };
+          let res;
+          if (drawerInfo.value.type === 'add') {
+            // 新增客服
+            res = await saveProductOut(params);
+          } else {
+            res = await updateProductOut(params);
+          }
+          if (res) {
+            message.success(drawerInfo.value.type === 'add' ? '新增出库成功' : '修改出库成功');
+            pOutListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+            drawerOnClose();
+          }
+        });
       };
+      const rulesRef = reactive({
+        customerId: [
+          {
+            required: true,
+            message: '请选择客户',
+          },
+        ],
+        productId: [
+          {
+            required: true,
+            message: '请选择产品名称',
+          },
+        ],
+        orderId: [
+          {
+            required: true,
+            message: '请选择订单名称',
+          },
+        ],
+        amount: [
+          {
+            required: true,
+            message: '请输入入库数量',
+          },
+        ],
+      });
+      const { validate, validateInfos } = useForm(drawerInfo.value.item, rulesRef);
       return {
         columns,
         resetAction,
@@ -374,7 +360,6 @@
         pageInfo,
         drawerInfo,
         searchInfo,
-
         addStoreOut,
         scanStoreOut,
         editStoreOut,
@@ -387,6 +372,7 @@
         cDataSource,
         // 订单信息
         oDataSource,
+        validateInfos,
       };
     },
   });

@@ -21,16 +21,7 @@ const dashboard: AppRouteModule = {
         title: '员工管理',
         roles: [RoleEnum.SUPER],
       },
-    },
-    {
-      path: 'product-manage',
-      name: 'SysAuthProductManage',
-      component: () => import('/@/views/auth/super/product.vue'),
-      meta: {
-        title: '产品信息管理',
-        roles: [RoleEnum.SUPER],
-      },
-    },
+    }
   ],
 };
 
