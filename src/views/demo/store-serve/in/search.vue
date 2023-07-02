@@ -73,7 +73,7 @@
       </template> -->
 
       <Form :labelCol="{ span: 4 }">
-        <FormItem label="订单产品">
+        <FormItem label="产品名称">
           <Select
             :show-search="true"
             :disabled="drawerInfo.type !== 'add'"
@@ -90,14 +90,15 @@
           </Select>
         </FormItem>
 
-        <FormItem label="入库批次">
+        <FormItem label="商品货号">
           <Input
             placeholder="请输入"
             allowClear
-            v-model:value="drawerInfo.item.batch"
+            v-model:value="drawerInfo.item.artNo"
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
+
         <FormItem label="入库数量">
           <InputNumber
             placeholder="请输入"
@@ -106,14 +107,14 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-        <FormItem label="单位">
+        <!-- <FormItem label="单位">
           <Input
             placeholder="请输入"
             allowClear
             v-model:value="drawerInfo.item.unit"
             :disabled="drawerInfo.type === 'scan'"
           />
-        </FormItem>
+        </FormItem> -->
         <FormItem label="其他">
           <TextArea
             placeholder="请输入"
@@ -159,9 +160,9 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
         DrawerItemType<{
           id: number | undefined;
           amount: number | undefined;
-          batch: string | undefined;
+          artNo: string | undefined;
           productId: number | undefined;
-          unit: string | undefined;
+          // unit: string | undefined;
           remark: string | undefined;
         }>
       >({
@@ -170,9 +171,9 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
         item: {
           id: undefined,
           amount: undefined,
-          batch: undefined,
+          artNo: undefined,
           productId: undefined,
-          unit: undefined,
+          // unit: undefined,
           remark: undefined,
         },
       });    
@@ -217,31 +218,26 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
       });
 
       const columns: ColumnsType<ProductInInfo> = [
-        // {
-        //   title: '入库时间',
-        //   dataIndex: 'name',
-        //   key: 'name',
-        // },
         {
-          title: '入库批次',
-          dataIndex: 'batch',
+          title: '产品名称',
+          dataIndex: 'productName',
         },
         {
           title: '产品编号',
           dataIndex: 'productNumber',
         },
         {
-          title: '产品名称',
-          dataIndex: 'productName',
-        },
-        {
           title: '产品数量',
           dataIndex: 'amount',
         },
         {
-          title: '单位',
-          dataIndex: 'unit',
+          title: '商品货号',
+          dataIndex: 'artNo',
         },
+        // {
+        //   title: '单位',
+        //   dataIndex: 'unit',
+        // },
         {
           title: '其他',
           dataIndex: 'remark',
