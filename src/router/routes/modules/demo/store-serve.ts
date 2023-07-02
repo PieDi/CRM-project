@@ -10,7 +10,7 @@ const storeServe: AppRouteModule = {
   meta: {
     orderNo: 400,
     icon: 'gg:loadbar-doc',
-    title: t('routes.demo.store-serve.init'),
+    title: '产品管理',
     roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
   },
   children: [
@@ -32,6 +32,15 @@ const storeServe: AppRouteModule = {
         roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
       },
     },
+    {
+      path: 'product-manage',
+      name: 'SysAuthProductManage',
+      component: () => import('/@/views/auth/super/product.vue'),
+      meta: {
+        title: '产品信息管理',
+        roles: [RoleEnum.SUPER],
+      },
+    }
   ],
 };
 

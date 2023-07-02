@@ -78,7 +78,7 @@
       width="60%"
     >
       <Form :labelCol="{ span: 4 }">
-        <FormItem label="产品名称">
+        <FormItem label="产品名称" v-bind="validateInfos.name">
           <Input
             placeholder="请输入"
             allowClear
@@ -86,7 +86,7 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-        <FormItem label="产品编号">
+        <FormItem label="产品编号" v-bind="validateInfos.number">
           <Input
             placeholder="请输入"
             allowClear
@@ -95,7 +95,7 @@
           />
         </FormItem>
 
-        <FormItem label="产品类型">
+        <FormItem label="产品类型" v-bind="validateInfos.type">
           <Select
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
@@ -116,7 +116,7 @@
           />
         </FormItem>
 
-        <FormItem label="产品售价">
+        <FormItem label="产品售价" v-bind="validateInfos.price">
           <InputNumber
             placeholder="请输入"
             allowClear
@@ -125,7 +125,7 @@
           />
         </FormItem>
 
-        <FormItem label="产品运费">
+        <FormItem label="产品运费" v-bind="validateInfos.freight">
           <InputNumber
             placeholder="请输入"
             allowClear
@@ -134,7 +134,7 @@
           />
         </FormItem>
 
-        <FormItem label="积分兑换比">
+        <FormItem label="积分兑换比" v-bind="validateInfos.integralConversionRatio">
           <InputNumber
             placeholder="请输入"
             allowClear
@@ -143,7 +143,7 @@
           />
         </FormItem>
 
-        <FormItem label="最高可用积分">
+        <FormItem label="最高可用积分" v-bind="validateInfos.integralMaxAvailable">
           <InputNumber
             placeholder="请输入"
             allowClear
@@ -152,7 +152,7 @@
           />
         </FormItem>
 
-        <FormItem label="计量单位">
+        <FormItem label="计量单位" v-bind="validateInfos.unit">
           <Input
             placeholder="请输入"
             allowClear
@@ -161,7 +161,7 @@
           />
         </FormItem>
 
-        <FormItem label="产品描述">
+        <FormItem label="产品描述" v-bind="validateInfos.introduction">
           <TextArea
             placeholder="请输入"
             allowClear
@@ -174,7 +174,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, computed, onMounted, createVNode } from 'vue';
+  import { defineComponent, ref, computed, onMounted, createVNode, reactive } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, InputNumber, Button, Modal, Select, message } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
@@ -187,6 +187,7 @@
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   const SelectOption = Select.Option;
+  const useForm = Form.useForm;
   const productTypeMap: Record<number, string> = {
     1: '标准产品',
     2: '非标准产品',
@@ -295,7 +296,6 @@
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'scan';
         drawerInfo.value.title = '查看产品';
-
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = item[key];
         });
@@ -332,19 +332,78 @@
         });
       };
       const submit = async () => {
-        let res;
-        if (drawerInfo.value.type === 'add') {
-          // 新增客服
-          res = await saveProduct({ ...drawerInfo.value.item });
-        } else {
-          res = await updateProduct({ ...drawerInfo.value.item });
-        }
-        if (res) {
-          message.success(drawerInfo.value.type === 'add' ? '新增产品成功' : '修改产品成功');
-          productListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
-          drawerOnClose();
-        }
+        validate().then(async () => {
+          let res;
+          if (drawerInfo.value.type === 'add') {
+            // 新增客服
+            res = await saveProduct({ ...drawerInfo.value.item });
+          } else {
+            res = await updateProduct({ ...drawerInfo.value.item });
+          }
+          if (res) {
+            message.success(drawerInfo.value.type === 'add' ? '新增产品成功' : '修改产品成功');
+            productListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+            drawerOnClose();
+          }
+        });
       };
+      const rulesRef = reactive({
+        freight: [
+          {
+            required: true,
+            message: '请输入运费',
+          },
+        ],
+        name: [
+          {
+            required: true,
+            message: '请输入产品名称',
+          },
+        ],
+        number: [
+          {
+            required: true,
+            message: '请输入产品编号',
+          },
+        ],
+        integralConversionRatio: [
+          {
+            required: true,
+            message: '请输入积分兑换比',
+          },
+        ],
+        integralMaxAvailable: [
+          {
+            required: true,
+            message: '请输入最高可用积分',
+          },
+        ],
+        introduction: [
+          {
+            required: true,
+            message: '请输入产品描述',
+          },
+        ],
+        price: [
+          {
+            required: true,
+            message: '请输入产品价格',
+          },
+        ],
+        type: [
+          {
+            required: true,
+            message: '请选择产品类型',
+          },
+        ],
+        unit: [
+          {
+            required: true,
+            message: '请输入计量单位',
+          },
+        ],
+      });
+      const { validate, validateInfos } = useForm(drawerInfo.value.item, rulesRef);
       return {
         columns,
         pagination,
@@ -359,6 +418,7 @@
         resetAction,
         searchAction,
         searchInfo,
+        validateInfos,
       };
     },
   });
