@@ -10,7 +10,7 @@
             v-model:value="searchInfo.name"
           />
         </FormItem>
-        
+
         <FormItem label="产品编号" style="margin-left: 10px">
           <Input
             placeholder="请输入"
@@ -77,13 +77,6 @@
       :visible="drawerInfo.visible"
       width="60%"
     >
-      <!-- <template #extra>
-        <Button v-if="drawerInfo.type === 'scan'" type="link" @click="editProduct"
-          >编辑</Button
-        >
-        <Button v-if="drawerInfo.type !== 'scan'" type="primary" @click="submit">提交</Button>
-      </template> -->
-
       <Form :labelCol="{ span: 4 }">
         <FormItem label="产品名称">
           <Input
@@ -101,7 +94,6 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-    
 
         <FormItem label="产品类型">
           <Select
@@ -115,7 +107,60 @@
           </Select>
         </FormItem>
 
-      
+        <FormItem label="产品原价">
+          <InputNumber
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.originalPrice"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+
+        <FormItem label="产品售价">
+          <InputNumber
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.price"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+
+        <FormItem label="产品运费">
+          <InputNumber
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.freight"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+
+        <FormItem label="积分兑换比">
+          <InputNumber
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.integralConversionRatio"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+
+        <FormItem label="最高可用积分">
+          <InputNumber
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.integralMaxAvailable"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+
+        <FormItem label="计量单位">
+          <Input
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.unit"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+
         <FormItem label="产品描述">
           <TextArea
             placeholder="请输入"
@@ -129,9 +174,9 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, computed, onMounted,createVNode } from 'vue';
+  import { defineComponent, ref, computed, onMounted, createVNode } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Modal,Select,message } from 'ant-design-vue';
+  import { Table, Form, Input, InputNumber, Button, Modal, Select, message } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { getProductPage, saveProduct, updateProduct, removalProduct } from '/@/api/demo/product';
@@ -142,11 +187,11 @@
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   const SelectOption = Select.Option;
-const productTypeMap: Record<number, string> = {
-  1: '标准产品',
-  2: '非标准产品',
-  3:'其他产品'
-}
+  const productTypeMap: Record<number, string> = {
+    1: '标准产品',
+    2: '非标准产品',
+    3: '其他产品',
+  };
   export default defineComponent({
     components: {
       PageWrapper,
@@ -154,11 +199,12 @@ const productTypeMap: Record<number, string> = {
       Form,
       FormItem,
       Input,
+      InputNumber,
       Button,
       Modal,
       TextArea,
       Select,
-      SelectOption
+      SelectOption,
     },
     setup() {
       const drawerInfo = ref<DrawerItemType<ProductInfo>>({
@@ -166,13 +212,19 @@ const productTypeMap: Record<number, string> = {
         title: '',
         item: {
           number: undefined,
+          unit: undefined,
           introduction: undefined,
           name: undefined,
           type: undefined,
           id: undefined,
+          originalPrice: undefined,
+          price: undefined,
+          freight: undefined,
+          integralConversionRatio: undefined,
+          integralMaxAvailable: undefined,
         },
       });
-  
+
       const pageInfo = ref<PageListInfo<ProductInfo>>({
         total: 0,
         current: 1,
@@ -189,7 +241,7 @@ const productTypeMap: Record<number, string> = {
       }));
       const searchInfo = ref({
         name: undefined,
-        number: undefined
+        number: undefined,
       });
       const productListReq = async (pageNum: number) => {
         const res = await getProductPage({ ...searchInfo.value, pageNum });
@@ -199,11 +251,11 @@ const productTypeMap: Record<number, string> = {
           pageInfo.value.dataSource = res.data;
         }
       };
-      const resetAction = () => { 
-        searchInfo.value.name = undefined
-        searchInfo.value.number = undefined
+      const resetAction = () => {
+        searchInfo.value.name = undefined;
+        searchInfo.value.number = undefined;
         productListReq(1);
-      }
+      };
       const searchAction = () => {
         productListReq(1);
       };
@@ -223,7 +275,7 @@ const productTypeMap: Record<number, string> = {
         {
           title: '产品类型',
           dataIndex: 'type',
-          customRender:(state) => (productTypeMap[state.record.type as number])
+          customRender: (state) => productTypeMap[state.record.type as number],
         },
         {
           title: '产品描述',
@@ -244,17 +296,17 @@ const productTypeMap: Record<number, string> = {
         drawerInfo.value.type = 'scan';
         drawerInfo.value.title = '查看产品';
 
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = item[key]  
-        })
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
       };
       const editProduct = (item: ProductInfo) => {
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'edit';
         drawerInfo.value.title = '编辑产品';
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = item[key]  
-        })
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
       };
       const deleteProduct = (item: ProductInfo) => {
         confirm(
@@ -275,22 +327,22 @@ const productTypeMap: Record<number, string> = {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = undefined  
-        })
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = undefined;
+        });
       };
       const submit = async () => {
-        let res 
+        let res;
         if (drawerInfo.value.type === 'add') {
           // 新增客服
-          res = await saveProduct({...drawerInfo.value.item})
+          res = await saveProduct({ ...drawerInfo.value.item });
         } else {
-          res = await updateProduct({...drawerInfo.value.item})
+          res = await updateProduct({ ...drawerInfo.value.item });
         }
-        if (res) { 
-          message.success(drawerInfo.value.type === 'add' ? '新增产品成功' : '修改产品成功')
+        if (res) {
+          message.success(drawerInfo.value.type === 'add' ? '新增产品成功' : '修改产品成功');
           productListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
-          drawerOnClose()
+          drawerOnClose();
         }
       };
       return {

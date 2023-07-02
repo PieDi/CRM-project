@@ -3,7 +3,13 @@ export interface ProductInfo {
   name: string | undefined;
   number: string  | undefined;
   type: number  | undefined;
-  introduction: string  | undefined;
+  introduction: string | undefined;
+  unit: string | undefined;
+  originalPrice: number | undefined;
+  price: number | undefined;
+  freight: number | undefined;
+  integralConversionRatio: number | undefined;
+  integralMaxAvailable: number | undefined;
 }
 
 export interface ProductInInfo { 

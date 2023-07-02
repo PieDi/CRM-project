@@ -213,7 +213,15 @@
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   const TextArea = Input.TextArea;
-
+const orderSourceMap: Record<number, string> = {
+  1: 'CRM',
+  2: '小程序'
+}
+const orderStatusMap: Record<number, string> = {
+  1: '待授权',
+  2: '待审核',
+  5: '已完成'
+}
   export default defineComponent({
     components: {
       PageWrapper,
@@ -348,10 +356,16 @@
           title: '订单编号',
           dataIndex: 'orderNumber',
         },
-        // {
-        //   title: '订单类型',
-        //   dataIndex: 'endTime',
-        // },
+        {
+          title: '订单来源',
+          dataIndex: 'source',
+          customRender: (state) => orderSourceMap[state.record.source as number],
+        },
+        {
+          title: '订单状态',
+          dataIndex: 'status',
+          customRender: (state) => orderStatusMap[state.record.status as number],
+        },
         {
           title: '订单数量',
           dataIndex: 'orderQuantity',
@@ -363,14 +377,6 @@
         {
           title: '合同名称',
           dataIndex: 'endTime',
-        },
-        {
-          title: '负责人',
-          dataIndex: 'responsiblePerson',
-        },
-        {
-          title: '其他',
-          dataIndex: 'remark',
         },
         {
           title: '操作',

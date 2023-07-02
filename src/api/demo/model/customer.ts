@@ -182,6 +182,7 @@ export interface CustomerOrderInfo {
   next: { status: number; operate: string }[] | undefined;
   outStorage: boolean | undefined;
   status: number | undefined;
+  source: number | undefined;
 }
 
 /**

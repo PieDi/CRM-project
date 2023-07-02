@@ -1,8 +1,8 @@
 <template>
   <PageWrapper title="出库管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
-      <div :style="{ display: 'flex' }"
-        ><FormItem label="产品名称">
+      <div :style="{ display: 'flex' }">
+        <FormItem label="产品名称">
           <Input
             placeholder="请输入"
             allowClear
@@ -22,8 +22,8 @@
           <Input placeholder="请输入" allowClear />
         </FormItem> -->
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
-        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
-      >
+        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
+      </div>
       <Button type="primary" style="margin-left: 10px" @click="addStoreOut">新增出库</Button>
     </div>
 
@@ -35,7 +35,7 @@
       :bordered="true"
       :pagination="pagination"
     >
-      <template #bodyCell="{ column, _text, record }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
@@ -83,7 +83,7 @@
       </template> -->
 
       <Form :labelCol="{ span: 4 }">
-        <FormItem label="订单产品">
+        <FormItem label="产品名称">
           <Select
             :show-search="true"
             :disabled="drawerInfo.type !== 'add'"
@@ -106,22 +106,16 @@
             placeholder="请选择"
             v-model:value="drawerInfo.item.customerId"
           >
-            <SelectOption
-              v-for="item of cDataSource"
-              :value="item.id"
-              >{{ item.name }}</SelectOption
-            >
+            <SelectOption v-for="item of cDataSource" :value="item.id">{{
+              item.name
+            }}</SelectOption>
           </Select>
         </FormItem>
 
-        <FormItem label="出库批次">
-          <Input
-            placeholder="请输入"
-            v-model:value="drawerInfo.item.batch"
-            allowClear
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
+        <!-- <FormItem label="出库批次">
+          <Input placeholder="请输入" v-model:value="drawerInfo.item.batch" allowClear
+            :disabled="drawerInfo.type === 'scan'" />
+        </FormItem> -->
         <FormItem label="出库数量">
           <InputNumber
             placeholder="请输入"
@@ -131,17 +125,15 @@
           />
         </FormItem>
 
-        <FormItem label="订单ID">
+        <FormItem label="订单名称">
           <Select
             placeholder="请选择"
             v-model:value="drawerInfo.item.orderId"
             :disabled="drawerInfo.type === 'scan'"
           >
-            <SelectOption
-              v-for="item of oDataSource"
-              :value="item.id"
-              >{{ item.orderName }}</SelectOption
-            >
+            <SelectOption v-for="item of oDataSource" :value="item.id">{{
+              item.orderName
+            }}</SelectOption>
           </Select>
 
           <!-- <Input
@@ -202,7 +194,6 @@
         DrawerItemType<{
           id: number | undefined;
           amount: number | undefined;
-          batch: string | undefined;
           customerId: string | undefined;
           orderId: string | undefined;
           productId: number | undefined;
@@ -215,7 +206,6 @@
         item: {
           id: undefined,
           amount: undefined,
-          batch: undefined,
           customerId: undefined,
           orderId: undefined,
           productId: undefined,
@@ -249,11 +239,11 @@
           pageInfo.value.dataSource = res.data;
         }
       };
-      const resetAction = () => { 
-        searchInfo.value.productName = undefined
-        searchInfo.value.productNumber = undefined
+      const resetAction = () => {
+        searchInfo.value.productName = undefined;
+        searchInfo.value.productNumber = undefined;
         pOutListReq(1);
-      }
+      };
       const searchAction = () => {
         pOutListReq(1);
       };
@@ -266,30 +256,25 @@
       });
 
       const columns: ColumnsType<ProductOutInfo> = [
-        // {
-        //   title: '出库时间',
-        //   dataIndex: 'name',
-        //   key: 'name',
-        // },
         {
-          title: '出库批次',
-          dataIndex: 'batch',
-        },
-        {
-          title: '出库数量',
-          dataIndex: 'amount',
+          title: '产品名称',
+          dataIndex: 'productName',
         },
         {
           title: '产品编号',
           dataIndex: 'productNumber',
         },
         {
+          title: '出库数量',
+          dataIndex: 'amount',
+        },
+        // {
+        //   title: '出库批次',
+        //   dataIndex: 'batch',
+        // },
+        {
           title: '购买人员',
           dataIndex: 'customerName',
-        },
-        {
-          title: '产品名称',
-          dataIndex: 'productName',
         },
         {
           title: '其他',
@@ -330,43 +315,40 @@
       const orderListReq = async () => {
         const res = await getCustomerOrderList();
         if (res) {
-          oDataSource.value = res.filter(item => !item.outStorage);
+          oDataSource.value = res.filter((item) => !item.outStorage);
         }
       };
-   
 
       const addStoreOut = () => {
-       
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'add';
         drawerInfo.value.title = '新增出库';
       };
-      const scanStoreOut = (item:ProductOutInfo) => {
-      
+      const scanStoreOut = (item: ProductOutInfo) => {
         drawerInfo.value.visible = true;
         drawerInfo.value.type = 'scan';
         drawerInfo.value.title = '查看出库';
 
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = item[key]  
-        })       
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
       };
-      const editStoreOut = (item:ProductOutInfo) => {
+      const editStoreOut = (item: ProductOutInfo) => {
         drawerInfo.value.type = 'edit';
         drawerInfo.value.title = '编辑出库';
         drawerInfo.value.visible = true;
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = item[key]  
-        })
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
       };
 
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
-        drawerInfo.value.type = undefined
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = undefined  
-        })
+        drawerInfo.value.type = undefined;
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = undefined;
+        });
       };
       const submit = async () => {
         const params = { ...drawerInfo.value.item };
