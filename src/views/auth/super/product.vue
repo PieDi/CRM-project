@@ -161,6 +161,98 @@
           />
         </FormItem>
 
+        <FormItem label="产品轮播图">
+          <Upload
+            :file-list="fileList"
+            :customRequest="uploadAction"
+            :disabled="drawerInfo.type === 'scan'"
+          >
+            <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
+
+            <template #itemRender="{ file }">
+              <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
+              <Space>
+                <Button
+                  type="link"
+                  v-if="drawerInfo.type === 'scan'"
+                  @click="
+                    () => {
+                      handleDownload(file);
+                    }
+                  "
+                  >下载</Button
+                >
+                <Button
+                  type="link"
+                  v-if="drawerInfo.type === 'scan'"
+                  @click="
+                    () => {
+                      handlePreView(file);
+                    }
+                  "
+                  >预览</Button
+                >
+                <Button
+                  v-if="drawerInfo.type !== 'scan'"
+                  type="link"
+                  @click="
+                    () => {
+                      handleRemove(file);
+                    }
+                  "
+                  >删除</Button
+                >
+              </Space>
+            </template>
+          </Upload>
+        </FormItem>
+
+        <FormItem label="产品详情图">
+          <Upload
+            :file-list="fileList"
+            :customRequest="uploadAction"
+            :disabled="drawerInfo.type === 'scan'"
+          >
+            <Button :disabled="drawerInfo.type === 'scan'">选择</Button>
+
+            <template #itemRender="{ file }">
+              <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
+              <Space>
+                <Button
+                  type="link"
+                  v-if="drawerInfo.type === 'scan'"
+                  @click="
+                    () => {
+                      handleDownload(file);
+                    }
+                  "
+                  >下载</Button
+                >
+                <Button
+                  type="link"
+                  v-if="drawerInfo.type === 'scan'"
+                  @click="
+                    () => {
+                      handlePreView(file);
+                    }
+                  "
+                  >预览</Button
+                >
+                <Button
+                  v-if="drawerInfo.type !== 'scan'"
+                  type="link"
+                  @click="
+                    () => {
+                      handleRemove(file);
+                    }
+                  "
+                  >删除</Button
+                >
+              </Space>
+            </template>
+          </Upload>
+        </FormItem>
+
         <FormItem label="产品描述" v-bind="validateInfos.introduction">
           <TextArea
             placeholder="请输入"
@@ -176,14 +268,24 @@
 <script lang="ts">
   import { defineComponent, ref, computed, onMounted, createVNode, reactive } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, InputNumber, Button, Modal, Select, message } from 'ant-design-vue';
+  import {
+    Table,
+    Form,
+    Input,
+    InputNumber,
+    Button,
+    Modal,
+    Select,
+    message,
+    Upload,
+  } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { getProductPage, saveProduct, updateProduct, removalProduct } from '/@/api/demo/product';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { ProductInfo } from '/@/api/demo/model/product';
-
+  import { fileMHUpload, fileMHDelete, getCustomerFileView } from '/@/api/demo/customer';
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   const SelectOption = Select.Option;
@@ -206,6 +308,7 @@
       TextArea,
       Select,
       SelectOption,
+      Upload,
     },
     setup() {
       const drawerInfo = ref<DrawerItemType<ProductInfo>>({
@@ -404,6 +507,49 @@
         ],
       });
       const { validate, validateInfos } = useForm(drawerInfo.value.item, rulesRef);
+
+      // 文件上传
+      const fileList = ref<any[]>([]);
+      const handleRemove = async (file: any) => {
+        if (file?.url) {
+          const res = await fileMHDelete(file?.id);
+          if (res) message.success('删除成功');
+        }
+        //@ts-ignore
+        const index = fileList.value.indexOf(file);
+        //@ts-ignore
+        const newFileList = fileList.value.slice();
+        newFileList.splice(index, 1);
+        fileList.value = newFileList;
+
+        const newFilesId = filesId.value.slice();
+        newFilesId.splice(index, 1);
+        filesId.value = newFilesId;
+      };
+      const handleDownload = async (file: any) => {
+        if (file?.url)
+          window.open(
+            `http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`,
+          );
+      };
+      const handlePreView = async (file: any) => {
+        const res = await getCustomerFileView(file?.id);
+        if (res) {
+          window.open(res);
+        }
+      };
+      const filesId = ref<any[]>([]);
+      const uploadAction = async (o: any) => {
+        const fileData = new FormData();
+        fileData.append('files', o.file);
+        const res = await fileMHUpload(fileData);
+        if (res) {
+          //@ts-ignore
+          fileList.value = [...fileList.value, o.file];
+          filesId.value.push(res[0]);
+        }
+      };
+
       return {
         columns,
         pagination,
@@ -419,6 +565,12 @@
         searchAction,
         searchInfo,
         validateInfos,
+        // 文件上传
+        fileList,
+        handleRemove,
+        handleDownload,
+        handlePreView,
+        uploadAction,
       };
     },
   });
