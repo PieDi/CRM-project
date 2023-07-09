@@ -8,8 +8,9 @@ export interface ProductInfo {
   originalPrice: number | undefined;
   price: number | undefined;
   freight: number | undefined;
-  integralConversionRatio: number | undefined;
-  integralMaxAvailable: number | undefined;
+  amount: number | undefined;
+  // integralConversionRatio: number | undefined;
+  // integralMaxAvailable: number | undefined;
 }
 
 export interface ProductInInfo { 

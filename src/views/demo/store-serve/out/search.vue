@@ -71,7 +71,7 @@
             :show-search="true"
             :disabled="drawerInfo.type !== 'add'"
             placeholder="请选择"
-            :filter-option="pFilterOption"
+            @change="pChange"
             v-model:value="drawerInfo.item.productId"
           >
             <SelectOption
@@ -106,7 +106,11 @@
             }}</SelectOption>
           </Select>
         </FormItem>
-        <FormItem label="出库数量" v-bind="validateInfos.amount">
+        <FormItem
+          label="出库数量"
+          v-bind="validateInfos.amount"
+          :help="`当前库存数量:${cProduct?.amount || ''}`"
+        >
           <InputNumber
             placeholder="请输入"
             allowClear
@@ -258,11 +262,10 @@
           pDataSource.value = res;
         }
       };
-      const pFilterOption = (input: string, option: any) => {
-        return (
-          option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
-          option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        );
+      const cProduct = ref<ProductInfo>();
+      const pChange = () => {
+        const p = pDataSource.value.find((t) => t.id === drawerInfo.value.item.productId);
+        cProduct.value = p;
       };
       // 客户信息
       const cDataSource = ref<Array<CustomerInfo>>([]);
@@ -367,7 +370,8 @@
         submit,
         // 产品
         pDataSource,
-        pFilterOption,
+        pChange,
+        cProduct,
         // 客户信息
         cDataSource,
         // 订单信息
