@@ -10,7 +10,7 @@
             v-model:value="searchInfo.customerName"
           />
         </FormItem>
-      
+
         <FormItem label="订单编号" style="margin-left: 10px">
           <Input
             placeholder="请输入"
@@ -66,7 +66,7 @@
       </template>
     </Table>
     <Modal
-    :mask-closable="false"
+      :mask-closable="false"
       :destroy-on-close="true"
       :title="drawerInfo.title"
       @cancel="drawerOnClose"
@@ -74,8 +74,16 @@
       width="60%"
       :visible="drawerInfo.visible"
     >
-      <Form :labelCol="{ span: 4 }">
-        <FormItem label="客户姓名">
+      <Form :labelCol="{ span: 4 }" ref="formRef" :model="drawerInfo.item">
+        <FormItem
+          label="客户姓名"
+          name="customerId"
+          :rules="{
+            required: true,
+            message: '请选择客户姓名',
+            trigger: 'change',
+          }"
+        >
           <Select
             :show-search="true"
             :disabled="drawerInfo.type !== 'add'"
@@ -88,24 +96,15 @@
           </Select>
         </FormItem>
 
-        <FormItem label="订单产品">
-          <Select
-            :show-search="true"
-            :disabled="drawerInfo.type !== 'add'"
-            placeholder="请选择"
-            :filter-option="pFilterOption"
-            v-model:value="drawerInfo.item.productId"
-          >
-            <SelectOption
-              v-for="item of pDataSource"
-              :key="`${item.name}-${item.number}`"
-              :value="item.id"
-              >{{ item.name }}</SelectOption
-            >
-          </Select>
-        </FormItem>
-
-        <FormItem label="订单名称">
+        <FormItem
+          label="订单名称"
+          name="orderName"
+          :rules="{
+            required: true,
+            message: '请输入订单名称',
+            trigger: 'change',
+          }"
+        >
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -113,7 +112,15 @@
             v-model:value="drawerInfo.item.orderName"
           />
         </FormItem>
-        <FormItem label="下单时间">
+        <FormItem
+          label="下单时间"
+          name="orderDate"
+          :rules="{
+            required: true,
+            message: '请选择订单时间',
+            trigger: 'change',
+          }"
+        >
           <DatePicker
             :disabled="drawerInfo.type === 'scan'"
             showTime
@@ -122,43 +129,95 @@
           />
         </FormItem>
 
-        <!-- <FormItem label="订单编号">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.orderNumber"
-          />
-        </FormItem> -->
+        <FormItem label="订单产品" style="margin-bottom: 0">
+          <Button style="float: right" type="link" @click="addProduct">新增</Button>
+          <Space v-for="(p, i) of drawerInfo.item.products" align="start">
+            <FormItem
+              label="产品名称"
+              :name="['products', i, 'productId']"
+              :rules="{
+                required: true,
+                message: '请选择产品名称',
+                trigger: 'change',
+              }"
+            >
+              <Select
+                :show-search="true"
+                :disabled="drawerInfo.type !== 'add'"
+                placeholder="请选择"
+                :filter-option="pFilterOption"
+                v-model:value="p.productId"
+                style="width: 150px"
+              >
+                <SelectOption
+                  v-for="item of pDataSource"
+                  :key="`${item.name}-${item.number}`"
+                  :value="item.id"
+                  >{{ item.name }}</SelectOption
+                >
+              </Select>
+            </FormItem>
 
-        <FormItem label="订单数量">
+            <FormItem
+              label="产品数量"
+              :name="['products', i, 'amount']"
+              :rules="{
+                required: true,
+                message: '请选择输入产品数量',
+                trigger: 'change',
+              }"
+            >
+              <InputNumber
+                :disabled="drawerInfo.type === 'scan'"
+                placeholder="请输入"
+                allowClear
+                min="1"
+                :precision="0"
+                v-model:value="p.amount"
+                style="width: 150px"
+              />
+            </FormItem>
+
+            <Button
+              style="float: right"
+              type="link"
+              @click="
+                () => {
+                  deleteProduct(i);
+                }
+              "
+            >
+              <template #icon><DeleteOutlined /></template
+            ></Button>
+          </Space>
+        </FormItem>
+
+        <FormItem
+          label="订单金额"
+          name="totalPrice"
+          :rules="{
+            required: true,
+            message: '请输入订单金额',
+            trigger: 'change',
+          }"
+        >
           <InputNumber
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
             allowClear
-            min="1"
-            :precision="0"
-            v-model:value="drawerInfo.item.orderQuantity"
+            v-model:value="drawerInfo.item.totalPrice"
           />
         </FormItem>
 
-        <FormItem label="订单金额">
-          <InputNumber
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.orderAmount"
-          />
-        </FormItem>
-
-        <!-- <FormItem label="关联合同">
-          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
-          </Select>
-        </FormItem> -->
-
-        <FormItem label="负责人">
+        <FormItem
+          label="负责人"
+          name="responsiblePerson"
+          :rules="{
+            required: true,
+            message: '请输入负责人',
+            trigger: 'change',
+          }"
+        >
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -192,7 +251,9 @@
     InputNumber,
     DatePicker,
     message,
+    Space,
   } from 'ant-design-vue';
+  import { DeleteOutlined } from '@ant-design/icons-vue';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { CustomerOrderInfo, CustomerInfo } from '/@/api/demo/model/customer';
@@ -207,21 +268,22 @@
   import { getProductList } from '/@/api/demo/product';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+  import type { FormInstance } from 'ant-design-vue';
   import dayjs, { Dayjs } from 'dayjs';
   import { useRoute } from 'vue-router';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   const TextArea = Input.TextArea;
-const orderSourceMap: Record<number, string> = {
-  1: 'CRM',
-  2: '小程序'
-}
-const orderStatusMap: Record<number, string> = {
-  1: '待授权',
-  2: '待审核',
-  5: '已完成'
-}
+  const orderSourceMap: Record<number, string> = {
+    1: 'CRM',
+    2: '小程序',
+  };
+  const orderStatusMap: Record<number, string> = {
+    1: '待授权',
+    2: '待审核',
+    5: '已完成',
+  };
   export default defineComponent({
     components: {
       PageWrapper,
@@ -236,17 +298,21 @@ const orderStatusMap: Record<number, string> = {
       InputNumber,
       DatePicker,
       TextArea,
+      Space,
+      DeleteOutlined,
     },
     setup() {
+      const formRef = ref<FormInstance>();
       const drawerInfo = ref<
         DrawerItemType<{
           id: number | undefined;
-          orderAmount: number | undefined;
+          totalPrice: number | undefined;
           orderDate: Dayjs | undefined;
           orderName: string | undefined;
           orderNumber: string | undefined;
-          orderQuantity: number | undefined;
-          productId: number | undefined;
+          products:
+            | Array<{ productId: number | undefined; amount: number | undefined }>
+            | undefined;
           remark: string | undefined;
           responsiblePerson: string | undefined;
           customerId: number | undefined;
@@ -257,12 +323,16 @@ const orderStatusMap: Record<number, string> = {
         type: undefined,
         item: {
           id: undefined,
-          orderAmount: undefined,
+          totalPrice: undefined,
           orderDate: undefined,
           orderName: undefined,
           orderNumber: undefined,
-          orderQuantity: undefined,
-          productId: undefined,
+          products: [
+            {
+              productId: undefined,
+              amount: undefined,
+            },
+          ],
           remark: undefined,
           responsiblePerson: undefined,
           customerId: undefined,
@@ -367,12 +437,8 @@ const orderStatusMap: Record<number, string> = {
           customRender: (state) => orderStatusMap[state.record.status as number],
         },
         {
-          title: '订单数量',
-          dataIndex: 'orderQuantity',
-        },
-        {
           title: '订单金额',
-          dataIndex: 'orderAmount',
+          dataIndex: 'totalPrice',
         },
         {
           title: '合同名称',
@@ -383,6 +449,22 @@ const orderStatusMap: Record<number, string> = {
           dataIndex: 'operation',
         },
       ];
+      const addProduct = () => {
+        const products = drawerInfo.value.item.products || [];
+        products?.push({
+          productId: undefined,
+          amount: undefined,
+        });
+        drawerInfo.value.item.products = products;
+      };
+      const deleteProduct = (i: number) => {
+        if (drawerInfo.value.item.products?.length) {
+          const products = [...drawerInfo.value.item.products];
+          products.splice(i, 1);
+          drawerInfo.value.item.products = products;
+        }
+      };
+
       const addOrder = () => {
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新增订单';
@@ -392,9 +474,9 @@ const orderStatusMap: Record<number, string> = {
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '订单信息';
         drawerInfo.value.type = 'scan';
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = item[key]  
-        })
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
         drawerInfo.value.item.orderDate = dayjs(item.orderDate);
       };
       const deleteOrder = (item: CustomerOrderInfo) => {
@@ -425,36 +507,39 @@ const orderStatusMap: Record<number, string> = {
         drawerInfo.value.title = '编辑订单';
         drawerInfo.value.type = 'edit';
         drawerInfo.value.visible = true;
-        Object.keys(drawerInfo.value.item).forEach(key => { 
-          drawerInfo.value.item[key] = item[key]  
-        })
+        Object.keys(drawerInfo.value.item).forEach((key) => {
+          drawerInfo.value.item[key] = item[key];
+        });
         drawerInfo.value.item.orderDate = dayjs(item.orderDate);
       };
       const submit = async () => {
-        let res;
-        if (drawerInfo.value.type === 'add') {
-          res = await saveCustomerOrder({
-            ...drawerInfo.value.item,
-            orderDate: drawerInfo.value.item.orderDate
-              ? drawerInfo.value.item.orderDate.valueOf()
-              : undefined,
-          });
-        } else {
-          res = await updateCustomerOrder({
-            ...drawerInfo.value.item,
-            orderDate: drawerInfo.value.item.orderDate
-              ? drawerInfo.value.item.orderDate.valueOf()
-              : undefined,
-          });
-        }
+        formRef.value?.validate().then(async () => {
+          let res;
+          if (drawerInfo.value.type === 'add') {
+            res = await saveCustomerOrder({
+              ...drawerInfo.value.item,
+              orderDate: drawerInfo.value.item.orderDate
+                ? drawerInfo.value.item.orderDate.valueOf()
+                : undefined,
+            });
+          } else {
+            res = await updateCustomerOrder({
+              ...drawerInfo.value.item,
+              orderDate: drawerInfo.value.item.orderDate
+                ? drawerInfo.value.item.orderDate.valueOf()
+                : undefined,
+            });
+          }
 
-        if (res) {
-          message.success(drawerInfo.value.type === 'add' ? '新增订单成功' : '修改订单成功');
-          customerOrderListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
-          drawerOnClose();
-        }
+          if (res) {
+            message.success(drawerInfo.value.type === 'add' ? '新增订单成功' : '修改订单成功');
+            customerOrderListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+            drawerOnClose();
+          }
+        });
       };
       return {
+        formRef,
         columns,
         pagination,
         searchInfo,
@@ -463,13 +548,14 @@ const orderStatusMap: Record<number, string> = {
         pageInfo,
         drawerInfo,
         showGoBack: !!route?.query.id,
-        
         addOrder,
         scanOrder,
         deleteOrder,
         drawerOnClose,
         drawerEdit,
         submit,
+        addProduct,
+        deleteProduct,
         // 客户相关
         cDataSource,
         // 产品
