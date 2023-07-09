@@ -69,12 +69,7 @@
   import { useRoute } from 'vue-router';
   import dayjs from 'dayjs';
   import mRecord from './components/addContract.vue';
-  import {
-    Table,
-    Form,
-    Input,
-    Button,
-  } from 'ant-design-vue';
+  import { Table, Form, Input, Button } from 'ant-design-vue';
 
   const FormItem = Form.Item;
   export default defineComponent({
@@ -231,19 +226,14 @@
           description: undefined,
           effectiveStart: undefined,
           effectiveEnd: undefined,
-          files: undefined
+          files: undefined,
         },
       });
-
-      // const downloadContact = (item) => {};
-      // const previewContact = (item) => {};
 
       return {
         columns,
         pagination,
         showGoBack: !!route?.query.id,
-        // downloadContact,
-        // previewContact,
         pageInfo,
         customerOrderListReq,
         resetAction,

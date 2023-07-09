@@ -15,6 +15,15 @@ const storeServe: AppRouteModule = {
   },
   children: [
     {
+      path: 'product-manage',
+      name: 'SysAuthProductManage',
+      component: () => import('/@/views/auth/super/product.vue'),
+      meta: {
+        title: '产品信息管理',
+        roles: [RoleEnum.SUPER],
+      },
+    },
+    {
       path: 'in',
       name: 'StoreIn',
       component: () => import('/@/views/demo/store-serve/in/search.vue'),
@@ -32,15 +41,6 @@ const storeServe: AppRouteModule = {
         roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
       },
     },
-    {
-      path: 'product-manage',
-      name: 'SysAuthProductManage',
-      component: () => import('/@/views/auth/super/product.vue'),
-      meta: {
-        title: '产品信息管理',
-        roles: [RoleEnum.SUPER],
-      },
-    }
   ],
 };
 

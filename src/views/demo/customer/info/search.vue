@@ -194,7 +194,7 @@
           </Select>
         </FormItem>
 
-        <FormItem label="客户等级">
+        <FormItem label="客户等级" v-bind="validateInfos.level">
           <InputNumber
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -205,7 +205,7 @@
           />
         </FormItem>
 
-        <FormItem label="联系地址">
+        <FormItem label="联系地址" v-bind="validateInfos.contactAddress">
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -214,7 +214,7 @@
           />
         </FormItem>
 
-        <FormItem label="客户标签">
+        <FormItem label="客户标签" v-bind="validateInfos.tag">
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -510,6 +510,24 @@
           {
             required: true,
             message: '请选择来源',
+          },
+        ],
+        level: [
+          {
+            required: true,
+            message: '请输入客户等级',
+          },
+        ],
+        contactAddress: [
+          {
+            required: true,
+            message: '请输入联系地址',
+          },
+        ],
+        tag: [
+          {
+            required: true,
+            message: '请输入客户标签',
           },
         ],
       });

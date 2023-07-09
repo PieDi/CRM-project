@@ -8,13 +8,21 @@
     :visible="drawerInfo.visible"
     width="60%"
   >
-    <Form :labelCol="{ span: 4 }">
-      <FormItem label="客户姓名">
+    <Form :labelCol="{ span: 4 }" ref="formRef" :model="mInfo">
+      <FormItem
+        label="客户姓名"
+        name="customerId"
+        :rules="{
+          required: true,
+          message: '请选择客户姓名',
+          trigger: 'change',
+        }"
+      >
         <Select
           :disabled="drawerInfo.type !== 'add'"
           placeholder="请选择"
           @change="customerOnChange"
-          v-model:value="currentCustomer.id"
+          v-model:value="mInfo.customerId"
         >
           <SelectOption v-for="item of dataSource" :value="item.id">{{ item.name }}</SelectOption>
         </Select>
@@ -48,7 +56,15 @@
         </FormItem>
       </template>
 
-      <FormItem label="就诊医院">
+      <FormItem
+        label="就诊医院"
+        name="hospitalName"
+        :rules="{
+          required: true,
+          message: '请输入就诊医院',
+          trigger: 'change',
+        }"
+      >
         <Input
           placeholder="请输入"
           allowClear
@@ -57,7 +73,15 @@
         />
       </FormItem>
 
-      <FormItem label="科室">
+      <FormItem
+        label="科室"
+        name="departmentName"
+        :rules="{
+          required: true,
+          message: '请输入科室',
+          trigger: 'change',
+        }"
+      >
         <Input
           placeholder="请输入"
           allowClear
@@ -65,7 +89,15 @@
           :disabled="drawerInfo.type === 'scan'"
         />
       </FormItem>
-      <FormItem label="疾病名称">
+      <FormItem
+        label="疾病名称"
+        name="diseaseName"
+        :rules="{
+          required: true,
+          message: '请输入疾病名称',
+          trigger: 'change',
+        }"
+      >
         <Input
           placeholder="请输入"
           allowClear
@@ -74,7 +106,15 @@
         />
       </FormItem>
 
-      <FormItem label="会诊日期">
+      <FormItem
+        label="会诊日期"
+        name="visitDate"
+        :rules="{
+          required: true,
+          message: '请输入会诊日期',
+          trigger: 'change',
+        }"
+      >
         <DatePicker
           :show-time="true"
           v-model:value="mInfo.visitDate"
@@ -157,7 +197,7 @@
   import { DrawerItemType } from '/@/views/type';
   import { SelectValue } from 'ant-design-vue/lib/select';
   import type { UploadProps } from 'ant-design-vue';
-
+  import type { FormInstance } from 'ant-design-vue';
   import dayjs, { Dayjs } from 'dayjs';
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -182,12 +222,15 @@
       },
     },
     setup(props, { emit }) {
+      const formRef = ref<FormInstance>();
       const mInfo = ref<{
+        customerId: number | undefined;
         departmentName: string | undefined;
         diseaseName: string | undefined;
         hospitalName: undefined | string;
         visitDate: Dayjs | undefined;
       }>({
+        customerId: props.drawerInfo?.item?.customerId || undefined,
         departmentName: props.drawerInfo?.item?.departmentName || undefined,
         diseaseName: props.drawerInfo?.item?.diseaseName || undefined,
         hospitalName: props.drawerInfo?.item?.hospitalName || undefined,
@@ -252,25 +295,26 @@
           drawerOnClose();
           return;
         }
-        if (currentCustomer.value.id) {
-          const params = {
-            customerId: currentCustomer.value.id,
-            id: props.drawerInfo.item.id,
-            ...mInfo.value,
-            visitDate: mInfo.value.visitDate ? mInfo.value.visitDate.valueOf() : undefined,
-            fileIds: filesId.value.filter((id) => !!id),
-          };
+        formRef.value?.validate().then(async () => {
+          if (currentCustomer.value.id) {
+            const params = {
+              id: props.drawerInfo.item.id,
+              ...mInfo.value,
+              visitDate: mInfo.value.visitDate ? mInfo.value.visitDate.valueOf() : undefined,
+              fileIds: filesId.value.filter((id) => !!id),
+            };
 
-          let res;
-          if (props.drawerInfo.type === 'add') res = await saveCustomerMH(params);
-          if (props.drawerInfo.type === 'edit') res = await updateCustomerMH(params);
-          if (res) {
-            message.success(
-              props.drawerInfo.type === 'add' ? '新增客户病史成功' : '修改客户病史成功',
-            );
-            emit('submit', props.drawerInfo.type === 'add' ? true : false);
+            let res;
+            if (props.drawerInfo.type === 'add') res = await saveCustomerMH(params);
+            if (props.drawerInfo.type === 'edit') res = await updateCustomerMH(params);
+            if (res) {
+              message.success(
+                props.drawerInfo.type === 'add' ? '新增客户病史成功' : '修改客户病史成功',
+              );
+              emit('submit', props.drawerInfo.type === 'add' ? true : false);
+            }
           }
-        }
+        });
       };
       // 文件上传
       const fileList = ref<UploadProps['fileList']>([]);
@@ -315,6 +359,7 @@
       };
 
       return {
+        formRef,
         drawerInfo: props.drawerInfo,
         customerOnChange,
         currentCustomer,

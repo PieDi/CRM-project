@@ -10,9 +10,6 @@
             style="width: 150px"
           />
         </FormItem>
-        <!-- <FormItem label="联系电话" style="margin-left: 10px;">
-          <Input placeholder="请输入" allow-clear style="width: 150px;" />
-        </FormItem> -->
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
@@ -54,8 +51,16 @@
       width="60%"
       :visible="drawerInfo.visible"
     >
-      <Form :labelCol="{ span: 4 }">
-        <FormItem label="客户姓名">
+      <Form :labelCol="{ span: 4 }" ref="formRef" :model="drawerInfo.item">
+        <FormItem
+          label="客户姓名"
+          name="customerId"
+          :rules="{
+            required: true,
+            message: '请选择客户姓名',
+            trigger: 'change',
+          }"
+        >
           <Select
             :disabled="drawerInfo.type !== 'add'"
             placeholder="请选择"
@@ -66,7 +71,15 @@
           </Select>
         </FormItem>
 
-        <FormItem label="回访时间">
+        <FormItem
+          label="回访时间"
+          name="visitTime"
+          :rules="{
+            required: true,
+            message: '请选择回访时间',
+            trigger: 'change',
+          }"
+        >
           <DatePicker
             :disabled="drawerInfo.type === 'scan'"
             show-time
@@ -76,7 +89,15 @@
           />
         </FormItem>
 
-        <FormItem label="回访项目">
+        <FormItem
+          label="回访项目"
+          name="item"
+          :rules="{
+            required: true,
+            message: '请输入回访项目',
+            trigger: 'change',
+          }"
+        >
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -85,7 +106,15 @@
           />
         </FormItem>
 
-        <FormItem label="回访类型">
+        <FormItem
+          label="回访类型"
+          name="type"
+          :rules="{
+            required: true,
+            message: '请选择回访类型',
+            trigger: 'change',
+          }"
+        >
           <Select
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请选择"
@@ -97,8 +126,16 @@
             <SelectOption :value="3">其他</SelectOption>
           </Select>
         </FormItem>
-        
-        <FormItem label="标题">
+
+        <FormItem
+          label="标题"
+          name="title"
+          :rules="{
+            required: true,
+            message: '请输入回访标题',
+            trigger: 'change',
+          }"
+        >
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -107,7 +144,15 @@
           />
         </FormItem>
 
-        <FormItem label="回访内容">
+        <FormItem
+          label="回访内容"
+          name="visitContent"
+          :rules="{
+            required: true,
+            message: '请输入回访内容',
+            trigger: 'change',
+          }"
+        >
           <TextArea
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -116,7 +161,15 @@
           />
         </FormItem>
 
-        <FormItem label="下一步计划">
+        <FormItem
+          label="下一步计划"
+          name="nextPlan"
+          :rules="{
+            required: true,
+            message: '请输入下一步回访计划',
+            trigger: 'change',
+          }"
+        >
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -158,6 +211,7 @@
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { getCustomerList } from '/@/api/demo/customer';
   import { CustomerInfo } from '/@/api/demo/model/customer';
+  import type { FormInstance } from 'ant-design-vue';
   import dayjs from 'dayjs';
   import { useRoute } from 'vue-router';
   const TextArea = Input.TextArea;
@@ -183,26 +237,29 @@
       TextArea,
     },
     setup() {
+      const formRef = ref<FormInstance>();
       const columns: ColumnsType<VisitReturnInfo> = [
         {
           title: '客户姓名',
           dataIndex: 'customerName',
+          width: 120,
         },
         {
           title: '标题',
           dataIndex: 'title',
           width: 120,
-          ellipsis: true
+          ellipsis: true,
         },
         {
           title: '回访项目',
           dataIndex: 'item',
           width: 120,
-          ellipsis: true
+          ellipsis: true,
         },
         {
           title: '回访类型',
           dataIndex: 'type',
+          width: 120,
           customRender: (state) => visitTypeMap[state.record.type as number],
         },
         {
@@ -218,10 +275,6 @@
           title: '下一步计划',
           dataIndex: 'nextPlan',
         },
-        // {
-        //   title: '回访状态',
-        //   dataIndex: 'status',
-        // },
         {
           title: '操作',
           dataIndex: 'operation',
@@ -323,33 +376,31 @@
       };
 
       const submit = async () => {
-        let res;
-        if (drawerInfo.value.type === 'add') {
-          res = await saveVisit({
-            ...drawerInfo.value.item,
-            visitTime: drawerInfo.value.item.visitTime
-              ? drawerInfo.value.item.visitTime.valueOf()
-              : undefined,
-          });
-        } else { 
-          res = await updateVisit({
-            ...drawerInfo.value.item,
-            visitTime: drawerInfo.value.item.visitTime
-              ? drawerInfo.value.item.visitTime.valueOf()
-              : undefined,
-          });
-        }
-          
-
-
-          
-        if (res) {
-          message.success(
-            drawerInfo.value.type === 'add' ? '新增回访计划成功' : '修改回访计划成功',
-          );
-          visitRListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
-          drawerOnClose();
-        }
+        formRef.value?.validate().then(async () => {
+          let res;
+          if (drawerInfo.value.type === 'add') {
+            res = await saveVisit({
+              ...drawerInfo.value.item,
+              visitTime: drawerInfo.value.item.visitTime
+                ? drawerInfo.value.item.visitTime.valueOf()
+                : undefined,
+            });
+          } else {
+            res = await updateVisit({
+              ...drawerInfo.value.item,
+              visitTime: drawerInfo.value.item.visitTime
+                ? drawerInfo.value.item.visitTime.valueOf()
+                : undefined,
+            });
+          }
+          if (res) {
+            message.success(
+              drawerInfo.value.type === 'add' ? '新增回访计划成功' : '修改回访计划成功',
+            );
+            visitRListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+            drawerOnClose();
+          }
+        });
       };
       const resetAction = () => {
         searchInfo.value.customerName = undefined;
@@ -387,6 +438,7 @@
       };
 
       return {
+        formRef,
         columns,
         searchInfo,
         pageInfo,
