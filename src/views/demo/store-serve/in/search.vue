@@ -92,7 +92,11 @@
           />
         </FormItem>
 
-        <FormItem label="入库数量" v-bind="validateInfos.amount" :help="`当前库存数量:${cProduct?.amount || ''}`">
+        <FormItem
+          label="入库数量"
+          v-bind="validateInfos.amount"
+          :help="`当前库存数量:${cProduct?.amount || ''}`"
+        >
           <InputNumber
             placeholder="请输入"
             allowClear
@@ -243,7 +247,7 @@
       const cProduct = ref<ProductInfo>();
       const pChange = () => {
         const p = pDataSource.value.find((t) => t.id === drawerInfo.value.item.productId);
-        cProduct.value = p
+        cProduct.value = p;
       };
       const addStoreIn = () => {
         drawerInfo.value.visible = true;
