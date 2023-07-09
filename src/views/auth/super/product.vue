@@ -54,15 +54,6 @@
             "
             >编辑</Button
           >
-          <!-- <Button
-            type="link"
-            @click="
-              () => {
-                deleteCServe(record);
-              }
-            "
-            >删除</Button
-          > -->
         </template>
       </template>
     </Table>
@@ -107,15 +98,6 @@
           </Select>
         </FormItem>
 
-        <FormItem label="产品原价">
-          <InputNumber
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.originalPrice"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
-
         <FormItem label="产品售价" v-bind="validateInfos.price">
           <InputNumber
             placeholder="请输入"
@@ -124,34 +106,6 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-
-        <FormItem label="产品运费" v-bind="validateInfos.freight">
-          <InputNumber
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.freight"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
-
-        <FormItem label="积分兑换比" v-bind="validateInfos.integralConversionRatio">
-          <InputNumber
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.integralConversionRatio"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
-
-        <FormItem label="最高可用积分" v-bind="validateInfos.integralMaxAvailable">
-          <InputNumber
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.integralMaxAvailable"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
-
         <FormItem label="计量单位" v-bind="validateInfos.unit">
           <Input
             placeholder="请输入"
@@ -160,7 +114,30 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-
+        <FormItem label="产品描述" v-bind="validateInfos.introduction">
+          <TextArea
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.introduction"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+        <FormItem label="产品原价">
+          <InputNumber
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.originalPrice"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+        <FormItem label="产品运费" >
+          <InputNumber
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.freight"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
         <FormItem label="产品轮播图">
           <Upload
             :file-list="fileList"
@@ -252,15 +229,6 @@
             </template>
           </Upload>
         </FormItem>
-
-        <FormItem label="产品描述" v-bind="validateInfos.introduction">
-          <TextArea
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.introduction"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
       </Form>
     </Modal>
   </PageWrapper>
@@ -324,8 +292,8 @@
           originalPrice: undefined,
           price: undefined,
           freight: undefined,
-          integralConversionRatio: undefined,
-          integralMaxAvailable: undefined,
+          // integralConversionRatio: undefined,
+          // integralMaxAvailable: undefined,
         },
       });
 
@@ -451,12 +419,6 @@
         });
       };
       const rulesRef = reactive({
-        freight: [
-          {
-            required: true,
-            message: '请输入运费',
-          },
-        ],
         name: [
           {
             required: true,
@@ -467,18 +429,6 @@
           {
             required: true,
             message: '请输入产品编号',
-          },
-        ],
-        integralConversionRatio: [
-          {
-            required: true,
-            message: '请输入积分兑换比',
-          },
-        ],
-        integralMaxAvailable: [
-          {
-            required: true,
-            message: '请输入最高可用积分',
           },
         ],
         introduction: [

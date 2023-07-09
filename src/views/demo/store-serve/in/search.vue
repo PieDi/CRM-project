@@ -71,7 +71,7 @@
             :show-search="true"
             :disabled="drawerInfo.type !== 'add'"
             placeholder="请选择"
-            :filter-option="pFilterOption"
+            @change="pChange"
             v-model:value="drawerInfo.item.productId"
           >
             <SelectOption
@@ -92,7 +92,7 @@
           />
         </FormItem>
 
-        <FormItem label="入库数量" v-bind="validateInfos.amount">
+        <FormItem label="入库数量" v-bind="validateInfos.amount" :help="`当前库存数量:${cProduct?.amount || ''}`">
           <InputNumber
             placeholder="请输入"
             allowClear
@@ -154,7 +154,6 @@
           amount: number | undefined;
           artNo: string | undefined;
           productId: number | undefined;
-          // unit: string | undefined;
           remark: string | undefined;
         }>
       >({
@@ -165,7 +164,6 @@
           amount: undefined,
           artNo: undefined,
           productId: undefined,
-          // unit: undefined,
           remark: undefined,
         },
       });
@@ -242,12 +240,10 @@
           pDataSource.value = res;
         }
       };
-
-      const pFilterOption = (input: string, option: any) => {
-        return (
-          option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
-          option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        );
+      const cProduct = ref<ProductInfo>();
+      const pChange = () => {
+        const p = pDataSource.value.find((t) => t.id === drawerInfo.value.item.productId);
+        cProduct.value = p
       };
       const addStoreIn = () => {
         drawerInfo.value.visible = true;
@@ -347,7 +343,8 @@
         deleteIn,
         submit,
         pDataSource,
-        pFilterOption,
+        pChange,
+        cProduct,
         validateInfos,
       };
     },
