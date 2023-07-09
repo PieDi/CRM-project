@@ -8,8 +8,16 @@
     :visible="drawerInfo.visible"
     width="60%"
   >
-    <Form :labelCol="{ span: 4 }">
-      <FormItem label="客户姓名">
+    <Form :labelCol="{ span: 4 }" ref="formRef" :model="mInfo">
+      <FormItem
+        label="客户姓名"
+        name="customerId"
+        :rules="{
+          required: true,
+          message: '请选择客户姓名',
+          trigger: 'change',
+        }"
+      >
         <Select
           :disabled="drawerInfo.type == 'scan'"
           placeholder="请选择"
@@ -19,7 +27,15 @@
           <SelectOption v-for="item of dataSource" :value="item.id">{{ item.name }}</SelectOption>
         </Select>
       </FormItem>
-      <FormItem label="订单名称">
+      <FormItem
+        label="订单名称"
+        name="orderId"
+        :rules="{
+          required: true,
+          message: '请选择订单姓名',
+          trigger: 'change',
+        }"
+      >
         <Select
           :disabled="drawerInfo.type == 'scan'"
           placeholder="请选择"
@@ -30,7 +46,15 @@
           }}</SelectOption>
         </Select>
       </FormItem>
-      <FormItem label="发票名称">
+      <FormItem
+        label="发票名称"
+        name="name"
+        :rules="{
+          required: true,
+          message: '请输入发票名称',
+          trigger: 'change',
+        }"
+      >
         <Input
           placeholder="请输入"
           allowClear
@@ -38,7 +62,15 @@
           v-model:value="mInfo.name"
         />
       </FormItem>
-      <FormItem label="发票编号">
+      <FormItem
+        label="发票编号"
+        name="number"
+        :rules="{
+          required: true,
+          message: '请输入发票编号',
+          trigger: 'change',
+        }"
+      >
         <Input
           placeholder="请输入"
           allowClear
@@ -47,7 +79,15 @@
         />
       </FormItem>
 
-      <FormItem label="经手人">
+      <FormItem
+        label="经手人"
+        name="agent"
+        :rules="{
+          required: true,
+          message: '请输入经手人',
+          trigger: 'change',
+        }"
+      >
         <Input
           placeholder="请输入"
           allowClear
@@ -56,7 +96,15 @@
         />
       </FormItem>
 
-      <FormItem label="金额">
+      <FormItem
+        label="金额"
+        name="amount"
+        :rules="{
+          required: true,
+          message: '请输入金额',
+          trigger: 'change',
+        }"
+      >
         <InputNumber
           placeholder="请输入"
           allowClear
@@ -65,7 +113,15 @@
         />
       </FormItem>
 
-      <FormItem label="发票号">
+      <FormItem
+        label="发票号"
+        name="serial"
+        :rules="{
+          required: true,
+          message: '请输入发票号',
+          trigger: 'change',
+        }"
+      >
         <InputNumber
           placeholder="请输入"
           allowClear
@@ -74,7 +130,15 @@
         />
       </FormItem>
 
-      <FormItem label="开票日期">
+      <FormItem
+        label="开票日期"
+        name="invoiceTime"
+        :rules="{
+          required: true,
+          message: '请输入开票日期',
+          trigger: 'change',
+        }"
+      >
         <DatePicker
           :show-time="true"
           v-model:value="mInfo.invoiceTime"
@@ -158,13 +222,13 @@
     saveCustomerInvoice,
     updateCustomerInvoice,
     fileInvoiceUpload,
-  fileInvoiceDelete,
-  getCustomerFileView
+    fileInvoiceDelete,
+    getCustomerFileView,
   } from '/@/api/demo/customer';
   import { CustomerInvoiceInfo, CustomerInfo, CustomerOrderInfo } from '/@/api/demo/model/customer';
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
-
+  import type { FormInstance } from 'ant-design-vue';
   import dayjs, { Dayjs } from 'dayjs';
   const FormItem = Form.Item;
   const InputTextArea = Input.TextArea;
@@ -193,6 +257,7 @@
       },
     },
     setup(props, { emit }) {
+      const formRef = ref<FormInstance>();
       const mInfo = ref<{
         id?: number | undefined;
         orderId: number | undefined;
@@ -259,20 +324,22 @@
           drawerOnClose();
           return;
         }
-        const params = {
-          ...mInfo.value,
-          invoiceTime: mInfo.value.invoiceTime ? mInfo.value.invoiceTime.valueOf() : undefined,
-          fileIds: filesId.value.filter((id) => !!id),
-        };
-        let res;
-        if (props.drawerInfo.type === 'add') res = await saveCustomerInvoice(params);
-        if (props.drawerInfo.type === 'edit') res = await updateCustomerInvoice(params);
-        if (res) {
-          message.success(
-            props.drawerInfo.type === 'add' ? '新增客户发票成功' : '修改客户发票成功',
-          );
-          emit('submit', props.drawerInfo.type === 'add' ? true : false);
-        }
+        formRef.value?.validate().then(async () => {
+          const params = {
+            ...mInfo.value,
+            invoiceTime: mInfo.value.invoiceTime ? mInfo.value.invoiceTime.valueOf() : undefined,
+            fileIds: filesId.value.filter((id) => !!id),
+          };
+          let res;
+          if (props.drawerInfo.type === 'add') res = await saveCustomerInvoice(params);
+          if (props.drawerInfo.type === 'edit') res = await updateCustomerInvoice(params);
+          if (res) {
+            message.success(
+              props.drawerInfo.type === 'add' ? '新增客户发票成功' : '修改客户发票成功',
+            );
+            emit('submit', props.drawerInfo.type === 'add' ? true : false);
+          }
+        });
       };
       // 文件上传
       const fileList = ref<UploadProps['fileList']>([]);
@@ -299,8 +366,8 @@
           );
       };
       const handlePreView = async (file: any) => {
-        const res = await getCustomerFileView(file?.id)
-        if (res) { 
+        const res = await getCustomerFileView(file?.id);
+        if (res) {
           window.open(res);
         }
       };
@@ -317,6 +384,7 @@
         }
       };
       return {
+        formRef,
         drawerInfo: props.drawerInfo,
         mInfo,
         drawerOnClose,

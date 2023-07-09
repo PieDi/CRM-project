@@ -145,7 +145,6 @@
                 :show-search="true"
                 :disabled="drawerInfo.type !== 'add'"
                 placeholder="请选择"
-                :filter-option="pFilterOption"
                 v-model:value="p.productId"
                 style="width: 150px"
               >
@@ -375,12 +374,6 @@
         }
       };
 
-      const pFilterOption = (input: string, option: any) => {
-        return (
-          option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
-          option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        );
-      };
       const route = useRoute();
       const customerOrderListReq = async (pageNum: number) => {
         const res = await getCustomerOrderPage({
@@ -441,10 +434,6 @@
           dataIndex: 'totalPrice',
         },
         {
-          title: '合同名称',
-          dataIndex: 'endTime',
-        },
-        {
           title: '操作',
           dataIndex: 'operation',
         },
@@ -477,6 +466,11 @@
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = item[key];
         });
+        //@ts-ignore
+        drawerInfo.value.item.products = item.orderProducts.map((p) => ({
+          productId: p.id,
+          amount: p.amount,
+        }));
         drawerInfo.value.item.orderDate = dayjs(item.orderDate);
       };
       const deleteOrder = (item: CustomerOrderInfo) => {
@@ -510,6 +504,11 @@
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = item[key];
         });
+        //@ts-ignore
+        drawerInfo.value.item.products = item.orderProducts.map((p) => ({
+          productId: p.id,
+          amount: p.amount,
+        }));
         drawerInfo.value.item.orderDate = dayjs(item.orderDate);
       };
       const submit = async () => {
@@ -561,7 +560,6 @@
         // 产品
         // currentP,
         pDataSource,
-        pFilterOption,
       };
     },
   });

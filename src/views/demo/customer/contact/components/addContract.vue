@@ -8,8 +8,16 @@
     :visible="drawerInfo.visible"
     width="60%"
   >
-    <Form :labelCol="{ span: 4 }">
-      <FormItem label="客户姓名">
+    <Form :labelCol="{ span: 4 }" ref="formRef" :model="mInfo">
+      <FormItem
+        label="客户姓名"
+        name="customerId"
+        :rules="{
+          required: true,
+          message: '请选择客户姓名',
+          trigger: 'change',
+        }"
+      >
         <Select
           :disabled="drawerInfo.type == 'scan'"
           placeholder="请选择"
@@ -19,7 +27,15 @@
           <SelectOption v-for="item of dataSource" :value="item.id">{{ item.name }}</SelectOption>
         </Select>
       </FormItem>
-      <FormItem label="订单名称">
+      <FormItem
+        label="订单名称"
+        name="orderId"
+        :rules="{
+          required: true,
+          message: '请选择订单姓名',
+          trigger: 'change',
+        }"
+      >
         <Select
           :disabled="drawerInfo.type == 'scan'"
           placeholder="请选择"
@@ -30,7 +46,15 @@
           }}</SelectOption>
         </Select>
       </FormItem>
-      <FormItem label="合同名称">
+      <FormItem
+        label="合同名称"
+        name="name"
+        :rules="{
+          required: true,
+          message: '请输入合同名称',
+          trigger: 'change',
+        }"
+      >
         <Input
           placeholder="请输入"
           allowClear
@@ -38,7 +62,15 @@
           v-model:value="mInfo.name"
         />
       </FormItem>
-      <FormItem label="合同编号">
+      <FormItem
+        label="合同编号"
+        name="number"
+        :rules="{
+          required: true,
+          message: '请输入合同编号',
+          trigger: 'change',
+        }"
+      >
         <Input
           placeholder="请输入"
           allowClear
@@ -46,7 +78,15 @@
           v-model:value="mInfo.number"
         />
       </FormItem>
-      <FormItem label="金额">
+      <FormItem
+        label="金额"
+        name="price"
+        :rules="{
+          required: true,
+          message: '请输入合同金额',
+          trigger: 'change',
+        }"
+      >
         <InputNumber
           placeholder="请输入"
           allowClear
@@ -54,7 +94,15 @@
           v-model:value="mInfo.price"
         />
       </FormItem>
-      <FormItem label="生效日期">
+      <FormItem
+        label="生效日期"
+        name="effectiveStart"
+        :rules="{
+          required: true,
+          message: '请输入生效日期',
+          trigger: 'change',
+        }"
+      >
         <DatePicker
           :show-time="true"
           v-model:value="mInfo.effectiveStart"
@@ -62,14 +110,30 @@
         />
       </FormItem>
 
-      <FormItem label="截止日期">
+      <FormItem
+        label="截止日期"
+        name="effectiveEnd"
+        :rules="{
+          required: true,
+          message: '请输入截止日期',
+          trigger: 'change',
+        }"
+      >
         <DatePicker
           :show-time="true"
           v-model:value="mInfo.effectiveEnd"
           :disabled="drawerInfo.type === 'scan'"
         />
       </FormItem>
-      <FormItem label="签约时间">
+      <FormItem
+        label="签约时间"
+        name="signTime"
+        :rules="{
+          required: true,
+          message: '请输入签约日期',
+          trigger: 'change',
+        }"
+      >
         <DatePicker
           :show-time="true"
           v-model:value="mInfo.signTime"
@@ -155,8 +219,8 @@
     saveCustomerContract,
     updateCustomerContract,
     fileContractUpload,
-  fileContractDelete,
-  getCustomerFileView
+    fileContractDelete,
+    getCustomerFileView,
   } from '/@/api/demo/customer';
   import {
     CustomerContractInfo,
@@ -165,6 +229,7 @@
   } from '/@/api/demo/model/customer';
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
+  import type { FormInstance } from 'ant-design-vue';
   import dayjs, { Dayjs } from 'dayjs';
   const FormItem = Form.Item;
   const InputTextArea = Input.TextArea;
@@ -192,6 +257,7 @@
       },
     },
     setup(props, { emit }) {
+      const formRef = ref<FormInstance>();
       const mInfo = ref<{
         id?: number | undefined;
         orderId: string | undefined;
@@ -262,25 +328,27 @@
           drawerOnClose();
           return;
         }
-        const params = {
-          ...mInfo.value,
-          signTime: mInfo.value.signTime ? mInfo.value.signTime.valueOf() : undefined,
-          effectiveStart: mInfo.value.effectiveStart
-            ? mInfo.value.effectiveStart.valueOf()
-            : undefined,
-          effectiveEnd: mInfo.value.effectiveEnd ? mInfo.value.effectiveEnd.valueOf() : undefined,
-          fileIds: filesId.value.filter((id) => !!id),
-        };
-        delete params.customerId;
-        let res;
-        if (props.drawerInfo.type === 'add') res = await saveCustomerContract(params);
-        if (props.drawerInfo.type === 'edit') res = await updateCustomerContract(params);
-        if (res) {
-          message.success(
-            props.drawerInfo.type === 'add' ? '新增客户合同成功' : '修改客户合同成功',
-          );
-          emit('submit', props.drawerInfo.type === 'add' ? true : false);
-        }
+        formRef.value?.validate().then(async () => {
+          const params = {
+            ...mInfo.value,
+            signTime: mInfo.value.signTime ? mInfo.value.signTime.valueOf() : undefined,
+            effectiveStart: mInfo.value.effectiveStart
+              ? mInfo.value.effectiveStart.valueOf()
+              : undefined,
+            effectiveEnd: mInfo.value.effectiveEnd ? mInfo.value.effectiveEnd.valueOf() : undefined,
+            fileIds: filesId.value.filter((id) => !!id),
+          };
+          delete params.customerId;
+          let res;
+          if (props.drawerInfo.type === 'add') res = await saveCustomerContract(params);
+          if (props.drawerInfo.type === 'edit') res = await updateCustomerContract(params);
+          if (res) {
+            message.success(
+              props.drawerInfo.type === 'add' ? '新增客户合同成功' : '修改客户合同成功',
+            );
+            emit('submit', props.drawerInfo.type === 'add' ? true : false);
+          }
+        });
       };
       // 文件上传
       const fileList = ref<UploadProps['fileList']>([]);
@@ -307,12 +375,12 @@
           );
       };
       const handlePreView = async (file: any) => {
-        const res = await getCustomerFileView(file?.id)
-        if (res) { 
+        const res = await getCustomerFileView(file?.id);
+        if (res) {
           window.open(res);
         }
       };
-      
+
       const filesId = ref<any[]>([]);
       const uploadAction = async (o: any) => {
         const fileData = new FormData();
@@ -325,6 +393,7 @@
         }
       };
       return {
+        formRef,
         drawerInfo: props.drawerInfo,
         mInfo,
         drawerOnClose,
