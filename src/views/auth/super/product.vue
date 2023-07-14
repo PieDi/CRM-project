@@ -98,6 +98,15 @@
           </Select>
         </FormItem>
 
+        <FormItem label="产品原价">
+          <InputNumber
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.originalPrice"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+
         <FormItem label="产品售价" v-bind="validateInfos.price">
           <InputNumber
             placeholder="请输入"
@@ -114,6 +123,33 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
+        
+        <FormItem label="产品运费">
+          <InputNumber
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.freight"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+
+
+        <FormItem label="积分兑换" v-bind="validateInfos.integral">
+          <RadioGroup
+            v-model:value="drawerInfo.item.integral"
+            name="integral"
+            :disabled="drawerInfo.type === 'scan'"
+          >
+            <Radio :value="2" name="integral">是</Radio>
+            <Radio :value="1" name="integral">否</Radio>
+          </RadioGroup>
+          <!-- <Input
+            placeholder="请输入"
+            allowClear
+            :disabled="drawerInfo.type === 'scan'"
+          /> -->
+        </FormItem>
+
         <FormItem label="产品描述" v-bind="validateInfos.introduction">
           <TextArea
             placeholder="请输入"
@@ -122,22 +158,8 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-        <FormItem label="产品原价">
-          <InputNumber
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.originalPrice"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
-        <FormItem label="产品运费" >
-          <InputNumber
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.freight"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
+   
+       
         <FormItem label="产品轮播图">
           <Upload
             :file-list="fileList"
@@ -245,6 +267,8 @@
     Modal,
     Select,
     message,
+    RadioGroup,
+    Radio,
     Upload,
   } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
@@ -277,6 +301,8 @@
       Select,
       SelectOption,
       Upload,
+      RadioGroup,
+      Radio,
     },
     setup() {
       const drawerInfo = ref<DrawerItemType<ProductInfo>>({
@@ -292,6 +318,9 @@
           originalPrice: undefined,
           price: undefined,
           freight: undefined,
+          amount: undefined,
+          integral: 2,
+
           // integralConversionRatio: undefined,
           // integralMaxAvailable: undefined,
         },
@@ -348,6 +377,15 @@
           title: '产品类型',
           dataIndex: 'type',
           customRender: (state) => productTypeMap[state.record.type as number],
+        },
+        {
+          title: '产品库存',
+          dataIndex: 'amount',
+        },
+        {
+          title: '库存管理',
+          dataIndex: 'amount',
+          customRender: (state) => (state.record.lowStocks ? '库存不足' : '库存充足'),
         },
         {
           title: '产品描述',

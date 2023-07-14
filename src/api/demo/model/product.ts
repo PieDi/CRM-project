@@ -9,6 +9,8 @@ export interface ProductInfo {
   price: number | undefined;
   freight: number | undefined;
   amount: number | undefined;
+  integral: number | undefined;
+  lowStocks?: boolean | undefined;
   // integralConversionRatio: number | undefined;
   // integralMaxAvailable: number | undefined;
 }
