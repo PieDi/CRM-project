@@ -3,17 +3,17 @@
     <h3 class="header">{{ `客户病史信息${i + 1}` }}</h3>
     <div class="basic">
       <div class="header"
-        ><span>疾病名称:</span><span>{{ item.diseaseBasic.diseaseName }}</span></div
-      >
-      <div class="header"
         ><span>医院名称:</span><span>{{ item.diseaseBasic.hospitalName }}</span></div
       >
       <div class="header"
-        ><span>科室:</span><span>{{ item.diseaseBasic.departmentName }}</span></div
+        ><span>就诊时间:</span
+        ><span>{{ dayjs(item.diseaseBasic.visitDate).format('YYYY-MM-DD') }}</span></div
       >
       <div class="header"
-        ><span>会诊时间名称:</span
-        ><span>{{ dayjs(item.diseaseBasic.visitDate).format('YYYY-MM-DD') }}</span></div
+        ><span>疾病名称:</span><span>{{ item.diseaseBasic.diseaseName }}</span></div
+      >
+      <div class="header"
+        ><span>科室:</span><span>{{ item.diseaseBasic.departmentName }}</span></div
       >
     </div>
 
@@ -171,7 +171,7 @@
             <div class="block-content">
               <div>
                 <div class="content-label">
-                  <span>会诊日期:</span
+                  <span>就诊时间:</span
                   >{{
                     dayjs(item.diseaseConsultation.last.consultationDate).format('YYYY-MM-DD')
                   }}</div
@@ -348,7 +348,7 @@
                 dataIndex: 'consultationContent',
               },
               {
-                title: '会诊日期',
+                title: '就诊时间',
                 dataIndex: 'consultationDate',
                 customRender: (state) =>
                   dayjs(state.record.consultationDate).format('YYYY-MM-DD HH:mm:ss'),

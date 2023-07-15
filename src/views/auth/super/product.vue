@@ -54,6 +54,9 @@
             "
             >编辑</Button
           >
+          <Button  type="link" danger @click="() => {
+            deleteProduct(record)
+          }">删除</Button>
         </template>
       </template>
     </Table>
@@ -320,9 +323,6 @@
           freight: undefined,
           amount: undefined,
           integral: 2,
-
-          // integralConversionRatio: undefined,
-          // integralMaxAvailable: undefined,
         },
       });
 
@@ -368,27 +368,33 @@
         {
           title: '产品名称',
           dataIndex: 'name',
+          width: 200
         },
         {
           title: '产品编号',
           dataIndex: 'number',
+          width: 200
         },
         {
           title: '产品类型',
           dataIndex: 'type',
+          width: 120,
           customRender: (state) => productTypeMap[state.record.type as number],
         },
         {
           title: '产品库存',
           dataIndex: 'amount',
+          width: 120,
         },
         {
           title: '库存管理',
           dataIndex: 'amount',
+          width: 120,
           customRender: (state) => (state.record.lowStocks ? '库存不足' : '库存充足'),
         },
         {
           title: '产品描述',
+          width: 200,
           dataIndex: 'introduction',
         },
         {

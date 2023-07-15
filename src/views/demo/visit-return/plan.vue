@@ -27,6 +27,7 @@
           <div style="display: flex">
             <Button type="link" @click="scanReturnPlan(record)">查看</Button>
             <Button type="link" @click="drawerEdit(record)">编辑</Button>
+            <Button v-if="authShow" type="link" danger @click="deletePlan(record)">删除</Button>
             <Button
               type="link"
               style="margin-left: 10px"
@@ -63,11 +64,18 @@
         >
           <Select
             :disabled="drawerInfo.type !== 'add'"
+            show-search
+            :filter-option="filterOption"
             placeholder="请选择"
             allow-clear
             v-model:value="drawerInfo.item.customerId"
           >
-            <SelectOption v-for="item of dataSource" :value="item.id">{{ item.name }}</SelectOption>
+            <SelectOption
+              v-for="item of dataSource"
+              :value="item.id"
+              :key="`${item.name}_${item.id}`"
+              >{{ item.name }}</SelectOption
+            >
           </Select>
         </FormItem>
 
@@ -82,7 +90,6 @@
         >
           <DatePicker
             :disabled="drawerInfo.type === 'scan'"
-            show-time
             allow-clear
             placeholder="请选择"
             v-model:value="drawerInfo.item.visitTime"
@@ -201,12 +208,12 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, computed, onMounted } from 'vue';
+  import { defineComponent, ref, onMounted, toRaw, computed, createVNode } from 'vue';
   import { PageWrapper } from '@/components/Page';
   import { Form, Input, Button, Table, Modal, DatePicker, Select, message } from 'ant-design-vue';
   import StartVisit from './start-visit/index.vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
-  import { getVisitPage, saveVisit, updateVisit } from '/@/api/demo/visit-return';
+  import { getVisitPage, saveVisit, updateVisit, deleteVisit } from '/@/api/demo/visit-return';
   import { VisitReturnInfo } from '/@/api/demo/model/visit-return';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { getCustomerList } from '/@/api/demo/customer';
@@ -214,8 +221,12 @@
   import type { FormInstance } from 'ant-design-vue';
   import dayjs from 'dayjs';
   import { useRoute } from 'vue-router';
-  const TextArea = Input.TextArea;
+  import { useUserStore } from '/@/store/modules/user';
+  import { RoleEnum } from '/@/enums/roleEnum';
+  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
+  const TextArea = Input.TextArea;
   const visitTypeMap: Record<number, string> = {
     1: '电话回访',
     2: '线下回访',
@@ -237,6 +248,11 @@
       TextArea,
     },
     setup() {
+      const userStore = useUserStore();
+      const roleList = toRaw(userStore.getRoleList) || [];
+      const authShow = computed(() => {
+        return roleList.some((role) => [RoleEnum.SUPER, RoleEnum.ADMIN].includes(role));
+      });
       const formRef = ref<FormInstance>();
       const columns: ColumnsType<VisitReturnInfo> = [
         {
@@ -264,15 +280,17 @@
         },
         {
           title: '回访时间',
-          dataIndex: 'time',
-          customRender: (state) => dayjs(state.record.visitTime).format('YYYY-MM-DD HH:mm:ss'),
+          dataIndex: 'visitTime',
+          width: 120,
         },
         {
           title: '回访内容',
+          width: 120,
           dataIndex: 'visitContent',
         },
         {
           title: '下一步计划',
+          width: 180,
           dataIndex: 'nextPlan',
         },
         {
@@ -321,6 +339,9 @@
           dataSource.value = res;
         }
       };
+      const filterOption = (input: string, option: any) => {
+        return option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+      };
 
       // 抽屉
       const drawerInfo = ref<DrawerItemType<VisitReturnInfo>>({
@@ -341,6 +362,22 @@
         },
       });
 
+      const deletePlan = (item: VisitReturnInfo) => {
+        confirm(
+          withConfirm({
+            icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+            content: '确定删除该回访计划',
+            async onOk() {
+              const res = await deleteVisit(item.id as number);
+              if (res) {
+                message.success('删除回访计划成功');
+                visitRListReq(pageInfo.value.current);
+              }
+            },
+          }),
+        );
+      };
+
       const addReturnPlan = () => {
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新建回访';
@@ -354,7 +391,7 @@
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = item[key];
         });
-        drawerInfo.value.item.visitTime = dayjs(item.visitTime);
+        drawerInfo.value.item.visitTime = dayjs(item.visitTime, 'YYYY-MM-DD');
       };
       const drawerEdit = (item: VisitReturnInfo) => {
         drawerInfo.value.title = '编辑回访';
@@ -363,7 +400,7 @@
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = item[key];
         });
-        drawerInfo.value.item.visitTime = dayjs(item.visitTime);
+        drawerInfo.value.item.visitTime = dayjs(item.visitTime, 'YYYY-MM-DD');
       };
 
       const drawerOnClose = () => {
@@ -382,7 +419,7 @@
             res = await saveVisit({
               ...drawerInfo.value.item,
               visitTime: drawerInfo.value.item.visitTime
-                ? drawerInfo.value.item.visitTime.valueOf()
+                ? drawerInfo.value.item.visitTime.format('YYYY-MM-DD')
                 : undefined,
             });
           } else {
@@ -445,6 +482,7 @@
         pagination,
         resetAction,
         searchAction,
+        deletePlan,
         // 抽屉
         dataSource,
         drawerInfo,
@@ -459,6 +497,8 @@
         startVisit,
         onModelConfirm,
         onModelCancel,
+        authShow,
+        filterOption,
       };
     },
   });

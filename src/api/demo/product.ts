@@ -44,7 +44,7 @@ export const updateProduct = (params: any) =>
 export const removalProduct = (id: number) =>
   defHttp.post<{ total: number; pageNum: number; data: ProductInfo[] }>({
     url: Api.ProductRemoval,
-    params: { id },
+    params: { ids: [id] },
   });
 // 入库
 export const getProductInPage = (params: any) =>
