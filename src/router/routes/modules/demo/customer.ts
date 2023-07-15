@@ -45,7 +45,7 @@ const customer: AppRouteModule = {
           name: 'InfoSource',
           component: () => import('/@/views/demo/customer/info/source.vue'),
           meta: {
-            title: '新增来源分组标签',
+            title: '客户来源分组标签',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },

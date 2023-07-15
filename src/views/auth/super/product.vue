@@ -146,11 +146,6 @@
             <Radio :value="2" name="integral">是</Radio>
             <Radio :value="1" name="integral">否</Radio>
           </RadioGroup>
-          <!-- <Input
-            placeholder="请输入"
-            allowClear
-            :disabled="drawerInfo.type === 'scan'"
-          /> -->
         </FormItem>
 
         <FormItem label="产品描述" v-bind="validateInfos.introduction">
@@ -368,33 +363,33 @@
         {
           title: '产品名称',
           dataIndex: 'name',
-          width: 200
+          width: '14%'
         },
         {
           title: '产品编号',
           dataIndex: 'number',
-          width: 200
+          width: '14%'
         },
         {
           title: '产品类型',
           dataIndex: 'type',
-          width: 120,
+          width: '14%',
           customRender: (state) => productTypeMap[state.record.type as number],
         },
         {
           title: '产品库存',
           dataIndex: 'amount',
-          width: 120,
+          width: '14%'
         },
         {
           title: '库存管理',
           dataIndex: 'amount',
-          width: 120,
+          width: '14%',
           customRender: (state) => (state.record.lowStocks ? '库存不足' : '库存充足'),
         },
         {
           title: '产品描述',
-          width: 200,
+          width: '14%',
           dataIndex: 'introduction',
         },
         {

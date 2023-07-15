@@ -1,6 +1,6 @@
 <template>
   <div class="disease-item" v-for="(item, i) of diseaseObject">
-    <h3 class="header">{{ `客户病史信息${i + 1}` }}</h3>
+    <h3 class="header">{{ `客户病史信息` }}</h3>
     <div class="basic">
       <div class="header"
         ><span>医院名称:</span><span>{{ item.diseaseBasic.hospitalName }}</span></div
