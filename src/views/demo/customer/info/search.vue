@@ -214,7 +214,7 @@
           />
         </FormItem>
 
-        <FormItem label="客户标签" v-bind="validateInfos.tag">
+        <FormItem label="客户标签">
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -522,12 +522,6 @@
           {
             required: true,
             message: '请输入联系地址',
-          },
-        ],
-        tag: [
-          {
-            required: true,
-            message: '请输入客户标签',
           },
         ],
       });
