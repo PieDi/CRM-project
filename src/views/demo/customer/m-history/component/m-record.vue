@@ -20,11 +20,18 @@
       >
         <Select
           :disabled="drawerInfo.type !== 'add'"
+          show-search
+          :filter-option="filterOption"
           placeholder="请选择"
           @change="customerOnChange"
           v-model:value="mInfo.customerId"
         >
-          <SelectOption v-for="item of dataSource" :value="item.id">{{ item.name }}</SelectOption>
+          <SelectOption
+            v-for="item of dataSource"
+            :value="item.id"
+            :key="`${item.name}_${item.id}`"
+            >{{ item.name }}</SelectOption
+          >
         </Select>
       </FormItem>
 
@@ -107,19 +114,15 @@
       </FormItem>
 
       <FormItem
-        label="会诊日期"
+        label="就诊时间"
         name="visitDate"
         :rules="{
           required: true,
-          message: '请输入会诊日期',
+          message: '请输入就诊时间',
           trigger: 'change',
         }"
       >
-        <DatePicker
-          :show-time="true"
-          v-model:value="mInfo.visitDate"
-          :disabled="drawerInfo.type === 'scan'"
-        />
+        <DatePicker v-model:value="mInfo.visitDate" :disabled="drawerInfo.type === 'scan'" />
       </FormItem>
 
       <FormItem label="附件">
@@ -235,7 +238,7 @@
         diseaseName: props.drawerInfo?.item?.diseaseName || undefined,
         hospitalName: props.drawerInfo?.item?.hospitalName || undefined,
         visitDate: props.drawerInfo?.item?.visitDate
-          ? dayjs(props.drawerInfo.item.visitDate)
+          ? dayjs(props.drawerInfo.item.visitDate, 'YYYY-MM-DD')
           : undefined,
       });
       //@ts-ignore
@@ -286,6 +289,9 @@
         const t = dataSource.value.find((item: CustomerInfo) => item.id === value);
         if (t) currentCustomer.value = { ...t };
       };
+      const filterOption = (input: string, option: any) => {
+        return option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+      };
 
       const drawerOnClose = () => {
         emit('drawerOnClose');
@@ -300,7 +306,9 @@
             const params = {
               id: props.drawerInfo.item.id,
               ...mInfo.value,
-              visitDate: mInfo.value.visitDate ? mInfo.value.visitDate.valueOf() : undefined,
+              visitDate: mInfo.value.visitDate
+                ? mInfo.value.visitDate.format('YYYY-MM-DD')
+                : undefined,
               fileIds: filesId.value.filter((id) => !!id),
             };
 
@@ -373,6 +381,7 @@
         handleRemove,
         handleDownload,
         handlePreView,
+        filterOption,
       };
     },
   });

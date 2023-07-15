@@ -27,7 +27,7 @@ const customer: AppRouteModule = {
           name: 'InfoSearch',
           component: () => import('/@/views/demo/customer/info/search.vue'),
           meta: {
-            title: t('routes.demo.customer.info.init'),
+            title: '客户信息管理与新增',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
@@ -36,7 +36,7 @@ const customer: AppRouteModule = {
           name: 'InfoGroup',
           component: () => import('/@/views/demo/customer/info/group.vue'),
           meta: {
-            title: t('routes.demo.customer.info.group'),
+            title: '新增客户分组标签',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
@@ -45,7 +45,7 @@ const customer: AppRouteModule = {
           name: 'InfoSource',
           component: () => import('/@/views/demo/customer/info/source.vue'),
           meta: {
-            title: '客户来源',
+            title: '新增来源分组标签',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
@@ -54,28 +54,17 @@ const customer: AppRouteModule = {
           name: 'SysAuthCSLink',
           component: () => import('/@/views/auth/cs-link.vue'),
           meta: {
-            title: '客户关联',
+            title: '小程序客户委派',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
           },
         },
-        // {
-        //   path: 'dataCenter',
-        //   name: 'InfoDataCenter',
-        //   component: () => import('/@/views/demo/customer/info/dataCenter.vue'),
-        //   meta: {
-        //     // title: '客户信息看板',
-        //     title: t('routes.demo.customer.info.dataCenter'),
-        //     hideMenu: true,
-        //     roles: [RoleEnum.SUPER, RoleEnum.ADMIN,RoleEnum.TEST],
-        //   },
-        // },
       ],
     },
     {
       path: 'mHistory',
       name: 'MHistory',
       meta: {
-        title: t('routes.demo.customer.mHistory.init'),
+        title: '客户就诊信息管理',
       },
       children: [
         {
@@ -83,7 +72,7 @@ const customer: AppRouteModule = {
           name: 'MHistorySearch',
           component: () => import('/@/views/demo/customer/m-history/search.vue'),
           meta: {
-            title: t('routes.demo.customer.mHistory.init'),
+            title: '客户就诊信息录入',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },

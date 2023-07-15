@@ -29,7 +29,7 @@
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
-      <Button type="primary" style="margin-left: 10px" @click="addMHistory">新增客户病史</Button>
+      <Button type="primary" style="margin-left: 10px" @click="addMHistory">新增客户就诊记录</Button>
     </div>
 
     <Table
@@ -42,15 +42,6 @@
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
-          <Button
-            type="link"
-            @click="
-              () => {
-                scanMRecord(record);
-              }
-            "
-            >查看</Button
-          >
           <Button
             type="link"
             @click="
@@ -265,21 +256,24 @@
           dataIndex: 'customerName',
         },
         {
-          title: '会诊时间',
-          width: 180,
+          title: '就诊时间',
+          width: 120,
           dataIndex: 'visitDate',
-          customRender: (state) => dayjs(state.record.visitDate).format('YYYY-MM-DD HH:mm:ss'),
+          // customRender: (state) => dayjs(state.record.visitDate).format('YYYY-MM-DD HH:mm:ss'),
         },
         {
           title: '医院名称',
+          width: 200,
           dataIndex: 'hospitalName',
         },
         {
           title: '科室',
+          width: 120,
           dataIndex: 'departmentName',
         },
         {
           title: '疾病名称',
+          width: 200,
           dataIndex: 'diseaseName',
         },
         {

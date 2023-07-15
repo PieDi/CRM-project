@@ -52,6 +52,7 @@
             "
             >编辑</Button
           >
+          <!-- <Button v-if="authShow" type="link" danger @click="() => {}">删除</Button> -->
         </template>
       </template>
     </Table>
@@ -132,7 +133,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, computed, onMounted, reactive } from 'vue';
+  import { defineComponent, ref, computed, onMounted, reactive, toRaw } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import { Table, Form, Input, Button, Modal, InputNumber, Select, message } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
@@ -145,7 +146,10 @@
   } from '/@/api/demo/product';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { getCustomerList, getCustomerOrderList } from '/@/api/demo/customer';
-  import { CustomerInfo, CustomerOrderInfo } from '/@/api/demo/model/customer';
+import { CustomerInfo, CustomerOrderInfo } from '/@/api/demo/model/customer';
+import { useUserStore } from '/@/store/modules/user';
+import { RoleEnum } from '/@/enums/roleEnum';
+  
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   const SelectOption = Select.Option;
@@ -165,6 +169,11 @@
       InputNumber,
     },
     setup() {
+      const userStore = useUserStore();
+      const roleList = toRaw(userStore.getRoleList) || [];
+      const authShow = computed(() => {
+        return roleList.some((role) => [RoleEnum.SUPER, RoleEnum.ADMIN].includes(role));
+      });
       const drawerInfo = ref<
         DrawerItemType<{
           id: number | undefined;
@@ -233,18 +242,22 @@
         {
           title: '产品名称',
           dataIndex: 'productName',
+          width: 200
         },
         {
           title: '产品编号',
           dataIndex: 'productNumber',
+          width: 200
         },
         {
           title: '出库数量',
           dataIndex: 'amount',
+          width: 120
         },
         {
           title: '购买人员',
           dataIndex: 'customerName',
+          width: 120
         },
         {
           title: '其他',
@@ -377,6 +390,7 @@
         // 订单信息
         oDataSource,
         validateInfos,
+        authShow
       };
     },
   });

@@ -98,7 +98,7 @@ export interface CustomerMHSaveParams {
   departmentName: string | undefined;
   diseaseName: string | undefined;
   hospitalName: string | undefined;
-  visitDate: number | undefined;
+  visitDate: string | undefined;
   fileIds: number[] | undefined;
 }
 /**

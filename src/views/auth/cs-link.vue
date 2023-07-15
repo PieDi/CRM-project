@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="客户关联">
+  <PageWrapper title="小程序客户委派">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客户姓名">

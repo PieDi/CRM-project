@@ -167,7 +167,7 @@
       ];
       const cColumns = [
         {
-          title: '会诊日期',
+          title: '就诊时间',
           dataIndex: 'consultationDate',
           customRender: (state) =>
             dayjs(state.record.consultationDate).format('YYYY-MM-DD HH:mm:ss'),

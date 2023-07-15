@@ -18,7 +18,7 @@
       <Form :labelCol="{ span: 4 }">
         <template v-for="(item, i) in listInfo">
           <div>
-            <FormItem label="会诊日期">
+            <FormItem label="就诊时间">
               <DatePicker :show-time="true" allowClear v-model:value="item.consultationDate" />
             </FormItem>
 

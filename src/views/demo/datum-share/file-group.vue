@@ -50,7 +50,7 @@
   import { PageWrapper } from '/@/components/Page';
   import { Button, Upload, message } from 'ant-design-vue';
   import { useRoute } from 'vue-router';
-  import { getShareList, uploadShare, deleteShare, downloadShare } from '/@/api/demo/datum-share';
+  import { getShareList, uploadShare, deleteShare } from '/@/api/demo/datum-share';
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
