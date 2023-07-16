@@ -242,26 +242,27 @@ import { RoleEnum } from '/@/enums/roleEnum';
         {
           title: '产品名称',
           dataIndex: 'productName',
-          width: 200
+          width: '16%',
         },
         {
           title: '产品编号',
           dataIndex: 'productNumber',
-          width: 200
+          width: '16%',
         },
         {
           title: '出库数量',
           dataIndex: 'amount',
-          width: 120
+          width: '16%',
         },
         {
           title: '购买人员',
           dataIndex: 'customerName',
-          width: 120
+          width: '16%',
         },
         {
           title: '其他',
           dataIndex: 'remark',
+          width: '16%',
         },
         {
           title: '操作',

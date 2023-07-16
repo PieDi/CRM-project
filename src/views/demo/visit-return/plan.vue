@@ -258,39 +258,38 @@
         {
           title: '客户姓名',
           dataIndex: 'customerName',
-          width: 120,
+          width: '10%',
         },
         {
           title: '标题',
           dataIndex: 'title',
-          width: 120,
+          width: '12%',
           ellipsis: true,
         },
         {
           title: '回访项目',
           dataIndex: 'item',
-          width: 120,
-          ellipsis: true,
+          width: '12%',
         },
         {
           title: '回访类型',
           dataIndex: 'type',
-          width: 120,
+          width: '120px',
           customRender: (state) => visitTypeMap[state.record.type as number],
         },
         {
           title: '回访时间',
           dataIndex: 'visitTime',
-          width: 120,
+          width: '10%',
         },
         {
           title: '回访内容',
-          width: 120,
+          width: '12%',
           dataIndex: 'visitContent',
         },
         {
           title: '下一步计划',
-          width: 180,
+          width: '12%',
           dataIndex: 'nextPlan',
         },
         {

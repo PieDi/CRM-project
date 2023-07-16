@@ -331,7 +331,9 @@
         current: pageInfo.value.current,
         pageSize: 10,
         showTotal: (total: number) => `共${total}条`,
-        onChange: (page: number) => {},
+        onChange: (page: number) => {
+          productListReq(page);
+        },
         showQuickJumper: false,
         showSizeChanger: false,
       }));

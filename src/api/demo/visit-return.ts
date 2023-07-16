@@ -22,7 +22,7 @@ export const getVisitCalendar = (params: { month?: string; year?: string }) =>
 export const getVisitPage = (params: any) =>
   defHttp.post<{ total: number; pageNum: number; data: VisitReturnInfo[] }>({
     url: Api.VisitPage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize: 10, ...params },
   });
 export const getVisitList = (params: { customerId: number; status: number }) =>
   defHttp.post<Array<VisitReturnInfo>>({

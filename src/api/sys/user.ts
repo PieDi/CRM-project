@@ -68,7 +68,7 @@ export function getUserDetail(params) {
 export const getUserPage = (params: { pageNum: number; userName?: string }) =>
   defHttp.post<{ total: number; pageNum: number; data: UserInfo[] }>({
     url: Api.UserPage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize: 10, ...params },
   });
 export const getUserList = () =>
   defHttp.post<Array<UserInfo>>({
