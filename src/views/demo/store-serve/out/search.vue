@@ -207,7 +207,7 @@ import { RoleEnum } from '/@/enums/roleEnum';
         current: pageInfo.value.current,
         pageSize: 10,
         showTotal: (total: number) => `共${total}条`,
-        onChange: (page: number) => {},
+        onChange: (page: number) => {pOutListReq(page)},
         showQuickJumper: false,
         showSizeChanger: false,
       }));

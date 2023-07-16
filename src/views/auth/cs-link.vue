@@ -32,7 +32,7 @@
       :bordered="true"
       :pagination="pagination"
     >
-      <template #bodyCell="{ column, _text, record }">
+      <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
@@ -74,7 +74,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, createVNode, computed } from 'vue';
+  import { defineComponent, ref, onMounted, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import {
     Table,
@@ -149,7 +149,7 @@
         showSizeChanger: false,
       }));
       const customerListReq = async (pageNum: number) => {
-        const res = await getCustomerPage({ ...searchInfo.value, assign: 0, pageNum });
+        const res = await getCustomerPage({ ...searchInfo.value, assign: 0, resource: 1, pageNum });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;

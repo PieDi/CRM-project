@@ -199,7 +199,9 @@
         current: pageInfo.value.current,
         pageSize: 10,
         showTotal: (total: number) => `共${total}条`,
-        onChange: (page: number) => {},
+        onChange: (page: number) => {
+          pInListReq(page)
+        },
         showQuickJumper: false,
         showSizeChanger: false,
       }));
