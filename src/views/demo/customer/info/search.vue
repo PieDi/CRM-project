@@ -335,7 +335,7 @@
         showSizeChanger: false,
       }));
       const customerListReq = async (pageNum: number) => {
-        const res = await getCustomerPage({ ...searchInfo.value, pageNum });
+        const res = await getCustomerPage({ ...searchInfo.value, resource: 1, pageNum });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
@@ -398,6 +398,14 @@
           customRender: (state) => {
             const group = customerGroupList.value.find((item) => item.id === state.record.groupId);
             return group ? group.name : '';
+          },
+        },
+        {
+          title: '客户来源',
+          dataIndex: 'sourceId',
+          customRender: (state) => {
+            const source = customerSourceList.value.find((item) => item.id === state.record.sourceId);
+            return source ? source.name : '';
           },
         },
         {

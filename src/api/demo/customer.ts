@@ -153,7 +153,7 @@ enum Api {
 /**
  * 客户基本信息
  */
-export const getCustomerPage = (params: CustomerListParams) =>
+export const getCustomerPage = (params: any) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerInfo[] }>({
     url: Api.CustomerPage,
     params: { pageSize:10, ...params },
