@@ -16,7 +16,7 @@ enum Api {
 export const getCustomerServePage = (params: any) =>
   defHttp.post<{ total: number; pageNum: number; data: CServeInfo[] }>({
     url: Api.CustomerServePage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize: 10, ...params },
   });
 export const getCustomerServeList = (name?: string) =>
   defHttp.post<Array<CServeInfo>>({

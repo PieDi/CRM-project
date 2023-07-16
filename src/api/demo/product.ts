@@ -28,7 +28,7 @@ export const getProductList = (params?: { type?: number; name: string }) =>
 export const getProductPage = (params: { name?: string; number?: number; pageNum: number }) =>
   defHttp.post<{ total: number; pageNum: number; data: ProductInfo[] }>({
     url: Api.ProductPage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize: 10, ...params },
   });
 export const saveProduct = (params: any) =>
   defHttp.post<{ total: number; pageNum: number; data: ProductInfo[] }>({
@@ -50,7 +50,7 @@ export const removalProduct = (id: number) =>
 export const getProductInPage = (params: any) =>
   defHttp.post<{ total: number; pageNum: number; data: ProductInInfo[] }>({
     url: Api.ProductInPage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize: 10, ...params },
   });
 export const saveProductIn = (params?: any) =>
   defHttp.post<any>({ url: Api.ProductInSave, params });
@@ -64,7 +64,7 @@ export const deleteProductIn = (id: string | number) =>
 export const getProductOutPage = (params: any) =>
   defHttp.post<{ total: number; pageNum: number; data: ProductOutInfo[] }>({
     url: Api.ProductOutPage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize: 10, ...params },
   });
 export const saveProductOut = (params?: any) =>
   defHttp.post<any>({ url: Api.ProductOutSave, params });

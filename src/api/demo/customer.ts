@@ -156,7 +156,7 @@ enum Api {
 export const getCustomerPage = (params: CustomerListParams) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerInfo[] }>({
     url: Api.CustomerPage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize:10, ...params },
   });
 export const getCustomerList = (name?: string) =>
   defHttp.post<Array<CustomerInfo>>({
@@ -193,7 +193,7 @@ export const boardCustomer = (id: string) =>
 export const getCustomerGPage = (params: CustomerListParams) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerGroupInfo[] }>({
     url: Api.CustomerGPage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize: 10, ...params },
   });
 export const getCustomerGList = (name?: string) =>
   defHttp.post<Array<CustomerGroupInfo>>({
@@ -216,7 +216,7 @@ export const deleteCustomerG = (id: string | number) =>
 export const getCustomerSPage = (params: { name?: string; pageNum: number }) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerSourceInfo[] }>({
     url: Api.CustomerSPage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize: 10, ...params },
   });
 export const getCustomerSList = (name?: string) =>
   defHttp.post<Array<CustomerSourceInfo>>({
@@ -239,7 +239,7 @@ export const deleteCustomerS = (id: string | number) =>
 export const getCustomerMHPage = (params: CustomerMHListParams) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerMHInfo[] }>({
     url: Api.CustomerMHPage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize: 10, ...params },
   });
 export const getCustomerMHList = (customerId?: number) =>
   defHttp.post<Array<CustomerMHInfo>>({
@@ -345,7 +345,7 @@ export const fileCDelete = (fileId: number) =>
 export const getCustomerOrderPage = (params: CustomerOrderListParams) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerOrderInfo[] }>({
     url: Api.CustomerOrderPage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize: 10, ...params },
   });
 export const getCustomerOrderList = (name?: string, customerId?: number) =>
   defHttp.post<Array<CustomerOrderInfo>>({
@@ -380,7 +380,7 @@ export const columnarCustomerOrder = (type: number) =>
 export const getCustomerContractPage = (params: { pageNum?: number; name?: string; id?: string }) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerContractInfo[] }>({
     url: Api.CustomerContractPage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize: 10, ...params },
   });
 export const getCustomerContractList = (name?: string) =>
   defHttp.post<Array<CustomerContractInfo>>({
@@ -408,7 +408,7 @@ export const fileContractDelete = (fileId: number) =>
 export const getCustomerInvoicePage = (params: { pageNum?: number; name?: string; id?: string }) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerInvoiceInfo[] }>({
     url: Api.CustomerInvoicePage,
-    params: { pageSize: 20, ...params },
+    params: { pageSize: 10, ...params },
   });
 
 export const saveCustomerInvoice = (params?: any) =>
