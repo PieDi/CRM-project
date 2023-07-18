@@ -224,7 +224,7 @@
         {
           title: '回访结果',
           dataIndex: 'result',
-          customRender: (state) => visitResMap[state.record.way as number],
+          customRender: (state) => visitResMap[state.record.result as number],
         },
         {
           title: '结果',
