@@ -60,18 +60,31 @@
             </Select>
           </FormItem>
           </div>
-          
 
+          <FormItem label="关联人">
+            <Input placeholder="填写关联人" v-model:value="formState.relatedPerson" />
+          </FormItem>
+          <FormItem label="地址">
+            <Input placeholder="填写地址" v-model:value="formState.address" />
+          </FormItem>
+          <FormItem label="服务类别">
+            <Input placeholder="填写服务类别" v-model:value="formState.serviceCategory" />
+          </FormItem>
+          <FormItem label="具体项目">
+            <Input placeholder="填写具体项目" v-model:value="formState.specialItem" />
+          </FormItem>
+          <FormItem label="相关资料">
+            <TextArea placeholder="填写相关资料" v-model:value="formState.relatedMaterial" />
+          </FormItem>
+          <FormItem label="下一步计划">
+            <TextArea placeholder="填写下一步计划" v-model:value="formState.nextPlan" />
+          </FormItem>
           <FormItem label="结果补充">
             <TextArea placeholder="填写回访结果补充" v-model:value="formState.supplement" />
           </FormItem>
-          <!-- <FormItem label="上传附件">
-            <Select placeholder="请选择" style="width: 150px; margin-right: 10px">
-              <SelectOption key="1">文档</SelectOption>
-              <SelectOption key="2">图片</SelectOption>
-            </Select>
-            <Button type="primary">上传文件</Button>
-          </FormItem> -->
+          <FormItem label="备注">
+            <TextArea placeholder="填写备注" v-model:value="formState.remark" />
+          </FormItem>
         </Form>
       </div>
       <!-- 近期回访列表 -->
@@ -125,6 +138,14 @@
     setup(props, { emit }) {
       const formState = reactive({
         visitId: props.visitPlan.id,
+        relatedPerson: undefined,
+        serviceCategory: undefined,
+        specialItem: undefined,
+        address: undefined,
+        nextPlan: undefined,
+        relatedMaterial: undefined,
+        remark: undefined,
+        remindTime: undefined,
         way: undefined,
         result: undefined,
         supplement: undefined,
