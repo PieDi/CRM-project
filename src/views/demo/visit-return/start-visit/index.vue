@@ -44,45 +44,47 @@
       <div style="margin-top: 20px">
         <p>回访结果</p>
         <Form>
-          <div style="display: flex;">
-            <FormItem label="回访方式">
-            <Select placeholder="请选择" style="width: 150px" v-model:value="formState.way">
-              <SelectOption :value="1">电话回访</SelectOption>
-              <SelectOption :value="2">线下回访</SelectOption>
-              <SelectOption :value="3">其他</SelectOption>
-            </Select>
+          <FormItem no-style>
+            <div style="display: flex">
+              <FormItem label="回访方式" style="width: 45%; margin-left: 0.5%">
+                <Select placeholder="请选择" v-model:value="formState.way">
+                  <SelectOption :value="1">电话回访</SelectOption>
+                  <SelectOption :value="2">线下回访</SelectOption>
+                  <SelectOption :value="3">其他</SelectOption>
+                </Select>
+              </FormItem>
+              <FormItem label="回访结果" style="width: 45%; margin-left: 8%">
+                <Select placeholder="请选择" v-model:value="formState.result">
+                  <SelectOption :value="1">超过预期</SelectOption>
+                  <SelectOption :value="2">达到预期</SelectOption>
+                  <SelectOption :value="3">结果一般</SelectOption>
+                </Select>
+              </FormItem></div
+            >
           </FormItem>
-          <FormItem label="回访结果" style="margin-left: 20px">
-            <Select placeholder="请选择" style="width: 150px" v-model:value="formState.result">
-              <SelectOption :value="1">超过预期</SelectOption>
-              <SelectOption :value="2">达到预期</SelectOption>
-              <SelectOption :value="3">结果一般</SelectOption>
-            </Select>
-          </FormItem>
-          </div>
 
-          <FormItem label="关联人">
+          <FormItem label="关联人" :labelCol="{ span: 2 }">
             <Input placeholder="填写关联人" v-model:value="formState.relatedPerson" />
           </FormItem>
-          <FormItem label="地址">
+          <FormItem label="地址" :labelCol="{ span: 2 }">
             <Input placeholder="填写地址" v-model:value="formState.address" />
           </FormItem>
-          <FormItem label="服务类别">
+          <FormItem label="服务类别" :labelCol="{ span: 2 }">
             <Input placeholder="填写服务类别" v-model:value="formState.serviceCategory" />
           </FormItem>
-          <FormItem label="具体项目">
+          <FormItem label="具体项目" :labelCol="{ span: 2 }">
             <Input placeholder="填写具体项目" v-model:value="formState.specialItem" />
           </FormItem>
-          <FormItem label="相关资料">
+          <FormItem label="相关资料" :labelCol="{ span: 2 }">
             <TextArea placeholder="填写相关资料" v-model:value="formState.relatedMaterial" />
           </FormItem>
-          <FormItem label="下一步计划">
+          <FormItem label="下一步计划" :labelCol="{ span: 2 }">
             <TextArea placeholder="填写下一步计划" v-model:value="formState.nextPlan" />
           </FormItem>
-          <FormItem label="结果补充">
+          <FormItem label="结果补充" :labelCol="{ span: 2 }">
             <TextArea placeholder="填写回访结果补充" v-model:value="formState.supplement" />
           </FormItem>
-          <FormItem label="备注">
+          <FormItem label="备注" :labelCol="{ span: 2 }">
             <TextArea placeholder="填写备注" v-model:value="formState.remark" />
           </FormItem>
         </Form>
@@ -96,7 +98,7 @@
 <script lang="ts">
   import { defineComponent, reactive } from 'vue';
   import { propTypes } from '/@/utils/propTypes';
-  import { Modal, Form, Input, Select, Button } from 'ant-design-vue';
+  import { Modal, Form, Input, Select, Button, message } from 'ant-design-vue';
   import BaseInfo from './base-info.vue';
   import MedicalHistoryList from './medical-history-list.vue';
   import RecentVistList from './recent-vist-list.vue';
@@ -156,8 +158,7 @@
 
       const onModalOk = async () => {
         const res = await startVisit({ ...formState });
-        if (res) {
-        }
+        if (res) message.success('开始回访成功');
         emit('confirm');
       };
       return {

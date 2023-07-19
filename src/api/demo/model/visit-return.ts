@@ -8,6 +8,7 @@ export interface VisitReturnInfo {
   type: number | undefined;
   visitTime: any;
   remark: string | undefined;
+  status: number | undefined;
   way: number | undefined;
   result: number | undefined;
   supplement: string | undefined;

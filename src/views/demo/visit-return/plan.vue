@@ -13,7 +13,10 @@
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
-      <Button type="primary" @click="addReturnPlan">新建回访</Button>
+      <div>
+        <Button type="primary" style="margin-right: 10px" @click="exportPlan">导出</Button>
+        <Button type="primary" @click="addReturnPlan">新建回访计划</Button>
+      </div>
     </div>
 
     <Table
@@ -26,9 +29,11 @@
         <template v-if="column.dataIndex === 'operation'">
           <div style="display: flex">
             <Button type="link" @click="scanReturnPlan(record)">查看</Button>
+            <!-- <Button type="link" @click="print(record)">打印</Button> -->
             <Button type="link" @click="drawerEdit(record)">编辑</Button>
             <Button v-if="authShow" type="link" danger @click="deletePlan(record)">删除</Button>
             <Button
+              v-if="record.status !== 2"
               type="link"
               style="margin-left: 10px"
               @click="
@@ -97,23 +102,6 @@
         </FormItem>
 
         <FormItem
-          label="回访项目"
-          name="item"
-          :rules="{
-            required: true,
-            message: '请输入回访项目',
-            trigger: 'change',
-          }"
-        >
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.item"
-          />
-        </FormItem>
-
-        <FormItem
           label="回访类型"
           name="type"
           :rules="{
@@ -152,11 +140,11 @@
         </FormItem>
 
         <FormItem
-          label="回访内容"
+          label="内容简述"
           name="visitContent"
           :rules="{
             required: true,
-            message: '请输入回访内容',
+            message: '内容简述',
             trigger: 'change',
           }"
         >
@@ -165,23 +153,6 @@
             placeholder="请输入"
             allowClear
             v-model:value="drawerInfo.item.visitContent"
-          />
-        </FormItem>
-
-        <FormItem
-          label="下一步计划"
-          name="nextPlan"
-          :rules="{
-            required: true,
-            message: '请输入下一步回访计划',
-            trigger: 'change',
-          }"
-        >
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.nextPlan"
           />
         </FormItem>
 
@@ -213,7 +184,14 @@
   import { Form, Input, Button, Table, Modal, DatePicker, Select, message } from 'ant-design-vue';
   import StartVisit from './start-visit/index.vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
-  import { getVisitPage, saveVisit, updateVisit, deleteVisit } from '/@/api/demo/visit-return';
+  import {
+    getVisitPage,
+    saveVisit,
+    updateVisit,
+    deleteVisit,
+    getVisit,
+    exportVisit,
+  } from '/@/api/demo/visit-return';
   import { VisitReturnInfo } from '/@/api/demo/model/visit-return';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { getCustomerList } from '/@/api/demo/customer';
@@ -231,6 +209,15 @@
     1: '电话回访',
     2: '线下回访',
     3: '其他',
+  };
+  const visitResMap: Record<number, string> = {
+    1: '超过预期',
+    2: '达到预期',
+    3: '结果一般',
+  };
+  const visitStatusMap: Record<number, string> = {
+    1: '待回访',
+    2: '已回访',
   };
   export default defineComponent({
     components: {
@@ -258,7 +245,7 @@
         {
           title: '客户姓名',
           dataIndex: 'customerName',
-          width: '10%',
+          width: 120,
         },
         {
           title: '标题',
@@ -267,34 +254,37 @@
           ellipsis: true,
         },
         {
-          title: '回访项目',
-          dataIndex: 'item',
-          width: '12%',
+          title: '回访状态',
+          dataIndex: 'type',
+          width: '100px',
+          customRender: (state) => visitStatusMap[state.record.status as number],
         },
         {
           title: '回访类型',
           dataIndex: 'type',
-          width: '120px',
+          width: '100px',
           customRender: (state) => visitTypeMap[state.record.type as number],
+        },
+        {
+          title: '回访结果',
+          dataIndex: 'type',
+          width: '100px',
+          customRender: (state) =>
+            state.record.result ? visitResMap[state.record.result as number] : '',
         },
         {
           title: '回访时间',
           dataIndex: 'visitTime',
-          width: '10%',
+          width: '120px',
         },
         {
-          title: '回访内容',
-          width: '12%',
+          title: '内容简述',
           dataIndex: 'visitContent',
-        },
-        {
-          title: '下一步计划',
-          width: '12%',
-          dataIndex: 'nextPlan',
         },
         {
           title: '操作',
           dataIndex: 'operation',
+          width: 380,
         },
       ];
       const searchInfo = ref({
@@ -318,7 +308,7 @@
       }));
 
       const visitRListReq = async (pageNum: number, id?: string) => {
-        const res = await getVisitPage({ ...searchInfo.value, status: 1, pageNum, id });
+        const res = await getVisitPage({ ...searchInfo.value, pageNum, id });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
@@ -383,14 +373,18 @@
         drawerInfo.value.type = 'add';
       };
 
-      const scanReturnPlan = (item: VisitReturnInfo) => {
-        drawerInfo.value.visible = true;
-        drawerInfo.value.title = '查看回访';
-        drawerInfo.value.type = 'scan';
-        Object.keys(drawerInfo.value.item).forEach((key) => {
-          drawerInfo.value.item[key] = item[key];
-        });
-        drawerInfo.value.item.visitTime = dayjs(item.visitTime, 'YYYY-MM-DD');
+      const scanReturnPlan = async (item: VisitReturnInfo) => {
+        const res = await getVisit(item.id as number);
+        if (res) window.open(`http://129.204.202.223:8001/basic-api${res}`);
+      };
+      const print = (item: VisitReturnInfo) => {
+        // drawerInfo.value.visible = true;
+        // drawerInfo.value.title = '查看回访';
+        // drawerInfo.value.type = 'scan';
+        // Object.keys(drawerInfo.value.item).forEach((key) => {
+        //   drawerInfo.value.item[key] = item[key];
+        // });
+        // drawerInfo.value.item.visitTime = dayjs(item.visitTime, 'YYYY-MM-DD');
       };
       const drawerEdit = (item: VisitReturnInfo) => {
         drawerInfo.value.title = '编辑回访';
@@ -473,6 +467,10 @@
         visitInfo.value.plan = undefined;
       };
 
+      const exportPlan = async () => {
+        window.open('http://129.204.202.223:8001/basic-api/customer/returnVisit/export')
+      };
+
       return {
         formRef,
         columns,
@@ -487,6 +485,7 @@
         drawerInfo,
         addReturnPlan,
         scanReturnPlan,
+        print,
         drawerOnClose,
         drawerEdit,
         submit,
@@ -498,6 +497,7 @@
         onModelCancel,
         authShow,
         filterOption,
+        exportPlan,
       };
     },
   });

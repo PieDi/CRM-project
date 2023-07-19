@@ -20,19 +20,19 @@ const returnVisit: AppRouteModule = {
       name: 'ReturnListPlan',
       component: () => import('@/views/demo/visit-return/plan.vue'),
       meta: {
-        title: t('routes.demo.return-visit.plan'),
+        title: '回访工作计划',
         roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF]
       }
     },
-    {
-      path: 'search',
-      name: 'ReturnVisitSearch',
-      component: () => import('/@/views/demo/visit-return/search.vue'),
-      meta: {
-        title: t('routes.demo.return-visit.search'),
-        roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
-      },
-    }
+    // {
+    //   path: 'search',
+    //   name: 'ReturnVisitSearch',
+    //   component: () => import('/@/views/demo/visit-return/search.vue'),
+    //   meta: {
+    //     title: t('routes.demo.return-visit.search'),
+    //     roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+    //   },
+    // }
   ],
 };
 
