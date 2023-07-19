@@ -85,14 +85,18 @@
           }"
         >
           <Select
-            :show-search="true"
+            show-search
+            :filter-option="filterOption"
             :disabled="drawerInfo.type !== 'add'"
             placeholder="请选择"
             v-model:value="drawerInfo.item.customerId"
           >
-            <SelectOption v-for="item of cDataSource" :value="item.id">{{
-              item.name
-            }}</SelectOption>
+            <SelectOption
+              v-for="item of cDataSource"
+              :value="item.id"
+              :key="`${item.name}_${item.id}`"
+              >{{ item.name }}</SelectOption
+            >
           </Select>
         </FormItem>
 
@@ -537,6 +541,9 @@
           }
         });
       };
+      const filterOption = (input: string, option: any) => {
+        return option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+      };
       return {
         formRef,
         columns,
@@ -560,6 +567,7 @@
         // 产品
         // currentP,
         pDataSource,
+        filterOption,
       };
     },
   });

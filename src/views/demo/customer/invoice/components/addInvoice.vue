@@ -19,12 +19,19 @@
         }"
       >
         <Select
+          show-search
+          :filter-option="filterOption"
           :disabled="drawerInfo.type == 'scan'"
           placeholder="请选择"
           @change="customerOnChange"
           v-model:value="mInfo.customerId"
         >
-          <SelectOption v-for="item of dataSource" :value="item.id">{{ item.name }}</SelectOption>
+          <SelectOption
+            v-for="item of dataSource"
+            :value="item.id"
+            :key="`${item.name}_${item.id}`"
+            >{{ item.name }}</SelectOption
+          >
         </Select>
       </FormItem>
       <FormItem
@@ -383,6 +390,9 @@
           filesId.value.push(res[0]);
         }
       };
+      const filterOption = (input: string, option: any) => {
+        return option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+      };
       return {
         formRef,
         drawerInfo: props.drawerInfo,
@@ -399,6 +409,7 @@
         dataSource,
         customerOnChange,
         orderDataSource,
+        filterOption,
       };
     },
   });
