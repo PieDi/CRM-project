@@ -42,50 +42,42 @@
       <medical-history-list v-if="visitCustomer.id" :customerId="visitCustomer.id" />
       <!-- 回访结果 -->
       <div style="margin-top: 20px">
-        <p>回访结果</p>
-        <Form>
-          <FormItem no-style>
-            <div style="display: flex">
-              <FormItem label="回访方式" style="width: 45%; margin-left: 0.5%">
-                <Select placeholder="请选择" v-model:value="formState.way">
-                  <SelectOption :value="1">电话回访</SelectOption>
-                  <SelectOption :value="2">线下回访</SelectOption>
-                  <SelectOption :value="3">其他</SelectOption>
-                </Select>
-              </FormItem>
-              <FormItem label="回访结果" style="width: 45%; margin-left: 8%">
-                <Select placeholder="请选择" v-model:value="formState.result">
-                  <SelectOption :value="1">超过预期</SelectOption>
-                  <SelectOption :value="2">达到预期</SelectOption>
-                  <SelectOption :value="3">结果一般</SelectOption>
-                </Select>
-              </FormItem></div
-            >
+        <!-- <p>回访结果</p> -->
+        <Form :labelCol="{ span: 2 }" >
+          <FormItem label="回访结果" style="width: 50%" :labelCol="{ span: 4 }">
+            <Select placeholder="请选择" v-model:value="formState.result">
+              <SelectOption :value="1">超过预期</SelectOption>
+              <SelectOption :value="2">达到预期</SelectOption>
+              <SelectOption :value="3">结果一般</SelectOption>
+            </Select>
           </FormItem>
 
-          <FormItem label="关联人" :labelCol="{ span: 2 }">
-            <Input placeholder="填写关联人" v-model:value="formState.relatedPerson" />
+          <FormItem label="关联人">
+            <Input placeholder="请填写关联人" v-model:value="formState.relatedPerson" />
           </FormItem>
-          <FormItem label="地址" :labelCol="{ span: 2 }">
-            <Input placeholder="填写地址" v-model:value="formState.address" />
+          <FormItem label="地址">
+            <Input placeholder="请填写地址" v-model:value="formState.address" />
           </FormItem>
-          <FormItem label="服务类别" :labelCol="{ span: 2 }">
-            <Input placeholder="填写服务类别" v-model:value="formState.serviceCategory" />
+          <FormItem label="服务类别">
+            <Input placeholder="请填写服务类别" v-model:value="formState.serviceCategory" />
           </FormItem>
-          <FormItem label="具体项目" :labelCol="{ span: 2 }">
-            <Input placeholder="填写具体项目" v-model:value="formState.specialItem" />
+          <FormItem label="具体项目">
+            <Input placeholder="请填写具体项目" v-model:value="formState.specialItem" />
           </FormItem>
-          <FormItem label="相关资料" :labelCol="{ span: 2 }">
-            <TextArea placeholder="填写相关资料" v-model:value="formState.relatedMaterial" />
+          <FormItem label="相关资料">
+            <TextArea placeholder="请填写相关资料" v-model:value="formState.relatedMaterial" />
           </FormItem>
-          <FormItem label="下一步计划" :labelCol="{ span: 2 }">
-            <TextArea placeholder="填写下一步计划" v-model:value="formState.nextPlan" />
+          <FormItem label="下一步计划">
+            <TextArea placeholder="请填写下一步计划" v-model:value="formState.nextPlan" />
           </FormItem>
-          <FormItem label="结果补充" :labelCol="{ span: 2 }">
-            <TextArea placeholder="填写回访结果补充" v-model:value="formState.supplement" />
+          <FormItem label="结果补充">
+            <TextArea placeholder="请填写回访结果补充" v-model:value="formState.supplement" />
           </FormItem>
-          <FormItem label="备注" :labelCol="{ span: 2 }">
-            <TextArea placeholder="填写备注" v-model:value="formState.remark" />
+          <FormItem label="提醒时间">
+            <Input placeholder="请填写提醒时间" v-model:value="formState.remindTime" />
+          </FormItem>
+          <FormItem label="备注">
+            <TextArea placeholder="请填写备注" v-model:value="formState.remark" />
           </FormItem>
         </Form>
       </div>
