@@ -460,6 +460,7 @@
       };
       const onModelConfirm = () => {
         showModal.value = false;
+        visitRListReq(pageInfo.value.current, route.query?.id ? (route.query?.id as string) : undefined);
       };
       const onModelCancel = () => {
         showModal.value = false;
