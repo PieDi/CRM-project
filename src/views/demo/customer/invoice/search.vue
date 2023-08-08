@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="客户发票管理" :back-show="showGoBack">
+  <PageWrapper title="客户发票查询与新增" :back-show="showGoBack">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="发票名称">

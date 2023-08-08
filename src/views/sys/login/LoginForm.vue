@@ -26,7 +26,7 @@
       />
     </FormItem>
 
-    <ARow class="enter-x">
+    <!-- <ARow class="enter-x">
       <ACol :span="12">
         <FormItem>
           <Button type="link" @click="setLoginState(LoginStateEnum.REGISTER)" size="small">
@@ -41,7 +41,7 @@
           </Button>
         </FormItem>
       </ACol>
-    </ARow>
+    </ARow> -->
 
     <FormItem class="enter-x">
       <Button type="primary" size="large" block @click="handleLogin" :loading="loading">

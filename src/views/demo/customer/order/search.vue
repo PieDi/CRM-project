@@ -462,6 +462,10 @@
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新增订单';
         drawerInfo.value.type = 'add';
+        drawerInfo.value.item.products = [{
+          productId: undefined,
+          amount: undefined,
+        }]
       };
       const scanOrder = (item: CustomerOrderInfo) => {
         drawerInfo.value.visible = true;
