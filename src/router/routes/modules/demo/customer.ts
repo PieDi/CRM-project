@@ -126,7 +126,7 @@ const customer: AppRouteModule = {
           name: 'ContactSearch',
           component: () => import('/@/views/demo/customer/contact/search.vue'),
           meta: {
-            title: t('routes.demo.customer.contact.init'),
+            title: '客户合同查询与新增',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
@@ -164,7 +164,7 @@ const customer: AppRouteModule = {
           name: 'InvoiceSearch',
           component: () => import('/@/views/demo/customer/invoice/search.vue'),
           meta: {
-            title: '客户发票管理',
+            title: '客户发票查询与新增',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },

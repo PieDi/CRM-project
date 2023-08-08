@@ -20,7 +20,7 @@ const datumShare: AppRouteModule = {
       name: 'DatumShareClassify',
       component: () => import('/@/views/demo/datum-share/index.vue'),
       meta: {
-        title: '共享资料管理',
+        title: '共享资料新增',
         roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
       },
     },
