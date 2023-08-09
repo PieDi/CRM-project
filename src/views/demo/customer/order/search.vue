@@ -134,7 +134,7 @@
         </FormItem>
 
         <FormItem label="订单产品" style="margin-bottom: 0">
-          <Button style="float: right" type="link" @click="addProduct">新增</Button>
+          <Button v-if="drawerInfo.type !== 'scan'" style="float: right" type="link" @click="addProduct">新增</Button>
           <Space v-for="(p, i) of drawerInfo.item.products" align="start">
             <FormItem
               label="产品名称"
@@ -182,6 +182,7 @@
             </FormItem>
 
             <Button
+              v-if="drawerInfo.type !== 'scan'"
               style="float: right"
               type="link"
               @click="
