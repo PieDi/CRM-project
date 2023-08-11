@@ -1,200 +1,201 @@
 <template>
   <div class="bbb">
-    <div class="disease-item" v-for="(item, i) of diseaseObject">
-    <div class="basic">
-      <div class="header"
-        ><span>医院名称:</span><span>{{ item.diseaseBasic.hospitalName }}</span></div
-      >
-      <div class="header"
-        ><span>就诊时间:</span
-        ><span>{{ dayjs(item.diseaseBasic.visitDate).format('YYYY-MM-DD') }}</span></div
-      >
-      <div class="header"
-        ><span>疾病名称:</span><span>{{ item.diseaseBasic.diseaseName }}</span></div
-      >
-      <div class="header"
-        ><span>科室:</span><span>{{ item.diseaseBasic.departmentName }}</span></div
-      >
-    </div>
+    <div class="disease-item" >
+      <div class="basic">
+        <div class="header"
+          ><span>医院名称:</span><span>{{ diseaseObject.diseaseBasic.hospitalName }}</span></div
+        >
+        <div class="header"
+          ><span>就诊时间:</span
+          ><span>{{ dayjs(diseaseObject.diseaseBasic.visitDate).format('YYYY-MM-DD') }}</span></div
+        >
+        <div class="header"
+          ><span>疾病名称:</span><span>{{ diseaseObject.diseaseBasic.diseaseName }}</span></div
+        >
+        <div class="header"
+          ><span>科室:</span><span>{{ diseaseObject.diseaseBasic.departmentName }}</span></div
+        >
+      </div>
 
-    <div style="display: flex">
-      <div class="content">
-        <div class="item-title">
-          <div
-            class="record-title"
-            @click="
+      <div style="display: flex">
+        <div class="content">
+          <div class="item-title">
+            <div
+              class="record-title"
+              @click="
               () => {
-                linkClick(item.diseaseBasic.id as number);
+                linkClick(diseaseObject.diseaseBasic.id as number);
               }"
-            >用药记录</div
-          >
-          <div
-            style="cursor: pointer"
-            @click="
+              >用药记录</div
+            >
+            <div
+              style="cursor: pointer"
+              @click="
               () => {
-                viewAll(1, item.diseaseBasic.id as number);
+                viewAll(1, diseaseObject.diseaseBasic.id as number);
               }
             "
-            >{{ `查看全部(${item.diseaseMedicine?.count || 0})` }}</div
-          >
+              >{{ `查看全部(${diseaseObject.diseaseMedicine?.count || 0})` }}</div
+            >
+          </div>
+          <div class="item-content">
+            <template v-if="diseaseObject.diseaseMedicine.last">
+              <div class="block-content">
+                <div>
+                  <div class="content-label">
+                    <span>用药时间:</span
+                    >{{ dayjs(diseaseObject.diseaseMedicine.last.useDate).format('YYYY-MM-DD') }}</div
+                  >
+                  <div class="content-label">
+                    <span>药品名称:</span>{{ diseaseObject.diseaseMedicine.last.medicineName }}</div
+                  >
+                </div>
+                <div>
+                  <div class="content-label"
+                    ><span>用药剂量:</span>{{ diseaseObject.diseaseMedicine.last.useDose }}</div
+                  >
+                </div>
+              </div> </template
+            ><div v-else class="block-content">暂无数据</div>
+          </div>
         </div>
-        <div class="item-content">
-          <template v-if="item.diseaseMedicine.last">
-            <div class="block-content">
-              <div>
-                <div class="content-label">
-                  <span>用药时间:</span
-                  >{{ dayjs(item.diseaseMedicine.last.useDate).format('YYYY-MM-DD') }}</div
-                >
-                <div class="content-label">
-                  <span>药品名称:</span>{{ item.diseaseMedicine.last.medicineName }}</div
-                >
-              </div>
-              <div>
-                <div class="content-label"
-                  ><span>用药剂量:</span>{{ item.diseaseMedicine.last.useDose }}</div
-                >
-              </div>
-            </div> </template
-          ><div v-else class="block-content">暂无数据</div>
+        <div class="content">
+          <div class="item-title">
+            <div
+              class="record-title"
+              @click="
+              () => {
+                linkClick(diseaseObject.diseaseBasic.id as number);
+              }"
+              >检验记录</div
+            >
+            <div
+              style="cursor: pointer"
+              @click="
+              () => {
+                viewAll(2, diseaseObject.diseaseBasic.id as number);
+              }
+            "
+              >{{ `查看全部(${diseaseObject.diseaseCheck?.count || 0})` }}</div
+            >
+          </div>
+          <div class="item-content">
+            <template v-if="diseaseObject.diseaseCheck.last">
+              <div class="block-content">
+                <div>
+                  <div class="content-label">
+                    <span>检验时间:</span
+                    >{{ dayjs(diseaseObject.diseaseCheck.last.checkDate).format('YYYY-MM-DD') }}</div
+                  >
+                  <div class="content-label">
+                    <span>检验机构:</span>{{ diseaseObject.diseaseCheck.last.checkMechanism }}</div
+                  >
+                </div>
+                <div>
+                  <div class="content-label"
+                    ><span>检验类型:</span>{{ diseaseObject.diseaseCheck.last.checkType }}</div
+                  >
+                </div>
+              </div> </template
+            ><div v-else class="block-content">暂无数据</div>
+          </div>
         </div>
       </div>
-      <div class="content">
-        <div class="item-title">
-          <div
-            class="record-title"
-            @click="
+      <div style="display: flex">
+        <div class="content">
+          <div class="item-title">
+            <div
+              class="record-title"
+              @click="
               () => {
-                linkClick(item.diseaseBasic.id as number);
+                linkClick(diseaseObject.diseaseBasic.id as number);
               }"
-            >检验记录</div
-          >
-          <div
-            style="cursor: pointer"
-            @click="
+              >影像记录</div
+            >
+            <div
+              style="cursor: pointer"
+              @click="
               () => {
-                viewAll(2, item.diseaseBasic.id as number);
+                viewAll(3, diseaseObject.diseaseBasic.id as number);
               }
             "
-            >{{ `查看全部(${item.diseaseCheck?.count || 0})` }}</div
-          >
+              >{{ `查看全部(${diseaseObject.diseaseImage?.count || 0})` }}</div
+            >
+          </div>
+          <div class="item-content">
+            <template v-if="diseaseObject.diseaseImage.last">
+              <div class="block-content">
+                <div>
+                  <div class="content-label">
+                    <span>检验时间:</span
+                    >{{ dayjs(diseaseObject.diseaseImage.last.checkDate).format('YYYY-MM-DD') }}</div
+                  >
+                  <div> <span>检验机构:</span>{{ diseaseObject.diseaseImage.last.checkMechanism }}</div>
+                </div>
+                <div>
+                  <div class="content-label"
+                    ><span>检验类型:</span
+                    >{{ iCheckType[diseaseObject.diseaseImage.last.checkType as number] }}</div
+                  >
+                  <div class="content-label"
+                    ><span>检验部位:</span>{{ diseaseObject.diseaseImage.last.checkPart }}</div
+                  >
+                </div>
+              </div>
+            </template>
+            <div v-else class="block-content">暂无数据</div>
+          </div>
         </div>
-        <div class="item-content">
-          <template v-if="item.diseaseCheck.last">
-            <div class="block-content">
-              <div>
-                <div class="content-label">
-                  <span>检验时间:</span
-                  >{{ dayjs(item.diseaseCheck.last.checkDate).format('YYYY-MM-DD') }}</div
-                >
-                <div class="content-label">
-                  <span>检验机构:</span>{{ item.diseaseCheck.last.checkMechanism }}</div
-                >
+        <div class="content">
+          <div class="item-title">
+            <div
+              class="record-title"
+              @click="
+              () => {
+                linkClick(diseaseObject.diseaseBasic.id as number);
+              }"
+              >就诊记录</div
+            >
+            <div
+              style="cursor: pointer"
+              @click="
+              () => {
+                viewAll(4, diseaseObject.diseaseBasic.id as number);
+              }
+            "
+              >{{ `查看全部(${diseaseObject.diseaseConsultation?.count || 0})` }}</div
+            >
+          </div>
+          <div class="item-content">
+            <template v-if="diseaseObject.diseaseConsultation.last">
+              <div class="block-content">
+                <div>
+                  <div class="content-label">
+                    <span>就诊时间:</span
+                    >{{
+                      dayjs(diseaseObject.diseaseConsultation.last.consultationDate).format('YYYY-MM-DD')
+                    }}</div
+                  >
+                  <div class="content-label">
+                    <span>会诊内容:</span
+                    >{{ diseaseObject.diseaseConsultation.last.consultationContent }}</div
+                  >
+                </div>
+                <div>
+                  <div class="content-label"
+                    ><span>会诊专家:</span
+                    >{{ diseaseObject.diseaseConsultation.last.consultationExpert }}</div
+                  >
+                </div>
               </div>
-              <div>
-                <div class="content-label"
-                  ><span>检验类型:</span>{{ item.diseaseCheck.last.checkType }}</div
-                >
-              </div>
-            </div> </template
-          ><div v-else class="block-content">暂无数据</div>
+            </template>
+            <div v-else class="block-content">暂无数据</div>
+          </div>
         </div>
       </div>
     </div>
-    <div style="display: flex">
-      <div class="content">
-        <div class="item-title">
-          <div
-            class="record-title"
-            @click="
-              () => {
-                linkClick(item.diseaseBasic.id as number);
-              }"
-            >影像记录</div
-          >
-          <div
-            style="cursor: pointer"
-            @click="
-              () => {
-                viewAll(3, item.diseaseBasic.id as number);
-              }
-            "
-            >{{ `查看全部(${item.diseaseImage?.count || 0})` }}</div
-          >
-        </div>
-        <div class="item-content">
-          <template v-if="item.diseaseImage.last">
-            <div class="block-content">
-              <div>
-                <div class="content-label">
-                  <span>检验时间:</span
-                  >{{ dayjs(item.diseaseImage.last.checkDate).format('YYYY-MM-DD') }}</div
-                >
-                <div> <span>检验机构:</span>{{ item.diseaseImage.last.checkMechanism }}</div>
-              </div>
-              <div>
-                <div class="content-label"
-                  ><span>检验类型:</span
-                  >{{ iCheckType[item.diseaseImage.last.checkType as number] }}</div
-                >
-                <div class="content-label"
-                  ><span>检验部位:</span>{{ item.diseaseImage.last.checkPart }}</div
-                >
-              </div>
-            </div>
-          </template>
-          <div v-else class="block-content">暂无数据</div>
-        </div>
-      </div>
-      <div class="content">
-        <div class="item-title">
-          <div
-            class="record-title"
-            @click="
-              () => {
-                linkClick(item.diseaseBasic.id as number);
-              }"
-            >就诊记录</div
-          >
-          <div
-            style="cursor: pointer"
-            @click="
-              () => {
-                viewAll(4, item.diseaseBasic.id as number);
-              }
-            "
-            >{{ `查看全部(${item.diseaseConsultation?.count || 0})` }}</div
-          >
-        </div>
-        <div class="item-content">
-          <template v-if="item.diseaseConsultation.last">
-            <div class="block-content">
-              <div>
-                <div class="content-label">
-                  <span>就诊时间:</span
-                  >{{
-                    dayjs(item.diseaseConsultation.last.consultationDate).format('YYYY-MM-DD')
-                  }}</div
-                >
-                <div class="content-label">
-                  <span>会诊内容:</span>{{ item.diseaseConsultation.last.consultationContent }}</div
-                >
-              </div>
-              <div>
-                <div class="content-label"
-                  ><span>会诊专家:</span>{{ item.diseaseConsultation.last.consultationExpert }}</div
-                >
-              </div>
-            </div>
-          </template>
-          <div v-else class="block-content">暂无数据</div>
-        </div>
-      </div>
-    </div>
+    <ItemTable :modal-config="modalConfig" @close="modalClose" />
   </div>
-  <ItemTable :modal-config="modalConfig" @close="modalClose" />
-  </div>
-  
 </template>
 <script lang="ts">
   import { defineComponent, reactive, PropType } from 'vue';
@@ -234,6 +235,7 @@
     },
     props: {
       disease: {
+        required: true,
         type: Object as PropType<
           Array<{
             diseaseBasic: CustomerMHInfo;
@@ -254,7 +256,7 @@
               last: CustomerCInfo;
             };
           }>
-        >,
+          >,
       },
     },
     setup(props) {
@@ -369,7 +371,7 @@
         modalConfig.dataSource = [];
       };
       return {
-        diseaseObject: props.disease,
+        diseaseObject: props.disease[0],
         modalConfig,
         iCheckType,
         linkClick,

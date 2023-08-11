@@ -24,6 +24,7 @@
           <div v-else>暂无病史数据</div>
         </div>
       </div>
+
       <div class="content-bottom">
         <div class="order">
           <h3 style="margin-top: 10px">客户订单</h3>
@@ -221,9 +222,11 @@
         }
         .disease {
           position: relative;
+          flex: 1;
           padding-top: 10px;
           background: #fff;
           margin-left: 20px;
+          border-radius: 8px;
         }
       }
 
