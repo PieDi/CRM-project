@@ -43,6 +43,7 @@ export interface CustomerInfo {
   id: number | undefined;
   age: number | undefined;
   birth: string | undefined;
+  surName:string | undefined;
   contactAddress: string | undefined;
   documentNumber: string | undefined;
   documentType: number | undefined;

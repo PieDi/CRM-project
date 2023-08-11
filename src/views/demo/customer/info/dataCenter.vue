@@ -1,19 +1,30 @@
 <template>
   <div class="info-board">
-    <div class="title" @click="goBack">
-      <ArrowLeftOutlined style="color: #fff; margin-right: 10px" /> <span>客户信息</span></div
-    >
+    <div class="title">
+      <img @click="goBack" referrerpolicy="no-referrer" src="/src/assets/images/exit.png" />
+      <span @click="goBack" class="text_1">客户信息</span>
+    </div>
+
     <div class="content">
-      <div class="info-basic">
-        <h3>基本信息</h3>
-        <BasicInfo v-if="boardInfo?.customerBasic" :disease="boardInfo?.customerBasic" />
-      </div>
-      <div class="info-content">
+      <div class="content-top">
+        <div class="info-basic">
+          <div class="block-tip"></div>
+          <div class="vip-tag">
+            <img src="/src/assets/images/vip-tag.png" />
+          </div>
+          <div class="info-title">基本信息</div>
+          <BasicInfo v-if="boardInfo?.customerBasic" :disease="boardInfo?.customerBasic" />
+        </div>
+
         <div class="disease">
-          
+          <div class="block-tip"></div>
+          <div class="info-title" :style="{marginLeft: '16px'}">客户病史信息</div>
+
           <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases" />
           <div v-else>暂无病史数据</div>
         </div>
+      </div>
+      <div class="content-bottom">
         <div class="order">
           <h3 style="margin-top: 10px">客户订单</h3>
           <OrderInfo v-if="boardInfo?.orders" :disease="boardInfo?.orders" />
@@ -149,45 +160,89 @@
 </script>
 <style lang="less" scoped>
   .info-board {
-    background: rgb(20, 50, 93);
-    color: #fff;
+    background: #f0f2f5;
+    color: #7f8ca2;
     height: 100%;
+
     .title {
-      font-weight: 600;
+      font-weight: 500;
       font-size: 20px;
-      line-height: 20px;
-      height: 50px;
-      padding: 15px 10px;
-      background: rgb(18, 77, 129);
-      margin: 0 0 15px;
+      line-height: 28px;
+      height: 48px;
+      padding-left: 10px;
+      background: #0c2135;
       display: flex;
       align-items: center;
-    }
-    .content {
-      display: flex;
-      min-height: calc(100% - 65px);
-      font-size: 18px;
-      background: inherit;
-      h3 {
+      .text_1 {
         color: #fff;
-        font-weight: 600;
+      }
+    }
+
+    .content {
+      min-height: calc(100% - 48px);
+      font-size: 16px;
+      background: inherit;
+      padding: 20px;
+
+      .block-tip {
+        position: absolute;
+        width: 3px;
+        height: 16px;
+        background: #007aff;
+        left: 0;
+        top: 15px;
       }
 
-      .info-basic {
-        padding: 20px 20px;
-        width: 350px;
-        background: rgb(18, 77, 129);
+      .content-top {
+        display: flex;
+        .info-title {
+          height: 25px;
+          font-size: 18px;
+          font-weight: 600;
+          color: #2e354f;
+          line-height: 25px;
+        }
+        .info-basic {
+          position: relative;
+          width: 336px;
+          height: 646px;
+          background: #fff;
+          border-radius: 8px;
+          padding: 10px 16px;
+          .vip-tag {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 72px;
+            height: 28px;
+            padding: 0 16px;
+            background: #fff0d2;
+          }
+        }
+        .disease {
+          position: relative;
+          padding-top: 10px;
+          background: #fff;
+          margin-left: 20px;
+        }
       }
+
+      .content-bottom {
+      }
+
       .info-content {
         flex: 1;
         padding: 0 10px;
+
         .disease {
+          position: relative;
           height: 610px;
           background: rgb(18, 77, 129);
           overflow-y: scroll;
           padding-left: 20px;
           padding-top: 15px;
         }
+
         .order {
           min-height: 300px;
           // height: calc(100% - 560px);
