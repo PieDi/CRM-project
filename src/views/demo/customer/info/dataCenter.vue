@@ -19,9 +19,7 @@
         <div class="disease">
           <div class="block-tip"></div>
           <div class="info-title" :style="{marginLeft: '16px'}">客户病史信息</div>
-
           <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases" />
-          <div v-else>暂无病史数据</div>
         </div>
       </div>
 
@@ -202,14 +200,15 @@
           font-weight: 600;
           color: #2e354f;
           line-height: 25px;
+          margin-bottom: 20px;
         }
         .info-basic {
           position: relative;
           width: 336px;
-          height: 646px;
+          // height: 646px;
           background: #fff;
           border-radius: 8px;
-          padding: 10px 16px;
+          padding: 10px 16px 20px;
           .vip-tag {
             position: absolute;
             top: 0;
@@ -221,6 +220,8 @@
           }
         }
         .disease {
+          display: flex;
+          flex-direction: column;
           position: relative;
           flex: 1;
           padding-top: 10px;
@@ -236,7 +237,6 @@
       .info-content {
         flex: 1;
         padding: 0 10px;
-
         .disease {
           position: relative;
           height: 610px;

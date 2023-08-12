@@ -13,25 +13,7 @@ export interface CustomerListParams {
  */
 export interface CustomerBoard {
   /*  */ customerBasic: CustomerInfo /*  */;
-  diseases: Array<{
-    diseaseBasic: CustomerMHInfo;
-    diseaseMedicine: {
-      count: number;
-      last: CustomerDInfo;
-    };
-    diseaseCheck: {
-      count: number;
-      last: CustomerEInfo;
-    };
-    diseaseImage: {
-      count: number;
-      last: CustomerIInfo;
-    };
-    diseaseConsultation: {
-      count: number;
-      last: CustomerCInfo;
-    };
-  }>;
+  diseases: any;
   orders: Array<{
     order: CustomerOrderInfo;
     orderContracts: Array<CustomerContractInfo>;
@@ -81,6 +63,7 @@ export interface CustomerMHListParams {
   hospitalName?: string;
   pageNum: number;
   id?: string;
+  customerId?: string;
 }
 
 export interface CustomerMHInfo {
