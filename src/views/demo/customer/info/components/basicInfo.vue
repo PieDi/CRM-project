@@ -8,14 +8,14 @@
     </div>
 
     <div :style="{ display: 'flex' }">
-      <div class="content" :style="{ width: '50%' }">
+      <div class="content" :style="{ width: '50%', marginTop: '16px' }">
         <img src="/src/assets/images/info-birth.png" />
         <div class="right">
           <div>生日:</div>
           <div class="label">{{ diseaseObject?.birth }}</div>
         </div>
       </div>
-      <div class="content" :style="{ width: '50%' }">
+      <div class="content" :style="{ width: '50%',marginTop: '16px' }">
         <img src="/src/assets/images/info-mobile.png" />
         <div class="right">
           <div>电话:</div>
@@ -152,7 +152,7 @@ export default defineComponent({
 .info-content {
   display: flex;
   align-items: center;
-  padding-bottom: 20px;
+  padding-bottom: 10px;
   border-bottom: 1px solid #ebebeb;
   span {
     display: inline-block;
@@ -188,7 +188,7 @@ export default defineComponent({
 // 添加测试信息
 .content {
   display: flex;
-  margin-top: 16px;
+  margin-top: 26px;
 
   img {
     width: 16px;
@@ -200,10 +200,5 @@ export default defineComponent({
   .label {
     color: #2E354F
   }
-}
-</style>
-<style lang="less">
-.ant-table {
-  background: rgba(255, 255, 255, 0.2);
 }
 </style>
