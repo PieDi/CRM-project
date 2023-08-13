@@ -288,6 +288,7 @@ export default defineComponent({
         position: relative;
         padding-top: 10px;
         height: 326px;
+        overflow: hidden;
       }
     }
 

@@ -25,11 +25,11 @@
         <div>订单状态</div>
       </div>
       <div class="column column-6">
-        <div class="link" @click="()=>{cLinkClick(item.order.id as number)}">查看发票</div>
+        <div class="link" @click="()=>{handlePreView(item.order.id as number, 5) }">查看发票</div>
         <div>客户发票信息</div>
       </div>
       <div class="column column-4">
-        <div class="link" @click="()=>{iLinkClick(item.order.id as number)}">查看合同</div>
+        <div class="link" @click="()=>{ handlePreView(item.order.id as number, 6)}">查看合同</div>
         <div>客户合同信息</div>
       </div>
     </div>
@@ -47,6 +47,7 @@
     CustomerContractInfo,
     CustomerInvoiceInfo,
   } from '/@/api/demo/model/customer';
+  import { boardFileView } from '/@/api/demo/customer';
   const orderSourceMap: Record<number, string> = {
     1: 'CRM',
     2: '小程序',
@@ -123,7 +124,12 @@
       const iLinkClick = (id: number) => {
         router.push({ path: '/customer/invoice/search', query: { id } });
       };
-
+      const handlePreView = async (id: number, type: number) => {
+        const res = await boardFileView(id, type);
+        if (res) {
+          res.forEach((url) => window.open(url));
+        }
+      };
       return {
         linkClick,
         cLinkClick,
@@ -134,6 +140,7 @@
         scanOrder,
         orderSourceMap,
         orderStatusMap,
+        handlePreView,
       };
     },
   });
