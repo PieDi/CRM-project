@@ -226,6 +226,7 @@
         const res = await getCustomerMHPage({
           ...searchInfo.value,
           pageNum,
+          customerId: route?.query.customerId as string,
           id: route?.query.id as string,
         });
         if (res) {

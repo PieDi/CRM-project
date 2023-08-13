@@ -115,13 +115,6 @@
       const previewFile = async (item) => {
         const res = await previewTemplate(`/${route.query.name as string}/${item}`);
         if (res) window.open(res);
-
-        // pdfShow.value = true;
-        // setTimeout(() => {
-        //   pdfPreview.embed(`http://129.204.202.223:8001/contract/template/download?path=/${
-        //     route.query.name as string
-        //   }/${item}`, '#pdf-content');
-        // }, 200);
       };
       const deleteFile = (item) => {
         confirm(

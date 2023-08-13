@@ -55,7 +55,6 @@ enum Api {
    */
   FileDownload = '/customer/file/download',
   FileView = '/customer/file/view',
-
   /**
    * 客户病史信息
    */
@@ -184,9 +183,12 @@ export const getCustomerFileDownload = (path: string) =>
 export const getCustomerFileView = (fileId: number) =>
   defHttp.post<string>({ url: Api.FileView, params: { fileId } });
   
+  //看板信息
 export const boardCustomer = (id: string) =>
   defHttp.post<CustomerBoard>({ url: Api.BoardCustomer, params: { id } });
-
+// 看板附件
+  export const boardFileView = (id: number, type: number) =>
+  defHttp.post<string[]>({ url: '/customer/basic/viewFile', params: { id, type } });
 /**
  * 客户分组信息
  */

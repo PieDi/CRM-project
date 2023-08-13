@@ -308,7 +308,7 @@
       }));
 
       const visitRListReq = async (pageNum: number, id?: string) => {
-        const res = await getVisitPage({ ...searchInfo.value, pageNum, id });
+        const res = await getVisitPage({ ...searchInfo.value, pageNum, id,customerId:route.query?.customerId });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;

@@ -1,3 +1,4 @@
+import { VisitReturnInfo } from "./visit-return";
 /**
  * 客户列表请求类型
  */
@@ -12,31 +13,14 @@ export interface CustomerListParams {
  * 客户信息看板
  */
 export interface CustomerBoard {
-  /*  */ customerBasic: CustomerInfo /*  */;
-  diseases: Array<{
-    diseaseBasic: CustomerMHInfo;
-    diseaseMedicine: {
-      count: number;
-      last: CustomerDInfo;
-    };
-    diseaseCheck: {
-      count: number;
-      last: CustomerEInfo;
-    };
-    diseaseImage: {
-      count: number;
-      last: CustomerIInfo;
-    };
-    diseaseConsultation: {
-      count: number;
-      last: CustomerCInfo;
-    };
-  }>;
+  customerBasic: CustomerInfo;
+  diseases: any;
   orders: Array<{
     order: CustomerOrderInfo;
     orderContracts: Array<CustomerContractInfo>;
     orderInvoices: Array<CustomerInvoiceInfo>;
   }>;
+  returnVisits: Array<VisitReturnInfo>
 }
 
 export interface CustomerInfo {
@@ -81,6 +65,7 @@ export interface CustomerMHListParams {
   hospitalName?: string;
   pageNum: number;
   id?: string;
+  customerId?: string;
 }
 
 export interface CustomerMHInfo {
@@ -167,13 +152,15 @@ export interface CustomerOrderListParams {
   source?: number;
   productType?: number;
   id: string | undefined;
+  customerId?: string
 }
 
 export interface CustomerOrderInfo {
   id?: number | undefined;
-  orderAmount: number | undefined;
+  totalPrice: number | undefined;
   orderQuantity: number | undefined;
   orderDate: number | undefined;
+  orderTime: string | undefined;
   orderName: string | undefined;
   orderNumber: string | undefined;
   productId: number | undefined;

@@ -1,44 +1,39 @@
 <template>
-  <Table
-    :columns="columns"
-    :dataSource="diseaseObject"
-    :pagination="false"
-    :canResize="false"
-    :striped="false"
-    :bordered="false"
-    class="bbbb"
-  >
-    <template #bodyCell="{ record, column }">
-      <template v-if="column.dataIndex === 'orderName'">
-        <span
-          type="link"
-          style="color: rgb(0, 255, 250); cursor: pointer;"
-          @click="()=>{linkClick(record.order.id as number)}"
-          >{{ record.order.orderName }}</span
-        >
-      </template>
-      <template v-if="column.dataIndex === 'contracts'">
-        <div style="display: flex; flex-direction: column">
-          <span
-            style="color: rgb(0, 255, 250); cursor: pointer;"
-            @click="()=>{cLinkClick(c.id as number)}"
-            v-for="c of record.orderContracts"
-            >{{ c.name }}</span
-          >
-        </div>
-      </template>
-      <template v-if="column.dataIndex === 'invoices'">
-        <div style="display: flex; flex-direction: column">
-          <span
-            style="color: rgb(0, 255, 250)"
-            @click="()=>{iLinkClick(c.id as number)}"
-            v-for="c of record.orderInvoices"
-            >{{ c.name }}</span
-          >
-        </div>
-      </template>
-    </template>
-  </Table>
+  <div class="ccc">
+    <div v-for="item of diseaseObject" class="order-item">
+      <img src="/src/assets/images/order-logo.png" class="item-logo" />
+      <div class="column column-1">
+        <div class="value" style="font-weight: 500; font-size: 20px">{{
+          `￥${item.order.totalPrice}`
+        }}</div>
+        <div>订单金额</div>
+      </div>
+      <div class="column column-2">
+        <div class="value">{{ item.order.orderTime }}</div>
+        <div>下单时间</div>
+      </div>
+      <div class="column column-3">
+        <div class="value">{{ item.order.orderName }}</div>
+        <div>订单名称</div>
+      </div>
+      <div class="column column-4">
+        <div class="value">{{ orderSourceMap[item.order.source as number] }}</div>
+        <div>订单来源</div>
+      </div>
+      <div class="column column-5">
+        <div class="value">{{ orderStatusMap[item.order.status as number] }}</div>
+        <div>订单状态</div>
+      </div>
+      <div class="column column-6">
+        <div class="link" @click="()=>{cLinkClick(item.order.id as number)}">查看发票</div>
+        <div>客户发票信息</div>
+      </div>
+      <div class="column column-4">
+        <div class="link" @click="()=>{iLinkClick(item.order.id as number)}">查看合同</div>
+        <div>客户合同信息</div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -52,7 +47,15 @@
     CustomerContractInfo,
     CustomerInvoiceInfo,
   } from '/@/api/demo/model/customer';
-
+  const orderSourceMap: Record<number, string> = {
+    1: 'CRM',
+    2: '小程序',
+  };
+  const orderStatusMap: Record<number, string> = {
+    1: '待授权',
+    2: '待审核',
+    5: '已完成',
+  };
   export default defineComponent({
     components: {
       Table,
@@ -98,7 +101,7 @@
         {
           title: '订单金额',
           dataIndex: 'orderAmount',
-          customRender: (state) => state.record.order.orderAmount,
+          customRender: (state) => state.record.order.totalPrice,
         },
         {
           title: '关联合同',
@@ -129,32 +132,41 @@
         dayjs,
         columns,
         scanOrder,
+        orderSourceMap,
+        orderStatusMap,
       };
     },
   });
 </script>
-<style lang="less">
-  .bbbb {
-    .ant-table-thead > tr > th {
-      color: #fff;
-      background: transparent;
-      border-right: none;
-      font-size: 20px;
-      padding: 10px 5px;
-    }
-    .ant-table-cell-scrollbar {
-      // box-shadow: none;
-      opacity: 0;
-    }
-    .ant-table {
-      background: transparent;
-      color: #fff;
-    }
-    .ant-table-tbody > tr > td {
-      font-size: 18px;
-    }
-    .ant-table-tbody > tr.ant-table-row:hover > td {
-      background: transparent;
+<style lang="less" scoped>
+  .ccc {
+    margin-top: 10px;
+    overflow: hidden;
+    padding: 0 16px;
+    .order-item {
+      height: 84px;
+      border-bottom: 1px solid #ebebeb;
+      display: flex;
+      align-items: center;
+      .item-logo {
+        margin-left: 24px;
+        width: 32px;
+        height: 32px;
+      }
+      .column {
+        margin: 0 16px;
+        .value {
+          font-size: 16px;
+          color: #2e354f;
+          line-height: 22px;
+        }
+        .link {
+          cursor: pointer;
+          font-size: 16px;
+          color: #007aff;
+          line-height: 22px;
+        }
+      }
     }
   }
 </style>

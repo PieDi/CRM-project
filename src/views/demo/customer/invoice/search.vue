@@ -247,9 +247,6 @@
         },
       });
 
-      const downloadInvoice = (item) => {};
-      const previewInvoice = (item) => {};
-
       return {
         columns,
         pagination,
@@ -258,9 +255,6 @@
         searchAction,
         pageInfo,
         showGoBack: !!route?.query.id,
-
-        downloadInvoice,
-        previewInvoice,
         addMHistory,
         mRecordClose,
         mRecordSubmit,
