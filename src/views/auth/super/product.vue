@@ -365,28 +365,28 @@
         {
           title: '产品名称',
           dataIndex: 'name',
-          width: '14%'
+          width: 200
         },
         {
           title: '产品编号',
           dataIndex: 'number',
-          width: '14%'
+          width: 160
         },
         {
           title: '产品类型',
           dataIndex: 'type',
-          width: '14%',
+          width: 120,
           customRender: (state) => productTypeMap[state.record.type as number],
         },
         {
           title: '产品库存',
           dataIndex: 'amount',
-          width: '14%'
+          width: 120
         },
         {
           title: '库存管理',
           dataIndex: 'amount',
-          width: '14%',
+          width: 120,
           customRender: (state) => (state.record.lowStocks ? '库存不足' : '库存充足'),
         },
         {

@@ -24,6 +24,7 @@
       :dataSource="pageInfo.dataSource"
       :bordered="true"
       :pagination="pagination"
+      :scroll="{ x: 'max-content' }"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
@@ -190,7 +191,6 @@
     updateVisit,
     deleteVisit,
     getVisit,
-    exportVisit,
   } from '/@/api/demo/visit-return';
   import { VisitReturnInfo } from '/@/api/demo/model/visit-return';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
@@ -245,46 +245,48 @@
         {
           title: '客户姓名',
           dataIndex: 'customerName',
-          width: 120,
+          width: 100,
         },
         {
           title: '标题',
           dataIndex: 'title',
-          width: '12%',
+          width: 200,
           ellipsis: true,
         },
         {
           title: '回访状态',
           dataIndex: 'type',
-          width: '100px',
+          width: 100,
           customRender: (state) => visitStatusMap[state.record.status as number],
         },
         {
           title: '回访类型',
           dataIndex: 'type',
-          width: '100px',
+          width: 100,
           customRender: (state) => visitTypeMap[state.record.type as number],
         },
         {
           title: '回访结果',
           dataIndex: 'type',
-          width: '100px',
+          width: 100,
           customRender: (state) =>
             state.record.result ? visitResMap[state.record.result as number] : '',
         },
         {
           title: '回访时间',
           dataIndex: 'visitTime',
-          width: '120px',
+          width: 120,
         },
         {
           title: '内容简述',
           dataIndex: 'visitContent',
+          width: 200,
+          ellipsis: true,
         },
         {
           title: '操作',
           dataIndex: 'operation',
-          width: 380,
+          width: 350,
         },
       ];
       const searchInfo = ref({
