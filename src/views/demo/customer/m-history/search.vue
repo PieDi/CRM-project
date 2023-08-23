@@ -255,6 +255,7 @@
         {
           title: '姓名',
           dataIndex: 'customerName',
+          width: 80,
         },
         {
           title: '就诊时间',

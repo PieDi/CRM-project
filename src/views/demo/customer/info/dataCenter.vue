@@ -98,17 +98,15 @@ export default defineComponent({
     const route = useRoute();
     const boardInfo = ref<CustomerBoard>();
     const customerInfoBoard = async () => {
-      const rd = Math.random()
       if (route.query?.id ) {
         const res = await boardCustomer(route.query.id as string);
-        if (res && rd >= 0.1) {
+        if (res) {
           boardInfo.value = res;
         }
       }
     };
     onMounted(() => {
       customerInfoBoard();
-      // customerListReq(1);
     });
 
     const searchInfo = ref({

@@ -35,6 +35,13 @@
       :pagination="pagination"
     >
       <template #bodyCell="{ column, record }">
+        <template v-if="column.dataIndex === 'introduction'">
+          <Tooltip :title="record.introduction"
+            ><div class="ellipsis">
+              {{ record.introduction }}
+            </div></Tooltip
+          >
+        </template>
         <template v-if="column.dataIndex === 'operation'">
           <Button
             type="link"
@@ -54,9 +61,16 @@
             "
             >编辑</Button
           >
-          <Button  type="link" danger @click="() => {
-            deleteProduct(record)
-          }">删除</Button>
+          <Button
+            type="link"
+            danger
+            @click="
+              () => {
+                deleteProduct(record);
+              }
+            "
+            >删除</Button
+          >
         </template>
       </template>
     </Table>
@@ -126,7 +140,7 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-        
+
         <FormItem label="产品运费">
           <InputNumber
             placeholder="请输入"
@@ -135,7 +149,6 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-
 
         <FormItem label="积分兑换" v-bind="validateInfos.integral">
           <RadioGroup
@@ -156,8 +169,7 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-   
-       
+
         <FormItem label="产品轮播图">
           <Upload
             :file-list="fileList"
@@ -268,6 +280,7 @@
     RadioGroup,
     Radio,
     Upload,
+    Tooltip,
   } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
@@ -301,6 +314,7 @@
       Upload,
       RadioGroup,
       Radio,
+      Tooltip,
     },
     setup() {
       const drawerInfo = ref<DrawerItemType<ProductInfo>>({
@@ -365,34 +379,35 @@
         {
           title: '产品名称',
           dataIndex: 'name',
-          width: '14%'
+          width: 200,
         },
         {
           title: '产品编号',
           dataIndex: 'number',
-          width: '14%'
+          width: 160,
         },
         {
           title: '产品类型',
           dataIndex: 'type',
-          width: '14%',
+          width: 120,
           customRender: (state) => productTypeMap[state.record.type as number],
         },
         {
           title: '产品库存',
           dataIndex: 'amount',
-          width: '14%'
+          width: 120,
         },
         {
           title: '库存管理',
           dataIndex: 'amount',
-          width: '14%',
+          width: 120,
           customRender: (state) => (state.record.lowStocks ? '库存不足' : '库存充足'),
         },
         {
           title: '产品描述',
           width: '14%',
           dataIndex: 'introduction',
+          ellipsis: true,
         },
         {
           title: '操作',
@@ -566,4 +581,11 @@
     },
   });
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+  .ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+  }
+</style>
