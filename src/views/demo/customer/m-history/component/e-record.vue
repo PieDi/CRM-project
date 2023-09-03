@@ -174,6 +174,7 @@
                   name: file.fileName,
                   status: 'done',
                   url: file.path,
+                  id: file.id
                 });
                 p.push(null);
               });
@@ -248,12 +249,14 @@
       // 文件上传
       const fileListMap = ref<{ [number: string]: any }>({});
       const handleDownload = (file: any) => {
+      
         if (file?.url)
           window.open(
             `http://129.204.202.223:8001/basic-api/customer/file/download?path=${file.url}`,
           );
       };
       const handlePreView = async (file: any) => {
+        console.log(212121, file)
         const res = await getCustomerFileView(file?.id);
         if (res) {
           window.open(res);

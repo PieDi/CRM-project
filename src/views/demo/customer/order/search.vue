@@ -1,8 +1,8 @@
 <template>
   <PageWrapper title="客户订单管理" :back-show="showGoBack">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
-      <div :style="{ display: 'flex' }"
-        ><FormItem label="客户姓名">
+      <div :style="{ display: 'flex' }">
+        <FormItem label="客户姓名">
           <Input
             placeholder="请输入"
             allowClear
@@ -20,9 +20,14 @@
           />
         </FormItem>
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
-        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
-      >
-      <Button type="primary" style="margin-left: 10px" @click="addOrder">新增订单</Button>
+        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
+        </div>
+      <div :style="{ display: 'flex' }">
+        <Button type="primary" style="margin-left: 10px" @click="orderExport"
+          >订单导出</Button>
+        <Button type="primary" style="margin-left: 10px" @click="addOrder">新增订单</Button>
+      </div>
+      
     </div>
 
     <Table
@@ -54,6 +59,7 @@
             >编辑</Button
           >
           <Button
+          v-if="authShow"
             type="link"
             @click="
               () => {
@@ -150,11 +156,12 @@
                 :disabled="drawerInfo.type !== 'add'"
                 placeholder="请选择"
                 v-model:value="p.productId"
-                style="width: 150px"
+                style="width: 250px"
+                :filter-option="pFilterOption"
               >
                 <SelectOption
                   v-for="item of pDataSource"
-                  :key="`${item.name}-${item.number}`"
+                  :key="`${item.name}-${item.id}`"
                   :value="item.id"
                   >{{ item.name }}</SelectOption
                 >
@@ -243,7 +250,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, computed, createVNode } from 'vue';
+  import { defineComponent, ref, onMounted, computed, createVNode, toRaw } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import {
     Table,
@@ -275,7 +282,8 @@
   import type { FormInstance } from 'ant-design-vue';
   import dayjs, { Dayjs } from 'dayjs';
   import { useRoute } from 'vue-router';
-
+  import { useUserStore } from '/@/store/modules/user';
+  import { RoleEnum } from '/@/enums/roleEnum';
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   const TextArea = Input.TextArea;
@@ -287,6 +295,8 @@
     1: '待授权',
     2: '待审核',
     5: '已完成',
+    18: '授权不通过',
+    19: '审核不通过'
   };
   export default defineComponent({
     components: {
@@ -306,6 +316,11 @@
       DeleteOutlined,
     },
     setup() {
+      const userStore = useUserStore();
+      const roleList = toRaw(userStore.getRoleList) || [];
+      const authShow = computed(() => {
+        return roleList.some((role) => [RoleEnum.SUPER, RoleEnum.ADMIN].includes(role));
+      });
       const formRef = ref<FormInstance>();
       const drawerInfo = ref<
         DrawerItemType<{
@@ -550,6 +565,10 @@
       const filterOption = (input: string, option: any) => {
         return option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0;
       };
+      const pFilterOption = (input: string, option: any) => {
+        return option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+      };
+      const orderExport = () => { }
       return {
         formRef,
         columns,
@@ -574,6 +593,9 @@
         // currentP,
         pDataSource,
         filterOption,
+        pFilterOption,
+        authShow,
+        orderExport
       };
     },
   });

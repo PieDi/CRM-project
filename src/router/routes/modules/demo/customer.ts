@@ -27,7 +27,7 @@ const customer: AppRouteModule = {
           name: 'InfoSearch',
           component: () => import('/@/views/demo/customer/info/search.vue'),
           meta: {
-            title: '客户信息管理与新增',
+            title: '客户信息查询管理与新增',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
@@ -36,7 +36,7 @@ const customer: AppRouteModule = {
           name: 'InfoGroup',
           component: () => import('/@/views/demo/customer/info/group.vue'),
           meta: {
-            title: '新增客户分组标签',
+            title: '编辑分组标签',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
@@ -45,7 +45,16 @@ const customer: AppRouteModule = {
           name: 'InfoSource',
           component: () => import('/@/views/demo/customer/info/source.vue'),
           meta: {
-            title: '客户来源分组标签',
+            title: '编辑客户来源分组',
+            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+          },
+        },
+        {
+          path: 'level',
+          name: 'InfoLevel',
+          component: () => import('/@/views/demo/customer/info/level.vue'),
+          meta: {
+            title: '编辑客户等级',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
@@ -54,7 +63,7 @@ const customer: AppRouteModule = {
           name: 'SysAuthCSLink',
           component: () => import('/@/views/auth/cs-link.vue'),
           meta: {
-            title: '小程序客户委派',
+            title: '小程序客服委派',
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
           },
         },
@@ -130,25 +139,25 @@ const customer: AppRouteModule = {
             roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
           },
         },
-        {
-          path: 'template',
-          name: 'ContactTemplate',
-          component: () => import('/@/views/demo/customer/contact/template.vue'),
-          meta: {
-            title: t('routes.demo.customer.contact.template'),
-            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
-          },
-        },
-        {
-          path: 't-group',
-          name: 'ContactTGroup',
-          component: () => import('/@/views/demo/customer/contact/t-group.vue'),
-          meta: {
-            title: '合同模板',
-            hideMenu: true,
-            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
-          },
-        },
+        // {
+        //   path: 'template',
+        //   name: 'ContactTemplate',
+        //   component: () => import('/@/views/demo/customer/contact/template.vue'),
+        //   meta: {
+        //     title: t('routes.demo.customer.contact.template'),
+        //     roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+        //   },
+        // },
+        // {
+        //   path: 't-group',
+        //   name: 'ContactTGroup',
+        //   component: () => import('/@/views/demo/customer/contact/t-group.vue'),
+        //   meta: {
+        //     title: '合同模板',
+        //     hideMenu: true,
+        //     roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+        //   },
+        // },
       ],
     },
     {
@@ -172,6 +181,4 @@ const customer: AppRouteModule = {
     },
   ],
 };
-export default {
-  ...customer,
-};
+export default customer;
