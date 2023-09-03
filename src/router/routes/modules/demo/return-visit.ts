@@ -12,7 +12,7 @@ const returnVisit: AppRouteModule = {
     orderNo: 200,
     icon: 'ion:aperture-outline',
     title: t('routes.demo.return-visit.index'),
-    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+    roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3]
   },
   children: [
     {
@@ -21,18 +21,9 @@ const returnVisit: AppRouteModule = {
       component: () => import('@/views/demo/visit-return/plan.vue'),
       meta: {
         title: '回访工作计划',
-        roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF]
+        roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3]
       }
-    },
-    // {
-    //   path: 'search',
-    //   name: 'ReturnVisitSearch',
-    //   component: () => import('/@/views/demo/visit-return/search.vue'),
-    //   meta: {
-    //     title: t('routes.demo.return-visit.search'),
-    //     roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
-    //   },
-    // }
+    }
   ],
 };
 

@@ -10,10 +10,10 @@ const staff: AppRouteModule = {
   component: LAYOUT,
   redirect: '/feat/icon',
   meta: {
-    orderNo: 200,
+    orderNo: 500,
     icon: 'ion:git-compare-outline',
     title: '用户管理',
-    roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
+    roles: [RoleEnum.SUPER],
   },
   children: [
  
@@ -23,7 +23,7 @@ const staff: AppRouteModule = {
           component: () => import('/@/views/auth/super/s-manage.vue'),
           meta: {
             title: '用户权限管理',
-            roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+            roles: [RoleEnum.SUPER],
           },
         }
 

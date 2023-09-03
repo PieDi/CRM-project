@@ -25,7 +25,7 @@ export const RootRoute: AppRouteRecordRaw = {
   redirect: PageEnum.BASE_HOME,
   meta: {
     title: 'Root',
-    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+    roles: [RoleEnum.SUPER,  RoleEnum.STAFF],
   },
 };
 
@@ -35,7 +35,7 @@ export const LoginRoute: AppRouteRecordRaw = {
   component: () => import('/@/views/sys/login/Login.vue'),
   meta: {
     title: t('routes.basic.login'),
-    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+    roles: [RoleEnum.SUPER,  RoleEnum.STAFF],
   },
 };
 
@@ -45,7 +45,7 @@ export const customerBoard: AppRouteModule = {
   meta: {
     title:t('routes.demo.customer.info.dataCenter'),
     // hideMenu: true,
-    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+    roles: [RoleEnum.SUPER,  RoleEnum.STAFF],
   },
   component: () => import('/@/views/demo/customer/info/dataCenter.vue'),
 };
