@@ -1,13 +1,11 @@
 import type { AppRouteModule } from '/@/router/types';
 import { LAYOUT } from '/@/router/constant';
-import { t } from '/@/hooks/web/useI18n';
 import { RoleEnum } from '/@/enums/roleEnum';
 
 const customer: AppRouteModule = {
   path: '/customer',
   name: 'Customer',
   component: LAYOUT,
-  redirect: '/feat/icon',
   meta: {
     orderNo: 100,
     icon: 'ion:git-compare-outline',
@@ -17,11 +15,20 @@ const customer: AppRouteModule = {
   children: [
     {
       path: 'info/search',
-      name: 'InfoSearch',
+      name: 'CustomerSearch',
       component: () => import('/@/views/demo/customer/info/search.vue'),
       meta: {
-        title: '客户信息查询与新增',
+        title: '信息查询编辑新增',
         roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3]
+      },
+    },
+    {
+      path: 'mHistory/search',
+      name: 'MHistorySearch',
+      component: () => import('/@/views/demo/customer/m-history/search.vue'),
+      meta: {
+        title: '客户就诊信息管理',
+        roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
       },
     },
     {
@@ -33,33 +40,8 @@ const customer: AppRouteModule = {
         roles: [RoleEnum.SUPER],
       },
     },
-    {
-      path: 'mHistory/search',
-      name: 'MHistorySearch',
-      component: () => import('/@/views/demo/customer/m-history/search.vue'),
-      meta: {
-        title: '客户就诊信息录入',
-        roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
-      },
-    },
-    {
-      path: 'contact/search',
-      name: 'ContactSearch',
-      component: () => import('/@/views/demo/customer/contact/search.vue'),
-      meta: {
-        title: '客户合同查询与新增',
-        roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
-      },
-    },
-    {
-      path: 'invoice/search',
-      name: 'InvoiceSearch',
-      component: () => import('/@/views/demo/customer/invoice/search.vue'),
-      meta: {
-        title: '客户发票查询与新增',
-        roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
-      },
-    },
+    
+  
     
 
 
@@ -150,7 +132,7 @@ const customer: AppRouteModule = {
     //       component: () => import('/@/views/auth/micro-order.vue'),
     //       meta: {
     //         title: '小程序订单',
-    //         roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
+    //         roles: [RoleEnum.SUPER],
     //       },
     //     },
     //     {

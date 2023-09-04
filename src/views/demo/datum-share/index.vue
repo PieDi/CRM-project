@@ -86,7 +86,7 @@
       const userStore = useUserStore();
       const roleList = toRaw(userStore.getRoleList) || [];
       const authShow = computed(() => {
-        return roleList.some((role) => [RoleEnum.SUPER, RoleEnum.ADMIN].includes(role));
+        return roleList.some((role) => [RoleEnum.SUPER].includes(role));
       });
 
       const router = useRouter();
