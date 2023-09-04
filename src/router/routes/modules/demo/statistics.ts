@@ -7,10 +7,10 @@ const statisticsManage: AppRouteModule = {
   name: 'StatisticsManage',
   component: LAYOUT,
   meta: {
-    orderNo: 700,
+    orderNo: 400,
     icon: 'ion:layers-outline',
     title: '统计管理',
-    roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF],
+    roles: [RoleEnum.SUPER, RoleEnum.STAFF2,  RoleEnum.STAFF3],
   },
   children: [
     {
@@ -19,9 +19,18 @@ const statisticsManage: AppRouteModule = {
       component: () => import('@/views/demo/statistics/order-statistics.vue'),
       meta: {
         title: '订单统计',
-        roles: [RoleEnum.SUPER, RoleEnum.ADMIN, RoleEnum.STAFF]
+        roles: [RoleEnum.SUPER, RoleEnum.STAFF2,  RoleEnum.STAFF3]
       }
     },
+            {
+          path: 'micro-order',
+          name: 'SysAuthCSLinkMicroOrder',
+          component: () => import('/@/views/auth/micro-order.vue'),
+          meta: {
+            title: '小程序订单统计',
+            roles: [RoleEnum.SUPER, RoleEnum.STAFF2,  RoleEnum.STAFF3]
+          },
+        },
 
   ],
 };

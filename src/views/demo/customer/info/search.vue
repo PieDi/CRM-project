@@ -44,7 +44,13 @@
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
-      <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增客户</Button>
+
+      <div :style="{ display: 'flex' }">
+        <Button type="primary" style="margin-left: 10px" @click="customerExport"
+          >客户信息导出</Button
+        >
+        <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增客户</Button></div
+      >
     </div>
 
     <Table
@@ -63,7 +69,17 @@
                 boardCustomer(record.id);
               }
             "
-            >查看</Button
+            >查看客户看板</Button
+          >
+          <Button
+            v-if="authShow"
+            type="link"
+            @click="
+              () => {
+                deleteAction(record);
+              }
+            "
+            >客户等级</Button
           >
           <Button
             type="link"
@@ -75,6 +91,7 @@
             >编辑</Button
           >
           <Button
+            v-if="authShow"
             type="link"
             @click="
               () => {
@@ -170,12 +187,7 @@
           />
         </FormItem>
         <FormItem label="客户来源" v-bind="validateInfos.sourceId">
-          <Select
-            placeholder="请选择"
-            :disabled="drawerInfo.type === 'scan'"
-            v-model:value="drawerInfo.item.sourceId"
-            :style="{ width: '150px' }"
-          >
+          <Select placeholder="请选择" :disabled="drawerInfo.type === 'scan'">
             <SelectOption v-for="item in customerSourceList" :key="item.id">{{
               item.name
             }}</SelectOption>
@@ -194,7 +206,7 @@
           </Select>
         </FormItem>
 
-        <FormItem label="客户等级" v-bind="validateInfos.level">
+        <!-- <FormItem label="客户等级" v-bind="validateInfos.level">
           <InputNumber
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
@@ -203,7 +215,7 @@
             allowClear
             v-model:value="drawerInfo.item.level"
           />
-        </FormItem>
+        </FormItem> -->
 
         <FormItem label="联系地址" v-bind="validateInfos.contactAddress">
           <Input
@@ -214,14 +226,14 @@
           />
         </FormItem>
 
-        <FormItem label="客户标签">
+        <!-- <FormItem label="客户标签">
           <Input
             :disabled="drawerInfo.type === 'scan'"
             placeholder="请输入"
             allowClear
             v-model:value="drawerInfo.item.tag"
           />
-        </FormItem>
+        </FormItem> -->
 
         <FormItem label="备注">
           <TextArea
@@ -236,7 +248,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, createVNode, computed, reactive } from 'vue';
+  import { defineComponent, ref, onMounted, createVNode, computed, reactive, toRaw } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import {
     Table,
@@ -266,6 +278,8 @@
   import dayjs, { Dayjs } from 'dayjs';
   import { sexMap, docTypeMap } from '/@/views/const';
   import { useRouter } from 'vue-router';
+  import { useUserStore } from '/@/store/modules/user';
+  import { RoleEnum } from '/@/enums/roleEnum';
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   const TextArea = Input.TextArea;
@@ -288,13 +302,17 @@
       TextArea,
     },
     setup() {
+      const userStore = useUserStore();
+      const roleList = toRaw(userStore.getRoleList) || [];
+      const authShow = computed(() => {
+        return roleList.some((role) => [RoleEnum.SUPER, RoleEnum.ADMIN].includes(role));
+      });
       const searchInfo = ref({
         name: undefined,
         groupId: undefined,
         sourceId: undefined,
         documentNumber: undefined,
       });
-
       const drawerInfo = ref<DrawerItemType<CustomerInfo>>({
         visible: false,
         title: '',
@@ -365,27 +383,33 @@
         {
           title: '姓名',
           dataIndex: 'name',
+          width: 100,
         },
         {
           title: '电话',
           dataIndex: 'mobile',
+          width: 140,
         },
         {
           title: '性别',
           dataIndex: 'sex',
+          width: 70,
           customRender: (state) => sexMap[state.record.sex as number],
         },
         {
           title: '证件类型',
           dataIndex: 'documentType',
+          width: 120,
           customRender: (state) => docTypeMap[state.record.documentType as number],
         },
         {
           title: '证件号码',
           dataIndex: 'documentNumber',
+          width: 180,
         },
         {
           title: '年龄',
+          width: 70,
           dataIndex: 'age',
         },
         {
@@ -394,6 +418,7 @@
         },
         {
           title: '所属分组',
+          width: 120,
           dataIndex: 'groupId',
           customRender: (state) => {
             const group = customerGroupList.value.find((item) => item.id === state.record.groupId);
@@ -403,10 +428,29 @@
         {
           title: '客户来源',
           dataIndex: 'sourceId',
+          width: 120,
           customRender: (state) => {
-            const source = customerSourceList.value.find((item) => item.id === state.record.sourceId);
+            const source = customerSourceList.value.find(
+              (item) => item.id === state.record.sourceId,
+            );
             return source ? source.name : '';
           },
+        },
+        {
+          title: '客户等级',
+          dataIndex: 'level',
+          width: 120,
+          // customRender: (state) => {
+          //   const source = customerSourceList.value.find(
+          //     (item) => item.id === state.record.sourceId,
+          //   );
+          //   return source ? source.name : '';
+          // },
+        },
+        {
+          title: '经办人',
+          dataIndex: 'agent',
+          width: 100,
         },
         {
           title: '操作',
@@ -520,12 +564,12 @@
             message: '请选择来源',
           },
         ],
-        level: [
-          {
-            required: true,
-            message: '请输入客户等级',
-          },
-        ],
+        // level: [
+        //   {
+        //     required: true,
+        //     message: '请输入客户等级',
+        //   },
+        // ],
         contactAddress: [
           {
             required: true,
@@ -549,10 +593,10 @@
           }
         });
       };
-      const birthChange = () => { 
+      const birthChange = () => {
         if (datePickerValue.value)
           drawerInfo.value.item.birth = dayjs(datePickerValue.value).format('YYYY-MM-DD');
-      }
+      };
       const documentChange = () => {
         if (
           drawerInfo.value.item.documentType === 1 &&
@@ -564,6 +608,7 @@
           drawerInfo.value.item.age = dayjs().year() - Number(t.slice(0, 4));
         }
       };
+      const customerExport = () => {};
       return {
         columns,
         pagination,
@@ -584,6 +629,8 @@
         documentChange,
         birthChange,
         validateInfos,
+        authShow,
+        customerExport,
       };
     },
   });

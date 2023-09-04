@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="小程序客户委派">
+  <PageWrapper title="小程序客服委派">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="客户姓名">
@@ -41,7 +41,7 @@
                 appointStaff(record);
               }
             "
-            >员工委派</Button
+            >委派客服维护</Button
           >
         </template>
       </template>
@@ -65,7 +65,7 @@
             v-model:value="drawerInfo.item.staffId"
           >
             <SelectOption v-for="item in staffSourceData" :key="item.userId">{{
-              item.userName
+              item.realName
             }}</SelectOption>
           </Select>
         </FormItem>

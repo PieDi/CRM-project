@@ -178,7 +178,7 @@
                   id: file.id,
                   name: file.fileName,
                   status: 'done',
-                  url: file.path,
+                  url: file.path
                 });
                 p.push(null);
               });

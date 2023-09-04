@@ -13,7 +13,7 @@
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
-      <Button type="primary" style="margin-left: 10px" @click="addGroup">新增分组</Button>
+      <Button type="primary" style="margin-left: 10px" @click="addGroup">新增客户分组</Button>
     </div>
 
     <Table
@@ -66,7 +66,7 @@
       :visible="drawerInfo.visible"
     >
       <Form :labelCol="{ span: 4 }">
-        <FormItem label="小组分类">
+        <!-- <FormItem label="小组分类">
           <Select
             placeholder="请选择"
             v-model:value="drawerInfo.item.type"
@@ -76,7 +76,7 @@
             <SelectOption :key="2">企业客户</SelectOption>
             <SelectOption :key="3">其他</SelectOption>
           </Select>
-        </FormItem>
+        </FormItem> -->
 
         <FormItem label="分组名称">
           <Input
@@ -87,15 +87,14 @@
           />
         </FormItem>
 
-        <FormItem label="分组描述" v-if="drawerInfo.item.type">
+        <FormItem label="分组描述">
           <TextArea
-            v-if="drawerInfo.item.type === 3"
             placeholder="请输入"
             allowClear
             v-model:value="drawerInfo.item.description"
             :disabled="drawerInfo.type === 'scan'"
           />
-          <Select
+          <!-- <Select
             v-else
             placeholder="请选择"
             v-model:value="drawerInfo.item.description"
@@ -107,7 +106,7 @@
             <SelectOption :key="2" value="就医服务客户">就医服务客户</SelectOption>
             <SelectOption :key="3" value="体验客户">体验客户</SelectOption>
             <SelectOption :key="4" value="其他">其他</SelectOption>
-          </Select>
+          </Select> -->
         </FormItem>
       </Form>
     </Modal>
@@ -216,11 +215,11 @@
           title: '分组名称',
           dataIndex: 'name',
         },
-        {
-          title: '小组分类',
-          dataIndex: 'type',
-          customRender: (state) => groupTypeMap[state.record.type as number],
-        },
+        // {
+        //   title: '小组分类',
+        //   dataIndex: 'type',
+        //   customRender: (state) => groupTypeMap[state.record.type as number],
+        // },
         {
           title: '分组描述',
           dataIndex: 'description',

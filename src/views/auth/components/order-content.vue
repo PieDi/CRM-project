@@ -9,16 +9,7 @@
           v-model:value="searchInfo.customerName"
         />
       </FormItem>
-      <!-- <FormItem label="负责人" style="margin-left: 10px">
-          <Select
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
-            :style="{ width: '150px' }"
-          >
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
-          </Select>
-        </FormItem> -->
+
       <FormItem label="订单编号" style="margin-left: 10px">
         <Input
           placeholder="请输入"
@@ -40,25 +31,9 @@
     :bordered="true"
     :pagination="pagination"
   >
-    <template #bodyCell="{ column, _text, record }">
+    <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
-        <Popover trigger="hover" v-if="handleShow && record.next && record.next.length">
-          <template #content>
-            <div :style="{ display: 'flex', 'flex-direction': 'column' }"
-              ><Button
-                type="link"
-                v-for="h of record.next"
-                @click="
-                  () => {
-                    handleAction({ id: record.id, status: h.status, opinion: h.operate });
-                  }
-                "
-                >{{ h.operate }}</Button
-              ></div
-            >
-          </template>
-          <Button type="link">操作</Button>
-        </Popover>
+        <template v-if="nsOrder"> 授权 审核 根据状态来 </template>
         <Button
           type="link"
           @click="
@@ -68,16 +43,6 @@
           "
           >查看</Button
         >
-
-        <!-- <Button
-            type="link"
-            @click="
-              () => {
-                deleteOrder(record);
-              }
-            "
-            >删除</Button
-          > -->
       </template>
     </template>
   </Table>
@@ -161,13 +126,6 @@
           v-model:value="drawerInfo.item.orderAmount"
         />
       </FormItem>
-
-      <!-- <FormItem label="关联合同">
-          <Select :disabled="drawerInfo.type === 'scan'" placeholder="请选择">
-            <SelectOption key="1">男</SelectOption>
-            <SelectOption key="2">女</SelectOption>
-          </Select>
-        </FormItem> -->
 
       <FormItem label="负责人">
         <Input
@@ -339,21 +297,9 @@
           title: '订单编号',
           dataIndex: 'orderNumber',
         },
-        // {
-        //   title: '订单类型',
-        //   dataIndex: 'endTime',
-        // },
-        {
-          title: '订单数量',
-          dataIndex: 'orderQuantity',
-        },
         {
           title: '订单金额',
-          dataIndex: 'orderAmount',
-        },
-        {
-          title: '合同名称',
-          dataIndex: 'endTime',
+          dataIndex: 'totalPrice',
         },
         {
           title: '负责人',
@@ -434,11 +380,11 @@
         pageInfo,
         drawerInfo,
         scanOrder,
-
+        microOrder: props.source === 2,
+        nsOrder: props.productType === 2,
         drawerOnClose,
         cDataSource,
         pDataSource,
-
         handleShow,
         handleAction,
       };

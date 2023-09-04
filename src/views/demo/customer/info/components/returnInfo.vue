@@ -23,7 +23,7 @@
       </div>
       <div class="item-des">
         <div class="label">内容简介</div>
-        <div>{{ item.remark }}</div>
+        <div class="des-content">{{ item.remark }}</div>
       </div>
     </div>
   </div>
@@ -115,15 +115,20 @@
         font-weight: 600;
         color: #2e354f;
         border-bottom: 1px solid #dddddd;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
 
         .item-logo {
           width: 22px;
           height: 22px;
         }
       }
+
       .label {
         width: 70px;
       }
+
       .item-row {
         margin-top: 8px;
         display: flex;
@@ -132,10 +137,21 @@
         height: 20px;
         overflow: hidden;
       }
+
       .item-des {
         margin-top: 8px;
         border-top: 1px solid #dddddd;
         padding-top: 8px;
+        overflow: hidden;
+
+        .des-content {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          height: 60px;
+        }
       }
     }
   }

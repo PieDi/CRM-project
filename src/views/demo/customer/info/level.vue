@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="客户来源">
+  <PageWrapper title="客户等级">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }">
         <FormItem label="来源名称">
@@ -13,7 +13,7 @@
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
-      <Button type="primary" style="margin-left: 10px" @click="addSource">新增客户来源</Button>
+      <Button type="primary" style="margin-left: 10px" @click="addSource">新增客户登记</Button>
     </div>
 
     <Table
@@ -67,7 +67,7 @@
       :visible="drawerInfo.visible"
     >
       <Form :labelCol="{ span: 4 }">
-        <FormItem label="来源名称">
+        <FormItem label="等级名称">
           <Input
             placeholder="请输入"
             allowClear
@@ -76,7 +76,7 @@
           />
         </FormItem>
 
-        <FormItem label="来源描述">
+        <FormItem label="等级描述">
           <TextArea
             placeholder="请输入"
             allowClear
@@ -177,11 +177,11 @@
 
       const columns: ColumnsType<CustomerSourceInfo> = [
         {
-          title: '来源名称',
+          title: '等级名称',
           dataIndex: 'name',
         },
         {
-          title: '来源描述',
+          title: '等级描述',
           dataIndex: 'description',
         },
         {
@@ -191,19 +191,19 @@
       ];
       const addSource = () => {
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '新增来源';
+        drawerInfo.value.title = '新增等级';
         drawerInfo.value.type = 'add';
       };
       const editGroup = (item: CustomerSourceInfo) => {
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '查看来源';
+        drawerInfo.value.title = '查看等级';
         drawerInfo.value.type = 'scan';
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = item[key];
         });
       };
       const drawerEdit = (item: CustomerSourceInfo) => {
-        drawerInfo.value.title = '编辑来源';
+        drawerInfo.value.title = '编辑等级';
         drawerInfo.value.type = 'edit';
         drawerInfo.value.visible = true;
         Object.keys(drawerInfo.value.item).forEach((key) => {
@@ -219,7 +219,7 @@
         }
         if (res) {
           message.success(
-            drawerInfo.value.type === 'add' ? '新增客户分组成功' : '修改客户分组成功',
+            drawerInfo.value.type === 'add' ? '新增客户等级成功' : '修改客户等级成功',
           );
           customerSourceReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
           drawerOnClose();
@@ -230,11 +230,11 @@
         confirm(
           withConfirm({
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
-            content: '确定删除该来源',
+            content: '确定删除该等级',
             async onOk() {
               const res = await deleteCustomerS(item.id as number);
               if (res) {
-                message.success('删除客户来源成功');
+                message.success('删除客户等级成功');
                 customerSourceReq(pageInfo.value.current);
               }
             },

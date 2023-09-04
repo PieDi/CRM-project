@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="员工管理">
+  <PageWrapper title="用户权限管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="员工姓名">

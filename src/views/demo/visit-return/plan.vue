@@ -29,12 +29,12 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <div style="display: flex">
-            <Button type="link" @click="scanReturnPlan(record)">查看</Button>
+            <Button v-if="record.status === 2" type="link" @click="scanReturnPlan(record)">查看回访单</Button>
             <!-- <Button type="link" @click="print(record)">打印</Button> -->
-            <Button type="link" @click="drawerEdit(record)">编辑</Button>
+            <Button v-if="record.status === 1" type="link" @click="drawerEdit(record)">编辑</Button>
             <Button v-if="authShow" type="link" danger @click="deletePlan(record)">删除</Button>
             <Button
-              v-if="record.status !== 2"
+              v-if="record.status === 1"
               type="link"
               style="margin-left: 10px"
               @click="

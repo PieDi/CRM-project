@@ -65,13 +65,13 @@
     </div>
 
     <div :style="{ display: 'flex' }">
-      <div class="content" :style="{ width: '50%' }">
+      <!-- <div class="content" :style="{ width: '50%' }">
         <img src="/src/assets/images/info-cAddress.png" />
         <div class="right">
           <div>联系地址:</div>
           <div class="label">脉仕希</div>
         </div>
-      </div>
+      </div> -->
 
       <div class="content" :style="{ width: '50%' }">
         <img src="/src/assets/images/info-group.png" />
@@ -80,16 +80,17 @@
           <div class="label">{{ groupStr }}</div>
         </div>
       </div>
-    </div>
-
-    <div :style="{ display: 'flex' }">
       <div class="content" :style="{ width: '50%' }">
         <img src="/src/assets/images/info-tag.png" />
         <div class="right">
-          <div>客户标签:</div>
-          <div class="label">{{ diseaseObject?.tag }}</div>
+          <div>客服:</div>
+          <div class="label">{{ diseaseObject?.agent }}</div>
         </div>
       </div>
+    </div>
+
+    <div :style="{ display: 'flex' }">
+      
 
       <div class="content" :style="{ width: '50%' }">
         <img src="/src/assets/images/info-tag.png" />
@@ -98,7 +99,11 @@
           <div class="label">{{ diseaseObject?.remark }}</div>
         </div>
       </div>
+
+   
     </div>
+
+    
   </div>
 </template>
 
