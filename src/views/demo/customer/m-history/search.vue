@@ -29,16 +29,16 @@
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
-      <Button type="primary" style="margin-left: 10px" @click="addMHistory">新增客户就诊记录</Button>
+      <Button type="primary" style="margin-left: 10px" @click="addMHistory"
+        >新增客户就诊记录</Button
+      >
     </div>
 
     <Table
       :columns="columns"
       :dataSource="pageInfo.dataSource"
-      :canResize="false"
-      :striped="false"
-      :bordered="true"
       :pagination="pagination"
+      :scroll="{x: '100%'}"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
@@ -173,7 +173,6 @@
   import cRecord from './component/c-record.vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
-  import dayjs from 'dayjs';
   import confirm from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { useRoute, useRouter } from 'vue-router';
@@ -247,26 +246,26 @@
       onMounted(() => {
         customerMHListReq(1);
       });
-      const router = useRouter()
+      const router = useRouter();
       const goBack = () => {
-        router.back()
-       }
+        router.back();
+      };
       const columns: ColumnsType<CustomerMHInfo> = [
         {
           title: '姓名',
           dataIndex: 'customerName',
-          width: 80,
+          width: 100,
         },
         {
           title: '就诊时间',
-          width: 120,
+          width: 140,
           dataIndex: 'visitDate',
-          // customRender: (state) => dayjs(state.record.visitDate).format('YYYY-MM-DD HH:mm:ss'),
         },
         {
           title: '医院名称',
           width: 200,
           dataIndex: 'hospitalName',
+          ellipsis: true,
         },
         {
           title: '科室',
@@ -280,26 +279,27 @@
         },
         {
           title: '用药记录',
-          width: 80,
+          width: 100,
           dataIndex: 'drug',
         },
         {
           title: '检验记录',
-          width: 80,
+          width: 100,
           dataIndex: 'examine',
         },
         {
           title: '影像记录',
-          width: 80,
           dataIndex: 'image',
+          width: 100
         },
         {
           title: '就诊记录',
-          width: 80,
+          width: 100,
           dataIndex: 'other',
         },
         {
           title: '操作',
+          width: 160,
           dataIndex: 'operation',
         },
       ];
@@ -315,32 +315,32 @@
           hospitalName: undefined,
           visitDate: undefined,
           customerId: undefined,
-          remark: undefined
+          remark: undefined,
         },
       });
       const mRecordClose = () => {
         mRecordDrawerInfo.value.title = '';
         mRecordDrawerInfo.value.visible = false;
         mRecordDrawerInfo.value.type = undefined;
-        Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
-          mRecordDrawerInfo.value.item[key] = undefined
-        })
+        Object.keys(mRecordDrawerInfo.value.item).forEach((key) => {
+          mRecordDrawerInfo.value.item[key] = undefined;
+        });
       };
       const mRecordEdit = (item: CustomerMHInfo) => {
         mRecordDrawerInfo.value.title = '编辑客户病史';
         mRecordDrawerInfo.value.type = 'edit';
         mRecordDrawerInfo.value.visible = true;
-        Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
-          mRecordDrawerInfo.value.item[key] = item[key]
-        })
+        Object.keys(mRecordDrawerInfo.value.item).forEach((key) => {
+          mRecordDrawerInfo.value.item[key] = item[key];
+        });
       };
       const scanMRecord = (item: CustomerMHInfo) => {
         mRecordDrawerInfo.value.title = '查看客户病史';
         mRecordDrawerInfo.value.visible = true;
         mRecordDrawerInfo.value.type = 'scan';
-        Object.keys(mRecordDrawerInfo.value.item).forEach(key => { 
-          mRecordDrawerInfo.value.item[key] = item[key]
-        })
+        Object.keys(mRecordDrawerInfo.value.item).forEach((key) => {
+          mRecordDrawerInfo.value.item[key] = item[key];
+        });
       };
       const deleteMRecord = (item: CustomerMHInfo) => {
         confirm({
@@ -515,8 +515,8 @@
   });
 </script>
 <style lang="less" scoped>
-.go-back {
-  color: #0960bd;
-  cursor: pointer;
-}
+  .go-back {
+    color: #0960bd;
+    cursor: pointer;
+  }
 </style>

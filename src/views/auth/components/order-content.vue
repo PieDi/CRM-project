@@ -33,7 +33,28 @@
   >
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
-        <template v-if="nsOrder"> 授权 审核 根据状态来 </template>
+        <template v-if="nsOrder">
+          <Button
+            v-if="record.status === 1"
+            type="link"
+            @click="
+              () => {
+                scanOrder(record);
+              }
+            "
+            >授权</Button
+          >
+          <Button
+            v-if="record.status === 2"
+            type="link"
+            @click="
+              () => {
+                scanOrder(record);
+              }
+            "
+            >审核</Button
+          >
+        </template>
         <Button
           type="link"
           @click="
@@ -198,7 +219,7 @@
       const roleList = toRaw(userStore.getRoleList) || [];
 
       const handleShow = computed(() => {
-        return roleList.some((role) => [RoleEnum.SUPER, RoleEnum.ADMIN].includes(role));
+        return roleList.some((role) => [RoleEnum.SUPER].includes(role));
       });
 
       const drawerInfo = ref<

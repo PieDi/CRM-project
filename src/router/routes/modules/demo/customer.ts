@@ -132,7 +132,7 @@ const customer: AppRouteModule = {
     //       component: () => import('/@/views/auth/micro-order.vue'),
     //       meta: {
     //         title: '小程序订单',
-    //         roles: [RoleEnum.SUPER, RoleEnum.ADMIN],
+    //         roles: [RoleEnum.SUPER],
     //       },
     //     },
     //     {
