@@ -101,7 +101,7 @@
             v-model:value="drawerInfo.item.age" />
         </FormItem>
         <FormItem label="客户来源" v-bind="validateInfos.sourceId">
-          <Select placeholder="请选择" :disabled="drawerInfo.type === 'scan'">
+          <Select placeholder="请选择" v-model:value="drawerInfo.item.sourceId" :disabled="drawerInfo.type === 'scan'">
             <SelectOption v-for="item in customerSourceList" :key="item.id">{{
               item.name
             }}</SelectOption>
