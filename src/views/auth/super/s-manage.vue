@@ -156,11 +156,11 @@
       const columns: ColumnsType<UserInfo> = [
         {
           title: '员工姓名',
-          dataIndex: 'userName',
+          dataIndex: 'realName',
         },
         {
           title: '电话',
-          dataIndex: 'address',
+          dataIndex: 'mobile',
         },
         {
           title: '邮箱',

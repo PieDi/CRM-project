@@ -59,7 +59,7 @@
       </template>
 
       <Form :labelCol="{ span: 6 }">
-        <FormItem label="指定员工">
+        <FormItem label="委派客服">
           <Select
             placeholder="请选择"
             v-model:value="drawerInfo.item.staffId"

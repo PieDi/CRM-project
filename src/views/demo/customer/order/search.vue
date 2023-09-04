@@ -31,11 +31,11 @@
               drawerEdit(record);
             }
             ">编辑</Button>
-          <Button v-if="record.status === 1" type="link" @click="() => {
+          <Button v-if="authShow && record.status === 1" type="link" @click="() => {
               scanOrder(record);
             }
             ">授权</Button>
-          <Button v-if="record.status === 2" type="link" @click="() => {
+          <Button v-if="authShow && record.status === 2" type="link" @click="() => {
               scanOrder(record);
             }
             ">审核</Button>
