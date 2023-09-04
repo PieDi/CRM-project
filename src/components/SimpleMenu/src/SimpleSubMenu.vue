@@ -10,9 +10,13 @@
       {{ getI18nName }}
     </div>
     <template #title>
-      <span :class="['ml-2', `${prefixCls}-sub-title`]">
-        {{ getI18nName }}
-      </span>
+      <Tooltip>
+        <template #title>{{ getI18nName }}</template>
+        <span :class="['ml-2', `${prefixCls}-sub-title`]">
+          {{ getI18nName }}
+        </span>
+      </Tooltip>
+
       <SimpleMenuTag :item="item" :collapseParent="getIsCollapseParent" />
     </template>
   </MenuItem>
@@ -50,7 +54,7 @@
   import { defineComponent, computed } from 'vue';
   import { useDesign } from '/@/hooks/web/useDesign';
   import Icon from '@/components/Icon/Icon.vue';
-
+  import { Tooltip } from 'ant-design-vue';
   import MenuItem from './components/MenuItem.vue';
   import SubMenu from './components/SubMenuItem.vue';
   import { propTypes } from '/@/utils/propTypes';
@@ -62,6 +66,7 @@
     components: {
       SubMenu,
       MenuItem,
+      Tooltip,
       SimpleMenuTag: createAsyncComponent(() => import('./SimpleMenuTag.vue')),
       Icon,
     },

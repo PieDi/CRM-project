@@ -9,7 +9,7 @@ const returnVisit: AppRouteModule = {
   component: LAYOUT,
   redirect: '/return-visit/search',
   meta: {
-    orderNo: 200,
+    orderNo: 500,
     icon: 'ion:aperture-outline',
     title: t('routes.demo.return-visit.index'),
     roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3]

@@ -59,6 +59,7 @@
       :canResize="true"
       :bordered="true"
       :pagination="pagination"
+      :scroll="{x: '100%'}"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
@@ -206,17 +207,6 @@
           </Select>
         </FormItem>
 
-        <!-- <FormItem label="客户等级" v-bind="validateInfos.level">
-          <InputNumber
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            min="1"
-            :precision="0"
-            allowClear
-            v-model:value="drawerInfo.item.level"
-          />
-        </FormItem> -->
-
         <FormItem label="联系地址" v-bind="validateInfos.contactAddress">
           <Input
             :disabled="drawerInfo.type === 'scan'"
@@ -225,15 +215,6 @@
             v-model:value="drawerInfo.item.contactAddress"
           />
         </FormItem>
-
-        <!-- <FormItem label="客户标签">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.tag"
-          />
-        </FormItem> -->
 
         <FormItem label="备注">
           <TextArea
@@ -405,7 +386,7 @@
         {
           title: '证件号码',
           dataIndex: 'documentNumber',
-          width: 180,
+          width: 200,
         },
         {
           title: '年龄',
@@ -414,6 +395,8 @@
         },
         {
           title: '联系地址',
+          width: 200,
+          ellipsis: true,
           dataIndex: 'contactAddress',
         },
         {
@@ -455,6 +438,7 @@
         {
           title: '操作',
           dataIndex: 'operation',
+          width: 400,
         },
       ];
       const customerGroupList = ref<CustomerGroupInfo[]>([]);
@@ -635,4 +619,5 @@
     },
   });
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+</style>

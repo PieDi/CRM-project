@@ -505,7 +505,6 @@
 <style lang="less" scoped>
   .bbb {
     flex: 1;
-
     .basic {
       display: flex;
       align-items: center;
@@ -526,6 +525,8 @@
         }
 
         .tips {
+          display: inline-block;
+          min-width: 80px;
           margin-right: 5px;
           color: #99a8bf;
         }

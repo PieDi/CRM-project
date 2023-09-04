@@ -405,7 +405,7 @@
         },
         {
           title: '产品描述',
-          width: '14%',
+          width: '200px',
           dataIndex: 'introduction',
           ellipsis: true,
         },
