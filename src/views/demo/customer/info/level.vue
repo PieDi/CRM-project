@@ -2,7 +2,7 @@
   <PageWrapper title="客户等级">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }">
-        <FormItem label="来源名称">
+        <FormItem label="等级名称">
           <Input
             placeholder="请输入"
             v-model:value="searchInfo.name"
@@ -13,7 +13,7 @@
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
-      <Button type="primary" style="margin-left: 10px" @click="addSource">新增客户登记</Button>
+      <Button type="primary" style="margin-left: 10px" @click="addSource">新增客户等级</Button>
     </div>
 
     <Table
@@ -93,10 +93,10 @@
   import { Table, Form, Input, Button, Modal, message } from 'ant-design-vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import {
-    getCustomerSPage,
-    saveCustomerS,
-    updateCustomerS,
-    deleteCustomerS,
+    getCustomerLPage,
+    saveCustomerL,
+    updateCustomerL,
+    deleteCustomerL,
   } from '/@/api/demo/customer';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
@@ -127,15 +127,6 @@
           name: undefined,
         },
       });
-      const groupInfo = ref<{
-        name: string;
-        id?: number | string;
-        des: string;
-      }>({
-        name: '',
-        id: undefined,
-        des: '',
-      });
 
       const searchInfo = ref({
         name: undefined,
@@ -157,7 +148,7 @@
         showSizeChanger: false,
       }));
       const customerSourceReq = async (pageNum: number) => {
-        const res = await getCustomerSPage({ ...searchInfo.value, pageNum });
+        const res = await getCustomerLPage({ ...searchInfo.value, pageNum });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
@@ -175,7 +166,7 @@
         customerSourceReq(1);
       });
 
-      const columns: ColumnsType<CustomerSourceInfo> = [
+      const columns: ColumnsType<any> = [
         {
           title: '等级名称',
           dataIndex: 'name',
@@ -213,9 +204,9 @@
       const submit = async () => {
         let res;
         if (drawerInfo.value.type === 'add') {
-          res = await saveCustomerS({ ...drawerInfo.value.item });
+          res = await saveCustomerL({ ...drawerInfo.value.item });
         } else {
-          res = await updateCustomerS({ ...drawerInfo.value.item });
+          res = await updateCustomerL({ ...drawerInfo.value.item });
         }
         if (res) {
           message.success(
@@ -232,7 +223,7 @@
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
             content: '确定删除该等级',
             async onOk() {
-              const res = await deleteCustomerS(item.id as number);
+              const res = await deleteCustomerL(item.id as number);
               if (res) {
                 message.success('删除客户等级成功');
                 customerSourceReq(pageInfo.value.current);
@@ -259,7 +250,6 @@
         drawerEdit,
         submit,
         drawerOnClose,
-        groupInfo,
         editGroup,
         deleteGroup,
         resetAction,

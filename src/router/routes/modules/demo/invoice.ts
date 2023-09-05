@@ -3,7 +3,7 @@ import { LAYOUT } from '/@/router/constant';
 import { RoleEnum } from '/@/enums/roleEnum';
 
 const invoice: AppRouteModule = {
-  path: '/customer',
+  path: '/invoice',
   name: 'Invoice',
   component: LAYOUT,
   redirect: '/feat/icon',
@@ -15,7 +15,7 @@ const invoice: AppRouteModule = {
   },
   children: [
     {
-      path: 'invoice/search',
+      path: 'search',
       name: 'InvoiceSearch',
       component: () => import('/@/views/demo/customer/invoice/search.vue'),
       meta: {

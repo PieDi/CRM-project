@@ -152,8 +152,8 @@ import {
   deleteCustomer,
   getCustomerGList,
   getCustomerSList,
+  exportCustomerInfo
 } from '/@/api/demo/customer';
-import { type ColumnsType } from 'ant-design-vue/lib/table';
 import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { CustomerInfo, CustomerGroupInfo, CustomerSourceInfo } from '/@/api/demo/model/customer';
@@ -189,7 +189,6 @@ export default defineComponent({
     const authShow = computed(() => {
       return roleList.some((role) => [RoleEnum.SUPER].includes(role));
     });
-    console.log(21212, authShow.value);
     const searchInfo = ref({
       name: undefined,
       groupId: undefined,
@@ -314,7 +313,7 @@ export default defineComponent({
         {
           title: '客户来源',
           dataIndex: 'sourceId',
-          width: 120,
+          width: 200,
           customRender: (state) => {
             const source = customerSourceList.value.find(
               (item) => item.id === state.record.sourceId,
@@ -494,7 +493,19 @@ export default defineComponent({
         drawerInfo.value.item.age = dayjs().year() - Number(t.slice(0, 4));
       }
     };
-    const customerExport = () => { };
+    const customerExport = async () => {
+      const t = {
+        ids: pageInfo.value.dataSource.map(item => item.id).join(','),
+        ...searchInfo.value, resource: 1, pageNum: pageInfo.value.current
+      }
+      let aa = ''
+      Object.keys(t).forEach(key => { 
+        if (t[key]) { 
+           aa += `${key}=${t[key]}&`
+        }
+      })
+      window.open(`http://129.204.202.223:8001/basic-api/customer/basic/export?${aa.slice(0, aa.length -1)}`)
+    };
     return {
       columns,
       pagination,

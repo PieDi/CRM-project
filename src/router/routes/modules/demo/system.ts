@@ -3,7 +3,7 @@ import { LAYOUT } from '/@/router/constant';
 import { RoleEnum } from '/@/enums/roleEnum';
 
 const system: AppRouteModule = {
-  path: '/customer',
+  path: '/system',
   name: 'System',
   component: LAYOUT,
   redirect: '/feat/icon',
@@ -15,7 +15,7 @@ const system: AppRouteModule = {
   },
   children: [
     {
-      path: 'info/group',
+      path: 'group',
       name: 'InfoGroup',
       component: () => import('/@/views/demo/customer/info/group.vue'),
       meta: {
@@ -24,7 +24,7 @@ const system: AppRouteModule = {
       },
     },
     {
-      path: 'info/source',
+      path: 'source',
       name: 'InfoSource',
       component: () => import('/@/views/demo/customer/info/source.vue'),
       meta: {
@@ -33,7 +33,7 @@ const system: AppRouteModule = {
       },
     },
     {
-      path: 'info/level',
+      path: 'level',
       name: 'InfoLevel',
       component: () => import('/@/views/demo/customer/info/level.vue'),
       meta: {

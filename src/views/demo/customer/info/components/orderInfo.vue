@@ -161,7 +161,7 @@
         height: 32px;
       }
       .column {
-        margin: 0 16px;
+        margin: 0 4px;
         .value {
           font-size: 16px;
           color: #2e354f;

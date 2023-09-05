@@ -24,24 +24,24 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <Button type="link" @click="() => {
-              scanOrder(record);
-            }
+            scanOrder(record);
+          }
             ">查看</Button>
-          <Button type="link" @click="() => {
-              drawerEdit(record);
-            }
+          <Button type="link" v-if="record.status === 1" @click="() => {
+            drawerEdit(record);
+          }
             ">编辑</Button>
           <Button v-if="authShow && record.status === 1" type="link" @click="() => {
-              scanOrder(record);
-            }
+            scanOrder(record);
+          }
             ">授权</Button>
           <Button v-if="authShow && record.status === 2" type="link" @click="() => {
-              scanOrder(record);
-            }
+            scanOrder(record);
+          }
             ">审核</Button>
           <Button v-if="authShow" type="link" @click="() => {
-              deleteOrder(record);
-            }
+            deleteOrder(record);
+          }
             ">删除</Button>
         </template>
       </template>
@@ -103,8 +103,8 @@
             </FormItem>
 
             <Button v-if="drawerInfo.type !== 'scan'" style="float: right" type="link" @click="() => {
-                deleteProduct(i);
-              }
+              deleteProduct(i);
+            }
               ">
               <template #icon>
                 <DeleteOutlined />
@@ -162,7 +162,7 @@ import {
   getCustomerOrderPage,
   saveCustomerOrder,
   updateCustomerOrder,
-  deleteCustomerOrder,
+  deleteCustomerOrder
 } from '/@/api/demo/customer';
 import { ProductInfo } from '/@/api/demo/model/product';
 import { getProductList } from '/@/api/demo/product';
@@ -457,7 +457,19 @@ export default defineComponent({
     const pFilterOption = (input: string, option: any) => {
       return option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
-    const orderExport = () => { }
+    const orderExport = () => {
+      const t = {
+        ids: pageInfo.value.dataSource.map(item => item.id).join(','),
+        ...searchInfo.value, resource: 1, pageNum: pageInfo.value.current
+      }
+      let aa = ''
+      Object.keys(t).forEach(key => { 
+        if (t[key]) { 
+           aa += `${key}=${t[key]}&`
+        }
+      })
+      window.open(`http://129.204.202.223:8001/basic-api/customer/order/exportOrder?${aa.slice(0, aa.length -1)}`)
+    }
     return {
       formRef,
       columns,

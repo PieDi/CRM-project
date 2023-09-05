@@ -10,12 +10,11 @@
       {{ getI18nName }}
     </div>
     <template #title>
-      <Tooltip>
-        <template #title>{{ getI18nName }}</template>
+
         <span :class="['ml-2', `${prefixCls}-sub-title`]">
           {{ getI18nName }}
         </span>
-      </Tooltip>
+  
 
       <SimpleMenuTag :item="item" :collapseParent="getIsCollapseParent" />
     </template>
