@@ -156,7 +156,7 @@ import {
 } from '/@/api/demo/customer';
 import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { CustomerInfo, CustomerGroupInfo, CustomerSourceInfo } from '/@/api/demo/model/customer'; 
+import { CustomerInfo, CustomerGroupInfo, CustomerSourceInfo } from '/@/api/demo/model/customer';
 import dayjs, { Dayjs } from 'dayjs';
 import { sexMap, docTypeMap } from '/@/views/const';
 import { useRouter } from 'vue-router';
@@ -494,8 +494,17 @@ export default defineComponent({
       }
     };
     const customerExport = async () => {
-      window.open('http://129.204.202.223:8001/basic-api/customer/basic/export')
-      // exportCustomerInfo()
+      const t = {
+        ids: pageInfo.value.dataSource.map(item => item.id).join(','),
+        ...searchInfo.value, resource: 1, pageNum: pageInfo.value.current
+      }
+      let aa = ''
+      Object.keys(t).forEach(key => { 
+        if (t[key]) { 
+           aa += `${key}=${t[key]}&`
+        }
+      })
+      window.open(`http://129.204.202.223:8001/basic-api/customer/basic/export?${aa.slice(0, aa.length -1)}`)
     };
     return {
       columns,

@@ -162,8 +162,7 @@ import {
   getCustomerOrderPage,
   saveCustomerOrder,
   updateCustomerOrder,
-  deleteCustomerOrder,
-  exportCustomerOrder
+  deleteCustomerOrder
 } from '/@/api/demo/customer';
 import { ProductInfo } from '/@/api/demo/model/product';
 import { getProductList } from '/@/api/demo/product';
@@ -459,7 +458,17 @@ export default defineComponent({
       return option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
     const orderExport = () => {
-      exportCustomerOrder()
+      const t = {
+        ids: pageInfo.value.dataSource.map(item => item.id).join(','),
+        ...searchInfo.value, resource: 1, pageNum: pageInfo.value.current
+      }
+      let aa = ''
+      Object.keys(t).forEach(key => { 
+        if (t[key]) { 
+           aa += `${key}=${t[key]}&`
+        }
+      })
+      window.open(`http://129.204.202.223:8001/basic-api/customer/order/exportOrder?${aa.slice(0, aa.length -1)}`)
     }
     return {
       formRef,
