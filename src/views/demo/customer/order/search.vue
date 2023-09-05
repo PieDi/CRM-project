@@ -15,7 +15,7 @@
             <SelectOption value="2">小程序</SelectOption>
           </Select>
         </FormItem> -->
-       
+
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
@@ -108,13 +108,13 @@
               </Select>
             </FormItem>
 
-            <FormItem label="产品数量" :name="['products', i, 'amount']" :rules="{
+            <FormItem label="产品数量" :name="['products', i, 'sum']" :rules="{
               required: true,
               message: '请选择输入产品数量',
               trigger: 'change',
             }">
               <InputNumber :disabled="drawerInfo.type === 'scan'" placeholder="请输入" allowClear min="1" :precision="0"
-                v-model:value="p.amount" style="width: 150px" />
+                v-model:value="p.sum" style="width: 150px" />
             </FormItem>
 
             <Button v-if="drawerInfo.type !== 'scan'" style="float: right" type="link" @click="() => {
@@ -234,7 +234,7 @@ export default defineComponent({
         orderName: string | undefined;
         orderNumber: string | undefined;
         products:
-        | Array<{ productId: number | undefined; amount: number | undefined }>
+        | Array<{ productId: number | undefined; sum: number | undefined }>
         | undefined;
         remark: string | undefined;
         responsiblePerson: string | undefined;
@@ -253,7 +253,7 @@ export default defineComponent({
         products: [
           {
             productId: undefined,
-            amount: undefined,
+            sum: undefined,
           },
         ],
         remark: undefined,
@@ -361,6 +361,11 @@ export default defineComponent({
         dataIndex: 'totalPrice',
       },
       {
+        title: '经办人',
+        dataIndex: 'agent',
+        width: 100,
+      },
+      {
         title: '操作',
         dataIndex: 'operation',
       },
@@ -369,7 +374,7 @@ export default defineComponent({
       const products = drawerInfo.value.item.products || [];
       products?.push({
         productId: undefined,
-        amount: undefined,
+        sum: undefined,
       });
       drawerInfo.value.item.products = products;
     };
@@ -387,7 +392,7 @@ export default defineComponent({
       drawerInfo.value.type = 'add';
       drawerInfo.value.item.products = [{
         productId: undefined,
-        amount: undefined,
+        sum: undefined,
       }]
     };
     const scanOrder = (item: CustomerOrderInfo) => {
@@ -400,7 +405,7 @@ export default defineComponent({
       //@ts-ignore
       drawerInfo.value.item.products = item.orderProducts.map((p) => ({
         productId: p.id,
-        amount: p.amount,
+        sum: p.sum,
       }));
       drawerInfo.value.item.orderDate = dayjs(item.orderDate);
     };
@@ -438,7 +443,7 @@ export default defineComponent({
       //@ts-ignore
       drawerInfo.value.item.products = item.orderProducts.map((p) => ({
         productId: p.id,
-        amount: p.amount,
+        sum: p.sum,
       }));
       drawerInfo.value.item.orderDate = dayjs(item.orderDate);
     };

@@ -26,7 +26,7 @@
           }
             ">查看</Button>
           <Button v-if="authShow" type="link" @click="() => {
-            mRecordEdit(record);
+            deleteInvoice(record);
           }
             ">删除</Button>
         </template>
@@ -40,7 +40,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-import { defineComponent, computed, onMounted, ref, toRaw } from 'vue';
+import { defineComponent, computed, onMounted, ref, toRaw, createVNode } from 'vue';
 import { PageWrapper } from '/@/components/Page';
 import {
   Table,
@@ -51,14 +51,17 @@ import {
   Select,
   InputNumber,
   DatePicker,
+  message
 } from 'ant-design-vue';
 import { type ColumnsType } from 'ant-design-vue/lib/table';
 import { DrawerItemType, PageListInfo } from '/@/views/type';
 import { CustomerInvoiceInfo } from '/@/api/demo/model/customer';
-import { getCustomerInvoicePage } from '/@/api/demo/customer';
+import { getCustomerInvoicePage, deleteCustomerInvoice } from '/@/api/demo/customer';
 import { useRoute } from 'vue-router';
 import dayjs from 'dayjs';
 import mRecord from './components/addInvoice.vue';
+import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { useUserStore } from '/@/store/modules/user';
 import { RoleEnum } from '/@/enums/roleEnum';
 const FormItem = Form.Item;
@@ -132,16 +135,6 @@ export default defineComponent({
     });
     const columns: ColumnsType<CustomerInvoiceInfo> = [
       {
-        title: '发票名称',
-        dataIndex: 'name',
-        width: 200
-      },
-      {
-        title: '发票编号',
-        dataIndex: 'number',
-        width: 200
-      },
-      {
         title: '客户名称',
         dataIndex: 'customerName',
         width: 200,
@@ -152,6 +145,16 @@ export default defineComponent({
         dataIndex: 'orderName',
         width: 200,
         ellipsis: true
+      },
+      {
+        title: '发票名称',
+        dataIndex: 'name',
+        width: 200
+      },
+      {
+        title: '发票编号',
+        dataIndex: 'number',
+        width: 200
       },
       {
         title: '订单编号',
@@ -254,7 +257,21 @@ export default defineComponent({
         files: undefined,
       },
     });
-
+    const deleteInvoice = (item: CustomerInvoiceInfo) => {
+      confirm(
+        withConfirm({
+          icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+          content: '确定删除该合同',
+          async onOk() {
+            const res = await deleteCustomerInvoice(item.id as number);
+            if (res) {
+              message.success('删除合同成功');
+              invoiceOrderListReq(pageInfo.value.current);
+            }
+          },
+        }),
+      );
+    };
     return {
       columns,
       pagination,
@@ -268,6 +285,7 @@ export default defineComponent({
       mRecordSubmit,
       mRecordEdit,
       scanRecord,
+      deleteInvoice,
       mRecordDrawerInfo,
       authShow
     };
