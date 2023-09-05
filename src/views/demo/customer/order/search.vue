@@ -15,7 +15,7 @@
             <SelectOption value="2">小程序</SelectOption>
           </Select>
         </FormItem> -->
-       
+
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
@@ -359,6 +359,11 @@ export default defineComponent({
       {
         title: '订单金额',
         dataIndex: 'totalPrice',
+      },
+      {
+        title: '经办人',
+        dataIndex: 'agent',
+        width: 100,
       },
       {
         title: '操作',
