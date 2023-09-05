@@ -25,7 +25,7 @@
           }
             ">查看</Button>
           <Button v-if="authShow" type="link" @click="() => {
-            mRecordEdit(record);
+            deleteContract(record);
           }
             ">删除</Button>
         </template>
@@ -41,17 +41,20 @@
 
 <script lang="ts">
 import { type ColumnsType } from 'ant-design-vue/lib/table';
-import { defineComponent, ref, onMounted, computed, toRaw } from 'vue';
+import { defineComponent, ref, onMounted, computed, toRaw, createVNode } from 'vue';
 import { PageWrapper } from '/@/components/Page';
 import { DrawerItemType, PageListInfo } from '/@/views/type';
 import { CustomerContractInfo } from '/@/api/demo/model/customer';
-import { getCustomerContractPage } from '/@/api/demo/customer';
+import { getCustomerContractPage, deleteCustomerContract } from '/@/api/demo/customer';
 import { useRoute } from 'vue-router';
 import dayjs from 'dayjs';
 import mRecord from './components/addContract.vue';
-import { Table, Form, Input, Button } from 'ant-design-vue';
+import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { Table, Form, Input, Button, message } from 'ant-design-vue';
 import { useUserStore } from '/@/store/modules/user';
 import { RoleEnum } from '/@/enums/roleEnum';
+
 const FormItem = Form.Item;
 export default defineComponent({
   components: {
@@ -117,18 +120,6 @@ export default defineComponent({
 
     const columns: ColumnsType<CustomerContractInfo> = [
       {
-        title: '合同名称',
-        width: 200,
-        ellipsis: true,
-        dataIndex: 'name',
-      },
-      {
-        title: '合同编号',
-        width: 200,
-        ellipsis: true,
-        dataIndex: 'number',
-      },
-      {
         title: '客户名称',
         dataIndex: 'customerName',
         width: 200,
@@ -139,6 +130,18 @@ export default defineComponent({
         dataIndex: 'orderName',
         width: 200,
         ellipsis: true
+      },
+      {
+        title: '合同名称',
+        width: 200,
+        ellipsis: true,
+        dataIndex: 'name',
+      },
+      {
+        title: '合同编号',
+        width: 200,
+        ellipsis: true,
+        dataIndex: 'number',
       },
       {
         title: '订单编号',
@@ -242,6 +245,22 @@ export default defineComponent({
       },
     });
 
+    const deleteContract = (item: CustomerContractInfo) => {
+      confirm(
+        withConfirm({
+          icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+          content: '确定删除该合同',
+          async onOk() {
+            const res = await deleteCustomerContract(item.id as number);
+            if (res) {
+              message.success('删除合同成功');
+              customerOrderListReq(pageInfo.value.current);
+            }
+          },
+        }),
+      );
+    };
+
     return {
       columns,
       pagination,
@@ -257,6 +276,7 @@ export default defineComponent({
       mRecordClose,
       mRecordSubmit,
       mRecordEdit,
+      deleteContract,
       scanRecord,
       mRecordDrawerInfo,
       authShow

@@ -1,8 +1,8 @@
 <template>
   <PageWrapper title="用户权限管理">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
-      <div :style="{ display: 'flex' }"
-        ><FormItem label="员工姓名">
+      <div :style="{ display: 'flex' }">
+        <FormItem label="员工姓名">
           <Input
             placeholder="请输入"
             allowClear
@@ -10,13 +10,9 @@
             v-model:value="searchInfo.userName"
           />
         </FormItem>
-
-        <!-- <FormItem label="证件号码" style="margin-left: 10px">
-          <Input placeholder="请输入" allowClear :style="{ width: '150px' }" />
-        </FormItem> -->
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
-        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
-      >
+      </div>
+      <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
     </div>
 
     <Table
@@ -28,7 +24,28 @@
       :pagination="pagination"
     >
       <!-- @ts-ignore -->
-      <template #bodyCell="{ column, _text, record }">
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.dataIndex === 'productManage'">
+          <!-- @ts-ignore -->
+          <Switch
+            :checked="record.productManage"
+            @change="
+              (val) => {
+                promotionStaff(record, val);
+              }
+            "
+          />
+        </template>
+        <template v-if="column.dataIndex === 'statistics'">
+          <Switch
+            :checked="record.statistics"
+            @change="
+              (val) => {
+                demotionStaff(record, val);
+              }
+            "
+          />
+        </template>
         <template v-if="column.dataIndex === 'operation'">
           <Button
             v-if="record.status"
@@ -50,26 +67,6 @@
             >激活</Button
           >
           <Button
-            v-if="record.role === 'staff'"
-            type="link"
-            @click="
-              () => {
-                promotionStaff(record);
-              }
-            "
-            >授权</Button
-          >
-          <Button
-            v-else
-            type="link"
-            @click="
-              () => {
-                demotionStaff(record);
-              }
-            "
-            >降权</Button
-          >
-          <Button
             type="link"
             danger
             @click="
@@ -87,9 +84,17 @@
 <script lang="ts">
   import { defineComponent, ref, onMounted, createVNode, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Drawer, Select, message } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Select, message, Switch } from 'ant-design-vue';
   import { type PageListInfo } from '/@/views/type';
-  import { getUserPage, deleteUser, authUser, promotionUser,demotionUser } from '/@/api/sys/user';
+  import {
+    getUserPage,
+    deleteUser,
+    authUser,
+    disableProductManage,
+    enableProductManage,
+    disableStatistics,
+    enableStatistics,
+  } from '/@/api/sys/user';
   import { UserInfo } from '/#/store';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
@@ -110,7 +115,7 @@
       FormItem,
       Input,
       Button,
-      Drawer,
+      Switch,
       Select,
       SelectOption,
       message,
@@ -142,10 +147,10 @@
           pageInfo.value.dataSource = res.data;
         }
       };
-      const resetAction = () => { 
-        searchInfo.value.userName = undefined
+      const resetAction = () => {
+        searchInfo.value.userName = undefined;
         userPageReq(1);
-      }
+      };
       const searchAction = () => {
         userPageReq(1);
       };
@@ -175,6 +180,14 @@
           title: '角色权限',
           dataIndex: 'role',
           customRender: (state) => roleMap[state.record?.role as string],
+        },
+        {
+          title: '产品管理',
+          dataIndex: 'productManage',
+        },
+        {
+          title: '统计管理',
+          dataIndex: 'statistics',
         },
         {
           title: '操作',
@@ -228,37 +241,42 @@
           }),
         );
       };
-      const promotionStaff = (item: UserInfo) => {
+
+      const promotionStaff = (item: UserInfo, no: any) => {
         confirm(
           withConfirm({
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
-            content: '确定授权该员工',
+            content: no ? '确定授权该员工' : '确定取消该授权',
             async onOk() {
-              const res = await promotionUser(item.userId as number);
+              const res = no
+                ? await enableProductManage(item.userId as number)
+                : await disableProductManage(item.userId as number);
               if (res) {
-                message.success('授权员工成功');
+                message.success('操作成功');
                 userPageReq(pageInfo.value.current);
               }
             },
           }),
         );
       };
-      const demotionStaff = (item: UserInfo) => {
+
+      const demotionStaff = (item: UserInfo, no: any) => {
         confirm(
           withConfirm({
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
-            content: '确定降权该员工',
+            content: no ? '确定授权该员工' : '确定取消该授权',
             async onOk() {
-              const res = await demotionUser(item.userId as number);
+              const res = no
+                ? await enableStatistics(item.userId as number)
+                : await disableStatistics(item.userId as number);
               if (res) {
-                message.success('降权员工成功');
+                message.success('操作成功');
                 userPageReq(pageInfo.value.current);
               }
             },
           }),
         );
       };
-      
 
       return {
         columns,
@@ -271,7 +289,7 @@
         activateStaff,
         unUseStaff,
         promotionStaff,
-        demotionStaff
+        demotionStaff,
       };
     },
   });

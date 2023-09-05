@@ -50,7 +50,8 @@ export function doLogout() {
   return defHttp.post({ url: Api.Logout });
 }
 
-export const modifyPwdApi = (params) => defHttp.post<{password: string, newPassword: string}>({ url: Api.ModifyPwd, params });
+export const modifyPwdApi = (params) =>
+  defHttp.post<{ password: string; newPassword: string }>({ url: Api.ModifyPwd, params });
 
 /**
  * @description: getUserInfo
@@ -80,20 +81,23 @@ export const deleteUser = (userId: string | number) =>
 
 export const authUser = (params: any) => defHttp.post<any>({ url: Api.AuthUser, params });
 
-export const promotionUser = (userId: number) =>
-  defHttp.post<any>({ url: Api.PromotionUser, params: { userId } });
-
-export const demotionUser = (userId: number) =>
-  defHttp.post<any>({ url: Api.DemotionUser, params: { userId } });
+export const disableProductManage = (userId: number) =>
+  defHttp.post<any>({ url: '/sys/user/disableProductManage', params: { userId } });
+export const enableProductManage = (userId: number) =>
+  defHttp.post<any>({ url: '/sys/user/enableProductManage', params: { userId } });
+export const disableStatistics = (userId: number) =>
+  defHttp.post<any>({ url: '/sys/user/disableStatistics', params: { userId } });
+export const enableStatistics = (userId: number) =>
+  defHttp.post<any>({ url: '/sys/user/enableStatistics', params: { userId } });
 
 // 项目无用代码
 export function getPermCode() {
-  return defHttp.get<string[]>({ url: Api.GetPermCode });
+  return defHttp.get<string[]>({ url: '' });
 }
 
 export function testRetry() {
   return defHttp.get(
-    { url: Api.TestRetry },
+    { url: '' },
     {
       retryRequest: {
         isOpenRetry: true,
