@@ -167,6 +167,9 @@ export const saveCustomer = (params?: CustomerSaveParams) =>
 
 export const updateCustomer = (params?: CustomerSaveParams) =>
   defHttp.post<any>({ url: Api.UpdateCustomer, params });
+  
+export const updateCustomerLevel = (params?: any) =>
+  defHttp.post<any>({ url: '/customer/basic/setLevel', params });
 
 export const deleteCustomer = (id: string | number) =>
   defHttp.post<any>({ url: Api.DeleteCustomer, params: { id } });
@@ -185,7 +188,7 @@ export const getCustomerFileView = (fileId: number) =>
 
 export const exportCustomerInfo = () =>
   defHttp.get<Array<CustomerInfo>>({
-    url: '/customer/basic/export'
+    url: '/customer/basic/export',
   });
 
 //看板信息
@@ -240,19 +243,17 @@ export const updateCustomerS = (params?: any) =>
 export const deleteCustomerS = (id: string | number) =>
   defHttp.post<any>({ url: Api.DeleteCustomerS, params: { id } });
 
-
-  /**
+/**
  * 客户等级
  */
 export const getCustomerLPage = (params: { name?: string; pageNum: number }) =>
-defHttp.post<{ total: number; pageNum: number; data: any[] }>({
-  url: '/customer/level/page',
-  params: { pageSize: 10, ...params },
-});
-export const getCustomerLList = (name?: string) =>
+  defHttp.post<{ total: number; pageNum: number; data: any[] }>({
+    url: '/customer/level/page',
+    params: { pageSize: 10, ...params },
+  });
+export const getCustomerLList = () =>
   defHttp.post<Array<CustomerSourceInfo>>({
-    url: Api.CustomerSList,
-    params: { name },
+    url: '/customer/level/list',
   });
 
 export const saveCustomerL = (params?: any) =>
@@ -404,8 +405,7 @@ export const columnarCustomerOrder = (type: number) =>
     url: Api.CustomerOrderColumnar,
     params: { type },
   });
-export const exportCustomerOrder = () =>
-  defHttp.get<any>({ url: '/customer/order/exportOrder' });
+export const exportCustomerOrder = () => defHttp.get<any>({ url: '/customer/order/exportOrder' });
 /*
  * 客户合同信息
  */
@@ -457,6 +457,3 @@ export const fileInvoiceUpload = (params: any) =>
 
 export const fileInvoiceDelete = (fileId: number) =>
   defHttp.post<number[]>({ url: Api.CustomerInvoiceFDelete, params: { fileId } });
-
-
-  

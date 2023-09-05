@@ -16,7 +16,7 @@
       :pagination="pagination">
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
-          <Button type="link" @click="() => {
+          <Button v-if="authShow" type="link" @click="() => {
             mRecordEdit(record);
           }
             ">编辑</Button>
@@ -24,6 +24,10 @@
             scanRecord(record);
           }
             ">查看</Button>
+          <Button v-if="authShow" type="link" @click="() => {
+            mRecordEdit(record);
+          }
+            ">删除</Button>
         </template>
       </template>
     </Table>
@@ -37,7 +41,7 @@
 
 <script lang="ts">
 import { type ColumnsType } from 'ant-design-vue/lib/table';
-import { defineComponent, ref, onMounted, computed } from 'vue';
+import { defineComponent, ref, onMounted, computed, toRaw } from 'vue';
 import { PageWrapper } from '/@/components/Page';
 import { DrawerItemType, PageListInfo } from '/@/views/type';
 import { CustomerContractInfo } from '/@/api/demo/model/customer';
@@ -46,7 +50,8 @@ import { useRoute } from 'vue-router';
 import dayjs from 'dayjs';
 import mRecord from './components/addContract.vue';
 import { Table, Form, Input, Button } from 'ant-design-vue';
-
+import { useUserStore } from '/@/store/modules/user';
+import { RoleEnum } from '/@/enums/roleEnum';
 const FormItem = Form.Item;
 export default defineComponent({
   components: {
@@ -59,6 +64,11 @@ export default defineComponent({
     mRecord,
   },
   setup() {
+    const userStore = useUserStore();
+    const roleList = toRaw(userStore.getRoleList) || [];
+    const authShow = computed(() => {
+      return roleList.some((role) => [RoleEnum.SUPER].includes(role));
+    });
     const searchInfo = ref({
       name: undefined,
     });
@@ -119,10 +129,22 @@ export default defineComponent({
         dataIndex: 'number',
       },
       {
-        title: '订单名称',
+        title: '客户名称',
+        dataIndex: 'customerName',
         width: 200,
-        ellipsis: true,
+        ellipsis: true
+      },
+      {
+        title: '订单名称',
         dataIndex: 'orderName',
+        width: 200,
+        ellipsis: true
+      },
+      {
+        title: '订单编号',
+        dataIndex: 'orderNumber',
+        width: 200,
+        ellipsis: true
       },
       {
         title: '金额',
@@ -237,6 +259,7 @@ export default defineComponent({
       mRecordEdit,
       scanRecord,
       mRecordDrawerInfo,
+      authShow
     };
   },
 });

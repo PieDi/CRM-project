@@ -51,7 +51,7 @@
         <img src="/src/assets/images/info-level.png" />
         <div class="right">
           <div>客户等级:</div>
-          <div class="label">{{ diseaseObject?.level }}</div>
+          <div class="label">{{ diseaseObject?.levelName }}</div>
         </div>
       </div>
 

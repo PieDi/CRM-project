@@ -19,3 +19,8 @@
   // Listening to page changes and dynamically changing site titles
   useTitle();
 </script>
+<style lang="less">
+#outline-switcher-overlay {
+  display: none !important;
+}
+</style>

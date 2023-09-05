@@ -9,6 +9,13 @@
         <FormItem label="订单编号" style="margin-left: 10px">
           <Input placeholder="请输入" allowClear :style="{ width: '150px' }" v-model:value="searchInfo.orderNumber" />
         </FormItem>
+        <!-- <FormItem label="订单来源" style="margin-left: 10px">
+          <Select   placeholder="请选择" :style="{ width: '150px' }"  v-model:value="searchInfo.source">
+            <SelectOption value="1">CRM</SelectOption>
+            <SelectOption value="2">小程序</SelectOption>
+          </Select>
+        </FormItem> -->
+       
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
@@ -27,10 +34,18 @@
             scanOrder(record);
           }
             ">查看</Button>
-          <Button type="link" v-if="record.status === 1" @click="() => {
-            drawerEdit(record);
-          }
-            ">编辑</Button>
+
+          <template v-if="record.productType === 2">
+            <Button type="link" v-if="record.status === 1" @click="() => {
+              drawerEdit(record);
+            }
+              ">编辑</Button></template>
+          <template v-else>
+            <Button type="link" v-if="record.status === 2" @click="() => {
+              drawerEdit(record);
+            }
+              ">编辑</Button>
+          </template>
           <Button v-if="authShow && record.status === 1" type="link" @click="() => {
             scanOrder(record);
           }
@@ -87,7 +102,7 @@
               trigger: 'change',
             }">
               <Select :show-search="true" :disabled="drawerInfo.type !== 'add'" placeholder="请选择"
-                v-model:value="p.productId" style="width: 250px" :filter-option="pFilterOption">
+                v-model:value="p.productId" style="width: 220px" :filter-option="pFilterOption">
                 <SelectOption v-for="item of pDataSource" :key="`${item.name}-${item.id}`" :value="item.id">{{ item.name
                 }}</SelectOption>
               </Select>
@@ -251,6 +266,7 @@ export default defineComponent({
     const searchInfo = ref({
       customerName: undefined,
       orderNumber: undefined,
+      source: undefined
     });
     const pageInfo = ref<PageListInfo<CustomerOrderInfo>>({
       total: 0,
@@ -300,6 +316,7 @@ export default defineComponent({
     const resetAction = () => {
       searchInfo.value.customerName = undefined;
       searchInfo.value.orderNumber = undefined;
+      searchInfo.value.source = undefined;
       customerOrderListReq(1);
     };
     const searchAction = () => {
@@ -463,12 +480,12 @@ export default defineComponent({
         ...searchInfo.value, resource: 1, pageNum: pageInfo.value.current
       }
       let aa = ''
-      Object.keys(t).forEach(key => { 
-        if (t[key]) { 
-           aa += `${key}=${t[key]}&`
+      Object.keys(t).forEach(key => {
+        if (t[key]) {
+          aa += `${key}=${t[key]}&`
         }
       })
-      window.open(`http://129.204.202.223:8001/basic-api/customer/order/exportOrder?${aa.slice(0, aa.length -1)}`)
+      window.open(`http://129.204.202.223:8001/basic-api/customer/order/exportOrder?${aa.slice(0, aa.length - 1)}`)
     }
     return {
       formRef,
