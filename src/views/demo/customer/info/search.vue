@@ -33,25 +33,25 @@
       </div>
     </div>
 
-    <Table :columns="columns" :dataSource="pageInfo.dataSource" :canResize="true" :bordered="true"
-      :pagination="pagination" :scroll="{ x: '100%' }">
+    <Table :columns="columns" :dataSource="pageInfo.dataSource" :bordered="true" :pagination="pagination"
+      :scroll="{ x: '100%' }">
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <Button type="link" @click="() => {
-            boardCustomer(record.id);
-          }
+              boardCustomer(record.id);
+            }
             ">查看客户看板</Button>
           <Button v-if="authShow" type="link" @click="() => {
-            deleteAction(record);
-          }
+              levelAction(record);
+            }
             ">客户等级</Button>
           <Button type="link" @click="() => {
-            drawerEdit(record);
-          }
+              drawerEdit(record);
+            }
             ">编辑</Button>
           <Button v-if="authShow" type="link" @click="() => {
-            deleteAction(record);
-          }
+              deleteAction(record);
+            }
             ">删除</Button>
         </template>
       </template>
@@ -127,6 +127,19 @@
         </FormItem>
       </Form>
     </Modal>
+
+    <Modal :mask-closable="false" :destroy-on-close="true" title="客户等级" @cancel="drawerOnClose" @ok="levelSubmit"
+      width="60%" :visible="levelInfo.visible">
+      <Form :labelCol="{ span: 4 }">
+        <FormItem label="客户等级">
+          <Select placeholder="请选择" v-model:value="levelInfo.level">
+            <SelectOption v-for="item in customerLevelList" :key="item.id">{{
+              item.name
+            }}</SelectOption>
+          </Select>
+        </FormItem>
+      </Form>
+    </Modal>
   </PageWrapper>
 </template>
 <script lang="ts">
@@ -152,7 +165,8 @@ import {
   deleteCustomer,
   getCustomerGList,
   getCustomerSList,
-  exportCustomerInfo
+  getCustomerLList,
+  updateCustomerLevel
 } from '/@/api/demo/customer';
 import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
@@ -207,7 +221,6 @@ export default defineComponent({
         documentNumber: undefined,
         documentType: undefined,
         groupId: undefined,
-        level: undefined,
         mobile: undefined,
         name: undefined,
         remark: undefined,
@@ -216,6 +229,13 @@ export default defineComponent({
         tag: undefined,
       },
     });
+
+    const levelInfo = ref({
+      visible: false,
+      level: undefined,
+      id: undefined,
+    });
+
     const datePickerValue = ref<Dayjs>();
     const pageInfo = ref<PageListInfo<CustomerInfo>>({
       total: 0,
@@ -251,10 +271,12 @@ export default defineComponent({
     const searchAction = () => {
       customerListReq(1);
     };
+
     onMounted(() => {
       customerListReq(1);
       getCustomerG();
       getCustomerS();
+      getCustomerL();
     });
     const router = useRouter();
     const boardCustomer = (id: number) => {
@@ -306,7 +328,9 @@ export default defineComponent({
           width: 120,
           dataIndex: 'groupId',
           customRender: (state) => {
-            const group = customerGroupList.value.find((item) => item.id === state.record.groupId);
+            const group = customerGroupList.value.find(
+              (item) => item.id === state.record.groupId,
+            );
             return group ? group.name : '';
           },
         },
@@ -325,22 +349,21 @@ export default defineComponent({
           title: '经办人',
           dataIndex: 'agent',
           width: 100,
-        }
-      ]
+        },
+      ];
       if (authShow.value) {
         t.push({
           title: '客户等级',
-          dataIndex: 'level',
+          dataIndex: 'levelName',
           width: 120,
-
-        })
+        });
       }
       t.push({
         title: '操作',
         dataIndex: 'operation',
         width: 400,
-      })
-      return t
+      });
+      return t;
     });
     const customerGroupList = ref<CustomerGroupInfo[]>([]);
     const getCustomerG = async () => {
@@ -351,6 +374,11 @@ export default defineComponent({
     const getCustomerS = async () => {
       const res = await getCustomerSList();
       if (res) customerSourceList.value = res;
+    };
+    const customerLevelList = ref<any[]>([]);
+    const getCustomerL = async () => {
+      const res = await getCustomerLList();
+      if (res) customerLevelList.value = res;
     };
     const addCustomer = () => {
       drawerInfo.value.visible = true;
@@ -368,6 +396,13 @@ export default defineComponent({
         });
         if (item.birth) datePickerValue.value = dayjs(res.birth, 'YYYY-MM-DD');
       }
+    };
+    const levelAction = (item: CustomerInfo) => {
+      levelInfo.value.visible = true;
+      //@ts-ignore
+      levelInfo.value.level = item.level;
+      //@ts-ignore
+      levelInfo.value.id = item.id;
     };
     const deleteAction = (item: CustomerInfo) => {
       confirm(
@@ -388,6 +423,11 @@ export default defineComponent({
       drawerInfo.value.visible = false;
       drawerInfo.value.title = '';
       drawerInfo.value.type = undefined;
+
+      levelInfo.value.visible = false;
+      levelInfo.value.level = undefined;
+      levelInfo.value.id = undefined;
+
       Object.keys(drawerInfo.value.item).forEach((key) => {
         drawerInfo.value.item[key] = undefined;
       });
@@ -449,12 +489,6 @@ export default defineComponent({
           message: '请选择来源',
         },
       ],
-      // level: [
-      //   {
-      //     required: true,
-      //     message: '请输入客户等级',
-      //   },
-      // ],
       contactAddress: [
         {
           required: true,
@@ -467,9 +501,9 @@ export default defineComponent({
       validate().then(async () => {
         let res;
         if (drawerInfo.value.type === 'add') {
-          res = await saveCustomer({ ...drawerInfo.value.item });
+          res = await saveCustomer({ ...drawerInfo.value.item, level: undefined });
         } else {
-          res = await updateCustomer({ ...drawerInfo.value.item });
+          res = await updateCustomer({ ...drawerInfo.value.item, level: undefined });
         }
         if (res) {
           message.success(drawerInfo.value.type === 'add' ? '添加客户成功' : '修改用户信息成功');
@@ -478,6 +512,17 @@ export default defineComponent({
         }
       });
     };
+
+    const levelSubmit = async () => {
+      //@ts-ignore
+      let res = await updateCustomerLevel({ id: levelInfo.value.id, levelId: levelInfo.value.level });
+      if (res) {
+        message.success('修改用户信息成功');
+        customerListReq(pageInfo.value.current);
+        drawerOnClose();
+      }
+    };
+
     const birthChange = () => {
       if (datePickerValue.value)
         drawerInfo.value.item.birth = dayjs(datePickerValue.value).format('YYYY-MM-DD');
@@ -495,16 +540,23 @@ export default defineComponent({
     };
     const customerExport = async () => {
       const t = {
-        ids: pageInfo.value.dataSource.map(item => item.id).join(','),
-        ...searchInfo.value, resource: 1, pageNum: pageInfo.value.current
-      }
-      let aa = ''
-      Object.keys(t).forEach(key => { 
-        if (t[key]) { 
-           aa += `${key}=${t[key]}&`
+        ids: pageInfo.value.dataSource.map((item) => item.id).join(','),
+        ...searchInfo.value,
+        resource: 1,
+        pageNum: pageInfo.value.current,
+      };
+      let aa = '';
+      Object.keys(t).forEach((key) => {
+        if (t[key]) {
+          aa += `${key}=${t[key]}&`;
         }
-      })
-      window.open(`http://129.204.202.223:8001/basic-api/customer/basic/export?${aa.slice(0, aa.length -1)}`)
+      });
+      window.open(
+        `http://129.204.202.223:8001/basic-api/customer/basic/export?${aa.slice(
+          0,
+          aa.length - 1,
+        )}`,
+      );
     };
     return {
       columns,
@@ -528,6 +580,10 @@ export default defineComponent({
       validateInfos,
       authShow,
       customerExport,
+      customerLevelList,
+      levelInfo,
+      levelAction,
+      levelSubmit,
     };
   },
 });

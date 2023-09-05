@@ -544,7 +544,6 @@ export default defineComponent({
 
               .label-1 {
                 flex: 1;
-
                 word-break: break-all;
                 text-overflow: ellipsis;
                 display: -webkit-box;

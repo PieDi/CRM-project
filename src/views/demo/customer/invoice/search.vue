@@ -17,7 +17,7 @@
       :pagination="pagination">
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
-          <Button type="link" @click="() => {
+          <Button v-if="authShow" type="link" @click="() => {
             mRecordEdit(record);
           }
             ">编辑</Button>
@@ -25,6 +25,10 @@
             scanRecord(record);
           }
             ">查看</Button>
+          <Button v-if="authShow" type="link" @click="() => {
+            mRecordEdit(record);
+          }
+            ">删除</Button>
         </template>
       </template>
     </Table>
@@ -36,7 +40,7 @@
   </PageWrapper>
 </template>
 <script lang="ts">
-import { defineComponent, computed, onMounted, ref } from 'vue';
+import { defineComponent, computed, onMounted, ref, toRaw } from 'vue';
 import { PageWrapper } from '/@/components/Page';
 import {
   Table,
@@ -55,7 +59,8 @@ import { getCustomerInvoicePage } from '/@/api/demo/customer';
 import { useRoute } from 'vue-router';
 import dayjs from 'dayjs';
 import mRecord from './components/addInvoice.vue';
-
+import { useUserStore } from '/@/store/modules/user';
+import { RoleEnum } from '/@/enums/roleEnum';
 const FormItem = Form.Item;
 const SelectOption = Select.Option;
 const TextArea = Input.TextArea;
@@ -77,6 +82,11 @@ export default defineComponent({
     mRecord
   },
   setup() {
+    const userStore = useUserStore();
+    const roleList = toRaw(userStore.getRoleList) || [];
+    const authShow = computed(() => {
+      return roleList.some((role) => [RoleEnum.SUPER].includes(role));
+    });
     const route = useRoute();
     const invoiceOrderListReq = async (pageNum: number) => {
       const res = await getCustomerInvoicePage({
@@ -259,7 +269,7 @@ export default defineComponent({
       mRecordEdit,
       scanRecord,
       mRecordDrawerInfo,
-
+      authShow
     };
   },
 });

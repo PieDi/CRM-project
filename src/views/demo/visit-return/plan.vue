@@ -373,6 +373,7 @@
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新建回访';
         drawerInfo.value.type = 'add';
+        console.log(34567)
       };
 
       const scanReturnPlan = async (item: VisitReturnInfo) => {

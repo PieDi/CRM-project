@@ -23,7 +23,7 @@
       </div>
       <div class="item-des">
         <div class="label">内容简介</div>
-        <div class="des-content">{{ item.remark }}</div>
+        <div class="des-content">{{ item.visitContent }}</div>
       </div>
     </div>
   </div>
@@ -92,7 +92,6 @@
     overflow: hidden;
     padding: 0 16px;
     display: flex;
-    background: re;
 
     .visit-item + .visit-item {
       margin-left: 16px;
