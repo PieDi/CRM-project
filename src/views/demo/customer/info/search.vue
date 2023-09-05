@@ -313,7 +313,7 @@ export default defineComponent({
         {
           title: '客户来源',
           dataIndex: 'sourceId',
-          width: 120,
+          width: 200,
           customRender: (state) => {
             const source = customerSourceList.value.find(
               (item) => item.id === state.record.sourceId,

@@ -27,7 +27,7 @@
             scanOrder(record);
           }
             ">查看</Button>
-          <Button type="link" @click="() => {
+          <Button type="link" v-if="record.status === 1" @click="() => {
             drawerEdit(record);
           }
             ">编辑</Button>
