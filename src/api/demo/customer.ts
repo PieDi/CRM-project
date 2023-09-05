@@ -155,7 +155,7 @@ enum Api {
 export const getCustomerPage = (params: any) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerInfo[] }>({
     url: Api.CustomerPage,
-    params: { pageSize:10, ...params },
+    params: { pageSize: 10, ...params },
   });
 export const getCustomerList = (name?: string) =>
   defHttp.post<Array<CustomerInfo>>({
@@ -182,12 +182,17 @@ export const getCustomerFileDownload = (path: string) =>
 
 export const getCustomerFileView = (fileId: number) =>
   defHttp.post<string>({ url: Api.FileView, params: { fileId } });
-  
-  //看板信息
+
+export const exportCustomerInfo = () =>
+  defHttp.get<Array<CustomerInfo>>({
+    url: '/customer/basic/export'
+  });
+
+//看板信息
 export const boardCustomer = (id: string) =>
   defHttp.post<CustomerBoard>({ url: Api.BoardCustomer, params: { id } });
 // 看板附件
-  export const boardFileView = (id: number, type: number) =>
+export const boardFileView = (id: number, type: number) =>
   defHttp.post<string[]>({ url: '/customer/basic/viewFile', params: { id, type } });
 /**
  * 客户分组信息
@@ -234,6 +239,30 @@ export const updateCustomerS = (params?: any) =>
 
 export const deleteCustomerS = (id: string | number) =>
   defHttp.post<any>({ url: Api.DeleteCustomerS, params: { id } });
+
+
+  /**
+ * 客户等级
+ */
+export const getCustomerLPage = (params: { name?: string; pageNum: number }) =>
+defHttp.post<{ total: number; pageNum: number; data: any[] }>({
+  url: '/customer/level/page',
+  params: { pageSize: 10, ...params },
+});
+export const getCustomerLList = (name?: string) =>
+  defHttp.post<Array<CustomerSourceInfo>>({
+    url: Api.CustomerSList,
+    params: { name },
+  });
+
+export const saveCustomerL = (params?: any) =>
+  defHttp.post<any>({ url: '/customer/level/save', params });
+
+export const updateCustomerL = (params?: any) =>
+  defHttp.post<any>({ url: '/customer/level/update', params });
+
+export const deleteCustomerL = (id: string | number) =>
+  defHttp.post<any>({ url: '/customer/level/delete', params: { id } });
 
 /**
  * 客户病史信息
@@ -375,7 +404,8 @@ export const columnarCustomerOrder = (type: number) =>
     url: Api.CustomerOrderColumnar,
     params: { type },
   });
-
+export const exportCustomerOrder = () =>
+  defHttp.get<any>({ url: '/customer/order/exportOrder' });
 /*
  * 客户合同信息
  */
@@ -427,3 +457,6 @@ export const fileInvoiceUpload = (params: any) =>
 
 export const fileInvoiceDelete = (fileId: number) =>
   defHttp.post<number[]>({ url: Api.CustomerInvoiceFDelete, params: { fileId } });
+
+
+  

@@ -159,7 +159,7 @@ export default defineComponent({
       tabStore.closeTab(getCurrentTab(), router);
     };
     const pushOrder = (customerId) => { 
-      router.push({ path: '/customer/order/search', query: { customerId } });
+      router.push({ path: '/order/search', query: { customerId } });
     }
     const pushVisit = (customerId) => { 
       router.push({ path: '/return-visit/plan', query: { customerId } });

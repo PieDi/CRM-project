@@ -152,11 +152,11 @@ import {
   deleteCustomer,
   getCustomerGList,
   getCustomerSList,
+  exportCustomerInfo
 } from '/@/api/demo/customer';
-import { type ColumnsType } from 'ant-design-vue/lib/table';
 import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { CustomerInfo, CustomerGroupInfo, CustomerSourceInfo } from '/@/api/demo/model/customer';
+import { CustomerInfo, CustomerGroupInfo, CustomerSourceInfo } from '/@/api/demo/model/customer'; 
 import dayjs, { Dayjs } from 'dayjs';
 import { sexMap, docTypeMap } from '/@/views/const';
 import { useRouter } from 'vue-router';
@@ -189,7 +189,6 @@ export default defineComponent({
     const authShow = computed(() => {
       return roleList.some((role) => [RoleEnum.SUPER].includes(role));
     });
-    console.log(21212, authShow.value);
     const searchInfo = ref({
       name: undefined,
       groupId: undefined,
@@ -494,7 +493,10 @@ export default defineComponent({
         drawerInfo.value.item.age = dayjs().year() - Number(t.slice(0, 4));
       }
     };
-    const customerExport = () => { };
+    const customerExport = async () => {
+      window.open('http://129.204.202.223:8001/basic-api/customer/basic/export')
+      // exportCustomerInfo()
+    };
     return {
       columns,
       pagination,

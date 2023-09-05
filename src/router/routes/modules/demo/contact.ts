@@ -3,7 +3,7 @@ import { LAYOUT } from '/@/router/constant';
 import { RoleEnum } from '/@/enums/roleEnum';
 
 const contact: AppRouteModule = {
-  path: '/customer',
+  path: '/contact',
   name: 'Contact',
   component: LAYOUT,
   redirect: '/feat/icon',
@@ -15,7 +15,7 @@ const contact: AppRouteModule = {
   },
   children: [
     {
-      path: 'contact/search',
+      path: 'search',
       name: 'ContactSearch',
       component: () => import('/@/views/demo/customer/contact/search.vue'),
       meta: {

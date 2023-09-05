@@ -3,7 +3,7 @@ import { LAYOUT } from '/@/router/constant';
 import { RoleEnum } from '/@/enums/roleEnum';
 
 const Order: AppRouteModule = {
-  path: '/customer',
+  path: '/order',
   name: 'Order',
   component: LAYOUT,
   redirect: '/feat/icon',
@@ -15,7 +15,7 @@ const Order: AppRouteModule = {
   },
   children: [
     {
-      path: 'order/search',
+      path: 'search',
       name: 'OrderSearch',
       component: () => import('/@/views/demo/customer/order/search.vue'),
       meta: {
@@ -24,7 +24,7 @@ const Order: AppRouteModule = {
       },
     },
     {
-      path: 'order/ns-order',
+      path: 'ns-order',
       name: 'SysAuthNSOrder',
       component: () => import('/@/views/auth/super/ns-order.vue'),
       meta: {
@@ -33,7 +33,7 @@ const Order: AppRouteModule = {
       },
     },
     {
-      path: 'order/micro-order',
+      path: 'micro-order',
       name: 'SysAuthCSLinkMicroOrder',
       component: () => import('/@/views/auth/micro-order.vue'),
       meta: {
