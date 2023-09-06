@@ -167,7 +167,7 @@ export const saveCustomer = (params?: CustomerSaveParams) =>
 
 export const updateCustomer = (params?: CustomerSaveParams) =>
   defHttp.post<any>({ url: Api.UpdateCustomer, params });
-  
+
 export const updateCustomerLevel = (params?: any) =>
   defHttp.post<any>({ url: '/customer/basic/setLevel', params });
 
@@ -393,6 +393,10 @@ export const updateCustomerOrder = (params?: any) =>
 
 export const deleteCustomerOrder = (id: string | number) =>
   defHttp.post<any>({ url: Api.DeleteCustomerOrder, params: { id } });
+export const authCustomerOrder = (params: any) =>
+  defHttp.post<any>({ url: '/customer/order/auth', params });
+export const auditCustomerOrder = (params: any) =>
+  defHttp.post<any>({ url: '/customer/order/audit', params });
 
 export const getCustomerOrderDetail = (id: string | number) =>
   defHttp.post<CustomerInfo>({ url: Api.CustomerOrderDetail, params: { id } });

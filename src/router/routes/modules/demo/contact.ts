@@ -8,7 +8,7 @@ const contact: AppRouteModule = {
   component: LAYOUT,
   redirect: '/feat/icon',
   meta: {
-    orderNo: 200,
+    orderNo: 300,
     icon: 'game-icons:abstract-004',
     title: '客户合同管理',
     roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],

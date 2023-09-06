@@ -324,7 +324,7 @@
         },
         {
           title: '负责人',
-          dataIndex: 'responsiblePerson',
+          dataIndex: 'agent',
         },
         {
           title: '其他',

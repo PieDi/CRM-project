@@ -8,7 +8,7 @@ const Order: AppRouteModule = {
   component: LAYOUT,
   redirect: '/feat/icon',
   meta: {
-    orderNo: 400,
+    orderNo: 200,
     icon: 'game-icons:abstract-023',
     title: '客户订单管理',
     roles: [RoleEnum.SUPER, RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
