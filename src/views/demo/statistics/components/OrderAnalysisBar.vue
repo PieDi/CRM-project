@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, ref, Ref, watch } from 'vue';
+  import { ref, Ref, watch } from 'vue';
   import { useECharts } from '/@/hooks/web/useECharts';
 
   const props = defineProps({
@@ -27,21 +27,39 @@
     () => props.dataSource,
     (val) => {
       setOptions({
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            lineStyle: {
-              width: 1,
-              color: '#019680',
+        toolbox: {
+          show: true,
+          feature: {
+            dataZoom: {
+              yAxisIndex: 'none',
             },
+            // dataView: { readOnly: false },
+            magicType: { type: ['line', 'bar'] },
+            saveAsImage: {},
           },
         },
-        grid: { left: '1%', right: '1%', top: '2%', bottom: 0, containLabel: true },
+        tooltip: {
+          trigger: 'axis',
+          // axisPointer: {
+          //   lineStyle: {
+          //     width: 1,
+          //     color: '#019680',
+          //   },
+          // },
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true,
+        },
         xAxis: {
           type: 'category',
           data: val.map((n) => n.date),
           axisLabel: {
-            interval: 0,
+            lineStyle: {
+              color: '#333',
+            },
           },
         },
         yAxis: {
@@ -51,8 +69,15 @@
         series: [
           {
             data: val.map((n) => n.count),
-            type: 'bar',
-            barMaxWidth: 80,
+            type: 'line',
+            itemStyle: {
+              normal: {
+                color: '#ff0000',
+                lineStyle: {
+                  color: '#ff0000',
+                },
+              },
+            },
           },
         ],
       });

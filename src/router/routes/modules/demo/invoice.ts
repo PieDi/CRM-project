@@ -8,7 +8,7 @@ const invoice: AppRouteModule = {
   component: LAYOUT,
   redirect: '/feat/icon',
   meta: {
-    orderNo: 300,
+    orderNo: 400,
     icon: 'game-icons:abacus',
     title: '客户发票管理',
     roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],

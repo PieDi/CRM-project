@@ -12,6 +12,8 @@
         <SelectOption :key="3">年</SelectOption>
       </Select>
     </FormItem>
+
+    
     <OrderAnalysisBar :dataSource="dataSource" />
   </PageWrapper>
 </template>

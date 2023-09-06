@@ -173,11 +173,6 @@ export default defineComponent({
         width: 200,
       },
       {
-        title: '发票号',
-        dataIndex: 'serial',
-        width: 200,
-      },
-      {
         title: '开票日期',
         dataIndex: 'invoiceTime',
         width: 180,
