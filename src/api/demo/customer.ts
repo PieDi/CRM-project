@@ -404,10 +404,10 @@ export const getCustomerOrderDetail = (id: string | number) =>
 export const handleCustomerOrder = (params: { id: number; status: number }) =>
   defHttp.post<any>({ url: Api.CustomerOrderHandle, params });
 
-export const columnarCustomerOrder = (type: number) =>
-  defHttp.post<Array<{ date: string; count: number }>>({
-    url: Api.CustomerOrderColumnar,
-    params: { type },
+export const columnarCustomerOrder = (params: any) =>
+  defHttp.post<Array<any>>({
+    url: '/applet/main/orders',
+    params,
   });
 export const exportCustomerOrder = () => defHttp.get<any>({ url: '/customer/order/exportOrder' });
 /*
