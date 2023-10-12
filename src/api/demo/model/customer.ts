@@ -1,4 +1,4 @@
-import { VisitReturnInfo } from "./visit-return";
+import { VisitReturnInfo } from './visit-return';
 /**
  * 客户列表请求类型
  */
@@ -20,14 +20,14 @@ export interface CustomerBoard {
     orderContracts: Array<CustomerContractInfo>;
     orderInvoices: Array<CustomerInvoiceInfo>;
   }>;
-  returnVisits: Array<VisitReturnInfo>
+  returnVisits: Array<VisitReturnInfo>;
 }
 
 export interface CustomerInfo {
   id: number | undefined;
   age: number | undefined;
   birth: string | undefined;
-  surName:string | undefined;
+  surName: string | undefined;
   contactAddress: string | undefined;
   documentNumber: string | undefined;
   documentType: number | undefined;
@@ -39,7 +39,7 @@ export interface CustomerInfo {
   sex: number | undefined;
   sourceId: number | undefined;
   tag: string | undefined;
-  files: Array<{ id: number,fileName: string; path: string }> | undefined;
+  files: Array<{ id: number; fileName: string; path: string }> | undefined;
 }
 
 export interface CustomerGroupInfo {
@@ -98,11 +98,13 @@ export interface CustomerDInfo {
   useDate: string | undefined;
   fileIds: number[] | undefined;
   newFiles: any[] | undefined;
-  files: Array<{
-    id: number,
-    fileName: string;
-    path: string
-  }> | undefined;
+  files:
+    | Array<{
+        id: number;
+        fileName: string;
+        path: string;
+      }>
+    | undefined;
 }
 /**
  * 客户检验
@@ -114,7 +116,7 @@ export interface CustomerEInfo {
   checkType: string | undefined;
   checkDate: number | undefined;
   fileIds: number[] | undefined;
-  files: Array<{ id: number, fileName: string; path: string }> | undefined;
+  files: Array<{ id: number; fileName: string; path: string }> | undefined;
 }
 /**
  * 客户影像
@@ -127,7 +129,7 @@ export interface CustomerIInfo {
   checkDate: number | undefined;
   checkPart: string | undefined;
   fileIds: number[] | undefined;
-  files: Array<{ id: number, fileName: string; path: string }> | undefined;
+  files: Array<{ id: number; fileName: string; path: string }> | undefined;
 }
 /**
  * 客户会诊
@@ -139,7 +141,7 @@ export interface CustomerCInfo {
   consultationExpert: string | undefined;
   consultationDate: number | undefined;
   fileIds: number[] | undefined;
-  files: Array<{ id: number,fileName: string; path: string }> | undefined;
+  files: Array<{ id: number; fileName: string; path: string }> | undefined;
 }
 
 /**
@@ -152,7 +154,7 @@ export interface CustomerOrderListParams {
   source?: number;
   productType?: number;
   id: string | undefined;
-  customerId?: string
+  customerId?: string;
 }
 
 export interface CustomerOrderInfo {
@@ -196,14 +198,15 @@ export interface CustomerContractInfo {
   number: string | undefined;
   orderName: string | undefined;
   price: number | undefined;
+  type: number | undefined;
   status: number | undefined;
-  signTime:number | undefined;
+  signTime: number | undefined;
   effectiveStart: number | undefined;
   effectiveEnd: number | undefined;
   description: string | undefined;
   firstParty?: string | undefined;
   secondParty?: string | undefined;
-  files: Array<{ id: number,fileName: string; path: string }> | undefined;
+  files: Array<{ id: number; fileName: string; path: string }> | undefined;
 }
 /**
  * 客户发票信息
@@ -211,6 +214,7 @@ export interface CustomerContractInfo {
 export interface CustomerInvoiceInfo {
   id: number | undefined;
   orderId: number | undefined;
+  type: number | undefined;
   orderName: string | undefined;
   customerId: number | undefined;
   name: string | undefined;
@@ -218,8 +222,10 @@ export interface CustomerInvoiceInfo {
   serial: string | undefined;
   amount: number | undefined;
   agent: string | undefined;
-  description: string | undefined;
-  invoiceTime: number | undefined;
+  mobile: string | undefined;
+  email: string | undefined;
+  bankAccount: string | undefined;
+  bank: string | undefined;
   status: number | undefined;
-  files: Array<{ id: number,fileName: string; path: string }> | undefined;
+  files: Array<{ id: number; fileName: string; path: string }> | undefined;
 }

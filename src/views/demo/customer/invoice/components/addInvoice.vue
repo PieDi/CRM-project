@@ -10,11 +10,11 @@
   >
     <Form :labelCol="{ span: 4 }" ref="formRef" :model="mInfo">
       <FormItem
-        label="客户姓名"
+        label="客户名称"
         name="customerId"
         :rules="{
           required: true,
-          message: '请选择客户姓名',
+          message: '请选择客户名称',
           trigger: 'change',
         }"
       >
@@ -53,14 +53,29 @@
           }}</SelectOption>
         </Select>
       </FormItem>
+
       <FormItem
-        label="发票名称"
-        name="name"
+        label="发票类型"
+        name="type"
         :rules="{
           required: true,
-          message: '请输入发票名称',
+          message: '请选择发票类型',
           trigger: 'change',
         }"
+      >
+        <Select
+          :disabled="drawerInfo.type == 'scan'"
+          placeholder="请选择"
+          v-model:value="mInfo.type"
+        >
+          <SelectOption :value="1">个人</SelectOption>
+          <SelectOption :value="2">企业</SelectOption>
+        </Select>
+      </FormItem>
+
+      <FormItem
+        label="开票企业名称"
+        name="name"
       >
         <Input
           placeholder="请输入"
@@ -69,14 +84,10 @@
           v-model:value="mInfo.name"
         />
       </FormItem>
+
       <FormItem
-        label="发票编号"
+        label="企业税号"
         name="number"
-        :rules="{
-          required: true,
-          message: '请输入发票编号',
-          trigger: 'change',
-        }"
       >
         <Input
           placeholder="请输入"
@@ -87,13 +98,32 @@
       </FormItem>
 
       <FormItem
-        label="经手人"
+        label="开户银行"
+        name="bank"
+      >
+        <Input
+          placeholder="请输入"
+          allowClear
+          :disabled="drawerInfo.type == 'scan'"
+          v-model:value="mInfo.bank"
+        />
+      </FormItem>
+
+      <FormItem
+        label="银行账号"
+        name="bankAccount"
+      >
+        <Input
+          placeholder="请输入"
+          allowClear
+          :disabled="drawerInfo.type == 'scan'"
+          v-model:value="mInfo.bankAccount"
+        />
+      </FormItem>
+
+      <FormItem
+        label="开票方联系人"
         name="agent"
-        :rules="{
-          required: true,
-          message: '请输入经手人',
-          trigger: 'change',
-        }"
       >
         <Input
           placeholder="请输入"
@@ -104,13 +134,32 @@
       </FormItem>
 
       <FormItem
+        label="联系人手机号"
+        name="mobile"
+      >
+        <Input
+          placeholder="请输入"
+          allowClear
+          :disabled="drawerInfo.type == 'scan'"
+          v-model:value="mInfo.mobile"
+        />
+      </FormItem>
+      <FormItem
+        label="联系人邮箱"
+        name="email"
+      >
+        <Input
+          placeholder="请输入"
+          allowClear
+          :disabled="drawerInfo.type == 'scan'"
+          v-model:value="mInfo.email"
+        />
+      </FormItem>
+
+      
+      <FormItem
         label="金额"
         name="amount"
-        :rules="{
-          required: true,
-          message: '请输入金额',
-          trigger: 'change',
-        }"
       >
         <InputNumber
           placeholder="请输入"
@@ -121,15 +170,10 @@
       </FormItem>
 
       <FormItem
-        label="发票号"
+        label="企业地址"
         name="serial"
-        :rules="{
-          required: true,
-          message: '请输入发票号',
-          trigger: 'change',
-        }"
       >
-        <InputNumber
+        <Input
           placeholder="请输入"
           allowClear
           :disabled="drawerInfo.type == 'scan'"
@@ -137,21 +181,6 @@
         />
       </FormItem>
 
-      <FormItem
-        label="开票日期"
-        name="invoiceTime"
-        :rules="{
-          required: true,
-          message: '请输入开票日期',
-          trigger: 'change',
-        }"
-      >
-        <DatePicker
-          :show-time="true"
-          v-model:value="mInfo.invoiceTime"
-          :disabled="drawerInfo.type === 'scan'"
-        />
-      </FormItem>
       <FormItem label="附件">
         <Upload
           :file-list="fileList"
@@ -197,14 +226,6 @@
           </template>
         </Upload>
       </FormItem>
-      <FormItem label="描述">
-        <InputTextArea
-          placeholder="请输入"
-          allowClear
-          :disabled="drawerInfo.type == 'scan'"
-          v-model:value="mInfo.description"
-        />
-      </FormItem>
     </Form>
   </Modal>
 </template>
@@ -236,7 +257,6 @@
   import { DrawerItemType } from '/@/views/type';
   import type { UploadProps } from 'ant-design-vue';
   import type { FormInstance } from 'ant-design-vue';
-  import dayjs, { Dayjs } from 'dayjs';
   const FormItem = Form.Item;
   const InputTextArea = Input.TextArea;
   const SelectOption = Select.Option;
@@ -268,6 +288,7 @@
       const mInfo = ref<{
         id?: number | undefined;
         orderId: number | undefined;
+        type: number | undefined;
         customerId: number | undefined;
         name: string | undefined;
         number: string | undefined;
@@ -275,11 +296,14 @@
         serial: string | undefined;
         amount: number | undefined;
         status: number | undefined;
-        invoiceTime: Dayjs | undefined;
-        description: string | undefined;
+        mobile: string | undefined;
+        email: string | undefined;
+        bankAccount: string | undefined;
+        bank: string | undefined;
       }>({
         id: props.drawerInfo.item.id,
         orderId: props.drawerInfo.item.orderId,
+        type: props.drawerInfo.item.type,
         customerId: props.drawerInfo?.item?.customerId,
         name: props.drawerInfo?.item?.name,
         number: props.drawerInfo?.item?.number,
@@ -287,10 +311,10 @@
         serial: props.drawerInfo.item.serial,
         amount: props.drawerInfo?.item?.amount,
         status: props.drawerInfo?.item?.status,
-        description: props.drawerInfo?.item?.description,
-        invoiceTime: props.drawerInfo?.item?.invoiceTime
-          ? dayjs(props.drawerInfo.item.invoiceTime)
-          : undefined,
+        mobile: props.drawerInfo?.item?.mobile,
+        email: props.drawerInfo?.item?.email,
+        bankAccount: props.drawerInfo?.item?.bankAccount,
+        bank: props.drawerInfo?.item?.bank
       });
 
       const dataSource = ref<Array<CustomerInfo>>([]);

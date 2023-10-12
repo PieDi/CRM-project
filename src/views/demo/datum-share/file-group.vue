@@ -18,6 +18,7 @@
     <div class="file-content">
       <div v-for="(item, i) in fileList" :key="i" class="file-item">
         <div class="file-item-border">
+          <FileTwoTone style="font-size: 80px" />
           <p>{{ item }}</p>
           <div class="btn"
             ><Button
@@ -54,13 +55,14 @@
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
-  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+  import { ExclamationCircleOutlined, FileTwoTone } from '@ant-design/icons-vue';
 
   export default defineComponent({
     components: {
       PageWrapper,
       Button,
       Upload,
+      FileTwoTone,
     },
     setup() {
       const userStore = useUserStore();
@@ -134,10 +136,12 @@
       .file-item-border {
         width: auto;
         height: 100%;
-        border: 1px solid #eee;
+        span {
+          margin-left: 50px;
+        }
         p {
           width: 100%;
-          margin-top: 20px;
+          // margin-top: 20px;
           text-align: center;
           text-overflow: ellipsis;
           overflow: hidden;

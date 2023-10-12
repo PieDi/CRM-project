@@ -12,7 +12,7 @@ const dashboard: AppRouteModule = {
     orderNo: 10,
     icon: 'ion:grid-outline',
     title: t('routes.dashboard.dashboard'),
-    roles: [RoleEnum.SUPER,  RoleEnum.STAFF],
+    roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
   },
   children: [
     {
@@ -21,7 +21,7 @@ const dashboard: AppRouteModule = {
       component: () => import('/@/views/dashboard/workbench/index.vue'),
       meta: {
         title: t('routes.dashboard.workbench'),
-        roles: [RoleEnum.SUPER,  RoleEnum.STAFF],
+        roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
       },
     },
   ],

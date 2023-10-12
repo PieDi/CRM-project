@@ -11,8 +11,8 @@
           />
         </FormItem>
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
+        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
-      <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
     </div>
 
     <Table
@@ -106,6 +106,9 @@
     super: '超管',
     admin: '管理员',
     staff: '员工',
+    staff1: '员工',
+    staff2: '员工',
+    staff3: '员工'
   };
   export default defineComponent({
     components: {
