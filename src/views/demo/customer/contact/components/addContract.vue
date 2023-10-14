@@ -10,11 +10,11 @@
   >
     <Form :labelCol="{ span: 4 }" ref="formRef" :model="mInfo">
       <FormItem
-        label="客户姓名"
+        label="客户名称"
         name="customerId"
         :rules="{
           required: true,
-          message: '请选择客户姓名',
+          message: '请选择客户名称',
           trigger: 'change',
         }"
       >
@@ -53,6 +53,38 @@
           }}</SelectOption>
         </Select>
       </FormItem>
+
+      <FormItem
+        label="合同类型"
+        name="type"
+        :rules="{
+          required: true,
+          message: '请选择客户名称',
+          trigger: 'change',
+        }"
+      >
+        <Select
+          show-search
+          :disabled="drawerInfo.type == 'scan'"
+          placeholder="请选择"
+          v-model:value="mInfo.type"
+        >
+          <SelectOption
+            :value="1"
+            >销售合同</SelectOption
+          >
+          <SelectOption
+            :value="2"
+            >采购合同</SelectOption
+          >
+          <SelectOption
+            :value="3"
+            >其他合同</SelectOption
+          >
+        </Select>
+      </FormItem>
+
+
       <FormItem
         label="合同名称"
         name="name"
@@ -271,6 +303,7 @@
         name: string | undefined;
         number: string | undefined;
         price: number | undefined;
+        type: number | undefined;
         customerId: number | undefined;
         status: number | undefined;
         signTime: Dayjs | undefined;
@@ -284,6 +317,7 @@
         number: props.drawerInfo?.item?.number,
         customerId: props.drawerInfo?.item?.customerId,
         price: props.drawerInfo?.item?.price,
+        type: props.drawerInfo?.item?.type,
         status: props.drawerInfo?.item?.status,
         signTime: props.drawerInfo?.item?.effectiveStart
           ? dayjs(props.drawerInfo.item.effectiveStart)

@@ -147,53 +147,46 @@ export default defineComponent({
         ellipsis: true
       },
       {
-        title: '发票名称',
+        title: '发票类型',
+        dataIndex: 'type',
+        width: 100,
+        customRender: (state) => (state.record.type === 1 ? '个人' : '企业'),
+      },
+      {
+        title: '开票企业名称',
         dataIndex: 'name',
         width: 200
       },
       {
-        title: '发票编号',
+        title: '企业税号',
         dataIndex: 'number',
         width: 200
       },
       {
-        title: '订单编号',
-        dataIndex: 'orderNumber',
-        width: 200,
-        ellipsis: true
-      },
-      {
-        title: '经手人',
+        title: '开票方联系人',
         dataIndex: 'agent',
-        width: 200,
+        width: 160,
       },
       {
-        title: '发票金额',
-        dataIndex: 'amount',
-        width: 200,
+        title: '联系人手机号',
+        dataIndex: 'mobile',
+        width: 150,
       },
-      {
-        title: '开票日期',
-        dataIndex: 'invoiceTime',
-        width: 180,
-        customRender: (state) => state.record.invoiceTime ? dayjs(state.record.invoiceTime).format('YYYY-MM-DD HH:mm:ss') : '',
-      },
-      {
-        title: '发票状态',
-        dataIndex: 'status',
-        width: 120,
-        customRender: (state) => (state.record.status === 1 ? '待确认' : '已确认'),
-      },
+      // {
+      //   title: '发票状态',
+      //   dataIndex: 'status',
+      //   width: 120,
+      //   customRender: (state) => (state.record.status === 1 ? '待确认' : '已确认'),
+      // },
       {
         title: '操作',
-        width: 160,
         dataIndex: 'operation',
       },
     ];
 
     // 新增记录
     const addMHistory = () => {
-      mRecordDrawerInfo.value.title = '新增合同';
+      mRecordDrawerInfo.value.title = '新增发票';
       mRecordDrawerInfo.value.visible = true;
       mRecordDrawerInfo.value.type = 'add';
     };
@@ -240,27 +233,30 @@ export default defineComponent({
         id: undefined,
         customerId: undefined,
         orderId: undefined,
+        type: undefined,
         orderName: undefined,
         name: undefined,
         number: undefined,
         serial: undefined,
         amount: undefined,
         agent: undefined,
-        description: undefined,
-        invoiceTime: undefined,
+        email: undefined,
+        mobile: undefined,
         status: undefined,
         files: undefined,
+        bankAccount: undefined,
+        bank: undefined
       },
     });
     const deleteInvoice = (item: CustomerInvoiceInfo) => {
       confirm(
         withConfirm({
           icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
-          content: '确定删除该合同',
+          content: '确定删除该发票',
           async onOk() {
             const res = await deleteCustomerInvoice(item.id as number);
             if (res) {
-              message.success('删除合同成功');
+              message.success('删除发票成功');
               invoiceOrderListReq(pageInfo.value.current);
             }
           },

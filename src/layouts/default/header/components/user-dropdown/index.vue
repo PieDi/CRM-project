@@ -11,7 +11,7 @@
 
     <template #overlay>
       <Menu @click="handleMenuClick">
-        <MenuItem key="modify" text="修改密码" icon="ion:lock-closed-outline" />
+        <!-- <MenuItem key="modify" text="修改密码" icon="ion:lock-closed-outline" /> -->
         <MenuItem
           key="logout"
           :text="t('layout.header.dropdownItemLoginOut')"

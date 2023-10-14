@@ -196,10 +196,6 @@
           dataIndex: 'age',
         },
         {
-          title: '联系地址',
-          dataIndex: 'contactAddress',
-        },
-        {
           title: '操作',
           dataIndex: 'operation',
         },

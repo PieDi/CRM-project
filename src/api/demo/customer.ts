@@ -162,10 +162,10 @@ export const getCustomerList = (name?: string) =>
     url: Api.CustomerList,
     params: { name },
   });
-export const saveCustomer = (params?: CustomerSaveParams) =>
+export const saveCustomer = (params?: any) =>
   defHttp.post<any>({ url: Api.SaveCustomer, params });
 
-export const updateCustomer = (params?: CustomerSaveParams) =>
+export const updateCustomer = (params?: any) =>
   defHttp.post<any>({ url: Api.UpdateCustomer, params });
 
 export const updateCustomerLevel = (params?: any) =>
