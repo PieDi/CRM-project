@@ -26,6 +26,7 @@ export interface CustomerBoard {
 export interface CustomerInfo {
   id: number | undefined;
   age: number | undefined;
+  type: number | undefined;
   birth: string | undefined;
   surName: string | undefined;
   contactAddress: string | undefined;

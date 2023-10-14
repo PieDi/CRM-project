@@ -3,8 +3,8 @@
     <div class="info-content">
       <span class="a">{{ diseaseObject?.surName || 'z' }}</span>
       <span>{{ diseaseObject?.name }}</span>
-      <span class="b">{{ diseaseObject?.age }}</span>
-      <span class="b">{{ sex }}</span>
+      <span v-if="diseaseObject?.type === 1"  class="b">{{ diseaseObject?.age }}</span>
+      <span v-if="diseaseObject?.type === 1" class="b">{{ sex }}</span>
     </div>
 
     <div :style="{ display: 'flex' }">
@@ -12,14 +12,14 @@
         <img src="/src/assets/images/info-birth.png" />
         <div class="right">
           <div>生日:</div>
-          <div class="label">{{ diseaseObject?.birth }}</div>
+          <div class="label">{{ diseaseObject?.type === 1 ? diseaseObject?.birth : '企业用户'}}</div>
         </div>
       </div>
       <div class="content" :style="{ width: '50%',marginTop: '16px' }">
         <img src="/src/assets/images/info-mobile.png" />
         <div class="right">
           <div>电话:</div>
-          <div class="label">{{ diseaseObject?.mobile }}</div>
+          <div class="label">{{ diseaseObject?.type === 1 ? diseaseObject?.mobile: diseaseObject?.contactMobile }}</div>
         </div>
       </div>
     </div>
@@ -35,14 +35,14 @@
       <img src="/src/assets/images/info-card.png" />
       <div class="right">
         <div>证件类型:</div>
-        <div class="label">{{ docTypeMap[diseaseObject?.documentType as number] }}</div>
+        <div class="label">{{ diseaseObject?.type === 1 ?  docTypeMap[diseaseObject?.documentType as number] : '企业用户' }}</div>
       </div>
     </div>
     <div class="content">
       <img src="/src/assets/images/info-cardNo.png" />
       <div class="right">
         <div>证件号码:</div>
-        <div class="label">{{ diseaseObject?.documentNumber }}</div>
+        <div class="label">{{diseaseObject?.type === 1 ? diseaseObject?.documentNumber: diseaseObject?.uscc }}</div>
       </div>
     </div>
 
@@ -110,7 +110,6 @@
 <script lang="ts">
 import { defineComponent, PropType, ref, onMounted } from 'vue';
 import dayjs from 'dayjs';
-import { CustomerInfo } from '/@/api/demo/model/customer';
 import { getCustomerGList, getCustomerSList } from '/@/api/demo/customer';
 const docTypeMap: Record<number, string> = {
   1: '身份证',
@@ -122,7 +121,7 @@ const docTypeMap: Record<number, string> = {
 export default defineComponent({
   props: {
     disease: {
-      type: Object as PropType<CustomerInfo>,
+      type: Object as PropType<any>,
       required: true,
     },
   },

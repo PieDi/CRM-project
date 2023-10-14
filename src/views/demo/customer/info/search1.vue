@@ -1,254 +1,247 @@
 <template>
-    <div :style="{ display: 'flex', justifyContent: 'space-between' }">
-      <div :style="{ display: 'flex' }">
-        <FormItem label="客户姓名">
-          <Input
-            placeholder="请输入"
-            allowClear
-            :style="{ width: '120px' }"
-            v-model:value="searchInfo.name"
-          />
-        </FormItem>
-        <FormItem label="客户分组" style="margin-left: 10px">
-          <Select
-            placeholder="请选择"
-            v-model:value="searchInfo.groupId"
-            :style="{ width: '120px' }"
-          >
-            <SelectOption v-for="item in customerGroupList" :key="item.id">{{
-              item.name
-            }}</SelectOption>
-          </Select>
-        </FormItem>
+  <div :style="{ display: 'flex', justifyContent: 'space-between' }">
+    <div :style="{ display: 'flex' }">
+      <FormItem label="客户姓名">
+        <Input
+          placeholder="请输入"
+          allowClear
+          :style="{ width: '120px' }"
+          v-model:value="searchInfo.name"
+        />
+      </FormItem>
+      <FormItem label="客户分组" style="margin-left: 10px">
+        <Select placeholder="请选择" v-model:value="searchInfo.groupId" :style="{ width: '120px' }">
+          <SelectOption v-for="item in customerGroupList" :key="item.id">{{
+            item.name
+          }}</SelectOption>
+        </Select>
+      </FormItem>
 
-        <FormItem label="客户来源" style="margin-left: 10px">
-          <Select
-            placeholder="请选择"
-            v-model:value="searchInfo.sourceId"
-            :style="{ width: '120px' }"
-          >
-            <SelectOption v-for="item in customerSourceList" :key="item.id">{{
-              item.name
-            }}</SelectOption>
-          </Select>
-        </FormItem>
-        <FormItem label="证件号码" style="margin-left: 10px">
-          <Input
-            placeholder="请输入"
-            allowClear
-            :style="{ width: '120px' }"
-            v-model:value="searchInfo.documentNumber"
-          />
-        </FormItem>
-        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
-        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
-      </div>
-
-      <div :style="{ display: 'flex' }">
-        <Button type="primary" style="margin-left: 10px" @click="customerExport"
-          >客户信息导出</Button
+      <FormItem label="客户来源" style="margin-left: 10px">
+        <Select
+          placeholder="请选择"
+          v-model:value="searchInfo.sourceId"
+          :style="{ width: '120px' }"
         >
-        <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增客户</Button>
-      </div>
+          <SelectOption v-for="item in customerSourceList" :key="item.id">{{
+            item.name
+          }}</SelectOption>
+        </Select>
+      </FormItem>
+      <FormItem label="证件号码" style="margin-left: 10px">
+        <Input
+          placeholder="请输入"
+          allowClear
+          :style="{ width: '120px' }"
+          v-model:value="searchInfo.documentNumber"
+        />
+      </FormItem>
+      <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
+      <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
     </div>
 
-    <Table
-      :columns="columns"
-      :dataSource="pageInfo.dataSource"
-      :bordered="true"
-      :pagination="pagination"
-      :scroll="{ x: '100%' }"
-    >
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'operation'">
-          <Button
-            type="link"
-            @click="
-              () => {
-                boardCustomer(record.id);
-              }
-            "
-            >查看客户看板</Button
-          >
-          <Button
-            v-if="authShow"
-            type="link"
-            @click="
-              () => {
-                levelAction(record);
-              }
-            "
-            >客户等级</Button
-          >
-          <Button
-            v-if="record.editRight"
-            type="link"
-            @click="
-              () => {
-                drawerEdit(record);
-              }
-            "
-            >编辑</Button
-          >
-          <Button
-            v-if="record.editRight"
-            type="link"
-            @click="
-              () => {
-                deleteAction(record);
-              }
-            "
-            >删除</Button
-          >
-        </template>
+    <div :style="{ display: 'flex' }">
+      <Button type="primary" style="margin-left: 10px" @click="customerExport">客户信息导出</Button>
+      <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增客户</Button>
+    </div>
+  </div>
+
+  <Table
+    :columns="columns"
+    :dataSource="pageInfo.dataSource"
+    :bordered="true"
+    :pagination="pagination"
+    :scroll="{ x: '100%' }"
+  >
+    <template #bodyCell="{ column, record }">
+      <template v-if="column.dataIndex === 'operation'">
+        <Button
+          type="link"
+          @click="
+            () => {
+              boardCustomer(record.id);
+            }
+          "
+          >查看客户看板</Button
+        >
+        <Button
+          v-if="authShow"
+          type="link"
+          @click="
+            () => {
+              levelAction(record);
+            }
+          "
+          >客户等级</Button
+        >
+        <Button
+          type="link"
+          @click="
+            () => {
+              drawerEdit(record);
+            }
+          "
+          >编辑</Button
+        >
+        <Button
+          v-if="authShow"
+          type="link"
+          @click="
+            () => {
+              deleteAction(record);
+            }
+          "
+          >删除</Button
+        >
       </template>
-    </Table>
-    <Modal
-      :mask-closable="false"
-      :destroy-on-close="true"
-      :title="drawerInfo.title"
-      @cancel="drawerOnClose"
-      @ok="submit"
-      width="60%"
-      :visible="drawerInfo.visible"
-    >
-      <Form :labelCol="{ span: 4 }">
-        <FormItem label="客户姓名" v-bind="validateInfos.name">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.name"
-          />
-        </FormItem>
+    </template>
+  </Table>
+  <Modal
+    :mask-closable="false"
+    :destroy-on-close="true"
+    :title="drawerInfo.title"
+    @cancel="drawerOnClose"
+    @ok="submit"
+    width="60%"
+    :visible="drawerInfo.visible"
+  >
+    <Form :labelCol="{ span: 4 }">
+      <FormItem label="客户姓名" v-bind="validateInfos.name">
+        <Input
+          :disabled="drawerInfo.type === 'scan'"
+          placeholder="请输入"
+          allowClear
+          v-model:value="drawerInfo.item.name"
+        />
+      </FormItem>
 
-        <FormItem label="客户电话" v-bind="validateInfos.mobile">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.mobile"
-          />
-        </FormItem>
-        <FormItem label="性别" v-bind="validateInfos.sex">
-          <Select
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
-            v-model:value="drawerInfo.item.sex"
-          >
-            <SelectOption :key="1">男</SelectOption>
-            <SelectOption :key="2">女</SelectOption>
-          </Select>
-        </FormItem>
+      <FormItem label="客户电话" v-bind="validateInfos.mobile">
+        <Input
+          :disabled="drawerInfo.type === 'scan'"
+          placeholder="请输入"
+          allowClear
+          v-model:value="drawerInfo.item.mobile"
+        />
+      </FormItem>
+      <FormItem label="性别" v-bind="validateInfos.sex">
+        <Select
+          :disabled="drawerInfo.type === 'scan'"
+          placeholder="请选择"
+          v-model:value="drawerInfo.item.sex"
+        >
+          <SelectOption :key="1">男</SelectOption>
+          <SelectOption :key="2">女</SelectOption>
+        </Select>
+      </FormItem>
 
-        <FormItem label="证件类型" v-bind="validateInfos.documentType">
-          <Select
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
-            @change="documentChange"
-            v-model:value="drawerInfo.item.documentType"
-          >
-            <SelectOption :key="1">身份证</SelectOption>
-            <SelectOption :key="2">护照</SelectOption>
-            <SelectOption :key="3">军官证</SelectOption>
-            <SelectOption :key="4">港澳通行证</SelectOption>
-            <SelectOption :key="5">台湾通行证</SelectOption>
-          </Select>
-        </FormItem>
+      <FormItem label="证件类型" v-bind="validateInfos.documentType">
+        <Select
+          :disabled="drawerInfo.type === 'scan'"
+          placeholder="请选择"
+          @change="documentChange"
+          v-model:value="drawerInfo.item.documentType"
+        >
+          <SelectOption :key="1">身份证</SelectOption>
+          <SelectOption :key="2">护照</SelectOption>
+          <SelectOption :key="3">军官证</SelectOption>
+          <SelectOption :key="4">港澳通行证</SelectOption>
+          <SelectOption :key="5">台湾通行证</SelectOption>
+        </Select>
+      </FormItem>
 
-        <FormItem label="证件号码" v-bind="validateInfos.documentNumber">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            @change="documentChange"
-            v-model:value="drawerInfo.item.documentNumber"
-          />
-        </FormItem>
+      <FormItem label="证件号码" v-bind="validateInfos.documentNumber">
+        <Input
+          :disabled="drawerInfo.type === 'scan'"
+          placeholder="请输入"
+          allowClear
+          @change="documentChange"
+          v-model:value="drawerInfo.item.documentNumber"
+        />
+      </FormItem>
 
-        <FormItem label="出生日期" v-bind="validateInfos.birth">
-          <DatePicker
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
-            allowClear
-            v-model:value="datePickerValue"
-            @change="birthChange"
-          />
-        </FormItem>
+      <FormItem label="出生日期" v-bind="validateInfos.birth">
+        <DatePicker
+          :disabled="drawerInfo.type === 'scan'"
+          placeholder="请选择"
+          allowClear
+          v-model:value="datePickerValue"
+          @change="birthChange"
+        />
+      </FormItem>
 
-        <FormItem label="年龄" v-bind="validateInfos.age">
-          <InputNumber
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            min="1"
-            :precision="0"
-            v-model:value="drawerInfo.item.age"
-          />
-        </FormItem>
-        <FormItem label="客户来源" v-bind="validateInfos.sourceId">
-          <Select
-            placeholder="请选择"
-            v-model:value="drawerInfo.item.sourceId"
-            :disabled="drawerInfo.type === 'scan'"
-          >
-            <SelectOption v-for="item in customerSourceList" :key="item.id">{{
-              item.name
-            }}</SelectOption>
-          </Select>
-        </FormItem>
+      <FormItem label="年龄" v-bind="validateInfos.age">
+        <InputNumber
+          :disabled="drawerInfo.type === 'scan'"
+          placeholder="请输入"
+          allowClear
+          min="1"
+          :precision="0"
+          v-model:value="drawerInfo.item.age"
+        />
+      </FormItem>
+      <FormItem label="客户来源" v-bind="validateInfos.sourceId">
+        <Select
+          placeholder="请选择"
+          v-model:value="drawerInfo.item.sourceId"
+          :disabled="drawerInfo.type === 'scan'"
+        >
+          <SelectOption v-for="item in customerSourceList" :key="item.id">{{
+            item.name
+          }}</SelectOption>
+        </Select>
+      </FormItem>
 
-        <FormItem label="所属分组" v-bind="validateInfos.groupId">
-          <Select
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
-            v-model:value="drawerInfo.item.groupId"
-          >
-            <SelectOption v-for="item in customerGroupList" :key="item.id">{{
-              item.name
-            }}</SelectOption>
-          </Select>
-        </FormItem>
+      <FormItem label="所属分组" v-bind="validateInfos.groupId">
+        <Select
+          :disabled="drawerInfo.type === 'scan'"
+          placeholder="请选择"
+          v-model:value="drawerInfo.item.groupId"
+        >
+          <SelectOption v-for="item in customerGroupList" :key="item.id">{{
+            item.name
+          }}</SelectOption>
+        </Select>
+      </FormItem>
 
-        <FormItem label="联系地址" v-bind="validateInfos.contactAddress">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.contactAddress"
-          />
-        </FormItem>
+      <FormItem label="联系地址" v-bind="validateInfos.contactAddress">
+        <Input
+          :disabled="drawerInfo.type === 'scan'"
+          placeholder="请输入"
+          allowClear
+          v-model:value="drawerInfo.item.contactAddress"
+        />
+      </FormItem>
 
-        <FormItem label="备注">
-          <TextArea
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.remark"
-          />
-        </FormItem>
-      </Form>
-    </Modal>
+      <FormItem label="备注">
+        <TextArea
+          :disabled="drawerInfo.type === 'scan'"
+          placeholder="请输入"
+          allowClear
+          v-model:value="drawerInfo.item.remark"
+        />
+      </FormItem>
+    </Form>
+  </Modal>
 
-    <Modal
-      :mask-closable="false"
-      :destroy-on-close="true"
-      title="客户等级"
-      @cancel="drawerOnClose"
-      @ok="levelSubmit"
-      width="60%"
-      :visible="levelInfo.visible"
-    >
-      <Form :labelCol="{ span: 4 }">
-        <FormItem label="客户等级">
-          <Select placeholder="请选择" v-model:value="levelInfo.level">
-            <SelectOption v-for="item in customerLevelList" :key="item.id">{{
-              item.name
-            }}</SelectOption>
-          </Select>
-        </FormItem>
-      </Form>
-    </Modal>
+  <Modal
+    :mask-closable="false"
+    :destroy-on-close="true"
+    title="客户等级"
+    @cancel="drawerOnClose"
+    @ok="levelSubmit"
+    width="60%"
+    :visible="levelInfo.visible"
+  >
+    <Form :labelCol="{ span: 4 }">
+      <FormItem label="客户等级">
+        <Select placeholder="请选择" v-model:value="levelInfo.level">
+          <SelectOption v-for="item in customerLevelList" :key="item.id">{{
+            item.name
+          }}</SelectOption>
+        </Select>
+      </FormItem>
+    </Form>
+  </Modal>
 </template>
 <script lang="ts">
   import { defineComponent, ref, onMounted, createVNode, computed, reactive, toRaw } from 'vue';
@@ -360,7 +353,7 @@
         showSizeChanger: false,
       }));
       const customerListReq = async (pageNum: number) => {
-        const res = await getCustomerPage({ ...searchInfo.value, resource: 1, pageNum });
+        const res = await getCustomerPage({ ...searchInfo.value, resource: 1, type: 1, pageNum });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
@@ -606,9 +599,9 @@
         validate().then(async () => {
           let res;
           if (drawerInfo.value.type === 'add') {
-            res = await saveCustomer({ ...drawerInfo.value.item, level: undefined });
+            res = await saveCustomer({ ...drawerInfo.value.item, type: 1, level: undefined });
           } else {
-            res = await updateCustomer({ ...drawerInfo.value.item, level: undefined });
+            res = await updateCustomer({ ...drawerInfo.value.item, type: 1, level: undefined });
           }
           if (res) {
             message.success(drawerInfo.value.type === 'add' ? '添加客户成功' : '修改用户信息成功');
@@ -651,6 +644,7 @@
           ids: pageInfo.value.dataSource.map((item) => item.id).join(','),
           ...searchInfo.value,
           resource: 1,
+          type: 1,
           pageNum: pageInfo.value.current,
         };
         let aa = '';

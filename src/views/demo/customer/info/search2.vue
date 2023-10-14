@@ -67,7 +67,6 @@
           >客户等级</Button
         >
         <Button
-          v-if="record.editRight"
           type="link"
           @click="
             () => {
@@ -77,7 +76,7 @@
           >编辑</Button
         >
         <Button
-          v-if="record.editRight"
+          v-if="authShow"
           type="link"
           @click="
             () => {
@@ -108,58 +107,53 @@
         />
       </FormItem>
 
-      <FormItem label="统一社会信用代码" v-bind="validateInfos.mobile">
+      <FormItem label="统一社会信用代码" v-bind="validateInfos.uscc">
         <Input
           :disabled="drawerInfo.type === 'scan'"
           placeholder="请输入"
           allowClear
-          v-model:value="drawerInfo.item.mobile"
+          v-model:value="drawerInfo.item.uscc"
         />
       </FormItem>
 
-      <FormItem label="联系人" v-bind="validateInfos.documentNumber">
+      <FormItem label="联系人">
         <Input
           :disabled="drawerInfo.type === 'scan'"
           placeholder="请输入"
           allowClear
-          @change="documentChange"
-          v-model:value="drawerInfo.item.documentNumber"
+          v-model:value="drawerInfo.item.contactName"
         />
       </FormItem>
-      <FormItem label="联系方式" v-bind="validateInfos.documentNumber">
+      <FormItem label="联系方式">
         <Input
           :disabled="drawerInfo.type === 'scan'"
           placeholder="请输入"
           allowClear
-          @change="documentChange"
-          v-model:value="drawerInfo.item.documentNumber"
+          v-model:value="drawerInfo.item.contactMobile"
         />
       </FormItem>
-      <FormItem label="联系地址" v-bind="validateInfos.documentNumber">
+      <FormItem label="联系地址">
         <Input
           :disabled="drawerInfo.type === 'scan'"
           placeholder="请输入"
           allowClear
-          @change="documentChange"
-          v-model:value="drawerInfo.item.documentNumber"
+          v-model:value="drawerInfo.item.contactAddress"
         />
       </FormItem>
-      <FormItem label="银行开户行" v-bind="validateInfos.documentNumber">
+      <FormItem label="银行开户行">
         <Input
           :disabled="drawerInfo.type === 'scan'"
           placeholder="请输入"
           allowClear
-          @change="documentChange"
-          v-model:value="drawerInfo.item.documentNumber"
+          v-model:value="drawerInfo.item.dpositBank"
         />
       </FormItem>
-      <FormItem label="银行账号" v-bind="validateInfos.documentNumber">
+      <FormItem label="银行账号">
         <Input
           :disabled="drawerInfo.type === 'scan'"
           placeholder="请输入"
           allowClear
-          @change="documentChange"
-          v-model:value="drawerInfo.item.documentNumber"
+          v-model:value="drawerInfo.item.bankAccount"
         />
       </FormItem>
 
@@ -220,17 +214,7 @@
 </template>
 <script lang="ts">
   import { defineComponent, ref, onMounted, createVNode, computed, reactive, toRaw } from 'vue';
-  import {
-    Table,
-    Form,
-    Input,
-    Button,
-    Modal,
-    Select,
-    InputNumber,
-    DatePicker,
-    message,
-  } from 'ant-design-vue';
+  import { Table, Form, Input, Button, Modal, Select, message } from 'ant-design-vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import {
     getCustomerPage,
@@ -246,8 +230,6 @@
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { CustomerInfo, CustomerGroupInfo, CustomerSourceInfo } from '/@/api/demo/model/customer';
-  import dayjs, { Dayjs } from 'dayjs';
-  import { sexMap, docTypeMap } from '/@/views/const';
   import { useRouter } from 'vue-router';
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
@@ -266,9 +248,7 @@
       Modal,
       Select,
       SelectOption,
-      InputNumber,
       ExclamationCircleOutlined,
-      DatePicker,
       TextArea,
     },
     setup() {
@@ -281,7 +261,6 @@
         name: undefined,
         groupId: undefined,
         sourceId: undefined,
-        documentNumber: undefined,
       });
       const drawerInfo = ref<DrawerItemType<any>>({
         visible: false,
@@ -289,18 +268,16 @@
         //@ts-ignore
         item: {
           id: undefined,
-          age: undefined,
-          birth: undefined,
-          contactAddress: undefined,
-          documentNumber: undefined,
-          documentType: undefined,
-          groupId: undefined,
-          mobile: undefined,
           name: undefined,
+          uscc: undefined,
+          contactName: undefined,
+          contactMobile: undefined,
+          contactAddress: undefined,
+          dpositBank: undefined,
+          bankAccount: undefined,
+          groupId: undefined,
           remark: undefined,
-          sex: undefined,
           sourceId: undefined,
-          tag: undefined,
         },
       });
 
@@ -310,7 +287,6 @@
         id: undefined,
       });
 
-      const datePickerValue = ref<Dayjs>();
       const pageInfo = ref<PageListInfo<CustomerInfo>>({
         total: 0,
         current: 1,
@@ -328,7 +304,7 @@
         showSizeChanger: false,
       }));
       const customerListReq = async (pageNum: number) => {
-        const res = await getCustomerPage({ ...searchInfo.value, resource: 1, pageNum });
+        const res = await getCustomerPage({ ...searchInfo.value, resource: 1, type: 2, pageNum });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
@@ -339,7 +315,6 @@
         searchInfo.value.name = undefined;
         searchInfo.value.groupId = undefined;
         searchInfo.value.sourceId = undefined;
-        searchInfo.value.documentNumber = undefined;
         customerListReq(1);
       };
       const searchAction = () => {
@@ -365,19 +340,18 @@
           },
           {
             title: '统一社会信用代码',
-            dataIndex: 'mobile',
+            dataIndex: 'uscc',
             width: 140,
           },
           {
             title: '联系人',
-            dataIndex: 'sex',
-            width: 70,
-            customRender: (state) => sexMap[state.record.sex as number],
+            dataIndex: 'contactName',
+            width: 120,
           },
           {
             title: '联系方式',
-            dataIndex: 'documentType',
-            width: 120,
+            dataIndex: 'contactMobile',
+            width: 180,
           },
           {
             title: '客户来源',
@@ -402,6 +376,13 @@
             },
           },
         ];
+        if (authShow.value) {
+          t.push({
+            title: '客户等级',
+            dataIndex: 'levelName',
+            width: 120,
+          });
+        }
         t.push({
           title: '操作',
           dataIndex: 'operation',
@@ -438,7 +419,6 @@
           Object.keys(drawerInfo.value.item).forEach((key) => {
             drawerInfo.value.item[key] = res[key];
           });
-          if (item.birth) datePickerValue.value = dayjs(res.birth, 'YYYY-MM-DD');
         }
       };
       const levelAction = (item: CustomerInfo) => {
@@ -475,50 +455,19 @@
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = undefined;
         });
-        datePickerValue.value = undefined;
       };
 
       const rulesRef = reactive({
         name: [
           {
             required: true,
-            message: '请输入名字',
+            message: '请输入企业名称',
           },
         ],
-        mobile: [
+        uscc: [
           {
             required: true,
-            message: '请输入电话',
-          },
-        ],
-        sex: [
-          {
-            required: true,
-            message: '请选择性别',
-          },
-        ],
-        documentType: [
-          {
-            required: true,
-            message: '请选择证件类型',
-          },
-        ],
-        documentNumber: [
-          {
-            required: true,
-            message: '请输入证件号码',
-          },
-        ],
-        age: [
-          {
-            required: true,
-            message: '请输入年龄',
-          },
-        ],
-        birth: [
-          {
-            required: true,
-            message: '请输入出生日期',
+            message: '请输入统一社会信用代码',
           },
         ],
         groupId: [
@@ -533,21 +482,15 @@
             message: '请选择来源',
           },
         ],
-        contactAddress: [
-          {
-            required: true,
-            message: '请输入联系地址',
-          },
-        ],
       });
       const { validate, validateInfos } = useForm(drawerInfo.value.item, rulesRef);
       const submit = async () => {
         validate().then(async () => {
           let res;
           if (drawerInfo.value.type === 'add') {
-            res = await saveCustomer({ ...drawerInfo.value.item, level: undefined });
+            res = await saveCustomer({ ...drawerInfo.value.item, type: 2, level: undefined });
           } else {
-            res = await updateCustomer({ ...drawerInfo.value.item, level: undefined });
+            res = await updateCustomer({ ...drawerInfo.value.item, type: 2, level: undefined });
           }
           if (res) {
             message.success(drawerInfo.value.type === 'add' ? '添加客户成功' : '修改用户信息成功');
@@ -569,27 +512,12 @@
           drawerOnClose();
         }
       };
-
-      const birthChange = () => {
-        if (datePickerValue.value)
-          drawerInfo.value.item.birth = dayjs(datePickerValue.value).format('YYYY-MM-DD');
-      };
-      const documentChange = () => {
-        if (
-          drawerInfo.value.item.documentType === 1 &&
-          drawerInfo.value.item.documentNumber?.length === 18
-        ) {
-          const t = drawerInfo.value.item.documentNumber.slice(6, 14);
-          datePickerValue.value = dayjs(t, 'YYYYMMDD');
-          drawerInfo.value.item.birth = datePickerValue.value.format('YYYY-MM-DD');
-          drawerInfo.value.item.age = dayjs().year() - Number(t.slice(0, 4));
-        }
-      };
       const customerExport = async () => {
         const t = {
           ids: pageInfo.value.dataSource.map((item) => item.id).join(','),
           ...searchInfo.value,
           resource: 1,
+          type: 2,
           pageNum: pageInfo.value.current,
         };
         let aa = '';
@@ -610,7 +538,6 @@
         pagination,
         pageInfo,
         drawerInfo,
-        datePickerValue,
         searchInfo,
         boardCustomer,
         addCustomer,
@@ -622,8 +549,6 @@
         submit,
         customerGroupList,
         customerSourceList,
-        documentChange,
-        birthChange,
         validateInfos,
         authShow,
         customerExport,
