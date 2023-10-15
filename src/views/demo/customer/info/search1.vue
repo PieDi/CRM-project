@@ -416,12 +416,6 @@
             dataIndex: 'age',
           },
           {
-            title: '联系地址',
-            width: 200,
-            ellipsis: true,
-            dataIndex: 'contactAddress',
-          },
-          {
             title: '客户来源',
             dataIndex: 'sourceId',
             width: 200,
@@ -530,6 +524,7 @@
           drawerInfo.value.item[key] = undefined;
         });
         datePickerValue.value = undefined;
+        clearValidate()
       };
 
       const rulesRef = reactive({
@@ -594,7 +589,7 @@
           },
         ],
       });
-      const { validate, validateInfos } = useForm(drawerInfo.value.item, rulesRef);
+      const { validate, validateInfos, clearValidate } = useForm(drawerInfo.value.item, rulesRef);
       const submit = async () => {
         validate().then(async () => {
           let res;

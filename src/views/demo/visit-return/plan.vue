@@ -34,7 +34,7 @@
             <Button v-if="record.status === 1 && record.editRight" type="link" @click="drawerEdit(record)">编辑</Button>
             <Button v-if="record.editRight" type="link" danger @click="deletePlan(record)">删除</Button>
             <Button
-              v-if="record.status === 1"
+              v-if="record.status === 1 && record.editRight"
               type="link"
               style="margin-left: 10px"
               @click="
@@ -282,6 +282,11 @@
           dataIndex: 'visitContent',
           width: 200,
           ellipsis: true,
+        },
+        {
+          title: '经办人',
+          dataIndex: 'agent',
+          width: 100,
         },
         {
           title: '操作',

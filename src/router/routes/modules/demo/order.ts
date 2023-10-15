@@ -29,7 +29,7 @@ const Order: AppRouteModule = {
       component: () => import('/@/views/auth/super/ns-order.vue'),
       meta: {
         title: '非标订单管理',
-        roles: [RoleEnum.SUPER],
+        roles: [RoleEnum.SUPER, RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
       },
     },
     {

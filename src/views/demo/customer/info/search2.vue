@@ -455,6 +455,7 @@
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = undefined;
         });
+        clearValidate()
       };
 
       const rulesRef = reactive({
@@ -483,7 +484,7 @@
           },
         ],
       });
-      const { validate, validateInfos } = useForm(drawerInfo.value.item, rulesRef);
+      const { validate, validateInfos, clearValidate } = useForm(drawerInfo.value.item, rulesRef);
       const submit = async () => {
         validate().then(async () => {
           let res;
