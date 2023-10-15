@@ -22,7 +22,7 @@ enum Api {
   ProductOutDelete = '/product/in/delete',
 }
 
-export const getProductList = (params?: { type?: number; name: string }) =>
+export const getProductList = (params?: any) =>
   defHttp.post<ProductInfo[]>({ url: Api.ProductList, params });
 
 export const getProductPage = (params: { name?: string; number?: number; pageNum: number }) =>

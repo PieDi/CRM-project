@@ -33,7 +33,7 @@
   >
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
-        <template v-if="nsOrder">
+        <!-- <template v-if="nsOrder">
           <Button
             v-if="record.status === 1"
             type="link"
@@ -54,7 +54,7 @@
             "
             >审核</Button
           >
-        </template>
+        </template> -->
         <Button
           type="link"
           @click="

@@ -21,7 +21,7 @@
         <img src="/src/assets/images/medicine-5.png" />
         <span class="tips">附件:</span>
         <div class="link" :style="{ color: '#007AFF' }" @click="() => {
-          handlePreView(diseaseObject.diseaseBasic.id as number, 1)
+          handlePreView(diseaseObject.diseaseBasic.id as number, 0)
         }">查看附件</div>
       </div>
     </div>

@@ -54,7 +54,7 @@
             >查看</Button
           >
 
-          <template v-if="record.productType === 2">
+          <!-- <template v-if="record.productType === 2">
             <Button
               type="link"
               v-if="record.status === 1"
@@ -77,8 +77,8 @@
               "
               >编辑</Button
             >
-          </template>
-          <Button
+          </template> -->
+          <!-- <Button
             v-if="authShow && record.status === 1"
             type="link"
             @click="
@@ -97,7 +97,7 @@
               }
             "
             >审核</Button
-          >
+          > -->
           <Button
             v-if="authShow"
             type="link"
@@ -471,7 +471,7 @@
       };
       const pDataSource = ref<Array<ProductInfo>>([]);
       const productReq = async () => {
-        const res = await getProductList();
+        const res = await getProductList({type: 1});
         if (res) {
           pDataSource.value = res;
         }
@@ -482,6 +482,7 @@
         const res = await getCustomerOrderPage({
           ...searchInfo.value,
           pageNum,
+          productType: 1,
           customerId: route?.query.customerId as string,
           id: route?.query.id as string,
         });
@@ -529,18 +530,18 @@
           dataIndex: 'orderNumber',
           width: 200,
         },
-        {
-          title: '订单来源',
-          dataIndex: 'source',
-          width: 120,
-          customRender: (state) => orderSourceMap[state.record.source as number],
-        },
-        {
-          title: '订单状态',
-          dataIndex: 'status',
-          width: 120,
-          customRender: (state) => orderStatusMap[state.record.status as number],
-        },
+        // {
+        //   title: '订单来源',
+        //   dataIndex: 'source',
+        //   width: 120,
+        //   customRender: (state) => orderSourceMap[state.record.source as number],
+        // },
+        // {
+        //   title: '订单状态',
+        //   dataIndex: 'status',
+        //   width: 120,
+        //   customRender: (state) => orderStatusMap[state.record.status as number],
+        // },
         {
           title: '订单金额',
           width: 180,
@@ -550,6 +551,10 @@
           title: '经办人',
           dataIndex: 'agent',
           width: 100,
+        },
+        {
+          title: '其他',
+          dataIndex: 'remark',
         },
         {
           title: '操作',
@@ -718,9 +723,9 @@
       const orderExport = () => {
         const t = {
           ids: pageInfo.value.dataSource.map((item) => item.id).join(','),
-          ...searchInfo.value,
-          resource: 1,
-          pageNum: pageInfo.value.current,
+          // ...searchInfo.value,
+          // resource: 1,
+          // pageNum: pageInfo.value.current,
         };
         let aa = '';
         Object.keys(t).forEach((key) => {

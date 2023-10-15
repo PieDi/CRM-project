@@ -227,7 +227,7 @@ export default defineComponent({
 
       .info-basic {
         position: relative;
-        width: 336px;
+        width: 280px;
         // height: 646px;
         background: #fff;
         border-radius: 8px;
