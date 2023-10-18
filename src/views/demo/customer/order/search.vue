@@ -19,13 +19,6 @@
             v-model:value="searchInfo.orderNumber"
           />
         </FormItem>
-        <!-- <FormItem label="订单来源" style="margin-left: 10px">
-          <Select   placeholder="请选择" :style="{ width: '150px' }"  v-model:value="searchInfo.source">
-            <SelectOption value="1">CRM</SelectOption>
-            <SelectOption value="2">小程序</SelectOption>
-          </Select>
-        </FormItem> -->
-
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
       </div>
@@ -721,23 +714,9 @@
         return option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0;
       };
       const orderExport = () => {
-        const t = {
-          ids: pageInfo.value.dataSource.map((item) => item.id).join(','),
-          // ...searchInfo.value,
-          // resource: 1,
-          // pageNum: pageInfo.value.current,
-        };
-        let aa = '';
-        Object.keys(t).forEach((key) => {
-          if (t[key]) {
-            aa += `${key}=${t[key]}&`;
-          }
-        });
+        const t = pageInfo.value.dataSource.map((item) => item.id).join(',')
         window.open(
-          `http://129.204.202.223:8001/basic-api/customer/order/exportOrder?${aa.slice(
-            0,
-            aa.length - 1,
-          )}`,
+          `http://129.204.202.223:8001/basic-api/customer/order/exportOrder?ids=${t}`,
         );
       };
       return {
