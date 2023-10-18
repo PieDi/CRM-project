@@ -514,24 +514,9 @@
         }
       };
       const customerExport = async () => {
-        const t = {
-          ids: pageInfo.value.dataSource.map((item) => item.id).join(','),
-          ...searchInfo.value,
-          resource: 1,
-          type: 2,
-          pageNum: pageInfo.value.current,
-        };
-        let aa = '';
-        Object.keys(t).forEach((key) => {
-          if (t[key]) {
-            aa += `${key}=${t[key]}&`;
-          }
-        });
+        const t = pageInfo.value.dataSource.map((item) => item.id).join(',')
         window.open(
-          `http://129.204.202.223:8001/basic-api/customer/basic/export?${aa.slice(
-            0,
-            aa.length - 1,
-          )}`,
+          `http://129.204.202.223:8001/basic-api/customer/basic/export?ids=${t}`,
         );
       };
       return {

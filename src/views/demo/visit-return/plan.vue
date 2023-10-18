@@ -477,7 +477,8 @@
       };
 
       const exportPlan = async () => {
-        window.open('http://129.204.202.223:8001/basic-api/customer/returnVisit/export')
+        const t = pageInfo.value.dataSource.map((item) => item.id).join(',')
+        window.open(`http://129.204.202.223:8001/basic-api/customer/returnVisit/export?ids=${t}`)
       };
 
       return {
