@@ -520,8 +520,10 @@
         }
       };
       const customerExport = async () => {
-        const t = pageInfo.value.dataSource.map((item) => item.id).join(',');
-        window.open(`http://129.204.202.223:8001/basic-api/customer/basic/export?ids=${t}&type=2`);
+        const t = pageInfo.value.dataSource.map((item) => item.id).join(',')
+        window.open(
+          `http://129.204.202.223:8001/basic-api/customer/basic/export?ids=${t}&type=2`,
+        );
       };
       return {
         columns,
