@@ -18,7 +18,7 @@ const statisticsManage: AppRouteModule = {
       name: 'StatisticsOrder',
       component: () => import('@/views/demo/statistics/order-statistics.vue'),
       meta: {
-        title: '订单统计',
+        title: '客户订单统计',
         roles: [RoleEnum.SUPER, RoleEnum.STAFF2,  RoleEnum.STAFF3]
       }
     }

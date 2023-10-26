@@ -9,7 +9,7 @@ const storeServe: AppRouteModule = {
   meta: {
     orderNo: 600,
     icon: 'gg:loadbar-doc',
-    title: '产品管理',
+    title: '采购管理',
     roles: [RoleEnum.SUPER, RoleEnum.STAFF1,  RoleEnum.STAFF3],
   },
   children: [
@@ -18,7 +18,7 @@ const storeServe: AppRouteModule = {
       name: 'SysAuthProductManage',
       component: () => import('/@/views/auth/super/product.vue'),
       meta: {
-        title: '产品信息管理',
+        title: '库存查询',
         roles: [RoleEnum.SUPER, RoleEnum.STAFF1,  RoleEnum.STAFF3]
       },
     },
@@ -27,7 +27,7 @@ const storeServe: AppRouteModule = {
       name: 'StoreIn',
       component: () => import('/@/views/demo/store-serve/in/search.vue'),
       meta: {
-        title: '产品入库管理',
+        title: '库存入库',
         roles: [RoleEnum.SUPER, RoleEnum.STAFF1,  RoleEnum.STAFF3]
       },
     },
@@ -36,7 +36,7 @@ const storeServe: AppRouteModule = {
       name: 'StoreOut',
       component: () => import('/@/views/demo/store-serve/out/search.vue'),
       meta: {
-        title: '产品出库管理',
+        title: '库存出库',
         roles: [RoleEnum.SUPER, RoleEnum.STAFF1,  RoleEnum.STAFF3]
       },
     },

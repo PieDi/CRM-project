@@ -1,8 +1,8 @@
 <template>
   <PageWrapper title="小程序客服委派">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
-      <div :style="{ display: 'flex' }"
-        ><FormItem label="客户姓名">
+      <div :style="{ display: 'flex' }">
+        <FormItem label="客户姓名">
           <Input
             placeholder="请输入"
             allowClear
@@ -20,9 +20,8 @@
           />
         </FormItem>
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
-        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
-      >
-      <!-- <Button type="primary" style="margin-left: 10px" @click="addCustomer">新增客户</Button> -->
+        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button>
+      </div>
     </div>
 
     <Table
@@ -46,42 +45,36 @@
         </template>
       </template>
     </Table>
-    <Drawer
+    <Modal
+      :mask-closable="false"
       :destroy-on-close="true"
       :title="drawerInfo.title"
-      placement="right"
-      @close="drawerOnClose"
+      @cancel="drawerOnClose"
+      @ok="submit"
+      width="50%"
       :visible="drawerInfo.visible"
-      :pagination="pagination"
     >
-      <template #extra>
-        <Button type="primary" @click="submit">提交</Button>
-      </template>
-
-      <Form :labelCol="{ span: 6 }">
+      <Form :labelCol="{ span: 4 }">
         <FormItem label="委派客服">
-          <Select
-            placeholder="请选择"
-            v-model:value="drawerInfo.item.staffId"
-          >
+          <Select placeholder="请选择" v-model:value="drawerInfo.item.staffId">
             <SelectOption v-for="item in staffSourceData" :key="item.userId">{{
               item.realName
             }}</SelectOption>
           </Select>
         </FormItem>
       </Form>
-    </Drawer>
+    </Modal>
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, onMounted, computed } from 'vue';
+  import { defineComponent, ref, onMounted, computed, toRaw } from 'vue';
   import { PageWrapper } from '/@/components/Page';
   import {
     Table,
     Form,
     Input,
     Button,
-    Drawer,
+    Modal,
     Select,
     InputNumber,
     DatePicker,
@@ -89,12 +82,13 @@
   } from 'ant-design-vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import { getCustomerPage, assignCustomer } from '/@/api/demo/customer';
-  import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { CustomerInfo } from '/@/api/demo/model/customer';
   import { getUserList } from '/@/api/sys/user';
   import { UserInfo } from '/#/store';
   import { sexMap, docTypeMap } from '/@/views/const';
+  import { useUserStore } from '/@/store/modules/user';
+  import { RoleEnum } from '/@/enums/roleEnum';
 
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
@@ -107,7 +101,7 @@
       FormItem,
       Input,
       Button,
-      Drawer,
+      Modal,
       Select,
       SelectOption,
       InputNumber,
@@ -116,6 +110,11 @@
       TextArea,
     },
     setup() {
+      const userStore = useUserStore();
+      const roleList = toRaw(userStore.getRoleList) || [];
+      const authShow = computed(() => {
+        return roleList.some((role) => [RoleEnum.SUPER].includes(role));
+      }).value;
       const searchInfo = ref({
         name: undefined,
         documentNumber: undefined,
@@ -156,11 +155,11 @@
           pageInfo.value.dataSource = res.data;
         }
       };
-      const resetAction = () => { 
-        searchInfo.value.name = undefined
-        searchInfo.value.documentNumber = undefined
+      const resetAction = () => {
+        searchInfo.value.name = undefined;
+        searchInfo.value.documentNumber = undefined;
         customerListReq(1);
-      }
+      };
       const searchAction = () => {
         customerListReq(1);
       };
@@ -168,38 +167,47 @@
         customerListReq(1);
       });
 
-      const columns: ColumnsType<CustomerInfo> = [
-        {
-          title: '姓名',
-          dataIndex: 'name',
-        },
-        {
-          title: '电话',
-          dataIndex: 'mobile',
-        },
-        {
-          title: '性别',
-          dataIndex: 'sex',
-          customRender: (state) => sexMap[state.record.sex as number],
-        },
-        {
-          title: '证件类型',
-          dataIndex: 'documentType',
-          customRender: (state) => docTypeMap[state.record.documentType as number],
-        },
-        {
-          title: '证件号码',
-          dataIndex: 'documentNumber',
-        },
-        {
-          title: '年龄',
-          dataIndex: 'age',
-        },
-        {
+      const columns = () => {
+        const t = [
+          {
+            title: '姓名',
+            dataIndex: 'name',
+          },
+          {
+            title: '电话',
+            dataIndex: 'mobile',
+          },
+          {
+            title: '性别',
+            dataIndex: 'sex',
+            customRender: (state) => sexMap[state.record.sex as number],
+          },
+          {
+            title: '证件类型',
+            dataIndex: 'documentType',
+            customRender: (state) => docTypeMap[state.record.documentType as number],
+          },
+          {
+            title: '证件号码',
+            dataIndex: 'documentNumber',
+          },
+          {
+            title: '年龄',
+            dataIndex: 'age',
+          },
+        ];
+        if (authShow) {
+          t.push({
+            title: '委派客服',
+            dataIndex: 'agent',
+          });
+        }
+        t.push({
           title: '操作',
           dataIndex: 'operation',
-        },
-      ];
+        });
+        return t;
+      };
 
       const staffSourceData = ref<UserInfo[]>([]);
       const userListReq = async () => {
@@ -231,12 +239,12 @@
         if (res) {
           message.success('委派员工成功');
           customerListReq(pageInfo.value.current);
-          drawerOnClose()
+          drawerOnClose();
         }
       };
 
       return {
-        columns,
+        columns: columns(),
         pagination,
         pageInfo,
         drawerInfo,

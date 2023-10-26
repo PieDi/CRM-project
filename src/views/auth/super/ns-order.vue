@@ -53,51 +53,6 @@
             "
             >查看</Button
           >
-
-          <!-- <template v-if="record.productType === 2">
-            <Button
-              type="link"
-              v-if="record.status === 1"
-              @click="
-                () => {
-                  drawerEdit(record);
-                }
-              "
-              >编辑</Button
-            ></template
-          >
-          <template v-else>
-            <Button
-              type="link"
-              v-if="record.status === 2"
-              @click="
-                () => {
-                  drawerEdit(record);
-                }
-              "
-              >编辑</Button
-            >
-          </template> -->
-          <!-- <Button
-            v-if="authShow && record.status === 1"
-            type="link"
-            @click="
-              () => {
-                authOrder(record);
-              }
-            "
-            >授权</Button
-          >
-          <Button
-            v-if="authShow && record.status === 2"
-            type="link"
-            @click="
-              () => {
-                auditOrder(record);
-              }
-            "
-            >审核</Button
-          > -->
           <Button
             v-if="authShow"
             type="link"
@@ -117,7 +72,7 @@
       :title="drawerInfo.title"
       @cancel="drawerOnClose"
       @ok="submit"
-      width="60%"
+      width="50%"
       :visible="drawerInfo.visible"
     >
       <Form :labelCol="{ span: 4 }" ref="formRef" :model="drawerInfo.item">

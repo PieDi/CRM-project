@@ -10,7 +10,7 @@ const Order: AppRouteModule = {
   meta: {
     orderNo: 200,
     icon: 'game-icons:abstract-023',
-    title: '客户订单管理',
+    title: '小程序订单管理',
     roles: [RoleEnum.SUPER, RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
   },
   children: [

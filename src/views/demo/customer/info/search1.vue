@@ -51,7 +51,7 @@
     :dataSource="pageInfo.dataSource"
     :bordered="true"
     :pagination="pagination"
-    :scroll="{ x: '100%' }"
+    :scroll="{ x: 'max-content' }"
   >
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
@@ -62,7 +62,7 @@
               boardCustomer(record.id);
             }
           "
-          >查看客户看板</Button
+          >客户信息编辑查看</Button
         >
         <Button
           v-if="authShow"
@@ -75,13 +75,14 @@
           >客户等级</Button
         >
         <Button
+          v-if="authShow"
           type="link"
           @click="
             () => {
               drawerEdit(record);
             }
           "
-          >编辑</Button
+          >销售委派</Button
         >
         <Button
           v-if="authShow"
@@ -449,11 +450,16 @@
             dataIndex: 'levelName',
             width: 120,
           });
+          t.push({
+            title: '销售委派',
+            dataIndex: 'levelName',
+            width: 120,
+          });
         }
         t.push({
           title: '操作',
           dataIndex: 'operation',
-          width: 400,
+          width: 420,
         });
         return t;
       });
@@ -524,7 +530,7 @@
           drawerInfo.value.item[key] = undefined;
         });
         datePickerValue.value = undefined;
-        clearValidate()
+        clearValidate();
       };
 
       const rulesRef = reactive({
