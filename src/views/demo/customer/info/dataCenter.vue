@@ -13,13 +13,17 @@
             <img src="/src/assets/images/vip-tag.png" />
           </div>
           <div class="info-title">基本信息</div>
-          <BasicInfo v-if="boardInfo?.customerBasic" :disease="boardInfo?.customerBasic" />
+          <BasicInfo v-if="boardInfo?.customerBasic" :disease="boardInfo?.customerBasic" :callback="infoCallback" />
         </div>
 
         <div class="disease">
           <div class="block-tip"></div>
-          <div class="info-title" :style="{ marginLeft: '16px' }">客户病史信息</div>
+          <div class="info-title" :style="{ marginLeft: '16px' }">客户病史信息<Button type="link">新增</Button></div>
           <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases" />
+        </div>
+        <div class="data-report">
+          <div class="block-tip"></div>
+          <div class="info-title" :style="{ marginLeft: '16px' }">数据报告<Button type="link">新增</Button></div>
         </div>
       </div>
 
@@ -28,7 +32,10 @@
           <div class="block-tip"></div>
           <div class="info-title" :style="{ marginLeft: '16px' }">客户订单</div>
           <div class="more">
-            <div @click="() => {pushOrder(boardInfo?.customerBasic.id) }">查看全部<img src="/src/assets/images/dis-more.png" /></div>
+            <div @click="() => {
+                pushOrder(boardInfo?.customerBasic.id);
+              }
+              ">查看全部<img src="/src/assets/images/dis-more.png" /></div>
           </div>
           <OrderInfo v-if="boardInfo?.orders" :disease="boardInfo?.orders" />
         </div>
@@ -37,7 +44,10 @@
           <div class="block-tip"></div>
           <div class="info-title" :style="{ marginLeft: '16px' }">回访工作计划</div>
           <div class="more">
-            <div @click="() => {pushVisit(boardInfo?.customerBasic.id) }">查看全部<img src="/src/assets/images/dis-more.png" /></div>
+            <div @click="() => {
+                pushVisit(boardInfo?.customerBasic.id);
+              }
+              ">查看全部<img src="/src/assets/images/dis-more.png" /></div>
           </div>
           <ReturnInfo v-if="boardInfo?.returnVisits" :disease="boardInfo?.returnVisits" />
         </div>
@@ -46,8 +56,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed, unref } from 'vue';
-import { ArrowLeftOutlined } from '@ant-design/icons-vue';
+import { defineComponent, ref, onBeforeMount, unref } from 'vue';
 import { PageWrapper } from '/@/components/Page';
 import {
   Table,
@@ -59,9 +68,6 @@ import {
   InputNumber,
   DatePicker,
 } from 'ant-design-vue';
-import { type PageListInfo } from '/@/views/type';
-import { getCustomerPage, boardCustomer } from '/@/api/demo/customer';
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { CustomerBoard } from '/@/api/demo/model/customer';
 import { useRoute, useRouter } from 'vue-router';
 import { useMultipleTabStore } from '/@/store/modules/multipleTab';
@@ -69,9 +75,8 @@ import Disease from './components/disease.vue';
 import BasicInfo from './components/basicInfo.vue';
 import OrderInfo from './components/orderInfo.vue';
 import ReturnInfo from './components/returnInfo.vue';
-
+import { boardCustomer } from '/@/api/demo/customer';
 const FormItem = Form.Item;
-const SelectOption = Select.Option;
 const TextArea = Input.TextArea;
 export default defineComponent({
   components: {
@@ -83,73 +88,29 @@ export default defineComponent({
     Button,
     Drawer,
     Select,
-    SelectOption,
     InputNumber,
-    ExclamationCircleOutlined,
     DatePicker,
     TextArea,
     Disease,
     BasicInfo,
     OrderInfo,
     ReturnInfo,
-    ArrowLeftOutlined,
   },
   setup() {
     const route = useRoute();
     const boardInfo = ref<CustomerBoard>();
     const customerInfoBoard = async () => {
-      if (route.query?.id ) {
+      if (route.query?.id) {
         const res = await boardCustomer(route.query.id as string);
-        if (res) {
-          boardInfo.value = res;
-        }
+        if (res) boardInfo.value = res;
       }
     };
-    onMounted(() => {
+    onBeforeMount(() => {
       customerInfoBoard();
     });
-
-    const searchInfo = ref({
-      name: undefined,
-      documentNumber: undefined,
-    });
-
-    const pageInfo = ref<PageListInfo<any>>({
-      total: 0,
-      current: 1,
-      dataSource: [],
-    });
-    const pagination = computed(() => ({
-      total: pageInfo.value.total,
-      current: pageInfo.value.current,
-      pageSize: 10,
-      showTotal: (total: number) => `共${total}条`,
-      onChange: (page: number) => {
-        customerListReq(page);
-      },
-      showQuickJumper: false,
-      showSizeChanger: false,
-    }));
-    const customerListReq = async (pageNum: number) => {
-      const res = await getCustomerPage({ ...searchInfo.value, assign: 0, pageNum });
-      if (res) {
-        pageInfo.value.total = res.total;
-        pageInfo.value.current = res.pageNum;
-        pageInfo.value.dataSource = res.data;
-      }
-    };
-    const resetAction = () => {
-      searchInfo.value.name = undefined;
-      searchInfo.value.documentNumber = undefined;
-      customerListReq(1);
-    };
-    const searchAction = () => {
-      customerListReq(1);
-    };
     const router = useRouter();
     const tabStore = useMultipleTabStore();
     const { currentRoute } = router;
-
     function getCurrentTab() {
       const route = unref(currentRoute);
       return tabStore.getTabList.find((item) => item.fullPath === route.fullPath)!;
@@ -158,22 +119,21 @@ export default defineComponent({
       router.back();
       tabStore.closeTab(getCurrentTab(), router);
     };
-    const pushOrder = (customerId) => { 
+    const pushOrder = (customerId) => {
       router.push({ path: '/order/search', query: { customerId } });
-    }
-    const pushVisit = (customerId) => { 
+    };
+    const pushVisit = (customerId) => {
       router.push({ path: '/return-visit/plan', query: { customerId } });
+    };
+    const infoCallback = () => {
+      customerInfoBoard()
     }
     return {
-      pagination,
-      pageInfo,
-      searchInfo,
-      resetAction,
-      searchAction,
       boardInfo,
       goBack,
       pushOrder,
-      pushVisit
+      pushVisit,
+      infoCallback
     };
   },
 });
@@ -204,6 +164,7 @@ export default defineComponent({
     font-size: 16px;
     background: inherit;
     padding: 20px;
+
     .block-tip {
       position: absolute;
       width: 3px;
@@ -228,7 +189,6 @@ export default defineComponent({
       .info-basic {
         position: relative;
         width: 280px;
-        // height: 646px;
         background: #fff;
         border-radius: 8px;
         padding: 10px 16px 20px;
@@ -251,8 +211,16 @@ export default defineComponent({
         flex: 1;
         padding-top: 10px;
         background: #fff;
-        margin-left: 20px;
+        margin: 0 20px;
         border-radius: 8px;
+      }
+
+      .data-report {
+        position: relative;
+        width: 280px;
+        background: #fff;
+        border-radius: 8px;
+        padding: 10px 16px 20px;
       }
     }
 
@@ -267,7 +235,7 @@ export default defineComponent({
         width: 80px;
         height: 22px;
         font-size: 16px;
-        color: #007AFF;
+        color: #007aff;
         line-height: 22px;
       }
 
@@ -315,4 +283,5 @@ export default defineComponent({
   }
 
   // 添加测试信息
-}</style>
+}
+</style>

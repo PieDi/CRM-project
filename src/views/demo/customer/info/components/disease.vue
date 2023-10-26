@@ -232,7 +232,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, PropType } from 'vue';
+import { defineComponent, watch, ref, reactive, PropType } from 'vue';
 import dayjs from 'dayjs';
 import { Button, Table } from 'ant-design-vue';
 import {
@@ -249,7 +249,6 @@ import {
   getCustomerCList,
   boardFileView,
 } from '/@/api/demo/customer';
-
 import ItemTable from './item-table.vue';
 import { useRouter } from 'vue-router';
 
@@ -414,8 +413,12 @@ export default defineComponent({
         res.forEach((url) => window.open(url));
       }
     };
+    const diseaseObject= ref()
+    watch(() => props.disease, () => { 
+      diseaseObject.value =  props.disease[0]
+    }, {immediate: true})
     return {
-      diseaseObject: props.disease[0],
+      diseaseObject,
       modalConfig,
       iCheckType,
       linkClick,
@@ -442,7 +445,7 @@ export default defineComponent({
     padding-left: 24px;
 
     .header {
-      margin-right: 32px;
+      margin-right: 10px;
       font-size: 18px;
       display: flex;
       align-items: center;
@@ -453,7 +456,6 @@ export default defineComponent({
 
       .tips {
         display: inline-block;
-        min-width: 80px;
         margin-right: 5px;
         color: #99a8bf;
       }
@@ -571,10 +573,9 @@ export default defineComponent({
       }
 
       .content+.content {
-        margin-left: 25px;
+        margin-left: 10px;
       }
     }
-
     .bottom-mask {
       position: absolute;
       height: 90px;
