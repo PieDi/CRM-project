@@ -23,6 +23,15 @@ const returnVisit: AppRouteModule = {
         title: '回访工作计划',
         roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3]
       }
+    },
+    {
+      path: 'board',
+      name: 'ReturnListPlan',
+      component: () => import('@/views/demo/visit-return/board.vue'),
+      meta: {
+        title: '回访工作计划看板',
+        roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3]
+      }
     }
   ],
 };

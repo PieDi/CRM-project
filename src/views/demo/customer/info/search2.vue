@@ -43,7 +43,7 @@
     :dataSource="pageInfo.dataSource"
     :bordered="true"
     :pagination="pagination"
-    :scroll="{ x: '100%' }"
+    :scroll="{ x: 'max-content' }"
   >
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
@@ -54,7 +54,7 @@
               boardCustomer(record.id);
             }
           "
-          >查看客户看板</Button
+          >客户信息编辑查看</Button
         >
         <Button
           v-if="authShow"
@@ -67,13 +67,14 @@
           >客户等级</Button
         >
         <Button
+          v-if="authShow"
           type="link"
           @click="
             () => {
               drawerEdit(record);
             }
           "
-          >编辑</Button
+          >销售委派</Button
         >
         <Button
           v-if="authShow"
@@ -336,7 +337,7 @@
           {
             title: '企业名称',
             dataIndex: 'name',
-            width: 100,
+            width: 200,
           },
           {
             title: '统一社会信用代码',
@@ -382,11 +383,16 @@
             dataIndex: 'levelName',
             width: 120,
           });
+          t.push({
+            title: '销售委派',
+            dataIndex: 'levelName',
+            width: 120,
+          });
         }
         t.push({
           title: '操作',
           dataIndex: 'operation',
-          width: 400,
+          width: 420,
         });
         return t;
       });
@@ -455,7 +461,7 @@
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = undefined;
         });
-        clearValidate()
+        clearValidate();
       };
 
       const rulesRef = reactive({
@@ -514,10 +520,8 @@
         }
       };
       const customerExport = async () => {
-        const t = pageInfo.value.dataSource.map((item) => item.id).join(',')
-        window.open(
-          `http://129.204.202.223:8001/basic-api/customer/basic/export?ids=${t}&type=2`,
-        );
+        const t = pageInfo.value.dataSource.map((item) => item.id).join(',');
+        window.open(`http://129.204.202.223:8001/basic-api/customer/basic/export?ids=${t}&type=2`);
       };
       return {
         columns,

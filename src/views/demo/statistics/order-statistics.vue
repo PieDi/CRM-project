@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="订单统计">
+  <PageWrapper title="客户订单统计">
     <div style="display: flex">
       <FormItem label="统计维度">
         <Select

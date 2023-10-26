@@ -185,11 +185,11 @@
           customRender: (state) => roleMap[state.record?.role as string],
         },
         {
-          title: '产品管理',
+          title: '采购管理',
           dataIndex: 'productManage',
         },
         {
-          title: '统计管理',
+          title: '查看统计管理',
           dataIndex: 'statistics',
         },
         {
