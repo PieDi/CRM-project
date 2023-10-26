@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType } from 'vue';
+  import { defineComponent, watch, ref, PropType } from 'vue';
   import dayjs from 'dayjs';
   import { Table, Button } from 'ant-design-vue';
   import { useRouter } from 'vue-router';
@@ -72,12 +72,19 @@
       const iLinkClick = (id: number) => {
         router.push({ path: '/customer/invoice/search', query: { id } });
       };
-
+      const diseaseObject = ref();
+      watch(
+        () => props.disease,
+        () => {
+          diseaseObject.value = props.disease;
+        },
+        { immediate: true },
+      );
       return {
         linkClick,
         cLinkClick,
         iLinkClick,
-        diseaseObject: props.disease,
+        diseaseObject,
         dayjs,
         scanOrder,
         visitTypeMap,

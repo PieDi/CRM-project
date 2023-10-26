@@ -34,13 +34,17 @@
       </div>
       <div class="column-6 column">
         <Tooltip title="查看发票">
-          <div class="link" @click="() => { handlePreView(item.order.id as number, 5) }">查看发票</div>
+          <div class="link" @click="() => { handlePreView(item.order.id as number, 5) }"
+            >查看发票</div
+          >
         </Tooltip>
         <div>客户发票信息</div>
       </div>
       <div class="column-6 column">
         <Tooltip title="查看合同">
-          <div class="link" @click="() => { handlePreView(item.order.id as number, 6) }">查看合同</div>
+          <div class="link" @click="() => { handlePreView(item.order.id as number, 6) }"
+            >查看合同</div
+          >
         </Tooltip>
         <div>客户合同信息</div>
       </div>
@@ -49,49 +53,49 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import dayjs from 'dayjs';
-import { Table, Button, Tooltip } from 'ant-design-vue';
-import { type ColumnsType } from 'ant-design-vue/lib/table';
-import { useRouter } from 'vue-router';
-import {
-  CustomerOrderInfo,
-  CustomerContractInfo,
-  CustomerInvoiceInfo,
-} from '/@/api/demo/model/customer';
-import { boardFileView } from '/@/api/demo/customer';
-const orderSourceMap: Record<number, string> = {
-  1: 'CRM',
-  2: '小程序',
-};
-const orderStatusMap: Record<number, string> = {
-  1: '待授权',
-  2: '待审核',
-  5: '已完成',
-};
-export default defineComponent({
-  components: {
-    Table,
-    Button,
-    Tooltip
-  },
-  props: {
-    disease: {
-      type: Object as PropType<
-        Array<{
-          order: CustomerOrderInfo;
-          orderContracts: Array<CustomerContractInfo>;
-          orderInvoices: Array<CustomerInvoiceInfo>;
-        }>
-      >,
+  import { defineComponent, watch, ref, PropType } from 'vue';
+  import dayjs from 'dayjs';
+  import { Table, Button, Tooltip } from 'ant-design-vue';
+  import { type ColumnsType } from 'ant-design-vue/lib/table';
+  import { useRouter } from 'vue-router';
+  import {
+    CustomerOrderInfo,
+    CustomerContractInfo,
+    CustomerInvoiceInfo,
+  } from '/@/api/demo/model/customer';
+  import { boardFileView } from '/@/api/demo/customer';
+  const orderSourceMap: Record<number, string> = {
+    1: 'CRM',
+    2: '小程序',
+  };
+  const orderStatusMap: Record<number, string> = {
+    1: '待授权',
+    2: '待审核',
+    5: '已完成',
+  };
+  export default defineComponent({
+    components: {
+      Table,
+      Button,
+      Tooltip,
     },
-  },
-  setup(props) {
-    const columns: ColumnsType<{
-      order: CustomerOrderInfo;
-      orderContracts: Array<CustomerContractInfo>;
-      orderInvoices: Array<CustomerInvoiceInfo>;
-    }> = [
+    props: {
+      disease: {
+        type: Object as PropType<
+          Array<{
+            order: CustomerOrderInfo;
+            orderContracts: Array<CustomerContractInfo>;
+            orderInvoices: Array<CustomerInvoiceInfo>;
+          }>
+        >,
+      },
+    },
+    setup(props) {
+      const columns: ColumnsType<{
+        order: CustomerOrderInfo;
+        orderContracts: Array<CustomerContractInfo>;
+        orderInvoices: Array<CustomerInvoiceInfo>;
+      }> = [
         {
           title: '订单名称',
           dataIndex: 'orderName',
@@ -126,80 +130,88 @@ export default defineComponent({
           dataIndex: 'invoices',
         },
       ];
-    const scanOrder = (item: CustomerOrderInfo) => { };
-    const router = useRouter();
-    const linkClick = (id: number) => {
-      router.push({ path: '/customer/order/search', query: { id } });
-    };
-    const cLinkClick = (id: number) => {
-      router.push({ path: '/customer/contact/search', query: { id } });
-    };
-    const iLinkClick = (id: number) => {
-      router.push({ path: '/customer/invoice/search', query: { id } });
-    };
-    const handlePreView = async (id: number, type: number) => {
-      const res = await boardFileView(id, type);
-      if (res) {
-        res.forEach((url) => window.open(url));
-      }
-    };
-    return {
-      linkClick,
-      cLinkClick,
-      iLinkClick,
-      diseaseObject: props.disease,
-      dayjs,
-      columns,
-      scanOrder,
-      orderSourceMap,
-      orderStatusMap,
-      handlePreView,
-    };
-  },
-});
+      const scanOrder = (item: CustomerOrderInfo) => {};
+      const router = useRouter();
+      const linkClick = (id: number) => {
+        router.push({ path: '/customer/order/search', query: { id } });
+      };
+      const cLinkClick = (id: number) => {
+        router.push({ path: '/customer/contact/search', query: { id } });
+      };
+      const iLinkClick = (id: number) => {
+        router.push({ path: '/customer/invoice/search', query: { id } });
+      };
+      const handlePreView = async (id: number, type: number) => {
+        const res = await boardFileView(id, type);
+        if (res) {
+          res.forEach((url) => window.open(url));
+        }
+      };
+      const diseaseObject = ref();
+      watch(
+        () => props.disease,
+        () => {
+          diseaseObject.value = props.disease;
+        },
+        { immediate: true },
+      );
+      return {
+        diseaseObject,
+        linkClick,
+        cLinkClick,
+        iLinkClick,
+        dayjs,
+        columns,
+        scanOrder,
+        orderSourceMap,
+        orderStatusMap,
+        handlePreView,
+      };
+    },
+  });
 </script>
 <style lang="less" scoped>
-.ccc {
-  padding: 0 16px;
-  height: 271px;
-  overflow-y: auto;
+  .ccc {
+    padding: 0 16px;
+    height: 271px;
+    overflow-y: auto;
 
-  .order-item {
-    height: 84px;
-    border-bottom: 1px solid #ebebeb;
-    display: flex;
-    align-items: center;
+    .order-item {
+      height: 84px;
+      border-bottom: 1px solid #ebebeb;
+      display: flex;
+      align-items: center;
 
-    .item-logo {
-      width: 32px;
-      height: 32px;
-      margin-right: 8px;
-    }
-
-    .column-1 {
-      width: 120px;
-    }
-
-    .column {
-      margin: 0 4px;
-      width: calc(16.66% - 26.66px);
-
-      .value {
-        font-size: 16px;
-        color: #2e354f;
-        line-height: 22px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+      .item-logo {
+        width: 32px;
+        height: 32px;
+        margin-right: 8px;
       }
 
-      .link {
-        cursor: pointer;
-        font-size: 16px;
-        color: #007aff;
-        line-height: 22px;
+      .column-1 {
+        width: 120px;
+      }
+
+      .column {
+        margin: 0 4px;
+        width: calc(16.66% - 26.66px);
+
+        .value {
+          font-size: 16px;
+          color: #2e354f;
+          line-height: 22px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+
+        .link {
+          cursor: pointer;
+          font-size: 16px;
+          color: #007aff;
+          line-height: 22px;
+        }
       }
     }
   }
-}
 </style>
