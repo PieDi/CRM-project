@@ -118,7 +118,6 @@
       <m-record
         :drawer-info="mRecordDrawerInfo"
         @drawerOnClose="mRecordClose"
-        @edit="mRecordEdit"
         @submit="mRecordSubmit"
       ></m-record
     ></template>
@@ -154,7 +153,6 @@
       <c-record
         :drawer-info="cRecordDrawerInfo"
         @drawerOnClose="cRecordClose"
-        @edit="cRecordEdit"
         @submit="cRecordSubmit"
       ></c-record
     ></template>
@@ -460,10 +458,6 @@
         cRecordDrawerInfo.value.item = item.id;
         // cRecordDrawerInfo.value.type = 'scan';
       };
-      const cRecordEdit = () => {
-        cRecordDrawerInfo.value.title = '编辑其他记录';
-        cRecordDrawerInfo.value.type = 'edit';
-      };
       const cRecordSubmit = () => {
         customerMHListReq(pageInfo.value.current);
         cRecordClose();
@@ -508,7 +502,6 @@
         cRecordDrawerInfo,
         cRecordClose,
         cRecordClick,
-        cRecordEdit,
         cRecordSubmit,
       };
     },
