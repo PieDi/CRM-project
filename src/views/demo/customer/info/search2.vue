@@ -44,6 +44,11 @@
     :bordered="true"
     :pagination="pagination"
     :scroll="{ x: 'max-content' }"
+    row-key="id"
+    :row-selection="{
+      selectedRowKeys: selectedRowKeys,
+      onChange: onSelectChange,
+    }"
   >
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'operation'">
@@ -396,6 +401,10 @@
         });
         return t;
       });
+      const selectedRowKeys = ref([]);
+      const onSelectChange = (key: any) => {
+        selectedRowKeys.value = key
+       }
       const customerGroupList = ref<CustomerGroupInfo[]>([]);
       const getCustomerG = async () => {
         const res = await getCustomerGList();
@@ -520,7 +529,8 @@
         }
       };
       const customerExport = async () => {
-        const t = pageInfo.value.dataSource.map((item) => item.id).join(',')
+        if(!selectedRowKeys.value.length) return
+        const t = selectedRowKeys.value.join(',');
         window.open(
           `http://129.204.202.223:8001/basic-api/customer/basic/export?ids=${t}&type=2`,
         );
@@ -548,6 +558,8 @@
         levelInfo,
         levelAction,
         levelSubmit,
+        selectedRowKeys,
+        onSelectChange
       };
     },
   });
