@@ -22,15 +22,15 @@ const customer: AppRouteModule = {
         roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3]
       },
     },
-    {
-      path: 'mHistory/search',
-      name: 'MHistorySearch',
-      component: () => import('/@/views/demo/customer/m-history/search.vue'),
-      meta: {
-        title: '客户就诊信息管理',
-        roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
-      },
-    },
+    // {
+    //   path: 'mHistory/search',
+    //   name: 'MHistorySearch',
+    //   component: () => import('/@/views/demo/customer/m-history/search.vue'),
+    //   meta: {
+    //     title: '客户就诊信息管理',
+    //     roles: [RoleEnum.SUPER,  RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
+    //   },
+    // },
     {
       path: 'info/cs-link',
       name: 'SysAuthCSLink',
