@@ -268,7 +268,7 @@ export const deleteCustomerL = (id: string | number) =>
 /**
  * 客户病史信息
  */
-export const getCustomerMHPage = (params: CustomerMHListParams) =>
+export const getCustomerMHPage = (params: any) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerMHInfo[] }>({
     url: Api.CustomerMHPage,
     params: { pageSize: 10, ...params },

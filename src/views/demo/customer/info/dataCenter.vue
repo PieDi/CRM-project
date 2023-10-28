@@ -23,7 +23,7 @@
         <div class="disease">
           <div class="block-tip"></div>
           <div class="info-title" :style="{ marginLeft: '16px' }"
-            >客户病史信息<Button type="link" @click="addMHistory">新增</Button></div
+            >客户病史记录<Button type="link" @click="addMHistory">新增</Button></div
           >
           <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases" />
         </div>

@@ -1,44 +1,18 @@
 <template>
-  <PageWrapper title="客户病史管理" :back-show="showGoBack">
-    <div :style="{ display: 'flex', justifyContent: 'space-between' }">
-      <div :style="{ display: 'flex' }"
-        ><FormItem label="客户姓名">
-          <Input
-            placeholder="请输入"
-            allowClear
-            :style="{ width: '150px' }"
-            v-model:value="searchInfo.customerName"
-          />
-        </FormItem>
-        <FormItem label="疾病名称" style="margin-left: 10px">
-          <Input
-            placeholder="请输入"
-            allowClear
-            :style="{ width: '150px' }"
-            v-model:value="searchInfo.diseaseName"
-          />
-        </FormItem>
-        <FormItem label="就诊医院" style="margin-left: 10px">
-          <Input
-            placeholder="请输入"
-            allowClear
-            :style="{ width: '150px' }"
-            v-model:value="searchInfo.hospitalName"
-          />
-        </FormItem>
-        <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
-        <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
-      >
-      <Button type="primary" style="margin-left: 10px" @click="addMHistory"
-        >新增客户就诊记录</Button
-      >
-    </div>
-
+  <Modal
+    :mask-closable="false"
+    :destroy-on-close="true"
+    title="更多病史"
+    @cancel="drawerOnClose"
+    @ok="drawerOnClose"
+    :visible="drawerInfo?.visible"
+    width="60%"
+  >
     <Table
       :columns="columns"
       :dataSource="pageInfo.dataSource"
       :pagination="pagination"
-      :scroll="{x: '100%'}"
+      :scroll="{ x: '100%' }"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
@@ -126,7 +100,6 @@
       <d-record
         :drawer-info="dRecordDrawerInfo"
         @drawerOnClose="dRecordClose"
-        @edit="dRecordEdit"
         @submit="dRecordSubmit"
       ></d-record
     ></template>
@@ -135,7 +108,6 @@
       <e-record
         :drawer-info="eRecordDrawerInfo"
         @drawerOnClose="eRecordClose"
-        @edit="eRecordEdit"
         @submit="eRecordSubmit"
       ></e-record
     ></template>
@@ -144,7 +116,6 @@
       <i-record
         :drawer-info="iRecordDrawerInfo"
         @drawerOnClose="iRecordClose"
-        @edit="iRecordEdit"
         @submit="iRecordSubmit"
       ></i-record
     ></template>
@@ -156,12 +127,11 @@
         @submit="cRecordSubmit"
       ></c-record
     ></template>
-  </PageWrapper>
+  </Modal>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, computed, onMounted, createVNode } from 'vue';
-  import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, message } from 'ant-design-vue';
+  import { defineComponent, ref, computed, onBeforeMount, createVNode } from 'vue';
+  import { Modal, Table, Form, Input, Button, message } from 'ant-design-vue';
   import { getCustomerMHPage, deleteCustomerMH } from '/@/api/demo/customer';
   import { CustomerMHInfo } from '/@/api/demo/model/customer';
   import mRecord from './component/m-record.vue';
@@ -173,12 +143,11 @@
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import confirm from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { useRoute, useRouter } from 'vue-router';
 
   const FormItem = Form.Item;
   export default defineComponent({
     components: {
-      PageWrapper,
+      Modal,
       Table,
       FormItem,
       Input,
@@ -189,19 +158,15 @@
       iRecord,
       cRecord,
     },
-    setup() {
-      const searchInfo = ref({
-        customerName: undefined,
-        diseaseName: undefined,
-        hospitalName: undefined,
-      });
-
-      const addMHistory = () => {
-        mRecordDrawerInfo.value.title = '新增客户病史';
-        mRecordDrawerInfo.value.visible = true;
-        mRecordDrawerInfo.value.type = 'add';
+    props: {
+      drawerInfo: {
+        type: Object as PropType<{ visible: boolean; customerId: any }>,
+      },
+    },
+    setup(props, { emit }) {
+      const drawerOnClose = () => {
+        emit('drawerOnClose');
       };
-
       const pageInfo = ref<PageListInfo<CustomerMHInfo>>({
         total: 0,
         current: 1,
@@ -218,13 +183,10 @@
         showQuickJumper: false,
         showSizeChanger: false,
       }));
-      const route = useRoute();
       const customerMHListReq = async (pageNum: number) => {
         const res = await getCustomerMHPage({
-          ...searchInfo.value,
           pageNum,
-          customerId: route?.query.customerId as string,
-          id: route?.query.id as string,
+          customerId: props?.drawerInfo?.customerId,
         });
         if (res) {
           pageInfo.value.total = res.total;
@@ -232,22 +194,11 @@
           pageInfo.value.dataSource = res.data;
         }
       };
-      const resetAction = () => {
-        searchInfo.value.diseaseName = undefined;
-        searchInfo.value.hospitalName = undefined;
-        searchInfo.value.customerName = undefined;
-        customerMHListReq(1);
-      };
-      const searchAction = () => {
-        customerMHListReq(1);
-      };
-      onMounted(() => {
+
+      onBeforeMount(() => {
         customerMHListReq(1);
       });
-      const router = useRouter();
-      const goBack = () => {
-        router.back();
-      };
+
       const columns: ColumnsType<CustomerMHInfo> = [
         {
           title: '姓名',
@@ -288,7 +239,7 @@
         {
           title: '影像记录',
           dataIndex: 'image',
-          width: 100
+          width: 100,
         },
         {
           title: '就诊记录',
@@ -377,10 +328,6 @@
         // dRecordDrawerInfo.value.type = 'scan';
         dRecordDrawerInfo.value.item = item.id;
       };
-      const dRecordEdit = () => {
-        dRecordDrawerInfo.value.title = '编辑用药记录';
-        dRecordDrawerInfo.value.type = 'edit';
-      };
       const dRecordSubmit = () => {
         customerMHListReq(pageInfo.value.current);
         dRecordClose();
@@ -404,10 +351,6 @@
         eRecordDrawerInfo.value.item = item.id;
         // eRecordDrawerInfo.value.type = 'scan';
       };
-      const eRecordEdit = () => {
-        eRecordDrawerInfo.value.title = '编辑检查记录';
-        eRecordDrawerInfo.value.type = 'edit';
-      };
       const eRecordSubmit = () => {
         customerMHListReq(pageInfo.value.current);
         eRecordClose();
@@ -430,10 +373,6 @@
         iRecordDrawerInfo.value.visible = true;
         iRecordDrawerInfo.value.item = item.id;
         // iRecordDrawerInfo.value.type = 'scan';
-      };
-      const iRecordEdit = () => {
-        iRecordDrawerInfo.value.title = '编辑影像记录';
-        iRecordDrawerInfo.value.type = 'edit';
       };
       const iRecordSubmit = () => {
         customerMHListReq(pageInfo.value.current);
@@ -464,16 +403,11 @@
       };
 
       return {
+        drawerInfo: props.drawerInfo,
         columns,
         pagination,
-        searchInfo,
         pageInfo,
-        resetAction,
-        searchAction,
-        addMHistory,
-        showGoBack: !!route?.query.id,
-        goBack,
-
+        drawerOnClose,
         mRecordDrawerInfo,
         mRecordClose,
         mRecordEdit,
@@ -484,19 +418,16 @@
         dRecordDrawerInfo,
         dRecordClose,
         dRecordClick,
-        dRecordEdit,
         dRecordSubmit,
 
         eRecordDrawerInfo,
         eRecordClose,
         eRecordClick,
-        eRecordEdit,
         eRecordSubmit,
 
         iRecordDrawerInfo,
         iRecordClose,
         iRecordClick,
-        iRecordEdit,
         iRecordSubmit,
 
         cRecordDrawerInfo,
