@@ -10,45 +10,62 @@
       </div>
       <div class="column-2 column">
         <Tooltip :title="item.order.orderTime">
-          <div class="value">{{ item.order.orderTime }}</div>
+          <span class="value">{{ item.order.orderTime }}</span>
         </Tooltip>
         <div>下单时间</div>
       </div>
       <div class="column-3 column">
         <Tooltip :title="item.order.orderName">
-          <div class="value">{{ item.order.orderName }}</div>
+          <span class="value">{{ item.order.orderName }}</span>
         </Tooltip>
         <div>订单名称</div>
       </div>
       <div class="column-4 column">
         <Tooltip :title="orderSourceMap[item.order.source as number]">
-          <div class="value">{{ orderSourceMap[item.order.source as number] }}</div>
+          <span class="value">{{ orderSourceMap[item.order.source as number] }}</span>
         </Tooltip>
         <div>订单来源</div>
       </div>
-      <div class="column-5 column">
-        <Tooltip :title="orderStatusMap[item.order.status as number]">
-          <div class="value">{{ orderStatusMap[item.order.status as number] }}</div>
-        </Tooltip>
-        <div>订单状态</div>
-      </div>
       <div class="column-6 column">
-        <Tooltip title="查看发票">
-          <div class="link" @click="() => { handlePreView(item.order.id as number, 5) }"
-            >查看发票</div
-          >
+        <Tooltip title="订单类型">
+          <span class="value">{{ orderTypeMap[item.order.type as number] }}</span>
         </Tooltip>
-        <div>客户发票信息</div>
+        <div>订单类型</div>
       </div>
-      <div class="column-6 column">
-        <Tooltip title="查看合同">
-          <div class="link" @click="() => { handlePreView(item.order.id as number, 6) }"
-            >查看合同</div
-          >
-        </Tooltip>
-        <div>客户合同信息</div>
+
+      <div class="column-7 column">
+        <div style="display: flex; align-items: center"
+          >合同操作：
+          <Button type="link">上传</Button>
+          <Button type="link">查看</Button>
+        </div>
+        <div style="display: flex; align-items: center"
+          >发票操作：
+          <Button type="link">上传</Button>
+          <Button type="link">查看</Button>
+        </div>
+      </div>
+
+      <div class="column-8 column">
+        <Button
+          type="primary"
+          @click="
+            () => {
+              editOrder(item.order);
+            }
+          "
+          >编辑</Button
+        >
       </div>
     </div>
+
+    <OrderModal
+      v-if="orderDrawerInfo.item.customerId"
+      :customer-id="orderDrawerInfo.item.customerId"
+      :drawer-info="orderDrawerInfo"
+      @drawerOnClose="orderInfoClose"
+      @submit="orderInfoSubmit"
+    ></OrderModal>
   </div>
 </template>
 
@@ -56,7 +73,6 @@
   import { defineComponent, watch, ref, PropType } from 'vue';
   import dayjs from 'dayjs';
   import { Table, Button, Tooltip } from 'ant-design-vue';
-  import { type ColumnsType } from 'ant-design-vue/lib/table';
   import { useRouter } from 'vue-router';
   import {
     CustomerOrderInfo,
@@ -64,72 +80,28 @@
     CustomerInvoiceInfo,
   } from '/@/api/demo/model/customer';
   import { boardFileView } from '/@/api/demo/customer';
-  const orderSourceMap: Record<number, string> = {
-    1: 'CRM',
-    2: '小程序',
-  };
-  const orderStatusMap: Record<number, string> = {
-    1: '待授权',
-    2: '待审核',
-    5: '已完成',
-  };
+  import { type DrawerItemType } from '/@/views/type';
+  import OrderModal, { orderSourceMap, orderTypeMap } from './order-modal.vue';
+
+  interface BBBB {
+    order: CustomerOrderInfo;
+    productBasics
+    orderContracts: Array<CustomerContractInfo>;
+    orderInvoices: Array<CustomerInvoiceInfo>;
+  }
   export default defineComponent({
     components: {
       Table,
       Button,
       Tooltip,
+      OrderModal,
     },
     props: {
       disease: {
-        type: Object as PropType<
-          Array<{
-            order: CustomerOrderInfo;
-            orderContracts: Array<CustomerContractInfo>;
-            orderInvoices: Array<CustomerInvoiceInfo>;
-          }>
-        >,
+        type: Object as PropType<Array<any>>,
       },
     },
-    setup(props) {
-      const columns: ColumnsType<{
-        order: CustomerOrderInfo;
-        orderContracts: Array<CustomerContractInfo>;
-        orderInvoices: Array<CustomerInvoiceInfo>;
-      }> = [
-        {
-          title: '订单名称',
-          dataIndex: 'orderName',
-        },
-        {
-          title: '下单时间',
-          dataIndex: 'orderDate',
-          customRender: (state) =>
-            dayjs(state.record.order.orderDate).format('YYYY-MM-DD HH:mm:ss'),
-        },
-        {
-          title: '订单编号',
-          dataIndex: 'orderNumber',
-          customRender: (state) => state.record.order.orderNumber,
-        },
-        {
-          title: '订单数量',
-          dataIndex: 'orderQuantity',
-          customRender: (state) => state.record.order.orderQuantity,
-        },
-        {
-          title: '订单金额',
-          dataIndex: 'orderAmount',
-          customRender: (state) => state.record.order.totalPrice,
-        },
-        {
-          title: '关联合同',
-          dataIndex: 'contracts',
-        },
-        {
-          title: '关联发票',
-          dataIndex: 'invoices',
-        },
-      ];
+    setup(props, { emit }) {
       const scanOrder = (item: CustomerOrderInfo) => {};
       const router = useRouter();
       const linkClick = (id: number) => {
@@ -147,7 +119,7 @@
           res.forEach((url) => window.open(url));
         }
       };
-      const diseaseObject = ref();
+      const diseaseObject = ref<Array<BBBB>>();
       watch(
         () => props.disease,
         () => {
@@ -155,17 +127,69 @@
         },
         { immediate: true },
       );
+
+      const orderDrawerInfo = ref<DrawerItemType<any>>({
+        visible: false,
+        title: '',
+        type: undefined,
+        item: {
+          id: undefined,
+          totalPrice: undefined,
+          orderDate: undefined,
+          orderName: undefined,
+          orderNumber: undefined,
+          products: [
+            {
+              productId: undefined,
+              sum: undefined,
+            },
+          ],
+          remark: undefined,
+          responsiblePerson: undefined,
+          customerId: undefined,
+        },
+      });
+      const editOrder = (item: CustomerOrderInfo) => {
+        orderDrawerInfo.value.visible = true;
+        orderDrawerInfo.value.type = 'edit';
+        orderDrawerInfo.value.title = '编辑订单';
+        Object.keys(orderDrawerInfo.value.item).forEach((key) => {
+          orderDrawerInfo.value.item[key] = item[key];
+        });
+        orderDrawerInfo.value.item.products = item.orderProducts?.map((p) => ({
+          productId: p.id,
+          sum: p.sum,
+        }));
+        orderDrawerInfo.value.item.orderDate = dayjs(item.orderTime);
+      };
+      const orderInfoClose = () => {
+        orderDrawerInfo.value.visible = false;
+        orderDrawerInfo.value.type = undefined;
+        orderDrawerInfo.value.title = '';
+        Object.keys(orderDrawerInfo.value.item).forEach((key) => {
+          orderDrawerInfo.value.item[key] = undefined;
+        });
+      };
+      const orderInfoSubmit = () => {
+        orderInfoClose();
+        emit('submit')
+      };
+
       return {
         diseaseObject,
         linkClick,
         cLinkClick,
         iLinkClick,
         dayjs,
-        columns,
         scanOrder,
         orderSourceMap,
-        orderStatusMap,
+        orderTypeMap,
         handlePreView,
+        // 编辑订单
+        editOrder,
+        orderDrawerInfo,
+        orderInfoClose,
+        orderInfoSubmit,
       };
     },
   });
@@ -188,17 +212,15 @@
         margin-right: 8px;
       }
 
-      .column-1 {
-        width: 120px;
-      }
-
       .column {
         margin: 0 4px;
-        width: calc(16.66% - 26.66px);
+        width: calc(33.33% - 290px);
 
         .value {
+          display: inline-block;
           font-size: 16px;
           color: #2e354f;
+          height: 18px;
           line-height: 22px;
           overflow: hidden;
           white-space: nowrap;
@@ -211,6 +233,22 @@
           color: #007aff;
           line-height: 22px;
         }
+      }
+
+      .column-1 {
+        width: 140px;
+      }
+
+      .column-2 {
+        width: 200px;
+      }
+
+      .column-7 {
+        width: 320px;
+      }
+
+      .column-8 {
+        width: 100px;
       }
     }
   }

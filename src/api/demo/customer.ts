@@ -374,12 +374,12 @@ export const fileCDelete = (fileId: number) =>
 /**
  * 客户订单
  */
-export const getCustomerOrderPage = (params: CustomerOrderListParams) =>
+export const getCustomerOrderPage = (params: any) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerOrderInfo[] }>({
     url: Api.CustomerOrderPage,
     params: { pageSize: 10, ...params },
   });
-export const getCustomerOrderList = (name?: string, customerId?: number) =>
+export const getCustomerOrderList = (customerId?: any) =>
   defHttp.post<Array<CustomerOrderInfo>>({
     url: Api.CustomerOrderList,
     params: { name, customerId },
