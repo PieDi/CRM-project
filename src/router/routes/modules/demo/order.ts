@@ -14,24 +14,24 @@ const Order: AppRouteModule = {
     roles: [RoleEnum.SUPER, RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
   },
   children: [
-    {
-      path: 'search',
-      name: 'OrderSearch',
-      component: () => import('/@/views/demo/customer/order/search.vue'),
-      meta: {
-        title: '客户订单管理',
-        roles: [RoleEnum.SUPER, RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
-      },
-    },
-    {
-      path: 'ns-order',
-      name: 'SysAuthNSOrder',
-      component: () => import('/@/views/auth/super/ns-order.vue'),
-      meta: {
-        title: '非标订单管理',
-        roles: [RoleEnum.SUPER, RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
-      },
-    },
+    // {
+    //   path: 'search',
+    //   name: 'OrderSearch',
+    //   component: () => import('/@/views/demo/customer/order/search.vue'),
+    //   meta: {
+    //     title: '客户订单管理',
+    //     roles: [RoleEnum.SUPER, RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
+    //   },
+    // },
+    // {
+    //   path: 'ns-order',
+    //   name: 'SysAuthNSOrder',
+    //   component: () => import('/@/views/auth/super/ns-order.vue'),
+    //   meta: {
+    //     title: '非标订单管理',
+    //     roles: [RoleEnum.SUPER, RoleEnum.STAFF, RoleEnum.STAFF1, RoleEnum.STAFF2, RoleEnum.STAFF3],
+    //   },
+    // },
     {
       path: 'micro-order',
       name: 'SysAuthCSLinkMicroOrder',
