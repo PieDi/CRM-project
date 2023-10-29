@@ -461,3 +461,17 @@ export const fileInvoiceUpload = (params: any) =>
 
 export const fileInvoiceDelete = (fileId: number) =>
   defHttp.post<number[]>({ url: Api.CustomerInvoiceFDelete, params: { fileId } });
+
+
+
+
+//重构部分
+// 附件上传
+export const boardFJUpload = (params: any) =>
+  defHttp.uploadFile<number[]>({ url: '/customer/file/onlyFile' }, params);
+//查看全部附件
+export const getFJList = (params: any) =>
+  defHttp.post<any>({
+    url: '/customer/file/list',
+    params,
+  });

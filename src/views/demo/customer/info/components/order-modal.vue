@@ -92,7 +92,7 @@
           </FormItem>
 
           <Button
-            v-if="type !== 'scan'"
+            v-if="type === 'add'"
             style="float: right"
             type="link"
             @click="

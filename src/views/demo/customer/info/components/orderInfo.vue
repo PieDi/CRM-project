@@ -36,13 +36,13 @@
       <div class="column-7 column">
         <div style="display: flex; align-items: center"
           >合同操作：
-          <Button type="link">上传</Button>
-          <Button type="link">查看</Button>
+          <Button type="link" @click="()=>{uploadAction(7, item.order.id as number)}">上传</Button>
+          <Button type="link" @click="()=>{scanFJAction(7, item.order.id as number)}">查看</Button>
         </div>
         <div style="display: flex; align-items: center"
           >发票操作：
-          <Button type="link">上传</Button>
-          <Button type="link">查看</Button>
+          <Button type="link" @click="()=>{uploadAction(8, item.order.id as number)}">上传</Button>
+          <Button type="link" @click="()=>{scanFJAction(8, item.order.id as number)}">查看</Button>
         </div>
       </div>
 
@@ -58,7 +58,7 @@
         >
       </div>
     </div>
-
+    <!-- 订单编辑 -->
     <OrderModal
       v-if="orderDrawerInfo.item.customerId"
       :customer-id="orderDrawerInfo.item.customerId"
@@ -66,6 +66,10 @@
       @drawerOnClose="orderInfoClose"
       @submit="orderInfoSubmit"
     ></OrderModal>
+    <!-- 文件上传 -->
+    <UploadModal v-if="uploadDrawerInfo.id" :drawer-info="uploadDrawerInfo" @drawerOnClose="uploadClose" @submit="uploadSubmit"></UploadModal>
+    <!-- 更多附件 -->
+    <MoreFj v-if="moreFJDrawerInfo.id" :drawer-info="moreFJDrawerInfo" @drawerOnClose="moreFJClose" ></MoreFj>
   </div>
 </template>
 
@@ -82,10 +86,12 @@
   import { boardFileView } from '/@/api/demo/customer';
   import { type DrawerItemType } from '/@/views/type';
   import OrderModal, { orderSourceMap, orderTypeMap } from './order-modal.vue';
-
+import UploadModal, { UploadAA } from './upload-modal.vue';
+  import MoreFj from './more-fj.vue';
+import { reactive } from 'vue';
   interface BBBB {
     order: CustomerOrderInfo;
-    productBasics
+    productBasics;
     orderContracts: Array<CustomerContractInfo>;
     orderInvoices: Array<CustomerInvoiceInfo>;
   }
@@ -95,6 +101,8 @@
       Button,
       Tooltip,
       OrderModal,
+      UploadModal,
+      MoreFj
     },
     props: {
       disease: {
@@ -127,7 +135,7 @@
         },
         { immediate: true },
       );
-
+      // 订单编辑
       const orderDrawerInfo = ref<DrawerItemType<any>>({
         visible: false,
         title: '',
@@ -172,9 +180,44 @@
       };
       const orderInfoSubmit = () => {
         orderInfoClose();
-        emit('submit')
+        emit('submit');
       };
-
+      // 附件上传
+      const uploadDrawerInfo = reactive<UploadAA>({
+        visible: false,
+        id: undefined,
+        type: undefined,
+      });
+      const uploadAction = (type: number, id: number) => { 
+        uploadDrawerInfo.visible = true
+        uploadDrawerInfo.type = type
+        uploadDrawerInfo.id = id
+      }
+      const uploadClose = () => {
+        uploadDrawerInfo.visible = false
+        uploadDrawerInfo.type = undefined
+        uploadDrawerInfo.id = undefined
+      }
+      const uploadSubmit = () => {
+        uploadClose()
+        emit('submit');
+      }
+      // 更多附件
+      const moreFJDrawerInfo = reactive<UploadAA>({
+        visible: false,
+        id: undefined,
+        type: undefined,
+      });
+      const scanFJAction = (type: number, id: number) => { 
+        moreFJDrawerInfo.visible = true
+        moreFJDrawerInfo.type = type
+        moreFJDrawerInfo.id = id
+      }
+      const moreFJClose = () => {
+        moreFJDrawerInfo.visible = false
+        moreFJDrawerInfo.type = undefined
+        moreFJDrawerInfo.id = undefined
+      }
       return {
         diseaseObject,
         linkClick,
@@ -190,6 +233,15 @@
         orderDrawerInfo,
         orderInfoClose,
         orderInfoSubmit,
+        // 附件上传
+        uploadDrawerInfo,
+        uploadAction,
+        uploadClose,
+        uploadSubmit,
+        // 查看附件
+        moreFJDrawerInfo,
+        scanFJAction,
+        moreFJClose
       };
     },
   });

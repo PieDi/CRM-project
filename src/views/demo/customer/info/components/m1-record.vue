@@ -185,8 +185,6 @@
           ? dayjs(props.drawerInfo.item.visitDate, 'YYYY-MM-DD')
           : undefined,
       });
-      console.log(111,  props.drawerInfo?.item, mInfo)
-
       const drawerOnClose = () => {
         emit('drawerOnClose');
       };

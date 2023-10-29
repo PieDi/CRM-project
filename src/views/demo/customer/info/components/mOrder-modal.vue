@@ -50,7 +50,6 @@ import {
 } from '/@/api/demo/customer';
 import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import type { FormInstance } from 'ant-design-vue';
 import dayjs from 'dayjs';
 const FormItem = Form.Item;
 const SelectOption = Select.Option;
@@ -81,7 +80,6 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const formRef = ref<FormInstance>();
     const drawerInfo = ref<
       DrawerItemType<AAAA>
     >({
@@ -139,7 +137,6 @@ export default defineComponent({
     });
 
     const columns: ColumnsType<CustomerOrderInfo> = [
-
       {
         title: '订单名称',
         dataIndex: 'orderName',
@@ -251,7 +248,6 @@ export default defineComponent({
     return {
       mOrderModal: props.mOrderModal,
       mOrderOnClose,
-      formRef,
       columns,
       pagination,
       pageInfo,
