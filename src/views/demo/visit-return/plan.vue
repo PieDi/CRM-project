@@ -30,7 +30,6 @@
         <template v-if="column.dataIndex === 'operation'">
           <div style="display: flex">
             <Button v-if="record.status === 2" type="link" @click="scanReturnPlan(record)">查看回访单</Button>
-            <!-- <Button type="link" @click="print(record)">打印</Button> -->
             <Button v-if="record.status === 1 && record.editRight" type="link" @click="drawerEdit(record)">编辑</Button>
             <Button v-if="record.editRight" type="link" danger @click="deletePlan(record)">删除</Button>
             <Button
@@ -199,8 +198,6 @@
   import type { FormInstance } from 'ant-design-vue';
   import dayjs from 'dayjs';
   import { useRoute } from 'vue-router';
-  import { useUserStore } from '/@/store/modules/user';
-  import { RoleEnum } from '/@/enums/roleEnum';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
@@ -235,11 +232,6 @@
       TextArea,
     },
     setup() {
-      const userStore = useUserStore();
-      const roleList = toRaw(userStore.getRoleList) || [];
-      const authShow = computed(() => {
-        return roleList.some((role) => [RoleEnum.SUPER].includes(role));
-      });
       const formRef = ref<FormInstance>();
       const columns: ColumnsType<VisitReturnInfo> = [
         {
@@ -378,7 +370,6 @@
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新建回访';
         drawerInfo.value.type = 'add';
-        console.log(34567)
       };
 
       const scanReturnPlan = async (item: VisitReturnInfo) => {
@@ -505,7 +496,6 @@
         startVisit,
         onModelConfirm,
         onModelCancel,
-        authShow,
         filterOption,
         exportPlan,
       };

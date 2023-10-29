@@ -31,10 +31,6 @@
 
 <script lang="ts">
   import { defineComponent, watch, ref, PropType } from 'vue';
-  import dayjs from 'dayjs';
-  import { Table, Button } from 'ant-design-vue';
-  import { useRouter } from 'vue-router';
-  import { CustomerOrderInfo } from '/@/api/demo/model/customer';
   import { VisitReturnInfo } from '/@/api/demo/model/visit-return';
   const visitTypeMap: Record<number, string> = {
     1: '电话回访',
@@ -51,27 +47,13 @@
     2: '已回访',
   };
   export default defineComponent({
-    components: {
-      Table,
-      Button,
-    },
     props: {
       disease: {
         type: Object as PropType<Array<VisitReturnInfo>>,
       },
     },
     setup(props) {
-      const scanOrder = (item: CustomerOrderInfo) => {};
-      const router = useRouter();
-      const linkClick = (id: number) => {
-        router.push({ path: '/customer/order/search', query: { id } });
-      };
-      const cLinkClick = (id: number) => {
-        router.push({ path: '/customer/contact/search', query: { id } });
-      };
-      const iLinkClick = (id: number) => {
-        router.push({ path: '/customer/invoice/search', query: { id } });
-      };
+
       const diseaseObject = ref();
       watch(
         () => props.disease,
@@ -81,12 +63,7 @@
         { immediate: true },
       );
       return {
-        linkClick,
-        cLinkClick,
-        iLinkClick,
         diseaseObject,
-        dayjs,
-        scanOrder,
         visitTypeMap,
         visitResMap,
         visitStatusMap,

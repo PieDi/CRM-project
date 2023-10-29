@@ -374,12 +374,12 @@ export const fileCDelete = (fileId: number) =>
 /**
  * 客户订单
  */
-export const getCustomerOrderPage = (params: CustomerOrderListParams) =>
+export const getCustomerOrderPage = (params: any) =>
   defHttp.post<{ total: number; pageNum: number; data: CustomerOrderInfo[] }>({
     url: Api.CustomerOrderPage,
     params: { pageSize: 10, ...params },
   });
-export const getCustomerOrderList = (name?: string, customerId?: number) =>
+export const getCustomerOrderList = (customerId?: any) =>
   defHttp.post<Array<CustomerOrderInfo>>({
     url: Api.CustomerOrderList,
     params: { name, customerId },
@@ -461,3 +461,17 @@ export const fileInvoiceUpload = (params: any) =>
 
 export const fileInvoiceDelete = (fileId: number) =>
   defHttp.post<number[]>({ url: Api.CustomerInvoiceFDelete, params: { fileId } });
+
+
+
+
+//重构部分
+// 附件上传
+export const boardFJUpload = (params: any) =>
+  defHttp.uploadFile<number[]>({ url: '/customer/file/onlyFile' }, params);
+//查看全部附件
+export const getFJList = (params: any) =>
+  defHttp.post<any>({
+    url: '/customer/file/list',
+    params,
+  });

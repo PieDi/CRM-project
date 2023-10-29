@@ -174,6 +174,8 @@ export interface CustomerOrderInfo {
   outStorage: boolean | undefined;
   status: number | undefined;
   source: number | undefined;
+  type: number | undefined;
+  orderProducts: Array<any>
 }
 
 /**

@@ -23,7 +23,7 @@
         <div class="disease">
           <div class="block-tip"></div>
           <div class="info-title" :style="{ marginLeft: '16px' }"
-            >客户病史记录<Button type="link" @click="addMHistory">新增</Button></div
+            >客户病史信息<Button type="link" @click="addMHistory">新增</Button></div
           >
           <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases" />
         </div>
@@ -38,58 +38,86 @@
       <div class="content-bottom">
         <div class="order">
           <div class="block-tip"></div>
-          <div class="info-title" :style="{ marginLeft: '16px' }">客户订单</div>
-          <div class="more">
-            <div
-              @click="
-                () => {
-                  pushOrder(boardInfo?.customerBasic.id);
-                }
-              "
-              >查看全部<img src="/src/assets/images/dis-more.png"
-            /></div>
+          <div class="info-title" :style="{ marginLeft: '16px' }"
+            >客户订单<Popover trigger="click">
+              <template #content>
+                <Button
+                  type="link"
+                  @click="
+                    () => {
+                      addOrder(1);
+                    }
+                  "
+                  >标准订单</Button
+                >
+                <Button
+                  type="link"
+                  @click="
+                    () => {
+                      addOrder(2);
+                    }
+                  "
+                  >非标准订单</Button
+                >
+              </template>
+              <Button type="link">新增</Button>
+            </Popover>
           </div>
-          <OrderInfo v-if="boardInfo?.orders" :disease="boardInfo?.orders" />
+          <div class="more">
+            <div @click="mOrderClick">查看全部<img src="/src/assets/images/dis-more.png" /></div>
+          </div>
+          <OrderInfo
+            v-if="boardInfo?.orders"
+            :disease="boardInfo?.orders"
+            @submit="orderInfoSubmit"
+          />
         </div>
 
         <div class="visit">
           <div class="block-tip"></div>
           <div class="info-title" :style="{ marginLeft: '16px' }">回访工作计划</div>
           <div class="more">
-            <div
-              @click="
-                () => {
-                  pushVisit(boardInfo?.customerBasic.id);
-                }
-              "
-              >查看全部<img src="/src/assets/images/dis-more.png"
-            /></div>
+            <div @click="hfClick">查看全部<img src="/src/assets/images/dis-more.png" /></div>
           </div>
           <ReturnInfo v-if="boardInfo?.returnVisits" :disease="boardInfo?.returnVisits" />
         </div>
       </div>
     </div>
+    <!-- 新增病史 -->
     <m1-record
       v-if="mRecordDrawerInfo.item.customerId"
       :drawer-info="mRecordDrawerInfo"
       @drawerOnClose="mRecordClose"
       @submit="mRecordSubmit"
     ></m1-record>
+    <!-- 全部订单 -->
+    <MOrderModal
+      v-if="mOrderDrawerInfo.customerId"
+      :mOrderModal="mOrderDrawerInfo"
+      @drawerOnClose="orderInfoSubmit"
+      @submit="orderInfoSubmit"
+    ></MOrderModal>
+    <!-- 新增订单 -->
+    <OrderModal
+      v-if="orderDrawerInfo.item.customerId"
+      :customer-id="orderDrawerInfo.item.customerId"
+      :drawer-info="orderDrawerInfo"
+      :product-type="orderDrawerInfo.productType"
+      @drawerOnClose="orderInfoClose"
+      @submit="orderInfoSubmit"
+    ></OrderModal>
+    <!-- 全部回访 -->
+    <MoreHf
+      v-if="hfDrawerInfo.customerId"
+      :hf-modal="hfDrawerInfo"
+      @drawerOnClose="hfInfoClose"
+      @submit="hfInfoClose"
+    ></MoreHf>
   </div>
 </template>
 <script lang="ts">
   import { defineComponent, ref, onBeforeMount, unref } from 'vue';
-  import { PageWrapper } from '/@/components/Page';
-  import {
-    Table,
-    Form,
-    Input,
-    Button,
-    Drawer,
-    Select,
-    InputNumber,
-    DatePicker,
-  } from 'ant-design-vue';
+  import { Button, Popover } from 'ant-design-vue';
   import { CustomerBoard } from '/@/api/demo/model/customer';
   import { useRoute, useRouter } from 'vue-router';
   import { useMultipleTabStore } from '/@/store/modules/multipleTab';
@@ -101,27 +129,21 @@
   import M1Record from './components/m1-record.vue';
   import { type DrawerItemType } from '/@/views/type';
   import { CustomerMHInfo } from '/@/api/demo/model/customer';
-
-  const FormItem = Form.Item;
-  const TextArea = Input.TextArea;
+  import MOrderModal from './components/mOrder-modal.vue';
+  import OrderModal from './components/order-modal.vue';
+  import MoreHf from './components/more-hf.vue';
   export default defineComponent({
     components: {
-      PageWrapper,
-      Table,
-      Form,
-      FormItem,
-      Input,
       Button,
-      Drawer,
-      Select,
-      InputNumber,
-      DatePicker,
-      TextArea,
       Disease,
       BasicInfo,
       OrderInfo,
       ReturnInfo,
       M1Record,
+      MOrderModal,
+      OrderModal,
+      MoreHf,
+      Popover,
     },
     setup() {
       const route = useRoute();
@@ -146,9 +168,7 @@
         router.back();
         tabStore.closeTab(getCurrentTab(), router);
       };
-      const pushOrder = (customerId) => {
-        router.push({ path: '/order/search', query: { customerId } });
-      };
+
       const pushVisit = (customerId) => {
         router.push({ path: '/return-visit/plan', query: { customerId } });
       };
@@ -188,17 +208,106 @@
         customerInfoBoard();
         mRecordClose();
       };
+      // 全部订单
+      const mOrderDrawerInfo = ref<{ visible: boolean; customerId: number | undefined }>({
+        visible: false,
+        customerId: undefined,
+      });
+      const mOrderInfoClose = () => {
+        mOrderDrawerInfo.value.visible = false;
+        mOrderDrawerInfo.value.customerId = undefined;
+      };
+      const mOrderClick = () => {
+        mOrderDrawerInfo.value.visible = true;
+        mOrderDrawerInfo.value.customerId = boardInfo.value?.customerBasic.id;
+      };
 
+      // 新增订单成功
+      const orderDrawerInfo = ref<DrawerItemType<any>>({
+        visible: false,
+        title: '',
+        type: undefined,
+        productType: undefined,
+        item: {
+          id: undefined,
+          totalPrice: undefined,
+          orderDate: undefined,
+          orderName: undefined,
+          orderNumber: undefined,
+          products: [
+            {
+              productId: undefined,
+              sum: undefined,
+            },
+          ],
+          remark: undefined,
+          responsiblePerson: undefined,
+          customerId: undefined,
+        },
+      });
+      const addOrder = (type: number) => {
+        orderDrawerInfo.value.visible = true;
+        orderDrawerInfo.value.type = 'add';
+        orderDrawerInfo.value.productType = type;
+        orderDrawerInfo.value.title = '新增订单';
+        orderDrawerInfo.value.item.customerId = boardInfo.value?.customerBasic?.id;
+        orderDrawerInfo.value.item.products = [
+          {
+            productId: undefined,
+            sum: undefined,
+          },
+        ];
+      };
+      const orderInfoClose = () => {
+        orderDrawerInfo.value.visible = false;
+        orderDrawerInfo.value.type = undefined;
+        orderDrawerInfo.value.title = '';
+        orderDrawerInfo.value.productType = undefined;
+        Object.keys(orderDrawerInfo.value.item).forEach((key) => {
+          orderDrawerInfo.value.item[key] = undefined;
+        });
+      };
+      const orderInfoSubmit = () => {
+        orderInfoClose();
+        customerInfoBoard();
+      };
+      // 全部回访
+      const hfDrawerInfo = ref<{ visible: boolean; customerId: number | undefined }>({
+        visible: false,
+        customerId: undefined,
+      });
+      const hfInfoClose = () => {
+        hfDrawerInfo.value.visible = false;
+        hfDrawerInfo.value.customerId = undefined;
+        customerInfoBoard();
+      };
+      const hfClick = () => {
+        hfDrawerInfo.value.visible = true;
+        hfDrawerInfo.value.customerId = boardInfo.value?.customerBasic.id;
+      };
       return {
         boardInfo,
         goBack,
-        pushOrder,
         pushVisit,
         infoCallback,
+        // 新增病史
         mRecordDrawerInfo,
         addMHistory,
         mRecordClose,
         mRecordSubmit,
+        // 更多订单
+        mOrderDrawerInfo,
+        mOrderInfoClose,
+        mOrderClick,
+        // 新增订单
+        orderDrawerInfo,
+        addOrder,
+        orderInfoClose,
+        orderInfoSubmit,
+        //全部回访
+        hfDrawerInfo,
+        hfClick,
+        hfInfoClose,
       };
     },
   });
@@ -245,7 +354,7 @@
         font-weight: 600;
         color: #2e354f;
         line-height: 25px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
       }
 
       .content-top {
