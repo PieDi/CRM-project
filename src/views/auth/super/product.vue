@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="产品信息管理">
+  <PageWrapper title="库存查询">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }"
         ><FormItem label="产品名称">
@@ -23,7 +23,7 @@
         <Button type="primary" style="margin-left: 10px" @click="resetAction">重置</Button>
         <Button type="primary" style="margin-left: 10px" @click="searchAction">搜索</Button></div
       >
-      <Button type="primary" style="margin-left: 10px" @click="addProduct">新增产品</Button>
+      <!-- <Button type="primary" style="margin-left: 10px" @click="addProduct">新增产品</Button> -->
     </div>
 
     <Table
