@@ -276,6 +276,7 @@ import D1Record from './d1-record.vue';
 import E1Record from './e1-record.vue';
 import I1Record from './i1-record.vue';
 import C1Record from './c1-record.vue';
+import { emitError } from 'vue-json-pretty/types/utils';
 const iCheckType = {
   1: 'CT',
   2: 'MR',
@@ -322,7 +323,7 @@ export default defineComponent({
       >,
     },
   },
-  setup(props) {
+  setup(props, { emit}) {
     const drawerInfo = ref<{ visible: boolean; customerId: number | undefined }>({
       visible: false,
       customerId: undefined,
@@ -467,6 +468,7 @@ export default defineComponent({
     };
     const dRecordSubmit = () => {
       dRecordClose();
+      emit('submit')
     };
 
     // 检验记录
@@ -488,6 +490,7 @@ export default defineComponent({
     };
     const eRecordSubmit = () => {
       eRecordClose();
+      emit('submit')
     };
 
     // 影像记录
@@ -509,6 +512,7 @@ export default defineComponent({
     };
     const iRecordSubmit = () => {
       iRecordClose();
+      emit('submit')
     };
 
     // 就诊记录
@@ -530,6 +534,7 @@ export default defineComponent({
     };
     const cRecordSubmit = () => {
       cRecordClose();
+      emit('submit')
     };
 
     const diseaseObject = ref();

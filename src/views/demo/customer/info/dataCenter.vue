@@ -25,7 +25,7 @@
           <div class="info-title" :style="{ marginLeft: '16px' }"
             >客户病史信息<Button type="link" @click="addMHistory">新增</Button></div
           >
-          <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases" />
+          <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases" @submit="infoCallback"/>
         </div>
         <div class="data-report">
           <div class="block-tip"></div>
@@ -91,12 +91,12 @@
       @submit="mRecordSubmit"
     ></m1-record>
     <!-- 全部订单 -->
-    <MOrderModal
+    <MoreO
       v-if="mOrderDrawerInfo.customerId"
       :mOrderModal="mOrderDrawerInfo"
       @drawerOnClose="orderInfoSubmit"
       @submit="orderInfoSubmit"
-    ></MOrderModal>
+    ></MoreO>
     <!-- 新增订单 -->
     <OrderModal
       v-if="orderDrawerInfo.item.customerId"
@@ -111,7 +111,7 @@
       v-if="hfDrawerInfo.customerId"
       :hf-modal="hfDrawerInfo"
       @drawerOnClose="hfInfoClose"
-      @submit="hfInfoClose"
+      @submit="hfInfoSubmit"
     ></MoreHf>
   </div>
 </template>
@@ -129,7 +129,7 @@
   import M1Record from './components/m1-record.vue';
   import { type DrawerItemType } from '/@/views/type';
   import { CustomerMHInfo } from '/@/api/demo/model/customer';
-  import MOrderModal from './components/mOrder-modal.vue';
+  import MoreO from './components/more-o.vue';
   import OrderModal from './components/order-modal.vue';
   import MoreHf from './components/more-hf.vue';
   export default defineComponent({
@@ -140,7 +140,7 @@
       OrderInfo,
       ReturnInfo,
       M1Record,
-      MOrderModal,
+      MoreO,
       OrderModal,
       MoreHf,
       Popover,
@@ -279,12 +279,16 @@
       const hfInfoClose = () => {
         hfDrawerInfo.value.visible = false;
         hfDrawerInfo.value.customerId = undefined;
-        customerInfoBoard();
+        // customerInfoBoard();
       };
       const hfClick = () => {
         hfDrawerInfo.value.visible = true;
         hfDrawerInfo.value.customerId = boardInfo.value?.customerBasic.id;
       };
+      const hfInfoSubmit = () => { 
+        hfInfoClose();
+        customerInfoBoard();
+      }
       return {
         boardInfo,
         goBack,
@@ -308,6 +312,7 @@
         hfDrawerInfo,
         hfClick,
         hfInfoClose,
+        hfInfoSubmit
       };
     },
   });
