@@ -242,9 +242,7 @@ export default defineComponent({
       customerOrderListReq(pageInfo.value.current);
       emit('submit')
     };
-
     const mOrderOnClose = () => { emit('drawerOnClose'); }
-
     return {
       mOrderModal: props.mOrderModal,
       mOrderOnClose,
