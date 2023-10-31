@@ -41,6 +41,8 @@ export interface CustomerInfo {
   sourceId: number | undefined;
   tag: string | undefined;
   files: Array<{ id: number; fileName: string; path: string }> | undefined;
+  originalDataReports: Array<any>
+  otherDataReports: Array<any>
 }
 
 export interface CustomerGroupInfo {

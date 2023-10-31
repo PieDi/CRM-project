@@ -36,7 +36,7 @@
             v-if="boardInfo?.customerBasic.id"
             :customer-id="boardInfo?.customerBasic.id"
             :disease="boardInfo?.customerBasic"
-            :callback="infoCallback"
+            @submit="infoCallback"
           />
         </div>
       </div>

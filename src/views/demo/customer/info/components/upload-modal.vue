@@ -68,7 +68,7 @@
         const res = await boardFJUpload(fileData);
         if (res) {
           message.success('附件上传成功')
-          emit('')
+          emit('submit')
         }
       };
       // 文件上传
