@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="入库管理">
+  <PageWrapper title="库存入库">
     <div :style="{ display: 'flex', justifyContent: 'space-between' }">
       <div :style="{ display: 'flex' }">
         <FormItem label="产品名称">

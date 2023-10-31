@@ -471,55 +471,57 @@
   });
 </script>
 <style lang="less" scoped>
-  .info-content {
-    display: flex;
-    align-items: center;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ebebeb;
-    span {
-      display: inline-block;
-      margin-right: 16px;
+  .aaa {
+    .info-content {
+      display: flex;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ebebeb;
+      span {
+        display: inline-block;
+        margin-right: 16px;
+      }
+
+      span + span {
+        height: 22px;
+        font-size: 16px;
+        color: #ff2d70;
+        line-height: 22px;
+      }
+
+      .a {
+        width: 48px;
+        height: 48px;
+        background: #99a8bf;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 28px;
+        text-align: center;
+      }
+
+      .b {
+        width: 22px;
+        background: rgba(255, 45, 112, 0.1);
+        text-align: center;
+        border-radius: 4px;
+      }
     }
 
-    span + span {
-      height: 22px;
-      font-size: 16px;
-      color: #ff2d70;
-      line-height: 22px;
-    }
+    // 添加测试信息
+    .content {
+      display: flex;
+      margin-top: 26px;
 
-    .a {
-      width: 48px;
-      height: 48px;
-      background: #99a8bf;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 28px;
-      text-align: center;
-    }
+      img {
+        width: 16px;
+        height: 16px;
+        margin-top: 4px;
+        margin-right: 5px;
+      }
 
-    .b {
-      width: 22px;
-      background: rgba(255, 45, 112, 0.1);
-      text-align: center;
-      border-radius: 4px;
-    }
-  }
-
-  // 添加测试信息
-  .content {
-    display: flex;
-    margin-top: 26px;
-
-    img {
-      width: 16px;
-      height: 16px;
-      margin-top: 4px;
-      margin-right: 5px;
-    }
-
-    .label {
-      color: #2e354f;
+      .label {
+        color: #2e354f;
+      }
     }
   }
 </style>

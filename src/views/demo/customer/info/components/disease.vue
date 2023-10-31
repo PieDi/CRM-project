@@ -238,8 +238,8 @@
 
     <MHModal v-if="drawerInfo.customerId" :drawer-info="drawerInfo" @drawerOnClose="drawerInfoClose"></MHModal>
 
-    <c1-record v-if="dRecordDrawerInfo.visible" :drawer-info="dRecordDrawerInfo" @drawerOnClose="dRecordClose"
-      @submit="dRecordSubmit"></c1-record>
+    <d1-record v-if="dRecordDrawerInfo.visible" :drawer-info="dRecordDrawerInfo" @drawerOnClose="dRecordClose"
+      @submit="dRecordSubmit"></d1-record>
 
     <e1-record v-if="eRecordDrawerInfo.visible" :drawer-info="eRecordDrawerInfo" @drawerOnClose="eRecordClose"
       @submit="eRecordSubmit"></e1-record>
@@ -276,7 +276,6 @@ import D1Record from './d1-record.vue';
 import E1Record from './e1-record.vue';
 import I1Record from './i1-record.vue';
 import C1Record from './c1-record.vue';
-import { emitError } from 'vue-json-pretty/types/utils';
 const iCheckType = {
   1: 'CT',
   2: 'MR',

@@ -67,9 +67,19 @@
       @submit="orderInfoSubmit"
     ></OrderModal>
     <!-- 文件上传 -->
-    <UploadModal v-if="uploadDrawerInfo.id" :drawer-info="uploadDrawerInfo" @drawerOnClose="uploadClose" @submit="uploadSubmit"></UploadModal>
+    <UploadModal
+      v-if="uploadDrawerInfo.id"
+      :drawer-info="uploadDrawerInfo"
+      @drawerOnClose="uploadClose"
+      @submit="uploadSubmit"
+    ></UploadModal>
     <!-- 更多附件 -->
-    <MoreFj v-if="moreFJDrawerInfo.id" :drawer-info="moreFJDrawerInfo" @drawerOnClose="moreFJClose" ></MoreFj>
+    <MoreFj
+      v-if="moreFJDrawerInfo.id"
+      :drawer-info="moreFJDrawerInfo"
+      @drawerOnClose="moreFJClose"
+      @submit="moreFJSubmit"
+    ></MoreFj>
   </div>
 </template>
 
@@ -86,9 +96,9 @@
   import { boardFileView } from '/@/api/demo/customer';
   import { type DrawerItemType } from '/@/views/type';
   import OrderModal, { orderSourceMap, orderTypeMap } from './order-modal.vue';
-import UploadModal, { UploadAA } from './upload-modal.vue';
-  import MoreFj from './more-fj.vue';
-import { reactive } from 'vue';
+  import UploadModal from './upload-modal.vue';
+  import MoreFj, { UploadAA } from './more-fj.vue';
+  import { reactive } from 'vue';
   interface BBBB {
     order: CustomerOrderInfo;
     productBasics;
@@ -102,7 +112,7 @@ import { reactive } from 'vue';
       Tooltip,
       OrderModal,
       UploadModal,
-      MoreFj
+      MoreFj,
     },
     props: {
       disease: {
@@ -188,36 +198,40 @@ import { reactive } from 'vue';
         id: undefined,
         type: undefined,
       });
-      const uploadAction = (type: number, id: number) => { 
-        uploadDrawerInfo.visible = true
-        uploadDrawerInfo.type = type
-        uploadDrawerInfo.id = id
-      }
+      const uploadAction = (type: number, id: number) => {
+        uploadDrawerInfo.visible = true;
+        uploadDrawerInfo.type = type;
+        uploadDrawerInfo.id = id;
+      };
       const uploadClose = () => {
-        uploadDrawerInfo.visible = false
-        uploadDrawerInfo.type = undefined
-        uploadDrawerInfo.id = undefined
-      }
+        uploadDrawerInfo.visible = false;
+        uploadDrawerInfo.type = undefined;
+        uploadDrawerInfo.id = undefined;
+      };
       const uploadSubmit = () => {
-        uploadClose()
+        uploadClose();
         emit('submit');
-      }
+      };
       // 更多附件
       const moreFJDrawerInfo = reactive<UploadAA>({
         visible: false,
         id: undefined,
         type: undefined,
       });
-      const scanFJAction = (type: number, id: number) => { 
-        moreFJDrawerInfo.visible = true
-        moreFJDrawerInfo.type = type
-        moreFJDrawerInfo.id = id
-      }
+      const scanFJAction = (type: number, id: number) => {
+        moreFJDrawerInfo.visible = true;
+        moreFJDrawerInfo.type = type;
+        moreFJDrawerInfo.id = id;
+      };
       const moreFJClose = () => {
-        moreFJDrawerInfo.visible = false
-        moreFJDrawerInfo.type = undefined
-        moreFJDrawerInfo.id = undefined
-      }
+        moreFJDrawerInfo.visible = false;
+        moreFJDrawerInfo.type = undefined;
+        moreFJDrawerInfo.id = undefined;
+      };
+      const moreFJSubmit = () => {
+        // moreFJClose();
+        emit('submit');
+      };
       return {
         diseaseObject,
         linkClick,
@@ -241,7 +255,8 @@ import { reactive } from 'vue';
         // 查看附件
         moreFJDrawerInfo,
         scanFJAction,
-        moreFJClose
+        moreFJClose,
+        moreFJSubmit
       };
     },
   });

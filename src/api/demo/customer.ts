@@ -185,7 +185,10 @@ export const getCustomerFileDownload = (path: string) =>
 
 export const getCustomerFileView = (fileId: number) =>
   defHttp.post<string>({ url: Api.FileView, params: { fileId } });
-
+  
+export const getCustomerFileRemove = (fileId: number) =>
+  defHttp.post<string>({ url: '/customer/file/remove', params: { fileId } });
+  
 export const exportCustomerInfo = () =>
   defHttp.get<Array<CustomerInfo>>({
     url: '/customer/basic/export',

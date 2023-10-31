@@ -30,8 +30,14 @@
         <div class="data-report">
           <div class="block-tip"></div>
           <div class="info-title" :style="{ marginLeft: '16px' }"
-            >数据报告<Button type="link">新增</Button></div
+            >数据报告</div
           >
+          <DataReport
+            v-if="boardInfo?.customerBasic.id"
+            :customer-id="boardInfo?.customerBasic.id"
+            :disease="boardInfo?.customerBasic"
+            :callback="infoCallback"
+          />
         </div>
       </div>
 
@@ -94,7 +100,7 @@
     <MoreO
       v-if="mOrderDrawerInfo.customerId"
       :mOrderModal="mOrderDrawerInfo"
-      @drawerOnClose="orderInfoSubmit"
+      @drawerOnClose="mOrderInfoClose"
       @submit="orderInfoSubmit"
     ></MoreO>
     <!-- 新增订单 -->
@@ -131,7 +137,8 @@
   import { CustomerMHInfo } from '/@/api/demo/model/customer';
   import MoreO from './components/more-o.vue';
   import OrderModal from './components/order-modal.vue';
-  import MoreHf from './components/more-hf.vue';
+import MoreHf from './components/more-hf.vue';
+  import DataReport from './components/data-report.vue';
   export default defineComponent({
     components: {
       Button,
@@ -144,6 +151,7 @@
       OrderModal,
       MoreHf,
       Popover,
+      DataReport
     },
     setup() {
       const route = useRoute();
@@ -396,7 +404,7 @@
 
         .data-report {
           position: relative;
-          width: 280px;
+          width: 380px;
           background: #fff;
           border-radius: 8px;
           padding: 10px 16px 20px;
