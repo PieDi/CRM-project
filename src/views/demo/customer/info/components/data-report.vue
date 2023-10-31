@@ -25,25 +25,35 @@
         /></div>
       </div>
       <div class="content">
-        <div class="item">
-          <span>脑电波检查结果.pdf</span>
+        <div class="item" v-for="item of diseaseObject.originalDataReports">
+          <span>{{ item.fileName }}</span>
           <div
-            ><Button type="link">查看</Button><Button type="link">下载</Button
-            ><Button type="link" danger>删除</Button></div
-          >
-        </div>
-        <div class="item">
-          <span>脑电波检查结果.pdf</span>
-          <div
-            ><Button type="link">查看</Button><Button type="link">下载</Button
-            ><Button type="link" danger>删除</Button></div
-          >
-        </div>
-        <div class="item">
-          <span>脑电波检查结果.pdf</span>
-          <div
-            ><Button type="link">查看</Button><Button type="link">下载</Button
-            ><Button type="link" danger>删除</Button></div
+            ><Button
+              type="link"
+              @click="
+                () => {
+                  handlePreView(item.id);
+                }
+              "
+              >查看</Button
+            ><Button
+              type="link"
+              @click="
+                () => {
+                  handleDownload(item.id);
+                }
+              "
+              >下载</Button
+            ><Button
+              type="link"
+              danger
+              @click="
+                () => {
+                  deleteFile(item.id);
+                }
+              "
+              >删除</Button
+            ></div
           >
         </div>
       </div>
@@ -106,10 +116,12 @@
 
 <script lang="ts">
   import { Button, message } from 'ant-design-vue';
-  import { defineComponent, PropType, ref, reactive, watch, onBeforeMount } from 'vue';
+  import { defineComponent, PropType, ref, reactive, watch, onBeforeMount, createVNode } from 'vue';
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import UploadModal from './upload-modal.vue';
   import MoreFj, { UploadAA } from './more-fj.vue';
-
+  import { getCustomerFileView, getCustomerFileRemove } from '/@/api/demo/customer';
+  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   export default defineComponent({
     props: {
       customerId: {
@@ -128,6 +140,7 @@
       MoreFj,
     },
     setup(props, { emit }) {
+      onBeforeMount(() => {});
       // 更多附件
       const moreFJDrawerInfo = reactive<UploadAA>({
         visible: false,
@@ -168,7 +181,42 @@
         uploadClose();
         emit('submit');
       };
+      const diseaseObject = ref();
+      watch(
+        () => props.disease,
+        () => {
+          diseaseObject.value = props.disease;
+        },
+        { immediate: true },
+      );
+
+      const handlePreView = async (id: number) => {
+        const res = await getCustomerFileView(id);
+        if (res) {
+          window.open(res);
+        }
+      };
+      const handleDownload = async (id: number) => {
+        if (id)
+          window.open(`http://129.204.202.223:8001/basic-api/customer/file/download?fileId=${id}`);
+      };
+      const deleteFile = (id: number) => {
+        confirm(
+          withConfirm({
+            icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+            content: '确定删除该文件',
+            async onOk() {
+              const res = await getCustomerFileRemove(id);
+              if (res) {
+                message.success('删除文件');
+                emit('submit');
+              }
+            },
+          }),
+        );
+      };
       return {
+        diseaseObject,
         // 查看附件
         moreFJDrawerInfo,
         scanFJAction,
@@ -179,6 +227,10 @@
         uploadAction,
         uploadClose,
         uploadSubmit,
+        // 附件操作
+        handlePreView,
+        handleDownload,
+        deleteFile,
       };
     },
   });
