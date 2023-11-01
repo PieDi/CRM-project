@@ -16,7 +16,7 @@ const storeServe: AppRouteModule = {
     {
       path: 'product-manage',
       name: 'SysAuthProductManage',
-      component: () => import('/@/views/auth/super/product.vue'),
+      component: () => import('/@/views/auth/super/product1.vue'),
       meta: {
         title: '库存查询',
         roles: [RoleEnum.SUPER, RoleEnum.STAFF1,  RoleEnum.STAFF3]
