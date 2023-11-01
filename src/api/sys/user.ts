@@ -71,9 +71,10 @@ export const getUserPage = (params: { pageNum: number; userName?: string }) =>
     url: Api.UserPage,
     params: { pageSize: 10, ...params },
   });
-export const getUserList = () =>
+export const getUserList = (params: any) =>
   defHttp.post<Array<UserInfo>>({
     url: Api.UserList,
+    params
   });
 
 export const deleteUser = (userId: string | number) =>

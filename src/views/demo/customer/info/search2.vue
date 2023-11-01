@@ -198,25 +198,21 @@
     </Form>
   </Modal>
 
-  <Modal
-    :mask-closable="false"
-    :destroy-on-close="true"
-    title="客户等级"
-    @cancel="drawerOnClose"
-    @ok="levelSubmit"
-    width="60%"
-    :visible="levelInfo.visible"
-  >
-    <Form :labelCol="{ span: 4 }">
-      <FormItem label="客户等级">
-        <Select placeholder="请选择" v-model:value="levelInfo.level">
-          <SelectOption v-for="item in customerLevelList" :key="item.id">{{
-            item.name
-          }}</SelectOption>
-        </Select>
-      </FormItem>
-    </Form>
-  </Modal>
+  <!-- 客户等级 -->
+  <CLevel
+    v-if="levelInfo.id"
+    :level-modal="levelInfo"
+    @drawerOnClose="levelDrawerOnClose"
+    @submit="levelSubmit"
+  ></CLevel>
+
+  <!-- 销售委派 -->
+  <XSWeipai
+    v-if="xsInfo.id"
+    :xs-modal="xsInfo"
+    @drawerOnClose="xsDrawerOnClose"
+    @submit="xsSubmit"
+  ></XSWeipai>
 </template>
 <script lang="ts">
   import { defineComponent, ref, onMounted, createVNode, computed, reactive, toRaw } from 'vue';
@@ -230,8 +226,6 @@
     deleteCustomer,
     getCustomerGList,
     getCustomerSList,
-    getCustomerLList,
-    updateCustomerLevel,
   } from '/@/api/demo/customer';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
@@ -239,6 +233,9 @@
   import { useRouter } from 'vue-router';
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
+  import XSWeipai from './xs-weipai.vue';
+  import CLevel from './c-level.vue';
+
   const FormItem = Form.Item;
   const SelectOption = Select.Option;
   const TextArea = Input.TextArea;
@@ -256,6 +253,8 @@
       SelectOption,
       ExclamationCircleOutlined,
       TextArea,
+      XSWeipai,
+      CLevel,
     },
     setup() {
       const userStore = useUserStore();
@@ -285,12 +284,6 @@
           remark: undefined,
           sourceId: undefined,
         },
-      });
-
-      const levelInfo = ref({
-        visible: false,
-        level: undefined,
-        id: undefined,
       });
 
       const pageInfo = ref<PageListInfo<CustomerInfo>>({
@@ -331,7 +324,6 @@
         customerListReq(1);
         getCustomerG();
         getCustomerS();
-        getCustomerL();
       });
       const router = useRouter();
       const boardCustomer = (id: number) => {
@@ -390,7 +382,7 @@
           });
           t.push({
             title: '销售委派',
-            dataIndex: 'levelName',
+            dataIndex: 'saleAgent',
             width: 120,
           });
         }
@@ -403,8 +395,8 @@
       });
       const selectedRowKeys = ref([]);
       const onSelectChange = (key: any) => {
-        selectedRowKeys.value = key
-       }
+        selectedRowKeys.value = key;
+      };
       const customerGroupList = ref<CustomerGroupInfo[]>([]);
       const getCustomerG = async () => {
         const res = await getCustomerGList();
@@ -415,11 +407,7 @@
         const res = await getCustomerSList();
         if (res) customerSourceList.value = res;
       };
-      const customerLevelList = ref<any[]>([]);
-      const getCustomerL = async () => {
-        const res = await getCustomerLList();
-        if (res) customerLevelList.value = res;
-      };
+ 
       const addCustomer = () => {
         drawerInfo.value.visible = true;
         drawerInfo.value.title = '新增客户';
@@ -436,13 +424,52 @@
           });
         }
       };
+      //客户等级
+      const levelInfo = reactive({
+        visible: false,
+        level: undefined,
+        id: undefined,
+      });
       const levelAction = (item: CustomerInfo) => {
-        levelInfo.value.visible = true;
+        levelInfo.visible = true;
         //@ts-ignore
-        levelInfo.value.level = item.level;
+        levelInfo.level = item.level;
         //@ts-ignore
-        levelInfo.value.id = item.id;
+        levelInfo.id = item.id;
       };
+      const levelDrawerOnClose = () => {
+        levelInfo.visible = false;
+        levelInfo.level = undefined;
+        levelInfo.id = undefined;
+      };
+      const levelSubmit = async () => {
+        levelDrawerOnClose();
+        customerListReq(pageInfo.value.current);
+      };
+
+      // 客服委派
+      const xsInfo = reactive({
+        visible: false,
+        saleId: undefined,
+        id: undefined,
+      });
+      const xsAction = (item: CustomerInfo) => {
+        xsInfo.visible = true;
+        //@ts-ignore
+        xsInfo.saleId = item.saleId;
+        //@ts-ignore
+        xsInfo.id = item.id;
+      };
+      const xsDrawerOnClose = () => {
+        xsInfo.visible = false;
+        xsInfo.saleId = undefined;
+        xsInfo.id = undefined;
+      };
+      const xsSubmit = () => {
+        xsDrawerOnClose();
+        customerListReq(pageInfo.value.current);
+      };
+
       const deleteAction = (item: CustomerInfo) => {
         confirm(
           withConfirm({
@@ -462,11 +489,6 @@
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-
-        levelInfo.value.visible = false;
-        levelInfo.value.level = undefined;
-        levelInfo.value.id = undefined;
-
         Object.keys(drawerInfo.value.item).forEach((key) => {
           drawerInfo.value.item[key] = undefined;
         });
@@ -516,24 +538,10 @@
         });
       };
 
-      const levelSubmit = async () => {
-        //@ts-ignore
-        let res = await updateCustomerLevel({
-          id: levelInfo.value.id,
-          levelId: levelInfo.value.level,
-        });
-        if (res) {
-          message.success('修改用户信息成功');
-          customerListReq(pageInfo.value.current);
-          drawerOnClose();
-        }
-      };
       const customerExport = async () => {
-        if(!selectedRowKeys.value.length) return
+        if (!selectedRowKeys.value.length) return;
         const t = selectedRowKeys.value.join(',');
-        window.open(
-          `http://129.204.202.223:8001/basic-api/customer/basic/export?ids=${t}&type=2`,
-        );
+        window.open(`http://129.204.202.223:8001/basic-api/customer/basic/export?ids=${t}&type=2`);
       };
       return {
         columns,
@@ -554,12 +562,19 @@
         validateInfos,
         authShow,
         customerExport,
-        customerLevelList,
+        selectedRowKeys,
+        onSelectChange,
+        //客户等级
         levelInfo,
         levelAction,
         levelSubmit,
-        selectedRowKeys,
-        onSelectChange
+        levelDrawerOnClose,
+
+        //销售委派
+        xsInfo,
+        xsAction,
+        xsDrawerOnClose,
+        xsSubmit,
       };
     },
   });
