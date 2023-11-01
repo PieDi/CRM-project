@@ -162,8 +162,7 @@ export const getCustomerList = (name?: string) =>
     url: Api.CustomerList,
     params: { name },
   });
-export const saveCustomer = (params?: any) =>
-  defHttp.post<any>({ url: Api.SaveCustomer, params });
+export const saveCustomer = (params?: any) => defHttp.post<any>({ url: Api.SaveCustomer, params });
 
 export const updateCustomer = (params?: any) =>
   defHttp.post<any>({ url: Api.UpdateCustomer, params });
@@ -179,16 +178,19 @@ export const getCustomerDetail = (id: number) =>
 
 export const assignCustomer = (params?: any) =>
   defHttp.post<any>({ url: Api.AssignCustomer, params });
+//销售委派
+export const assignSale = (params?: any) =>
+  defHttp.post<any>({ url: '/customer/basic/assignSale', params });
 
 export const getCustomerFileDownload = (path: string) =>
   defHttp.get<any>({ url: Api.FileDownload, params: { path } });
 
 export const getCustomerFileView = (fileId: number) =>
   defHttp.post<string>({ url: Api.FileView, params: { fileId } });
-  
+
 export const getCustomerFileRemove = (fileId: number) =>
   defHttp.post<string>({ url: '/customer/file/remove', params: { fileId } });
-  
+
 export const exportCustomerInfo = () =>
   defHttp.get<Array<CustomerInfo>>({
     url: '/customer/basic/export',
@@ -464,9 +466,6 @@ export const fileInvoiceUpload = (params: any) =>
 
 export const fileInvoiceDelete = (fileId: number) =>
   defHttp.post<number[]>({ url: Api.CustomerInvoiceFDelete, params: { fileId } });
-
-
-
 
 //重构部分
 // 附件上传

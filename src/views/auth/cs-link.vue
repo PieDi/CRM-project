@@ -211,7 +211,7 @@
 
       const staffSourceData = ref<UserInfo[]>([]);
       const userListReq = async () => {
-        const res = await getUserList();
+        const res = await getUserList({staff: 1});
         if (res) {
           staffSourceData.value = res;
         }
@@ -220,7 +220,7 @@
       const appointStaff = (item: CustomerInfo) => {
         userListReq();
         drawerInfo.value.visible = true;
-        drawerInfo.value.title = '员工委派';
+        drawerInfo.value.title = '客服委派';
         drawerInfo.value.type = 'scan';
         drawerInfo.value.item.id = item.id;
       };
@@ -229,7 +229,6 @@
         drawerInfo.value.visible = false;
         drawerInfo.value.title = '';
         drawerInfo.value.type = undefined;
-
         drawerInfo.value.item.staffId = undefined;
         drawerInfo.value.item.id = undefined;
       };

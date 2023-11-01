@@ -34,6 +34,7 @@ export interface CustomerInfo {
   documentType: number | undefined;
   groupId: number | undefined;
   level: number | undefined;
+  saleId: number | undefined;
   mobile: string | undefined;
   name: string | undefined;
   remark: string | undefined;
