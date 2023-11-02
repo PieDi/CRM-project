@@ -142,8 +142,8 @@
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-
-  import { type MaterialsInfo, getMaterialsPage, saveMaterials, updateMaterials, removalMaterials } from '/@/api/demo/materials';
+import { type MaterialsInfo, getMaterialsPage, saveMaterials, updateMaterials, removeMaterials } from '/@/api/demo/materials';
+  
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   const SelectOption = Select.Option;
@@ -267,7 +267,7 @@
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
             content: '确定删除该材料',
             async onOk() {
-              const res = await removalMaterials(item.id as number);
+              const res = await removeMaterials(item.id as number);
               if (res) {
                 message.success('删除产品成功');
                 productListReq(pageInfo.value.current);

@@ -1,21 +1,5 @@
 import { defHttp } from '/@/utils/http/axios';
-import { ProductInfo, ProductInInfo, ProductOutInfo } from './model/product';
-enum Api {
- 
-  // 产品入库
-  ProductInList = '/product/in/list',
-  ProductInPage = '/product/in/page',
-  ProductInSave = '/product/in/save',
-  ProductInUpdate = '/product/in/update',
-  ProductInDelete = '/product/in/delete',
 
-  // 产品出库
-  ProductOutList = '/product/out/list',
-  ProductOutPage = '/product/out/page',
-  ProductOutSave = '/product/out/save',
-  ProductOutUpdate = '/product/out/update',
-  ProductOutDelete = '/product/in/delete',
-}
 export interface MaterialsInfo { 
   id: number | undefined
   brand: string | undefined
@@ -43,35 +27,35 @@ export const updateMaterials = (params: any) =>
     params,
   });
 
-export const removalMaterials = (id: number) =>
+export const removeMaterials = (id: number) =>
   defHttp.post<{ total: number; pageNum: number; data: MaterialsInfo[] }>({
     url: '/materials/basic/delete',
     params: { ids: [id] },
   });
 
 // 入库
-export const getProductInPage = (params: any) =>
-  defHttp.post<{ total: number; pageNum: number; data: ProductInInfo[] }>({
-    url: Api.ProductInPage,
+export const getMaterialsInPage = (params: any) =>
+  defHttp.post<{ total: number; pageNum: number; data: MaterialsInfo[] }>({
+    url: '/materials/in/page',
     params: { pageSize: 10, ...params },
   });
-export const saveProductIn = (params?: any) =>
-  defHttp.post<any>({ url: Api.ProductInSave, params });
-export const updateProductIn = (params?: any) =>
-  defHttp.post<any>({ url: Api.ProductInUpdate, params });
+export const saveMaterialsIn = (params?: any) =>
+  defHttp.post<any>({ url: '/materials/in/save', params });
+export const updateMaterialsIn = (params?: any) =>
+  defHttp.post<any>({ url: '/materials/in/update', params });
 
-export const deleteProductIn = (id: string | number) =>
-  defHttp.post<any>({ url: Api.ProductInDelete, params: { id } });
+export const deleteMaterialsIn = (id: string | number) =>
+  defHttp.post<any>({ url: '/materials/in/delete', params: { id } });
 
 // 出库
-export const getProductOutPage = (params: any) =>
-  defHttp.post<{ total: number; pageNum: number; data: ProductOutInfo[] }>({
-    url: Api.ProductOutPage,
+export const getMaterialsOutPage = (params: any) =>
+  defHttp.post<{ total: number; pageNum: number; data: MaterialsInfo[] }>({
+    url: '/materials/out/page',
     params: { pageSize: 10, ...params },
   });
-export const saveProductOut = (params?: any) =>
-  defHttp.post<any>({ url: Api.ProductOutSave, params });
-export const updateProductOut = (params?: any) =>
-  defHttp.post<any>({ url: Api.ProductOutUpdate, params });
-export const deleteProductOut = (id: string | number) =>
-  defHttp.post<any>({ url: Api.ProductOutDelete, params: { id } });
+export const saveMaterialsOut = (params?: any) =>
+  defHttp.post<any>({ url: '/materials/out/save', params });
+export const updateMaterialsOut = (params?: any) =>
+  defHttp.post<any>({ url: '/materials/out/update', params });
+export const deleteMaterialsOut = (id: string | number) =>
+  defHttp.post<any>({ url: '/materials/out/delete', params: { id } });

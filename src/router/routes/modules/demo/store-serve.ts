@@ -25,7 +25,7 @@ const storeServe: AppRouteModule = {
     {
       path: 'in',
       name: 'StoreIn',
-      component: () => import('/@/views/demo/store-serve/in/search.vue'),
+      component: () => import('/@/views/demo/store-serve/in/search1.vue'),
       meta: {
         title: '库存入库',
         roles: [RoleEnum.SUPER, RoleEnum.STAFF1,  RoleEnum.STAFF3]
@@ -34,7 +34,7 @@ const storeServe: AppRouteModule = {
     {
       path: 'out',
       name: 'StoreOut',
-      component: () => import('/@/views/demo/store-serve/out/search.vue'),
+      component: () => import('/@/views/demo/store-serve/out/search1.vue'),
       meta: {
         title: '库存出库',
         roles: [RoleEnum.SUPER, RoleEnum.STAFF1,  RoleEnum.STAFF3]
