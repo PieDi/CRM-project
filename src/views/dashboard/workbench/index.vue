@@ -145,6 +145,7 @@
     //@ts-ignore
     drawerInfo.type = 'edit';
     drawerInfo.task = o.task;
+    drawerInfo.id = o.id;
     //@ts-ignore
     drawerInfo.taskTime = o.date;
   };
@@ -181,6 +182,7 @@
       res = await updateTaskCalendar({
         task: drawerInfo.task,
         taskTime: drawerInfo.taskTime,
+        id: drawerInfo.id
       });
     }
 
