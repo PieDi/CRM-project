@@ -14,19 +14,30 @@
       <Calendar @panel-change="onPanelChange">
         <template #dateCellRender="{ current }">
           <ul class="events">
-            <li
-              v-for="item in getListData(current)"
-              :key="item.content"
-              @click="
-                () => {
-                  liClick(item);
-                }
-              "
-            >
-              <Badge :status="item.type" :text="item.content" />
+            <li class="item" v-for="item in getListData(current)" :key="item.id">
+              <Badge
+                :status="item.type"
+                :text="item.task"
+                @click="
+                  () => {
+                    taskEdit(item);
+                  }
+                "
+              />
+              <Button
+                type="link"
+                danger
+                @click="
+                  () => {
+                    taskDelete(item.id);
+                  }
+                "
+                >删除</Button
+              >
             </li>
             <li
               ><Button
+                v-if="c.format('MM') === current.format('MM')"
                 type="link"
                 @click="
                   () => {
@@ -40,50 +51,145 @@
         </template>
       </Calendar>
     </div>
+    <Modal
+      :mask-closable="false"
+      :destroy-on-close="true"
+      title="个人任务"
+      @cancel="drawerOnClose"
+      @ok="submit"
+      width="50%"
+      :visible="drawerInfo.visible"
+    >
+      <Form :labelCol="{ span: 4 }">
+        <Form :labelCol="{ span: 4 }">
+          <FormItem label="个人任务">
+            <TextArea v-model:value="drawerInfo.task" placeholder="请输入"></TextArea>
+          </FormItem>
+        </Form>
+      </Form>
+    </Modal>
   </PageWrapper>
 </template>
 <script lang="ts" setup>
-  import { onBeforeMount, computed, ref, createVNode } from 'vue';
-  import { Calendar, Badge, Avatar, Button, Input } from 'ant-design-vue';
+  import { onBeforeMount, computed, ref, reactive, createVNode } from 'vue';
+  import {
+    Calendar,
+    Badge,
+    Avatar,
+    Button,
+    Input,
+    Modal,
+    Form,
+    FormItem,
+    message,
+  } from 'ant-design-vue';
   import { PageWrapper } from '/@/components/Page';
-  import { getTaskCalendar } from '/@/api/demo/visit-return';
-  import { CalendarObject } from '/@/api/demo/model/visit-return';
+  import {
+    getTaskCalendar,
+    saveTaskCalendar,
+    updateTaskCalendar,
+    deleteTaskCalendar,
+  } from '/@/api/demo/visit-return';
+  import { TaskObject } from '/@/api/demo/model/visit-return';
   import dayjs, { Dayjs } from 'dayjs';
-  import { useRouter } from 'vue-router';
   import headerImg from '/@/assets/images/header.jpg';
   import { useUserStore } from '/@/store/modules/user';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+
   const TextArea = Input.TextArea;
   const userStore = useUserStore();
   const userinfo = computed(() => userStore.getUserInfo);
-  const sourceData = ref<Array<CalendarObject>>([]);
-  onBeforeMount(async () => {
-    const c = dayjs();
-    const res = await getTaskCalendar({ year: c.format('YYYY'), month: c.format('MM') });
-    if (res) sourceData.value = res;
-  });
-  const onPanelChange = async (val: any) => {
-    const res = await getTaskCalendar({ year: val.format('YYYY'), month: val.format('MM') });
+  const sourceData = ref<Array<TaskObject>>([]);
+  const taskRequest = async (params: any) => {
+    const res = await getTaskCalendar(params);
     if (res) sourceData.value = res;
   };
+  const c = ref(dayjs());
+  onBeforeMount(async () => {
+    taskRequest({});
+  });
+  const onPanelChange = async (val: any) => {
+    c.value = val;
+    taskRequest({ year: val.format('YYYY'), month: val.format('MM') });
+  };
   const getListData = (value: Dayjs) => {
-    let listData: Array<{ type: 'warning'; content: string; id: number }> = [];
+    let listData: Array<{ type: 'warning'; task: string; id: number }> = [];
     sourceData.value.forEach((o) => {
       if (value.format('YYYY-MM-DD') === o.date) {
-        o.visits.forEach((i) => {
+        o.tasks.forEach((i) => {
           // @ts-ignore
-          listData.push({ type: 'warning', content: i.title, id: i.id });
+          listData.push({ type: 'warning', task: i.task, id: i.id, date: o.date });
         });
       }
     });
     return listData;
   };
-  const router = useRouter();
-  const liClick = (o: any) => {
-    router.push({ path: '/return-visit/plan', query: { id: o.id } });
+  const taskDelete = (id: number) => {
+    confirm(
+      withConfirm({
+        icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+        content: '确定删除该订单',
+        async onOk() {
+          const res = await deleteTaskCalendar([id]);
+          if (res) {
+            message.success('删除任务成功');
+            taskRequest({ year: c.value.format('YYYY'), month: c.value.format('MM') });
+          }
+        },
+      }),
+    );
   };
-  const aaa = ref();
-  const taskAdd = (value: Dayjs) => {};
+  const taskEdit = (o: any) => {
+    drawerInfo.visible = true;
+    //@ts-ignore
+    drawerInfo.type = 'edit';
+    drawerInfo.task = o.task;
+    //@ts-ignore
+    drawerInfo.taskTime = o.date;
+  };
+
+  const drawerInfo = reactive({
+    type: undefined,
+    visible: false,
+    task: undefined,
+    taskTime: undefined,
+    id: undefined,
+  });
+  const taskAdd = (value: Dayjs) => {
+    drawerInfo.visible = true;
+    //@ts-ignore
+    drawerInfo.type = 'add';
+    drawerInfo.task = undefined;
+    drawerInfo.id = undefined;
+    //@ts-ignore
+    drawerInfo.taskTime = value.format('YYYY-MM-DD');
+  };
+  const drawerOnClose = () => {
+    drawerInfo.visible = false;
+    drawerInfo.task = undefined;
+    drawerInfo.taskTime = undefined;
+  };
+  const submit = async () => {
+    let res;
+    if (drawerInfo.type === 'add') {
+      res = await saveTaskCalendar({
+        task: drawerInfo.task,
+        taskTime: drawerInfo.taskTime,
+      });
+    } else {
+      res = await updateTaskCalendar({
+        task: drawerInfo.task,
+        taskTime: drawerInfo.taskTime,
+      });
+    }
+
+    if (res) {
+      message.success('更新任务成功');
+      drawerOnClose();
+      taskRequest({ year: c.value.format('YYYY'), month: c.value.format('MM') });
+    }
+  };
 </script>
 <style lang="less">
   .calendar-board {
@@ -98,6 +204,11 @@
       list-style: none;
       margin: 0;
       padding: 0;
+      .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
     }
     .events .ant-badge-status {
       overflow: hidden;

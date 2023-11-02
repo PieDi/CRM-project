@@ -23,3 +23,11 @@ export interface CalendarObject {
     status: number;
   }>;
 }
+export interface TaskObject {
+  date: string;
+  count: number;
+  tasks: Array<{
+    id: number;
+    task: string;
+  }>;
+}
