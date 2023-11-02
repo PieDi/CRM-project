@@ -82,6 +82,39 @@
             src="/src/assets/images/report-more.png"
         /></div>
       </div>
+      <div class="content">
+        <div class="item" v-for="item of diseaseObject.otherDataReports">
+          <span>{{ item.fileName }}</span>
+          <div
+            ><Button
+              type="link"
+              @click="
+                () => {
+                  handlePreView(item.id);
+                }
+              "
+              >查看</Button
+            ><Button
+              type="link"
+              @click="
+                () => {
+                  handleDownload(item.id);
+                }
+              "
+              >下载</Button
+            ><Button
+              type="link"
+              danger
+              @click="
+                () => {
+                  deleteFile(item.id);
+                }
+              "
+              >删除</Button
+            ></div
+          >
+        </div>
+      </div>
     </div>
     <div class="3 block">
       <div class="header">
