@@ -14,6 +14,13 @@ enum Api {
   ExportVisit = '/customer/returnVisit/export', // 导出
 }
 
+
+export const getTaskCalendar = (params: { month?: string; year?: string }) =>
+  defHttp.post<Array<any>>({
+    url: '/sys/task/calendar',
+    params,
+  });
+
 export const getVisitCalendar = (params: { month?: string; year?: string }) =>
   defHttp.post<Array<CalendarObject>>({
     url: Api.VisitCalendar,

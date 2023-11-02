@@ -25,6 +25,17 @@
             >
               <Badge :status="item.type" :text="item.content" />
             </li>
+            <li
+              ><Button
+                type="link"
+                @click="
+                  () => {
+                    taskAdd(current);
+                  }
+                "
+                >新增</Button
+              ></li
+            >
           </ul>
         </template>
       </Calendar>
@@ -32,32 +43,32 @@
   </PageWrapper>
 </template>
 <script lang="ts" setup>
-  import { onMounted, computed, ref } from 'vue';
-  import { Calendar, Badge, Avatar } from 'ant-design-vue';
+  import { onBeforeMount, computed, ref, createVNode } from 'vue';
+  import { Calendar, Badge, Avatar, Button, Input } from 'ant-design-vue';
   import { PageWrapper } from '/@/components/Page';
-  import { getVisitCalendar } from '/@/api/demo/visit-return';
+  import { getTaskCalendar } from '/@/api/demo/visit-return';
   import { CalendarObject } from '/@/api/demo/model/visit-return';
-  import { Dayjs } from 'dayjs';
+  import dayjs, { Dayjs } from 'dayjs';
   import { useRouter } from 'vue-router';
   import headerImg from '/@/assets/images/header.jpg';
   import { useUserStore } from '/@/store/modules/user';
-
+  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+  const TextArea = Input.TextArea;
   const userStore = useUserStore();
   const userinfo = computed(() => userStore.getUserInfo);
   const sourceData = ref<Array<CalendarObject>>([]);
-  onMounted(async () => {
-    const res = await getVisitCalendar({});
+  onBeforeMount(async () => {
+    const c = dayjs();
+    const res = await getTaskCalendar({ year: c.format('YYYY'), month: c.format('MM') });
     if (res) sourceData.value = res;
   });
   const onPanelChange = async (val: any) => {
-    const res = await getVisitCalendar({ year: val.format('YYYY'), month: val.format('MM') });
+    const res = await getTaskCalendar({ year: val.format('YYYY'), month: val.format('MM') });
     if (res) sourceData.value = res;
   };
   const getListData = (value: Dayjs) => {
     let listData: Array<{ type: 'warning'; content: string; id: number }> = [];
     sourceData.value.forEach((o) => {
-      // const d = o.date.split('-')[2];
-      // console.log(32232323, o.date)
       if (value.format('YYYY-MM-DD') === o.date) {
         o.visits.forEach((i) => {
           // @ts-ignore
@@ -71,6 +82,8 @@
   const liClick = (o: any) => {
     router.push({ path: '/return-visit/plan', query: { id: o.id } });
   };
+  const aaa = ref();
+  const taskAdd = (value: Dayjs) => {};
 </script>
 <style lang="less">
   .calendar-board {
