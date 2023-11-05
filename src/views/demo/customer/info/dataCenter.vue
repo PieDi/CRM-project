@@ -25,13 +25,15 @@
           <div class="info-title" :style="{ marginLeft: '16px' }"
             >客户病史信息<Button type="link" @click="addMHistory">新增</Button></div
           >
-          <Disease v-if="boardInfo?.diseases" :disease="boardInfo?.diseases" @submit="infoCallback"/>
+          <Disease
+            v-if="boardInfo?.diseases"
+            :disease="boardInfo?.diseases"
+            @submit="infoCallback"
+          />
         </div>
         <div class="data-report">
           <div class="block-tip"></div>
-          <div class="info-title" :style="{ marginLeft: '16px' }"
-            >数据报告</div
-          >
+          <div class="info-title" :style="{ marginLeft: '16px' }">数据报告</div>
           <DataReport
             v-if="boardInfo?.customerBasic.id"
             :customer-id="boardInfo?.customerBasic.id"
@@ -81,7 +83,9 @@
 
         <div class="visit">
           <div class="block-tip"></div>
-          <div class="info-title" :style="{ marginLeft: '16px' }">回访工作计划</div>
+          <div class="info-title" :style="{ marginLeft: '16px' }"
+            >回访工作计划<Button type="link" @click="addVisitReturn">新增</Button></div
+          >
           <div class="more">
             <div @click="hfClick">查看全部<img src="/src/assets/images/dis-more.png" /></div>
           </div>
@@ -119,6 +123,14 @@
       @drawerOnClose="hfInfoClose"
       @submit="hfInfoSubmit"
     ></MoreHf>
+    <!-- 新建回访 -->
+    <HfModal
+      v-if="xjhfDrawerInfo.item.customerId"
+      :customer-id="xjhfDrawerInfo.item.customerId"
+      :drawer-info="xjhfDrawerInfo"
+      @drawerOnClose="XJHFDrawerOnClose"
+      @submit="XJHFSubmit"
+    ></HfModal>
   </div>
 </template>
 <script lang="ts">
@@ -137,7 +149,8 @@
   import { CustomerMHInfo } from '/@/api/demo/model/customer';
   import MoreO from './components/more-o.vue';
   import OrderModal from './components/order-modal.vue';
-import MoreHf from './components/more-hf.vue';
+  import MoreHf from './components/more-hf.vue';
+  import HfModal from './components/hf-modal.vue';
   import DataReport from './components/data-report.vue';
   export default defineComponent({
     components: {
@@ -150,8 +163,9 @@ import MoreHf from './components/more-hf.vue';
       MoreO,
       OrderModal,
       MoreHf,
+      HfModal,
       Popover,
-      DataReport
+      DataReport,
     },
     setup() {
       const route = useRoute();
@@ -293,10 +307,48 @@ import MoreHf from './components/more-hf.vue';
         hfDrawerInfo.value.visible = true;
         hfDrawerInfo.value.customerId = boardInfo.value?.customerBasic.id;
       };
-      const hfInfoSubmit = () => { 
+      const hfInfoSubmit = () => {
         hfInfoClose();
         customerInfoBoard();
-      }
+      };
+
+      const xjhfDrawerInfo = ref<DrawerItemType<any>>({
+        visible: false,
+        type: undefined,
+        title: '',
+        // @ts-ignore
+        item: {
+          id: undefined,
+          customerId: boardInfo.value?.customerBasic.id,
+          item: undefined,
+          nextPlan: undefined,
+          remark: undefined,
+          title: undefined,
+          type: undefined,
+          visitContent: undefined,
+          visitTime: undefined,
+        },
+      });
+      const addVisitReturn = () => {
+        xjhfDrawerInfo.value.title = '新建回访';
+        xjhfDrawerInfo.value.type = 'add';
+        xjhfDrawerInfo.value.visible = true;
+        xjhfDrawerInfo.value.item.customerId = boardInfo.value?.customerBasic.id;
+      };
+
+      const XJHFDrawerOnClose = () => {
+        xjhfDrawerInfo.value.visible = false;
+        xjhfDrawerInfo.value.title = '';
+        xjhfDrawerInfo.value.type = undefined;
+        Object.keys(xjhfDrawerInfo.value.item).forEach((key) => {
+          xjhfDrawerInfo.value.item[key] = undefined;
+        });
+      };
+
+      const XJHFSubmit = async () => {
+        XJHFDrawerOnClose();
+        customerInfoBoard();
+      };
       return {
         boardInfo,
         goBack,
@@ -317,10 +369,14 @@ import MoreHf from './components/more-hf.vue';
         orderInfoClose,
         orderInfoSubmit,
         //全部回访
+        xjhfDrawerInfo,
+        addVisitReturn,
+        XJHFDrawerOnClose,
+        XJHFSubmit,
         hfDrawerInfo,
         hfClick,
         hfInfoClose,
-        hfInfoSubmit
+        hfInfoSubmit,
       };
     },
   });

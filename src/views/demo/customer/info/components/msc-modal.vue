@@ -21,7 +21,7 @@
           <div class="label">{{ item.label }}</div>
 
           <div class="value">
-            <Input :bordered="false" :disabled="drawerInfo.type === 'scan'" :placeholder="item.label" v-model:value="xcgData[item.value]" />
+            <Input :disabled="drawerInfo.type === 'scan'" v-model:value="xcgData[item.value]" />
           </div>
           <div class="ckValue">{{ item.ckValue }}</div>
           <div class="unit">{{ item.unit }}</div>
@@ -39,7 +39,7 @@
           <div class="label">{{ item.label }}</div>
 
           <div class="value">
-            <Input :bordered="false" :disabled="drawerInfo.type === 'scan'" :placeholder="item.label" v-model:value="nxData[item.value]" />
+            <Input :disabled="drawerInfo.type === 'scan'" v-model:value="nxData[item.value]" />
           </div>
           <div class="ckValue">{{ item.ckValue }}</div>
           <div class="unit">{{ item.unit }}</div>
@@ -57,7 +57,7 @@
           <div class="label">{{ item.label }}</div>
 
           <div class="value">
-            <Input :bordered="false" :disabled="drawerInfo.type === 'scan'" :placeholder="item.label" v-model:value="xtData[item.value]" />
+            <Input :disabled="drawerInfo.type === 'scan'" v-model:value="xtData[item.value]" />
           </div>
           <div class="ckValue">{{ item.ckValue }}</div>
           <div class="unit">{{ item.unit }}</div>
@@ -75,7 +75,7 @@
           <div class="label">{{ item.label }}</div>
 
           <div class="value">
-            <Input :bordered="false" :disabled="drawerInfo.type === 'scan'" :placeholder="item.label" v-model:value="gsData[item.value]" />
+            <Input :disabled="drawerInfo.type === 'scan'" v-model:value="gsData[item.value]" />
           </div>
           <div class="ckValue">{{ item.ckValue }}</div>
           <div class="unit">{{ item.unit }}</div>
@@ -93,7 +93,7 @@
           <div class="label">{{ item.label }}</div>
 
           <div class="value">
-            <Input :bordered="false" :disabled="drawerInfo.type === 'scan'" :placeholder="item.label" v-model:value="xzData[item.value]" />
+            <Input :disabled="drawerInfo.type === 'scan'" v-model:value="xzData[item.value]" />
           </div>
           <div class="ckValue">{{ item.ckValue }}</div>
           <div class="unit">{{ item.unit }}</div>
@@ -111,7 +111,7 @@
           <div class="label">{{ item.label }}</div>
 
           <div class="value">
-            <Input :bordered="false" :disabled="drawerInfo.type === 'scan'" :placeholder="item.label" v-model:value="ncgData[item.value]" />
+            <Input :disabled="drawerInfo.type === 'scan'" v-model:value="ncgData[item.value]" />
           </div>
           <div class="ckValue">{{ item.ckValue }}</div>
           <div class="unit">{{ item.unit }}</div>
@@ -129,7 +129,7 @@
           <div class="label">{{ item.label }}</div>
 
           <div class="value">
-            <Input :bordered="false" :disabled="drawerInfo.type === 'scan'" :placeholder="item.label" v-model:value="zlbjwData[item.value]" />
+            <Input :disabled="drawerInfo.type === 'scan'" v-model:value="zlbjwData[item.value]" />
           </div>
           <div class="ckValue">{{ item.ckValue }}</div>
           <div class="unit">{{ item.unit }}</div>
@@ -147,7 +147,7 @@
           <div class="label">{{ item.label }}</div>
 
           <div class="value">
-            <Input :bordered="false" :disabled="drawerInfo.type === 'scan'" :placeholder="item.label" v-model:value="jzxData[item.value]" />
+            <Input :disabled="drawerInfo.type === 'scan'" v-model:value="jzxData[item.value]" />
           </div>
           <div class="ckValue">{{ item.ckValue }}</div>
           <div class="unit">{{ item.unit }}</div>
@@ -165,7 +165,7 @@
           <div class="label">{{ item.label }}</div>
 
           <div class="value">
-            <Input :bordered="false" :disabled="drawerInfo.type === 'scan'" :placeholder="item.label" v-model:value="xzgnData[item.value]" />
+            <Input :disabled="drawerInfo.type === 'scan'" v-model:value="xzgnData[item.value]" />
           </div>
           <div class="ckValue">{{ item.ckValue }}</div>
           <div class="unit">{{ item.unit }}</div>
@@ -183,7 +183,7 @@
           <div class="label">{{ item.label }}</div>
 
           <div class="value">
-            <Input :bordered="false" :disabled="drawerInfo.type === 'scan'" :placeholder="item.label" v-model:value="crxjbData[item.value]" />
+            <Input :disabled="drawerInfo.type === 'scan'" v-model:value="crxjbData[item.value]" />
           </div>
           <div class="ckValue">{{ item.ckValue }}</div>
           <div class="unit">{{ item.unit }}</div>
@@ -218,9 +218,9 @@
         emit('drawerOnClose');
       };
       const submit = async () => {
-        if (props.drawerInfo.type === 'sacn') { 
+        if (props.drawerInfo.type === 'sacn') {
           emit('drawerOnClose');
-          return
+          return;
         }
         const res = await saveDataReport({
           name: 'msc',
@@ -1065,6 +1065,7 @@
         .value {
           width: 200px;
           .ant-input {
+            width: 120px;
             padding: 0;
           }
         }

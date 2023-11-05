@@ -176,7 +176,7 @@
 
 - **Axios** 新增`withToken`配置，用于控制请求是否携带 token
 - **BasicUpload**
-  - 新增在预览 `Modal` 中删除文件时触发`preview-delete` 事件
+  - 新增在查看 `Modal` 中删除文件时触发`preview-delete` 事件
   - `value` 支持 `v-model` 用法
 - **Route 配置**
   - 增加`ignoreRoute`用于在`ROUTE_MAPPING`或`BACK`权限模式下仅生成菜单
@@ -270,7 +270,7 @@
 - **CropperImage** `Cropper` 头像裁剪新增圆形裁剪功能
 - **CropperAvatar** 新增头像上传组件
 - **Drawer** `useDrawer`新增`closeDrawer`函数
-- **Preview** 新增`createImgPreview`图片预览函数
+- **Preview** 新增`createImgPreview`图片查看函数
 - **Setup** 新增引导页示例
 - **Tests** 添加 jest 测试套件，暂不支持 Vue 组件单测
 - **Axios** 新增`authenticationScheme`配置，用于指定认证方案
@@ -315,7 +315,7 @@
 - 修复默认的`axios`拦截器不能处理自定义 code 的问题
 - 修复锁屏弹窗的高度问题
 - 修复`BaiscTable`的`列展示`复选框的半选状态显示不正确的问题
-- 修复`BasicUpload`组件的预览列表某些情况下不能显示的问题
+- 修复`BasicUpload`组件的查看列表某些情况下不能显示的问题
 - 修复`RadioButtonGroup`的`options`设置`disabled`不生效的问题
 - 修复`Tinymce`组件在只读模式下上传图片的按钮仍然可用的问题
 - 修复`BasicForm`特定情况下的卡顿问题
@@ -545,7 +545,7 @@
 
 ### 🐛 Bug Fixes
 
-- 修复图片预览样式错误
+- 修复图片查看样式错误
 - 修复图标样式问题
 - 修复可编辑表格下拉回显问题
 
@@ -635,7 +635,7 @@
 - `ant-design-vue`组件注册移动到`components/registerComponent`
 - 移除 `setup` 文件夹
 - 升级到`vite2`
-- 图片预览改为`Image`组件实现,暂时移除函数式使用方式
+- 图片查看改为`Image`组件实现,暂时移除函数式使用方式
 
 ### ✨ Features
 
@@ -1134,7 +1134,7 @@
 ### 🐛 Bug Fixes
 
 - 修复一级菜单折叠显示菜单名问题
-- 修复预览命令不打包问题
+- 修复查看命令不打包问题
 - 修复表格 actionColOptions 参数不生效问题
 - 修复表格刷新表单 loading 不生效问题
 - 修复带参界面刷新参数丢失问题
@@ -1200,8 +1200,8 @@
 - 菜单折叠优化
 - 页面细节优化
 - 打包后压缩 html
-- 预览组件及右键菜单函数化重构
-- 预览组件操作列居中
+- 查看组件及右键菜单函数化重构
+- 查看组件操作列居中
 
 ### 🎫 Chores
 
@@ -1299,7 +1299,7 @@
 
 ### ✨ Features
 
-- 新增图片预览组件
+- 新增图片查看组件
 
 ### 🔧 Continuous Integration
 

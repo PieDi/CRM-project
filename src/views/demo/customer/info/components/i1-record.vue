@@ -73,7 +73,7 @@
                           handlePreView(file);
                         }
                       "
-                      >预览</Button
+                      >查看</Button
                     >
                     <Button
                       type="link"

@@ -258,6 +258,7 @@
     },
     setup() {
       const userStore = useUserStore();
+      const userInfo = computed(() => userStore.getUserInfo);
       const roleList = toRaw(userStore.getRoleList) || [];
       const authShow = computed(() => {
         return roleList.some((role) => [RoleEnum.SUPER].includes(role));
@@ -539,9 +540,8 @@
       };
 
       const customerExport = async () => {
-        if (!selectedRowKeys.value.length) return;
         const t = selectedRowKeys.value.join(',');
-        window.open(`http://129.204.202.223:8001/basic-api/customer/basic/export?ids=${t}&type=2`);
+        window.open(`http://129.204.202.223:8001/basic-api/customer/basic/export?ids=${t}&type=2&id=${userInfo.value.userId}`);
       };
       return {
         columns,

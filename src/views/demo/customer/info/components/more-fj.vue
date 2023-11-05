@@ -101,7 +101,7 @@
       };
       const handleDownload = async (id: number) => {
         if (id)
-          window.open(`http://129.204.202.223:8001/basic-api/customer/file/download?fileId=${id}`);
+          window.open(`http://129.204.202.223:8001/basic-api/customer/file/downloadById?fileId=${id}`);
       };
       const deleteFile = (id: number) => {
         confirm(

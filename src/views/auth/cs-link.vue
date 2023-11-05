@@ -148,7 +148,7 @@
         showSizeChanger: false,
       }));
       const customerListReq = async (pageNum: number) => {
-        const res = await getCustomerPage({ ...searchInfo.value, assign: 0, resource: 2, pageNum });
+        const res = await getCustomerPage({ ...searchInfo.value, resource: 2, pageNum });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;

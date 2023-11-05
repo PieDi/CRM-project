@@ -61,7 +61,7 @@
         }
       }
 
-      // // 预览
+      // // 查看
       // function handlePreview(record: PreviewFileItem) {
       //   const { url = '' } = record;
       //   createImgPreview({

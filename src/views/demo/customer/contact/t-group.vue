@@ -37,7 +37,7 @@
                   previewFile(item);
                 }
               "
-              >预览</Button
+              >查看</Button
             >
             <Button
               v-if="authShow"
@@ -54,15 +54,7 @@
       </div>
     </div>
   </PageWrapper>
-  <!-- <Modal
-    v-model:visible="pdfShow"
-    title="预览"
-    width="100%"
-    wrap-class-name="full-modal"
-    :footer="null"
-  >
-    <div id="pdf-content"></div>
-  </Modal> -->
+
 </template>
 <script lang="ts">
   import { defineComponent, ref, onMounted, toRaw, computed, createVNode } from 'vue';

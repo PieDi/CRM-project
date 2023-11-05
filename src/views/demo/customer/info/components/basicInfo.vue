@@ -13,9 +13,7 @@
         <img src="/src/assets/images/info-birth.png" />
         <div class="right">
           <div>生日:</div>
-          <div class="label">{{
-            diseaseObject?.type === 1 ? diseaseObject?.birth : '企业用户'
-          }}</div>
+          <div class="label">{{ diseaseObject?.type === 1 ? diseaseObject?.birth : '' }}</div>
         </div>
       </div>
       <div class="content" :style="{ width: '50%', marginTop: '16px' }">
@@ -100,159 +98,30 @@
       </div>
     </div>
 
-    <Modal
-      :mask-closable="false"
-      :destroy-on-close="true"
-      :title="drawerInfo.title"
-      @cancel="drawerOnClose"
-      @ok="submit"
-      width="60%"
-      :visible="drawerInfo.visible"
-    >
-      <Form :labelCol="{ span: 4 }">
-        <FormItem label="客户姓名" v-bind="validateInfos.name">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.name"
-          />
-        </FormItem>
-
-        <FormItem label="客户电话" v-bind="validateInfos.mobile">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.mobile"
-          />
-        </FormItem>
-        <FormItem label="性别" v-bind="validateInfos.sex">
-          <Select
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
-            v-model:value="drawerInfo.item.sex"
-          >
-            <SelectOption :key="1">男</SelectOption>
-            <SelectOption :key="2">女</SelectOption>
-          </Select>
-        </FormItem>
-
-        <FormItem label="证件类型" v-bind="validateInfos.documentType">
-          <Select
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
-            @change="documentChange"
-            v-model:value="drawerInfo.item.documentType"
-          >
-            <SelectOption :key="1">身份证</SelectOption>
-            <SelectOption :key="2">护照</SelectOption>
-            <SelectOption :key="3">军官证</SelectOption>
-            <SelectOption :key="4">港澳通行证</SelectOption>
-            <SelectOption :key="5">台湾通行证</SelectOption>
-          </Select>
-        </FormItem>
-
-        <FormItem label="证件号码" v-bind="validateInfos.documentNumber">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            @change="documentChange"
-            v-model:value="drawerInfo.item.documentNumber"
-          />
-        </FormItem>
-
-        <FormItem label="出生日期" v-bind="validateInfos.birth">
-          <DatePicker
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
-            allowClear
-            v-model:value="datePickerValue"
-            @change="birthChange"
-          />
-        </FormItem>
-
-        <FormItem label="年龄" v-bind="validateInfos.age">
-          <InputNumber
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            min="1"
-            :precision="0"
-            v-model:value="drawerInfo.item.age"
-          />
-        </FormItem>
-        <FormItem label="客户来源" v-bind="validateInfos.sourceId">
-          <Select
-            placeholder="请选择"
-            v-model:value="drawerInfo.item.sourceId"
-            :disabled="drawerInfo.type === 'scan'"
-          >
-            <SelectOption v-for="item in customerSourceList" :key="item.id">{{
-              item.name
-            }}</SelectOption>
-          </Select>
-        </FormItem>
-
-        <FormItem label="所属分组" v-bind="validateInfos.groupId">
-          <Select
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请选择"
-            v-model:value="drawerInfo.item.groupId"
-          >
-            <SelectOption v-for="item in customerGroupList" :key="item.id">{{
-              item.name
-            }}</SelectOption>
-          </Select>
-        </FormItem>
-
-        <FormItem label="联系地址" v-bind="validateInfos.contactAddress">
-          <Input
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.contactAddress"
-          />
-        </FormItem>
-
-        <FormItem label="备注">
-          <TextArea
-            :disabled="drawerInfo.type === 'scan'"
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.remark"
-          />
-        </FormItem>
-      </Form>
-    </Modal>
+    <GRCustomer
+      v-if="grDrawerInfo.id"
+      :customer-id="grDrawerInfo.id"
+      :gr-drawer-info="grDrawerInfo"
+      @drawerOnClose="grOnClose"
+      @submit="grSubmit"
+    ></GRCustomer>
+    <QYCustomer
+      v-if="qyDrawerInfo.id"
+      :customer-id="qyDrawerInfo.id"
+      :qy-drawer-info="qyDrawerInfo"
+      @drawerOnClose="qyOnClose"
+      @submit="qySubmit"
+    ></QYCustomer>
+    
   </div>
 </template>
 
 <script lang="ts">
-  import {
-    Form,
-    FormItem,
-    Input,
-    Button,
-    Modal,
-    Select,
-    SelectOption,
-    InputNumber,
-    DatePicker,
-    message,
-  } from 'ant-design-vue';
-  import { type DrawerItemType } from '/@/views/type';
+  import { Button } from 'ant-design-vue';
   import { defineComponent, PropType, ref, reactive, watch, onBeforeMount } from 'vue';
-  import { CustomerInfo, CustomerGroupInfo, CustomerSourceInfo } from '/@/api/demo/model/customer';
-  import dayjs, { Dayjs } from 'dayjs';
-  import {
-    getCustomerDetail,
-    updateCustomer,
-    getCustomerGList,
-    getCustomerSList,
-  } from '/@/api/demo/customer';
-
+import GRCustomer from './gr-customer.vue';
+  import QYCustomer from './qy-customer.vue';
+  import { getCustomerGList, getCustomerSList } from '/@/api/demo/customer';
   const docTypeMap: Record<number, string> = {
     1: '身份证',
     2: '护照',
@@ -260,8 +129,6 @@
     4: '港澳通行证',
     5: '台湾通行证',
   };
-  const TextArea = Input.TextArea;
-  const useForm = Form.useForm;
 
   export default defineComponent({
     props: {
@@ -272,35 +139,23 @@
       callback: Function,
     },
     components: {
-      Form,
-      FormItem,
-      Input,
       Button,
-      Modal,
-      Select,
-      SelectOption,
-      InputNumber,
-      DatePicker,
-      TextArea,
+      GRCustomer,
+      QYCustomer
     },
     setup(props) {
-      const customerGroupList = ref<CustomerGroupInfo[]>([]);
       const groupStr = ref<string>('');
-
       const getCustomerG = async () => {
         const res = await getCustomerGList();
         if (res) {
           groupStr.value = res.find((o) => o.id === props?.disease?.groupId)?.name || '';
-          customerGroupList.value = res;
         }
       };
-      const customerSourceList = ref<CustomerSourceInfo[]>([]);
       const source = ref<string>('');
 
       const getCustomerS = async () => {
         const res = await getCustomerSList();
         if (res) {
-          customerSourceList.value = res;
           source.value = res.find((o) => o.id === props?.disease?.sourceId)?.name || '';
         }
       };
@@ -309,137 +164,40 @@
         getCustomerG();
         getCustomerS();
       });
-      const drawerEdit = async () => {
-        const res = await getCustomerDetail(props.disease.id as number);
-        if (res) {
-          drawerInfo.value.visible = true;
-          drawerInfo.value.title = '编辑客户信息';
-          drawerInfo.value.type = 'edit';
-          Object.keys(drawerInfo.value.item).forEach((key) => {
-            drawerInfo.value.item[key] = res[key];
-          });
-          if (props.disease.birth) datePickerValue.value = dayjs(res.birth, 'YYYY-MM-DD');
-        }
-      };
-      const drawerOnClose = () => {
-        drawerInfo.value.visible = false;
-        drawerInfo.value.title = '';
-        drawerInfo.value.type = undefined;
-        Object.keys(drawerInfo.value.item).forEach((key) => {
-          drawerInfo.value.item[key] = undefined;
-        });
-        datePickerValue.value = undefined;
-        clearValidate();
-      };
-      const drawerInfo = ref<DrawerItemType<CustomerInfo>>({
+      const grDrawerInfo = reactive({
         visible: false,
-        title: '',
-        //@ts-ignore
-        item: {
-          id: undefined,
-          age: undefined,
-          birth: undefined,
-          contactAddress: undefined,
-          documentNumber: undefined,
-          documentType: undefined,
-          groupId: undefined,
-          mobile: undefined,
-          name: undefined,
-          remark: undefined,
-          sex: undefined,
-          sourceId: undefined,
-          tag: undefined,
-        },
+        id: undefined,
       });
-      const rulesRef = reactive({
-        name: [
-          {
-            required: true,
-            message: '请输入名字',
-          },
-        ],
-        mobile: [
-          {
-            required: true,
-            message: '请输入电话',
-          },
-        ],
-        sex: [
-          {
-            required: true,
-            message: '请选择性别',
-          },
-        ],
-        documentType: [
-          {
-            required: true,
-            message: '请选择证件类型',
-          },
-        ],
-        documentNumber: [
-          {
-            required: true,
-            message: '请输入证件号码',
-          },
-        ],
-        age: [
-          {
-            required: true,
-            message: '请输入年龄',
-          },
-        ],
-        birth: [
-          {
-            required: true,
-            message: '请输入出生日期',
-          },
-        ],
-        groupId: [
-          {
-            required: true,
-            message: '请选择分组',
-          },
-        ],
-        sourceId: [
-          {
-            required: true,
-            message: '请选择来源',
-          },
-        ],
-        contactAddress: [
-          {
-            required: true,
-            message: '请输入联系地址',
-          },
-        ],
+      const qyDrawerInfo = reactive({
+        visible: false,
+        id: undefined,
       });
-      const { validate, validateInfos, clearValidate } = useForm(drawerInfo.value.item, rulesRef);
-      const datePickerValue = ref<Dayjs>();
-      const documentChange = () => {
-        if (
-          drawerInfo.value.item.documentType === 1 &&
-          drawerInfo.value.item.documentNumber?.length === 18
-        ) {
-          const t = drawerInfo.value.item.documentNumber.slice(6, 14);
-          datePickerValue.value = dayjs(t, 'YYYYMMDD');
-          drawerInfo.value.item.birth = datePickerValue.value.format('YYYY-MM-DD');
-          drawerInfo.value.item.age = dayjs().year() - Number(t.slice(0, 4));
+      const drawerEdit = async () => {
+        if (props?.disease?.type === 1) {
+          // 个人用户
+          grDrawerInfo.visible = true;
+          grDrawerInfo.id = props.disease.id;
+        } else {
+          // 企业用户
+          qyDrawerInfo.visible = true;
+          qyDrawerInfo.id = props.disease.id;
         }
       };
-      const birthChange = () => {
-        if (datePickerValue.value)
-          drawerInfo.value.item.birth = dayjs(datePickerValue.value).format('YYYY-MM-DD');
+      const grOnClose = () => {
+        grDrawerInfo.visible = false;
+        grDrawerInfo.id = undefined;
       };
-      const submit = async () => {
-        validate().then(async () => {
-          const res = await updateCustomer({ ...drawerInfo.value.item, type: 1, level: undefined });
-
-          if (res) {
-            message.success('修改用户信息成功');
-            if (props.callback) props.callback();
-            drawerOnClose();
-          }
-        });
+      const grSubmit = () => {
+        grOnClose()
+        if (props.callback) props.callback();
+      };
+      const qyOnClose = () => {
+        qyDrawerInfo.visible = false;
+        qyDrawerInfo.id = undefined;
+      };
+      const qySubmit = () => {
+        qyOnClose()
+        if (props.callback) props.callback();
       };
       const diseaseObject = ref();
       watch(
@@ -452,20 +210,16 @@
       return {
         diseaseObject,
         sex: props.disease?.sex != 1 ? '女' : '男',
-        dayjs,
         docTypeMap,
         groupStr,
         source,
-        customerGroupList,
-        customerSourceList,
-        drawerInfo,
-        validateInfos,
-        documentChange,
-        birthChange,
-        datePickerValue,
-        submit,
-        drawerOnClose,
         drawerEdit,
+        grDrawerInfo,
+        grOnClose,
+        grSubmit,
+        qyDrawerInfo,
+        qyOnClose,
+        qySubmit,
       };
     },
   });

@@ -20,7 +20,7 @@ export default {
     btn_scale_y: '垂直翻转',
     btn_zoom_in: '放大',
     btn_zoom_out: '缩小',
-    preview: '预览',
+    preview: '查看',
   },
   drawer: {
     loadingText: '加载中...',
@@ -101,7 +101,7 @@ export default {
     saveWarn: '请等待文件上传后，保存!',
     saveError: '没有上传成功的文件，无法保存!',
 
-    preview: '预览',
+    preview: '查看',
     choose: '选择文件',
 
     accept: '支持{0}格式',

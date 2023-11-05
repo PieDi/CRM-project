@@ -68,7 +68,7 @@ export default {
     contextMenu: '右键菜单',
     download: '文件下载',
     clickOutSide: 'ClickOutSide组件',
-    imgPreview: '图片预览',
+    imgPreview: '图片查看',
     copy: '剪切板',
     msg: '消息提示',
     watermark: '水印',
