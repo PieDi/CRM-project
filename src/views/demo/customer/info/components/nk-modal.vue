@@ -10,7 +10,7 @@
   >
     <div class="msc-nk">
       <div class="block">
-        <h3>血常规</h3>
+        <h2>血常规</h2>
         <div class="item">
           <div class="label">名称</div>
           <div class="value">结果</div>
@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="block">
-        <h3>凝血功能</h3>
+        <h2>凝血功能</h2>
         <div class="item">
           <div class="label">名称</div>
           <div class="value">结果</div>
@@ -46,7 +46,7 @@
         </div>
       </div>
       <div class="block">
-        <h3>血糖</h3>
+        <h2>血糖</h2>
         <div class="item">
           <div class="label">名称</div>
           <div class="value">结果</div>
@@ -64,7 +64,7 @@
         </div>
       </div>
       <div class="block">
-        <h3>肝肾功能</h3>
+        <h2>肝肾功能</h2>
         <div class="item">
           <div class="label">名称</div>
           <div class="value">结果</div>
@@ -82,7 +82,7 @@
         </div>
       </div>
       <div class="block">
-        <h3>血脂</h3>
+        <h2>血脂</h2>
         <div class="item">
           <div class="label">名称</div>
           <div class="value">结果</div>
@@ -100,7 +100,7 @@
         </div>
       </div>
       <div class="block">
-        <h3>尿常规</h3>
+        <h2>尿常规</h2>
         <div class="item">
           <div class="label">名称</div>
           <div class="value">结果</div>
@@ -118,7 +118,7 @@
         </div>
       </div>
       <div class="block">
-        <h3>淋巴细胞免疫表型</h3>
+        <h2>淋巴细胞免疫表型</h2>
         <div class="item">
           <div class="label">名称</div>
           <div class="value">结果</div>
@@ -139,7 +139,7 @@
         </div>
       </div>
       <div class="block">
-        <h3>甲状腺功能</h3>
+        <h2>甲状腺功能</h2>
         <div class="item">
           <div class="label">名称</div>
           <div class="value">结果</div>
@@ -157,7 +157,7 @@
         </div>
       </div>
       <div class="block">
-        <h3>心脏功能</h3>
+        <h2>心脏功能</h2>
         <div class="item">
           <div class="label">名称</div>
           <div class="value">结果</div>
@@ -175,7 +175,7 @@
         </div>
       </div>
       <div class="block">
-        <h3>传染性疾病功能</h3>
+        <h2>传染性疾病功能</h2>
         <div class="item">
           <div class="label">名称</div>
           <div class="value">结果</div>
@@ -193,7 +193,7 @@
         </div>
       </div>
       <div class="block">
-        <h3>呼吸道IgM抗体5联</h3>
+        <h2>呼吸道IgM抗体5联</h2>
         <div class="item">
           <div class="label">名称</div>
           <div class="value">结果</div>
@@ -211,7 +211,7 @@
         </div>
       </div>
       <div class="block">
-        <h3>流感病毒IgM抗体5联</h3>
+        <h2>流感病毒IgM抗体5联</h2>
         <div class="item">
           <div class="label">名称</div>
           <div class="value">结果</div>
@@ -1151,6 +1151,7 @@
         .value {
           width: 200px;
           .ant-input {
+            width: 120px;
             padding: 0;
           }
         }
@@ -1161,6 +1162,9 @@
           width: 200px;
         }
       }
+    }
+    .block + .block {
+      margin-top: 20px;
     }
   }
 </style>

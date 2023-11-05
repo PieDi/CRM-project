@@ -43,7 +43,7 @@
       </FormItem>
 
       <FormItem label="订单产品" style="margin-bottom: 0">
-        <Button style="float: right" type="link" @click="addProduct">新增</Button>
+        <Button v-if="type === 'add'" style="float: right" type="link" @click="addProduct">新增</Button>
         <Space v-for="(p, i) of orderDrawerInfo.products" align="start">
           <FormItem
             label="产品名称"
