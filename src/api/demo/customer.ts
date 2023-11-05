@@ -477,3 +477,14 @@ export const getFJList = (params: any) =>
     url: '/customer/file/list',
     params,
   });
+
+  export const saveDataReport = (params: any) =>
+  defHttp.post<any>({
+    url: '/customer/dataReport/saveDataReport',
+    params,
+  });
+  export const deleteDataReport = (params: any) =>
+  defHttp.post<any>({
+    url: '/customer/dataReport/delete',
+    params,
+  });

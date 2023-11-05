@@ -122,12 +122,35 @@
           ><img src="/src/assets/images/report3.png" /><span
             :style="{ color: '#2E354F', fontSize: '16px' }"
             >数据分析</span
-          ><span :style="{ fontSize: '12px' }">（指标）</span></div
-        >
-        <div style="display: flex"
-          ><Button type="link">编辑</Button><Button type="link">查看</Button
-          ><Button type="link">下载</Button><Button type="link" danger>删除</Button></div
-        >
+          ><span :style="{ fontSize: '12px' }">（指标）</span>
+        </div>
+        <div style="display: flex">
+          <Popover trigger="click">
+            <template #content>
+              <Button type="link" @click="MSCAction">msc</Button>
+              <br />
+              <Button type="link" @click="NKAction">nk</Button>
+            </template>
+            <Button type="link">编辑</Button>
+          </Popover>
+          <Popover trigger="click">
+            <template #content>
+              <Button type="link" @click="MSCScan">msc</Button>
+              <br />
+              <Button type="link" @click="NKScan">nk</Button>
+            </template>
+            <Button type="link">查看</Button>
+          </Popover>
+          <Button type="link" @click="dataReportDownload">下载</Button>
+          <Popover trigger="click">
+            <template #content>
+              <Button type="link" @click="MSCDelete">msc</Button>
+              <br />
+              <Button type="link" @click="NKDelete">nk</Button>
+            </template>
+            <Button type="link" danger>删除</Button>
+          </Popover>
+        </div>
       </div>
     </div>
     <!-- 文件上传 -->
@@ -144,17 +167,36 @@
       @drawerOnClose="moreFJClose"
       @submit="moreFJSubmit"
     ></MoreFj>
+    <!-- MSC -->
+    <MscModal
+      v-if="MSCDrawerInfo.visible"
+      :customer-id="MSCDrawerInfo.customerId"
+      :drawer-info="MSCDrawerInfo"
+      @drawerOnClose="MSCClose"
+      @submit="MSCSubmit"
+    ></MscModal>
+     <!-- NK -->
+     <NkModal
+      v-if="NKDrawerInfo.visible"
+      :customer-id="MSCDrawerInfo.customerId"
+      :drawer-info="NKDrawerInfo"
+      @drawerOnClose="NKClose"
+      @submit="NKSubmit"
+    ></NkModal>
   </div>
 </template>
 
 <script lang="ts">
-  import { Button, message } from 'ant-design-vue';
+  import { Popover, Button, message } from 'ant-design-vue';
   import { defineComponent, PropType, ref, reactive, watch, onBeforeMount, createVNode } from 'vue';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import UploadModal from './upload-modal.vue';
   import MoreFj, { UploadAA } from './more-fj.vue';
+import MscModal from './msc-modal.vue';
+  import NkModal from './nk-modal.vue';
   import { getCustomerFileView, getCustomerFileRemove } from '/@/api/demo/customer';
-  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+  import { deleteDataReport } from '/@/api/demo/customer';
   export default defineComponent({
     props: {
       customerId: {
@@ -169,8 +211,11 @@
     },
     components: {
       Button,
+      Popover,
       UploadModal,
       MoreFj,
+      MscModal,
+      NkModal
     },
     setup(props, { emit }) {
       onBeforeMount(() => {});
@@ -222,7 +267,7 @@
         },
         { immediate: true },
       );
-
+      // 报告查看、下载、删除
       const handlePreView = async (id: number) => {
         const res = await getCustomerFileView(id);
         if (res) {
@@ -248,6 +293,95 @@
           }),
         );
       };
+      // MSC
+      const MSCDrawerInfo =ref({
+        visible: false,
+        type: undefined,
+        customerId: props.customerId,
+        item: undefined,
+      });
+      const MSCAction = () => {
+        MSCDrawerInfo.value.visible = true;
+        //@ts-ignore
+        MSCDrawerInfo.value.type = 'edit';
+        MSCDrawerInfo.value.item = props.disease.mscData.item;
+      };
+      const MSCScan  = () => {
+        MSCDrawerInfo.value.visible = true;
+        //@ts-ignore
+        MSCDrawerInfo.value.type = 'scan';
+        MSCDrawerInfo.value.item = props.disease.mscData.item;
+      }
+      const MSCClose = () => {
+        MSCDrawerInfo.value.visible = false;
+        MSCDrawerInfo.value.item = undefined;
+      };
+      const MSCDelete = () => {
+        confirm(
+          withConfirm({
+            icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+            content: '确定删除该文件',
+            async onOk() {
+              const res = await deleteDataReport({name: 'msc', customerId: props.customerId});
+              if (res) {
+                message.success('删除文件');
+                emit('submit');
+              }
+            },
+          }),
+        );
+       }
+      const MSCSubmit = () => {
+        MSCClose();
+        emit('submit');
+      };
+      // NK
+      const NKDrawerInfo = ref({
+        visible: false,
+        type: undefined,
+        customerId: props.customerId,
+        item: undefined,
+      });
+      const NKAction = () => {
+        NKDrawerInfo.value.visible = true;
+        //@ts-ignore
+        NKDrawerInfo.value.type = 'edit';
+        NKDrawerInfo.value.item = props.disease.nkData.item;
+      };
+      const NKScan  = () => {
+        NKDrawerInfo.value.visible = true;
+        //@ts-ignore
+        NKDrawerInfo.value.type = 'scan';
+        NKDrawerInfo.value.item = props.disease.nkData.item;
+      };
+      const NKClose = () => {
+        NKDrawerInfo.value.visible = false;
+        NKDrawerInfo.value.item = undefined;
+      };
+      const NKDelete = () => {
+        confirm(
+          withConfirm({
+            icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
+            content: '确定删除该文件',
+            async onOk() {
+              const res = await deleteDataReport({name: 'nk', customerId: props.customerId});
+              if (res) {
+                message.success('删除文件');
+                emit('submit');
+              }
+            },
+          }),
+        );
+       }
+      const NKSubmit = () => {
+        NKClose();
+        emit('submit');
+      };
+
+      // 数据下载
+      const dataReportDownload =() => {
+        window.open(`http://129.204.202.223:8001/basic-api/customer/dataReport/export?customerId=${props.customerId}`); 
+      };
       return {
         diseaseObject,
         // 查看附件
@@ -264,6 +398,21 @@
         handlePreView,
         handleDownload,
         deleteFile,
+        //msc
+        MSCDrawerInfo,
+        MSCAction,
+        MSCScan,
+        MSCClose,
+        MSCDelete,
+        MSCSubmit,
+        //nk
+        NKDrawerInfo,
+        NKAction,
+        NKScan,
+        NKClose,
+        NKDelete,
+        NKSubmit,
+        dataReportDownload
       };
     },
   });
@@ -294,14 +443,17 @@
           height: 20px;
           line-height: 20px;
         }
+
         .ant-btn {
           padding: 0 5px;
         }
       }
+
       .content {
         margin-bottom: 16px;
         height: 178px;
         overflow: hidden;
+
         .item {
           height: 54px;
           margin-top: 8px;
