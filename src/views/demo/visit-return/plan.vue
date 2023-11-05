@@ -489,7 +489,7 @@
       const exportPlan = async () => {
         const t = selectedRowKeys.value.join(',');
         window.open(
-          `http://129.204.202.223:8001/basic-api/customer/returnVisit/export?ids=${t}&id=${userInfo.value.userId}`,
+          `http://129.204.202.223:8001/basic-api/customer/returnVisit/export?ids=${t}&userId=${userInfo.value.userId}`,
         );
       };
 
