@@ -650,7 +650,7 @@
       };
       const customerExport = async () => {
         const t = selectedRowKeys.value.join(',');
-        window.open(`http://129.204.202.223:8001/basic-api/customer/basic/export?ids=${t}&type=1&id=${userInfo.value.userId}`);
+        window.open(`http://129.204.202.223:8001/basic-api/customer/basic/export?ids=${t}&type=1&userId=${userInfo.value.userId}`);
       };
       return {
         columns,
