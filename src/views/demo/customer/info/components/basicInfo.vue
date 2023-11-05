@@ -105,13 +105,22 @@
       @drawerOnClose="grOnClose"
       @submit="grSubmit"
     ></GRCustomer>
+    <QYCustomer
+      v-if="qyDrawerInfo.id"
+      :customer-id="qyDrawerInfo.id"
+      :qy-drawer-info="qyDrawerInfo"
+      @drawerOnClose="qyOnClose"
+      @submit="qySubmit"
+    ></QYCustomer>
+    
   </div>
 </template>
 
 <script lang="ts">
   import { Button } from 'ant-design-vue';
   import { defineComponent, PropType, ref, reactive, watch, onBeforeMount } from 'vue';
-  import GRCustomer from './gr-customer.vue';
+import GRCustomer from './gr-customer.vue';
+  import QYCustomer from './qy-customer.vue';
   import { getCustomerGList, getCustomerSList } from '/@/api/demo/customer';
   const docTypeMap: Record<number, string> = {
     1: '身份证',
@@ -132,6 +141,7 @@
     components: {
       Button,
       GRCustomer,
+      QYCustomer
     },
     setup(props) {
       const groupStr = ref<string>('');
@@ -158,15 +168,35 @@
         visible: false,
         id: undefined,
       });
+      const qyDrawerInfo = reactive({
+        visible: false,
+        id: undefined,
+      });
       const drawerEdit = async () => {
-        grDrawerInfo.visible = true;
-        grDrawerInfo.id = props.disease.id;
+        if (props?.disease?.type === 1) {
+          // 个人用户
+          grDrawerInfo.visible = true;
+          grDrawerInfo.id = props.disease.id;
+        } else {
+          // 企业用户
+          qyDrawerInfo.visible = true;
+          qyDrawerInfo.id = props.disease.id;
+        }
       };
       const grOnClose = () => {
         grDrawerInfo.visible = false;
         grDrawerInfo.id = undefined;
       };
       const grSubmit = () => {
+        grOnClose()
+        if (props.callback) props.callback();
+      };
+      const qyOnClose = () => {
+        qyDrawerInfo.visible = false;
+        qyDrawerInfo.id = undefined;
+      };
+      const qySubmit = () => {
+        qyOnClose()
         if (props.callback) props.callback();
       };
       const diseaseObject = ref();
@@ -187,6 +217,9 @@
         grDrawerInfo,
         grOnClose,
         grSubmit,
+        qyDrawerInfo,
+        qyOnClose,
+        qySubmit,
       };
     },
   });
