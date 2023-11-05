@@ -9,9 +9,9 @@
     :visible="visible"
   >
     <Form :labelCol="{ span: 4 }">
-      <FormItem label="委派客服">
+      <FormItem label="委派销售">
         <Select placeholder="请选择" v-model:value="drawerInfo.saleId">
-          <SelectOption v-for="item in staffSourceData" :key="item.sale">{{
+          <SelectOption v-for="item in staffSourceData" :key="item.userId" :value="item.userId">{{
             item.realName
           }}</SelectOption>
         </Select>

@@ -25,6 +25,7 @@
                 "
               />
               <Button
+              v-if="item.editRight"
                 type="link"
                 danger
                 @click="
@@ -62,6 +63,9 @@
     >
       <Form :labelCol="{ span: 4 }">
         <Form :labelCol="{ span: 4 }">
+          <FormItem label="创建者" v-if="drawerInfo.type === 'edit'">
+            <div>{{ drawerInfo.creator }}</div>
+          </FormItem>
           <FormItem label="个人任务">
             <TextArea v-model:value="drawerInfo.task" placeholder="请输入"></TextArea>
           </FormItem>
@@ -114,12 +118,12 @@
     taskRequest({ year: val.format('YYYY'), month: val.format('MM') });
   };
   const getListData = (value: Dayjs) => {
-    let listData: Array<{ type: 'warning'; task: string; id: number }> = [];
+    let listData: Array<{ type: 'warning'; task: string; id: number, editRight: boolean, creator: string }> = [];
     sourceData.value.forEach((o) => {
       if (value.format('YYYY-MM-DD') === o.date) {
         o.tasks.forEach((i) => {
           // @ts-ignore
-          listData.push({ type: 'warning', task: i.task, id: i.id, date: o.date });
+          listData.push({ type: 'warning', task: i.task, id: i.id, date: o.date, editRight: i.editRight, creator: i.creator });
         });
       }
     });
@@ -146,6 +150,7 @@
     drawerInfo.type = 'edit';
     drawerInfo.task = o.task;
     drawerInfo.id = o.id;
+    drawerInfo.creator = o.creator
     //@ts-ignore
     drawerInfo.taskTime = o.date;
   };
@@ -153,6 +158,7 @@
   const drawerInfo = reactive({
     type: undefined,
     visible: false,
+    creator: undefined,
     task: undefined,
     taskTime: undefined,
     id: undefined,

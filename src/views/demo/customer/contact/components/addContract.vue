@@ -209,7 +209,7 @@
                     handlePreView(file);
                   }
                 "
-                >预览</Button
+                >查看</Button
               >
               <Button
                 v-if="drawerInfo.type !== 'scan'"

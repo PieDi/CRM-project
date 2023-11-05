@@ -102,7 +102,7 @@ export function createActionColumn(handleRemove: Function): BasicColumn {
     },
   };
 }
-// 文件预览列表
+// 文件查看列表
 export function createPreviewColumns(): BasicColumn[] {
   return [
     {

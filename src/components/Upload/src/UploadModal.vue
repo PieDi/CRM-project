@@ -165,7 +165,7 @@
         emit('delete', record);
       }
 
-      // 预览
+      // 查看
       // function handlePreview(record: FileItem) {
       //   const { thumbUrl = '' } = record;
       //   createImgPreview({

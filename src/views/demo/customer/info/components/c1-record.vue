@@ -39,7 +39,7 @@
                     <Button type="link" v-if="file?.url" @click="() => {
                         handlePreView(file);
                       }
-                      ">预览</Button>
+                      ">查看</Button>
                     <Button type="link" @click="() => {
                         handleRemove(file, i);
                       }

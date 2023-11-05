@@ -25,13 +25,26 @@
       :bordered="true"
       :pagination="pagination"
       :scroll="{ x: 'max-content' }"
+      :row-selection="{
+        selectedRowKeys: selectedRowKeys,
+        onChange: onSelectChange,
+      }"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
           <div style="display: flex">
-            <Button v-if="record.status === 2" type="link" @click="scanReturnPlan(record)">查看回访单</Button>
-            <Button v-if="record.status === 1 && record.editRight" type="link" @click="drawerEdit(record)">编辑</Button>
-            <Button v-if="record.editRight" type="link" danger @click="deletePlan(record)">删除</Button>
+            <Button v-if="record.status === 2" type="link" @click="scanReturnPlan(record)"
+              >查看回访单</Button
+            >
+            <Button
+              v-if="record.status === 1 && record.editRight"
+              type="link"
+              @click="drawerEdit(record)"
+              >编辑</Button
+            >
+            <Button v-if="record.editRight" type="link" danger @click="deletePlan(record)"
+              >删除</Button
+            >
             <Button
               v-if="record.status === 1 && record.editRight"
               type="link"
@@ -179,7 +192,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, onMounted, toRaw, computed, createVNode } from 'vue';
+  import { defineComponent, ref, onMounted, computed, createVNode } from 'vue';
   import { PageWrapper } from '@/components/Page';
   import { Form, Input, Button, Table, Modal, DatePicker, Select, message } from 'ant-design-vue';
   import StartVisit from './start-visit/index.vue';
@@ -200,6 +213,7 @@
   import { useRoute } from 'vue-router';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+  import { useUserStore } from '/@/store/modules/user';
 
   const TextArea = Input.TextArea;
   const visitTypeMap: Record<number, string> = {
@@ -232,6 +246,8 @@
       TextArea,
     },
     setup() {
+      const userStore = useUserStore();
+      const userInfo = computed(() => userStore.getUserInfo);
       const formRef = ref<FormInstance>();
       const columns: ColumnsType<VisitReturnInfo> = [
         {
@@ -307,7 +323,12 @@
       }));
 
       const visitRListReq = async (pageNum: number, id?: string) => {
-        const res = await getVisitPage({ ...searchInfo.value, pageNum, id,customerId:route.query?.customerId });
+        const res = await getVisitPage({
+          ...searchInfo.value,
+          pageNum,
+          id,
+          customerId: route.query?.customerId,
+        });
         if (res) {
           pageInfo.value.total = res.total;
           pageInfo.value.current = res.pageNum;
@@ -375,15 +396,6 @@
       const scanReturnPlan = async (item: VisitReturnInfo) => {
         const res = await getVisit(item.id as number);
         if (res) window.open(`http://129.204.202.223:8001/basic-api${res}`);
-      };
-      const print = (item: VisitReturnInfo) => {
-        // drawerInfo.value.visible = true;
-        // drawerInfo.value.title = '查看回访';
-        // drawerInfo.value.type = 'scan';
-        // Object.keys(drawerInfo.value.item).forEach((key) => {
-        //   drawerInfo.value.item[key] = item[key];
-        // });
-        // drawerInfo.value.item.visitTime = dayjs(item.visitTime, 'YYYY-MM-DD');
       };
       const drawerEdit = (item: VisitReturnInfo) => {
         drawerInfo.value.title = '编辑回访';
@@ -459,7 +471,10 @@
       };
       const onModelConfirm = () => {
         showModal.value = false;
-        visitRListReq(pageInfo.value.current, route.query?.id ? (route.query?.id as string) : undefined);
+        visitRListReq(
+          pageInfo.value.current,
+          route.query?.id ? (route.query?.id as string) : undefined,
+        );
       };
       const onModelCancel = () => {
         showModal.value = false;
@@ -467,9 +482,15 @@
         visitInfo.value.plan = undefined;
       };
 
+      const selectedRowKeys = ref([]);
+      const onSelectChange = (key: any) => {
+        selectedRowKeys.value = key;
+      };
       const exportPlan = async () => {
-        const t = pageInfo.value.dataSource.map((item) => item.id).join(',')
-        window.open(`http://129.204.202.223:8001/basic-api/customer/returnVisit/export?ids=${t}`)
+        const t = selectedRowKeys.value.join(',');
+        window.open(
+          `http://129.204.202.223:8001/basic-api/customer/returnVisit/export?ids=${t}&id=${userInfo.value.userId}`,
+        );
       };
 
       return {
@@ -498,6 +519,8 @@
         onModelCancel,
         filterOption,
         exportPlan,
+        selectedRowKeys,
+        onSelectChange,
       };
     },
   });

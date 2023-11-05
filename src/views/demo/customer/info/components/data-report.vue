@@ -276,7 +276,7 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
       };
       const handleDownload = async (id: number) => {
         if (id)
-          window.open(`http://129.204.202.223:8001/basic-api/customer/file/download?fileId=${id}`);
+          window.open(`http://129.204.202.223:8001/basic-api/customer/file/downloadById?fileId=${id}`);
       };
       const deleteFile = (id: number) => {
         confirm(
@@ -320,11 +320,11 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
         confirm(
           withConfirm({
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
-            content: '确定删除该文件',
+            content: '确定删除msc项',
             async onOk() {
               const res = await deleteDataReport({name: 'msc', customerId: props.customerId});
               if (res) {
-                message.success('删除文件');
+                message.success('删除msc项成功');
                 emit('submit');
               }
             },
@@ -362,11 +362,11 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
         confirm(
           withConfirm({
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
-            content: '确定删除该文件',
+            content: '确定删除nk项',
             async onOk() {
               const res = await deleteDataReport({name: 'nk', customerId: props.customerId});
               if (res) {
-                message.success('删除文件');
+                message.success('删除nk项成功');
                 emit('submit');
               }
             },
