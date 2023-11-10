@@ -124,7 +124,16 @@
             >数据分析</span
           ><span :style="{ fontSize: '12px' }">（指标）</span>
         </div>
-        <div style="display: flex">
+        <div style="display: flex"
+          ><img
+            @click="
+              () => {
+                scanFJAction(10);
+              }
+            "
+            src="/src/assets/images/report-more.png"
+        /></div>
+        <!-- <div style="display: flex">
           <Popover trigger="click">
             <template #content>
               <Button type="link" @click="MSCAction">msc</Button>
@@ -150,7 +159,7 @@
             </template>
             <Button type="link" danger>删除</Button>
           </Popover>
-        </div>
+        </div> -->
       </div>
     </div>
     <!-- 文件上传 -->
@@ -419,9 +428,10 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
 </script>
 <style lang="less" scoped>
   .eee {
+    display: flex;
     .block {
-      border-bottom: 1px solid #ebebeb;
-      margin-top: 16px;
+      width: 33.33%;
+      padding: 0px 20px 0 0;
 
       .header {
         display: flex;
@@ -451,7 +461,7 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
 
       .content {
         margin-bottom: 16px;
-        height: 178px;
+        height: 153px;
         overflow: hidden;
 
         .item {

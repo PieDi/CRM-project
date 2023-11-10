@@ -251,51 +251,9 @@
           </div>
         </div>
       </div>
-
-      <div class="bottom-mask">
-        <div class="basic">
-          <div class="header"
-            ><img src="/src/assets/images/dis-hospital.png" /><span :style="{ fontSize: '24px' }">{{
-              diseaseObject.diseaseBasic.hospitalName
-            }}</span></div
-          >
-          <div class="header"
-            ><img src="/src/assets/images/dis-time.png" />
-            <span class="tips">时间:</span>
-            <span>{{ `${dayjs(diseaseObject.diseaseBasic.visitDate).format('YYYY-MM-DD')}` }}</span>
-            <span class="label">最新</span>
-          </div>
-          <div class="header"
-            ><img src="/src/assets/images/dis-name.png" />
-            <span class="tips">疾病名称:</span>
-            <span :style="{ color: '#CF8903' }">{{
-              `${diseaseObject.diseaseBasic.diseaseName}`
-            }}</span>
-          </div>
-          <div class="header"
-            ><img src="/src/assets/images/dis-depart.png" />
-            <span class="tips">科室:</span>
-            <span>{{ `${diseaseObject.diseaseBasic.departmentName}` }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="bottom-mask more">
-        <div
-          @click="() => {
-          linkMore(diseaseObject.diseaseBasic.customerId as number);
-        }"
-          >查看更多病史信息<img src="/src/assets/images/dis-more.png"
-        /></div>
-      </div>
     </div>
 
     <ItemTable v-if="modalConfig.visible" :modal-config="modalConfig" @close="modalClose" />
-
-    <MHModal
-      v-if="drawerInfo.customerId"
-      :drawer-info="drawerInfo"
-      @drawerOnClose="drawerInfoClose"
-    ></MHModal>
 
     <d1-record
       v-if="dRecordDrawerInfo.visible"
@@ -354,7 +312,6 @@
     boardFileView,
   } from '/@/api/demo/customer';
   import ItemTable from './item-table.vue';
-  import MHModal from '../../m-history/mh-modal.vue';
   import D1Record from './d1-record.vue';
   import E1Record from './e1-record.vue';
   import I1Record from './i1-record.vue';
@@ -374,7 +331,6 @@
       Button,
       Table,
       ItemTable,
-      MHModal,
       D1Record,
       E1Record,
       I1Record,
@@ -408,19 +364,7 @@
       },
     },
     setup(props, { emit }) {
-      const drawerInfo = ref<{ visible: boolean; customerId: number | undefined }>({
-        visible: false,
-        customerId: undefined,
-      });
-      const drawerInfoClose = () => {
-        drawerInfo.value.visible = false;
-        drawerInfo.value.customerId = undefined;
-      };
-
-      const linkMore = (customerId: number) => {
-        drawerInfo.value.visible = true;
-        drawerInfo.value.customerId = diseaseObject.value.diseaseBasic.customerId;
-      };
+     
       const modalConfig = reactive<{
         dataSource: any[];
         columns: any[];
@@ -649,9 +593,6 @@
         diseaseObject,
         modalConfig,
         iCheckType,
-        drawerInfo,
-        drawerInfoClose,
-        linkMore,
         dayjs,
         viewAll,
         modalClose,
@@ -688,12 +629,11 @@
 </script>
 <style lang="less" scoped>
   .bbb {
-    flex: 1;
 
     .basic {
       display: flex;
       align-items: center;
-      height: 65px;
+      height: 54px;
       background: #f5f8fc;
       color: #2e354f;
       font-weight: 500;
@@ -765,7 +705,6 @@
           .item-content {
             margin-top: 15px;
             overflow: hidden;
-            height: 380px;
 
             .block-content {
               height: 172px;
