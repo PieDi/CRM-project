@@ -19,27 +19,38 @@
             :callback="infoCallback"
           />
         </div>
-
-        <div class="disease">
-          <div class="block-tip"></div>
-          <div class="info-title" :style="{ marginLeft: '16px' }"
-            >客户病史信息<Button type="link" @click="addMHistory">新增</Button></div
-          >
-          <Disease
-            v-if="boardInfo?.diseases"
-            :disease="boardInfo?.diseases"
-            @submit="infoCallback"
-          />
-        </div>
-        <div class="data-report">
-          <div class="block-tip"></div>
-          <div class="info-title" :style="{ marginLeft: '16px' }">数据报告</div>
-          <DataReport
-            v-if="boardInfo?.customerBasic.id"
-            :customer-id="boardInfo?.customerBasic.id"
-            :disease="boardInfo?.customerBasic"
-            @submit="infoCallback"
-          />
+        <div :style="{ flex: 1 }">
+          <div :style="{ display: 'flex' }">
+            <div class="disease">
+              <div class="block-tip"></div>
+              <div class="info-title" :style="{ marginLeft: '16px' }"
+                >客户病史信息<Button type="link" @click="addMHistory">新增</Button
+                ><Button type="link" @click="mmClick">查看全部</Button></div
+              >
+              <Disease
+                v-if="boardInfo?.diseases"
+                :disease="boardInfo?.diseases"
+                @submit="infoCallback"
+              />
+            </div>
+            <div class="disease-right">
+              <div class="block-tip"></div>
+              <div class="info-title" :style="{ marginLeft: '16px' }"
+                >客户就诊信息：(外部)过往就诊材料附件列</div
+              >
+              <DiseaseRight :disease="{aa: 'ss'}"/>
+            </div>
+          </div>
+          <div class="data-report">
+            <div class="block-tip"></div>
+            <div class="info-title" :style="{ marginLeft: '16px' }">数据报告</div>
+            <DataReport
+              v-if="boardInfo?.customerBasic.id"
+              :customer-id="boardInfo?.customerBasic.id"
+              :disease="boardInfo?.customerBasic"
+              @submit="infoCallback"
+            />
+          </div>
         </div>
       </div>
 
@@ -100,6 +111,13 @@
       @drawerOnClose="mRecordClose"
       @submit="mRecordSubmit"
     ></m1-record>
+    <!-- 全部病史 -->
+    <MHModal
+      v-if="mmDrawerInfo.customerId"
+      :drawer-info="mmDrawerInfo"
+      @drawerOnClose="mmInfoClose"
+      @submit="mmInfoSubmit"
+    ></MHModal>
     <!-- 全部订单 -->
     <MoreO
       v-if="mOrderDrawerInfo.customerId"
@@ -151,7 +169,10 @@
   import OrderModal from './components/order-modal.vue';
   import MoreHf from './components/more-hf.vue';
   import HfModal from './components/hf-modal.vue';
-  import DataReport from './components/data-report.vue';
+  import MHModal from '../m-history/mh-modal.vue';
+import DataReport from './components/data-report.vue';
+  import DiseaseRight from './components/disease-right.vue';
+  import { reactive } from 'vue';
   export default defineComponent({
     components: {
       Button,
@@ -159,6 +180,7 @@
       BasicInfo,
       OrderInfo,
       ReturnInfo,
+      MHModal,
       M1Record,
       MoreO,
       OrderModal,
@@ -166,6 +188,7 @@
       HfModal,
       Popover,
       DataReport,
+      DiseaseRight
     },
     setup() {
       const route = useRoute();
@@ -197,6 +220,21 @@
       const infoCallback = () => {
         customerInfoBoard();
       };
+      const mmDrawerInfo = reactive<{ visible: boolean; customerId: number | undefined }>({
+        visible: false,
+        customerId: undefined,
+      });
+      const mmInfoClose = () => {
+        mmDrawerInfo.visible = false;
+        mmDrawerInfo.customerId = undefined;
+      };
+      const mmClick = () => {
+        mmDrawerInfo.visible = true;
+        mmDrawerInfo.customerId = boardInfo.value?.customerBasic.id;
+      };
+      const mmInfoSubmit = () => {
+        customerInfoBoard();
+       }
       // 病史记录
       const mRecordDrawerInfo = ref<DrawerItemType<CustomerMHInfo>>({
         visible: false,
@@ -354,6 +392,11 @@
         goBack,
         pushVisit,
         infoCallback,
+        //全部病史
+        mmDrawerInfo,
+        mmInfoClose,
+        mmClick,
+        mmInfoSubmit,
         // 新增病史
         mRecordDrawerInfo,
         addMHistory,
@@ -449,18 +492,26 @@
 
         .disease {
           display: flex;
+          flex: 1;
+          height: 380px;
           flex-direction: column;
           position: relative;
-          flex: 1;
           padding-top: 10px;
           background: #fff;
           margin: 0 20px;
           border-radius: 8px;
+          margin-right: 1px;
         }
-
-        .data-report {
+        .disease-right {
+          width: 447px;
+          border-radius: 8px;
+          background: #fff;
+          padding-top: 10px;
           position: relative;
-          width: 380px;
+        }
+        .data-report {
+          margin: 16px 20px 0;
+          position: relative;
           background: #fff;
           border-radius: 8px;
           padding: 10px 16px 20px;

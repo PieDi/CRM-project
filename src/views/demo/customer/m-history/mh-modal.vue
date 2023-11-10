@@ -300,6 +300,7 @@
             const res = await deleteCustomerMH(item.id as number);
             if (res) {
               message.success('删除成功');
+              emit('submit')
               customerMHListReq(pageInfo.value.current);
             }
           },
@@ -308,6 +309,7 @@
       const mRecordSubmit = (reload: boolean) => {
         customerMHListReq(reload ? 1 : pageInfo.value.current);
         mRecordClose();
+        emit('submit')
       };
 
       // 用药记录
@@ -325,12 +327,12 @@
       const dRecordClick = (item: CustomerMHInfo) => {
         dRecordDrawerInfo.value.title = '用药记录';
         dRecordDrawerInfo.value.visible = true;
-        // dRecordDrawerInfo.value.type = 'scan';
         dRecordDrawerInfo.value.item = item.id;
       };
       const dRecordSubmit = () => {
         customerMHListReq(pageInfo.value.current);
         dRecordClose();
+        emit('submit')
       };
 
       // 检验记录
@@ -354,6 +356,7 @@
       const eRecordSubmit = () => {
         customerMHListReq(pageInfo.value.current);
         eRecordClose();
+        emit('submit')
       };
 
       // 影像记录
@@ -372,11 +375,11 @@
         iRecordDrawerInfo.value.title = '影像记录';
         iRecordDrawerInfo.value.visible = true;
         iRecordDrawerInfo.value.item = item.id;
-        // iRecordDrawerInfo.value.type = 'scan';
       };
       const iRecordSubmit = () => {
         customerMHListReq(pageInfo.value.current);
         iRecordClose();
+        emit('submit')
       };
 
       // 就诊记录
@@ -400,6 +403,7 @@
       const cRecordSubmit = () => {
         customerMHListReq(pageInfo.value.current);
         cRecordClose();
+        emit('submit')
       };
 
       return {
