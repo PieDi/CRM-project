@@ -36,7 +36,7 @@
             <div class="disease-right">
               <div class="block-tip"></div>
               <div class="info-title" :style="{ marginLeft: '16px' }"
-                >客户就诊信息：(外部)过往就诊材料附件列</div
+                >客户就诊信息：(外部)过往就诊材料附件列表</div
               >
               <DiseaseRight
               v-if="boardInfo?.customerBasic.id"

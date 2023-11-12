@@ -71,7 +71,7 @@
         <DatePicker v-model:value="mInfo.visitDate" :disabled="drawerInfo.type === 'scan'" />
       </FormItem>
 
-      <FormItem label="附件">
+      <FormItem label="(外部)过往就诊材料附件">
         <Upload
           :file-list="fileList"
           :customRequest="uploadAction"

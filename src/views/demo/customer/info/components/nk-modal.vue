@@ -225,8 +225,8 @@
   </Modal>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, PropType, computed, onBeforeMount } from 'vue';
-import { Input, Button, Modal, message } from 'ant-design-vue';
+import { defineComponent, reactive, PropType, ref, computed, onBeforeMount } from 'vue';
+import { Input, Button, Modal, DatePicker, message } from 'ant-design-vue';
 import { saveDataReport } from '/@/api/demo/customer';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -234,6 +234,7 @@ export default defineComponent({
   components: {
     Input,
     Button,
+    DatePicker,
     Modal,
   },
   props: {
@@ -1045,6 +1046,9 @@ export default defineComponent({
     });
 
     onBeforeMount(() => {
+      if (props.drawerInfo?.itemDate) { 
+          itemDate.value = dayjs(props.drawerInfo?.itemDate, 'YYYY-MM-DD')
+        }
       Object.keys(xcgData).forEach((key) => {
         xcgData[key] = props.drawerInfo.item?.cbc[key];
       });
