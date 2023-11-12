@@ -285,6 +285,7 @@
 
         .value {
           display: inline-block;
+          width: 80%;
           font-size: 16px;
           color: #2e354f;
           height: 18px;

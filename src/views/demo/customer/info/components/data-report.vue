@@ -416,17 +416,18 @@
             MSCDrawerInfo.type = 'scan';
             MSCDrawerInfo.item = res?.item;
             MSCDrawerInfo.itemDate = res?.itemDate;
+          } else {
+            NKDrawerInfo.visible = true;
+            //@ts-ignore
+            NKDrawerInfo.type = 'scan';
+            NKDrawerInfo.item = res?.item;
+            NKDrawerInfo.itemDate = res?.itemDate;
           }
-        } else {
-          NKDrawerInfo.visible = true;
-          //@ts-ignore
-          NKDrawerInfo.type = 'scan';
-          NKDrawerInfo.item = res?.item;
-          NKDrawerInfo.itemDate = res?.itemDate;
         }
       };
       const DREdit = async (id: number) => {
         const res = await getDataReport({ id });
+
         if (res) {
           if (res.name === 'msc') {
             MSCDrawerInfo.visible = true;
@@ -434,13 +435,13 @@
             MSCDrawerInfo.type = 'edit';
             MSCDrawerInfo.item = res?.item;
             MSCDrawerInfo.itemDate = res?.itemDate;
+          } else {
+            NKDrawerInfo.visible = true;
+            //@ts-ignore
+            NKDrawerInfo.type = 'edit';
+            NKDrawerInfo.item = res?.item;
+            NKDrawerInfo.itemDate = res?.itemDate;
           }
-        } else {
-          NKDrawerInfo.visible = true;
-          //@ts-ignore
-          NKDrawerInfo.type = 'edit';
-          NKDrawerInfo.item = res?.item;
-          NKDrawerInfo.itemDate = res?.itemDate;
         }
       };
       const moreDRDrawerInfo = reactive({
