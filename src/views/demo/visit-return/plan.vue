@@ -194,7 +194,18 @@
 <script lang="ts">
   import { defineComponent, ref, onMounted, computed, createVNode } from 'vue';
   import { PageWrapper } from '@/components/Page';
-  import { Form, Input, Button, Table, Modal, DatePicker, Select, message } from 'ant-design-vue';
+  import {
+    Form,
+    FormItem,
+    Input,
+    Button,
+    Table,
+    Modal,
+    DatePicker,
+    Select,
+    SelectOption,
+    message,
+  } from 'ant-design-vue';
   import StartVisit from './start-visit/index.vue';
   import { type DrawerItemType, PageListInfo } from '/@/views/type';
   import {
@@ -234,14 +245,14 @@
     components: {
       PageWrapper,
       Form,
-      FormItem: Form.Item,
+      FormItem,
       Input,
       Button,
       Table,
       Modal,
       DatePicker,
       Select,
-      SelectOption: Select.Option,
+      SelectOption,
       StartVisit,
       TextArea,
     },

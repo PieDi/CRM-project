@@ -44,6 +44,7 @@ export interface CustomerInfo {
   files: Array<{ id: number; fileName: string; path: string }> | undefined;
   originalDataReports: Array<any>
   otherDataReports: Array<any>
+  dataAnalyzes: Array<any>
 }
 
 export interface CustomerGroupInfo {

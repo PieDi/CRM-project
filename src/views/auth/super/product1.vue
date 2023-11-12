@@ -43,15 +43,6 @@
           >
         </template>
         <template v-if="column.dataIndex === 'operation'">
-          <!-- <Button
-            type="link"
-            @click="
-              () => {
-                scanProduct(record);
-              }
-            "
-            >查看</Button
-          > -->
           <Button
             type="link"
             @click="
@@ -59,7 +50,7 @@
                 editProduct(record);
               }
             "
-            >编辑</Button
+            >详情</Button
           >
           <Button
             type="link"
@@ -83,10 +74,29 @@
       @cancel="drawerOnClose"
       @ok="submit"
       :visible="drawerInfo.visible"
-      width="60%"
+      :width="800"
     >
       <Form :labelCol="{ span: 4 }">
-        <FormItem label="品牌" >
+        <FormItem label="类别" v-bind="validateInfos.types">
+          <Cascader
+            placeholder="请输入"
+            allowClear
+            :options="typeOptions"
+            v-model:value="drawerInfo.item.types"
+            :disabled="drawerInfo.type !== 'add'"
+          />
+        </FormItem>
+
+        <FormItem label="名称" v-bind="validateInfos.name">
+          <Input
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.name"
+            :disabled="drawerInfo.type !== 'add'"
+          />
+        </FormItem>
+
+        <FormItem label="品牌">
           <Input
             placeholder="请输入"
             allowClear
@@ -94,15 +104,8 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-        <FormItem label="材料名称" v-bind="validateInfos.name">
-          <Input
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.name"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
-        <FormItem label="材料编号">
+
+        <FormItem label="厂家货号">
           <Input
             placeholder="请输入"
             allowClear
@@ -110,12 +113,18 @@
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-        <FormItem label="计量单位" v-bind="validateInfos.unit">
+
+        <FormItem label="规格">
           <Input
             placeholder="请输入"
             allowClear
-            v-model:value="drawerInfo.item.unit"
+            v-model:value="drawerInfo.item.specification"
+            :disabled="drawerInfo.type === 'scan'"
           />
+        </FormItem>
+
+        <FormItem label="单位" v-bind="validateInfos.unit">
+          <Input placeholder="请输入" allowClear v-model:value="drawerInfo.item.unit" />
         </FormItem>
       </Form>
     </Modal>
@@ -127,6 +136,7 @@
   import {
     Table,
     Form,
+    Cascader,
     Input,
     InputNumber,
     Button,
@@ -142,8 +152,15 @@
   import { type ColumnsType } from 'ant-design-vue/lib/table';
   import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { type MaterialsInfo, getMaterialsPage, saveMaterials, updateMaterials, removeMaterials } from '/@/api/demo/materials';
-  
+  import {
+    type MaterialsInfo,
+    getMaterialsTypes,
+    getMaterialsPage,
+    saveMaterials,
+    updateMaterials,
+    removeMaterials,
+  } from '/@/api/demo/materials';
+
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
   const SelectOption = Select.Option;
@@ -154,6 +171,7 @@ import { type MaterialsInfo, getMaterialsPage, saveMaterials, updateMaterials, r
       PageWrapper,
       Table,
       Form,
+      Cascader,
       FormItem,
       Input,
       InputNumber,
@@ -168,12 +186,14 @@ import { type MaterialsInfo, getMaterialsPage, saveMaterials, updateMaterials, r
       Tooltip,
     },
     setup() {
-      const drawerInfo = ref<DrawerItemType<MaterialsInfo>>({
+      const drawerInfo = reactive<DrawerItemType<MaterialsInfo>>({
         visible: false,
         title: '',
         item: {
+          types: undefined,
           number: undefined,
           unit: undefined,
+          specification: undefined,
           brand: undefined,
           name: undefined,
           id: undefined,
@@ -216,29 +236,54 @@ import { type MaterialsInfo, getMaterialsPage, saveMaterials, updateMaterials, r
       const searchAction = () => {
         productListReq(1);
       };
-      onBeforeMount(() => {
+      const typeOptions = ref();
+      onBeforeMount(async () => {
         productListReq(1);
+        const res = await getMaterialsTypes();
+        if (res) {
+          const a = [];
+          res?.forEach((l) => {
+            const b = [];
+            l?.child?.forEach((m) => {
+              const c = [];
+              m?.child?.forEach((n) => {
+                //@ts-ignore
+                c.push({ label: n.name, value: n.id });
+              });
+              //@ts-ignore
+              b.push({ label: m.name, value: m.id, children: c });
+            });
+            //@ts-ignore
+            a.push({ label: l.name, value: l.id, children: b });
+          });
+          typeOptions.value = a
+        }
       });
 
       const columns: ColumnsType<MaterialsInfo> = [
         {
-          title: '品牌',
-          dataIndex: 'brand',
-          width: 120
+          title: '类别',
+          dataIndex: 'typeName',
+          width: 200,
         },
         {
-          title: '材料名称',
+          title: '名称',
           dataIndex: 'name',
           width: 200,
         },
         {
-          title: '材料编号',
+          title: '品牌',
+          dataIndex: 'brand',
+          width: 200,
+        }, 
+        {
+          title: '厂家货号',
           dataIndex: 'number',
           width: 160,
         },
         {
-          title: '计量单位',
-          dataIndex: 'unit',
+          title: '库存',
+          dataIndex: 'amount',
           width: 120,
         },
         {
@@ -248,18 +293,27 @@ import { type MaterialsInfo, getMaterialsPage, saveMaterials, updateMaterials, r
       ];
 
       const addProduct = () => {
-        drawerInfo.value.visible = true;
-        drawerInfo.value.title = '新增材料';
-        drawerInfo.value.type = 'add';
+        drawerInfo.visible = true;
+        drawerInfo.title = '新增材料';
+        drawerInfo.type = 'add';
+        clearValidate()
       };
-
-      const editProduct = (item: MaterialsInfo) => {
-        drawerInfo.value.visible = true;
-        drawerInfo.value.type = 'edit';
-        drawerInfo.value.title = '编辑材料';
-        Object.keys(drawerInfo.value.item).forEach((key) => {
-          drawerInfo.value.item[key] = item[key];
+      const drawerOnClose = () => {
+        drawerInfo.visible = false;
+        drawerInfo.title = '';
+        drawerInfo.type = undefined;
+        Object.keys(drawerInfo.item).forEach((key) => {
+          drawerInfo.item[key] = undefined;
         });
+      };
+      const editProduct = (item: MaterialsInfo) => {
+        drawerInfo.visible = true;
+        drawerInfo.type = 'edit';
+        drawerInfo.title = '编辑材料';
+        Object.keys(drawerInfo.item).forEach((key) => {
+          drawerInfo.item[key] = item[key];
+        });
+        clearValidate()
       };
       const deleteProduct = (item: MaterialsInfo) => {
         confirm(
@@ -276,26 +330,19 @@ import { type MaterialsInfo, getMaterialsPage, saveMaterials, updateMaterials, r
           }),
         );
       };
-      const drawerOnClose = () => {
-        drawerInfo.value.visible = false;
-        drawerInfo.value.title = '';
-        drawerInfo.value.type = undefined;
-        Object.keys(drawerInfo.value.item).forEach((key) => {
-          drawerInfo.value.item[key] = undefined;
-        });
-      };
+      
       const submit = async () => {
         validate().then(async () => {
           let res;
-          if (drawerInfo.value.type === 'add') {
+          if (drawerInfo.type === 'add') {
             // 新增客服
-            res = await saveMaterials({ ...drawerInfo.value.item });
+            res = await saveMaterials({ ...drawerInfo.item });
           } else {
-            res = await updateMaterials({ ...drawerInfo.value.item });
+            res = await updateMaterials({ ...drawerInfo.item });
           }
           if (res) {
-            message.success(drawerInfo.value.type === 'add' ? '新增材料成功' : '修改材料成功');
-            productListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+            message.success(drawerInfo.type === 'add' ? '新增材料成功' : '修改材料成功');
+            productListReq(drawerInfo.type === 'add' ? 1 : pageInfo.value.current);
             drawerOnClose();
           }
         });
@@ -306,17 +353,23 @@ import { type MaterialsInfo, getMaterialsPage, saveMaterials, updateMaterials, r
             required: true,
             message: '请输入材料名称',
           },
-        ]
+        ],
+        types: [
+          {
+            required: true,
+            message: '请选择材料类别',
+          },
+        ],
       });
-      const { validate, validateInfos } = useForm(drawerInfo.value.item, rulesRef);
+      const { validate, validateInfos, clearValidate } = useForm(drawerInfo.item, rulesRef);
 
       return {
         columns,
         pagination,
         drawerInfo,
         pageInfo,
+        typeOptions,
         addProduct,
-        // scanProduct,
         editProduct,
         deleteProduct,
         drawerOnClose,

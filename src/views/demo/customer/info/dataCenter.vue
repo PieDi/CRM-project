@@ -38,7 +38,12 @@
               <div class="info-title" :style="{ marginLeft: '16px' }"
                 >客户就诊信息：(外部)过往就诊材料附件列</div
               >
-              <DiseaseRight :disease="{aa: 'ss'}"/>
+              <DiseaseRight
+              v-if="boardInfo?.customerBasic.id"
+                :customer-id="boardInfo?.customerBasic.id"
+                :disease="boardInfo?.diseases"
+                @submit="infoCallback"
+              />
             </div>
           </div>
           <div class="data-report">
@@ -170,7 +175,7 @@
   import MoreHf from './components/more-hf.vue';
   import HfModal from './components/hf-modal.vue';
   import MHModal from '../m-history/mh-modal.vue';
-import DataReport from './components/data-report.vue';
+  import DataReport from './components/data-report.vue';
   import DiseaseRight from './components/disease-right.vue';
   import { reactive } from 'vue';
   export default defineComponent({
@@ -188,7 +193,7 @@ import DataReport from './components/data-report.vue';
       HfModal,
       Popover,
       DataReport,
-      DiseaseRight
+      DiseaseRight,
     },
     setup() {
       const route = useRoute();
@@ -234,7 +239,7 @@ import DataReport from './components/data-report.vue';
       };
       const mmInfoSubmit = () => {
         customerInfoBoard();
-       }
+      };
       // 病史记录
       const mRecordDrawerInfo = ref<DrawerItemType<CustomerMHInfo>>({
         visible: false,

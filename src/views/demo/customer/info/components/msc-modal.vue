@@ -9,6 +9,8 @@
     :width="860"
   >
     <div class="msc-nk">
+      <p>采集时间：<DatePicker  :disabled="drawerInfo.type === 'scan'" v-model:value="itemDate"/></p>
+      
       <div class="block">
         <h2>血常规</h2>
         <div class="item">
@@ -193,14 +195,15 @@
   </Modal>
 </template>
 <script lang="ts">
-  import { defineComponent, reactive, PropType, computed, onBeforeMount } from 'vue';
-  import { Input, Button, Modal, message } from 'ant-design-vue';
-  import { saveDataReport } from '/@/api/demo/customer';
-
+  import { defineComponent, reactive, ref, PropType, computed, onBeforeMount } from 'vue';
+  import { Input, Button, DatePicker,Modal, message } from 'ant-design-vue';
+import { saveDataReport } from '/@/api/demo/customer';
+import dayjs, { Dayjs} from 'dayjs';
   export default defineComponent({
     components: {
       Input,
       Button,
+      DatePicker,
       Modal,
     },
     props: {
@@ -214,17 +217,22 @@
       },
     },
     setup(props, { emit }) {
+      const itemDate= ref<Dayjs>()
       const drawerOnClose = () => {
         emit('drawerOnClose');
       };
       const submit = async () => {
-        if (props.drawerInfo.type === 'sacn') {
+        if (props.drawerInfo.type === 'scan') {
           emit('drawerOnClose');
           return;
+        }
+        if (!itemDate.value) { 
+          message.warn('请选择记录时间')
         }
         const res = await saveDataReport({
           name: 'msc',
           customerId: props.customerId,
+          itemDate: itemDate.value?.format('YYYY-MM-DD'),
           item: {
             cbc: { ...xcgData },
             inr: { ...nxData },
@@ -974,6 +982,9 @@
       });
 
       onBeforeMount(() => {
+        if (props.drawerInfo?.itemDate) { 
+          itemDate.value = dayjs(props.drawerInfo?.itemDate, 'YYYY-MM-DD')
+        }
         Object.keys(xcgData).forEach((key) => {
           xcgData[key] = props.drawerInfo.item?.cbc[key];
         });
@@ -1017,6 +1028,7 @@
         drawerInfo: props.drawerInfo,
         drawerOnClose,
         submit,
+        itemDate,
 
         xcgColumn,
         xcgData,

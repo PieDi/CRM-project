@@ -485,6 +485,18 @@ export const getFJList = (params: any) =>
   });
   export const deleteDataReport = (params: any) =>
   defHttp.post<any>({
-    url: '/customer/dataReport/delete',
+    url: '/customer/dataReport/deleteDataReport',
     params,
   });
+  export const getDataReport = (params: any) =>
+  defHttp.post<any>({
+    url: '/customer/dataReport/getDataReportById',
+    params,
+  });
+  export const getDataReportList = (params: any) =>
+  defHttp.post<any>({
+    url: '/customer/dataReport/getCustomerDatas',
+    params,
+  });
+
+  

@@ -1,12 +1,21 @@
 import { defHttp } from '/@/utils/http/axios';
 
 export interface MaterialsInfo { 
+  types: number[] | undefined
   id: number | undefined
   brand: string | undefined
   name: string | undefined
+  specification: string | undefined
   number: number | undefined
   unit: string | undefined
 }
+
+
+
+
+export const getMaterialsTypes = () =>
+  defHttp.post<any[]>({ url: '/materials/type/all' });
+
 export const getMaterialsList = (params?: any) =>
   defHttp.post<MaterialsInfo[]>({ url: '/materials/basic/list', params });
 
@@ -30,7 +39,7 @@ export const updateMaterials = (params: any) =>
 export const removeMaterials = (id: number) =>
   defHttp.post<{ total: number; pageNum: number; data: MaterialsInfo[] }>({
     url: '/materials/basic/delete',
-    params: { ids: [id] },
+    params: { id },
   });
 
 // 入库
