@@ -22,7 +22,7 @@
         <span class="tips">科室:</span>
         <span>{{ `${diseaseObject.diseaseBasic.departmentName}` }}</span>
       </div>
-      <div class="header">
+      <!-- <div class="header">
         <img src="/src/assets/images/medicine-5.png" />
         <span class="tips">附件:</span>
         <div
@@ -33,7 +33,7 @@
         }"
           >查看附件</div
         >
-      </div>
+      </div> -->
     </div>
 
     <div class="dis-content">

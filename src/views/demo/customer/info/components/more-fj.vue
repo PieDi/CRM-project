@@ -6,11 +6,16 @@
     @cancel="drawerOnClose"
     @ok="drawerOnClose"
     :visible="drawerInfo.visible"
-    :width="600"
+    :width="800"
   >
     <template v-if="fjList.length">
       <div v-for="item of fjList" class="fj-list">
-        <div class="aaa">{{ item.fileName }}</div>
+        <Tooltip :title="item.fileName">
+            <div class="aaa">{{ item.fileName }}</div></Tooltip
+          >
+          <Tooltip :title="item.createTime">
+            <div class="aaa">{{ item.createTime }}</div></Tooltip
+          >
         <Button
           type="link"
           @click="
@@ -48,7 +53,7 @@
 </template>
 <script lang="ts">
   import { defineComponent, ref, PropType, onBeforeMount, createVNode } from 'vue';
-  import { Button, Modal, message } from 'ant-design-vue';
+  import { Button, Modal, Tooltip,message } from 'ant-design-vue';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { getFJList } from '/@/api/demo/customer';
   import { getCustomerFileView, getCustomerFileRemove } from '/@/api/demo/customer';
@@ -63,6 +68,7 @@
     components: {
       Button,
       Modal,
+      Tooltip
     },
     props: {
       drawerInfo: {
@@ -76,6 +82,7 @@
           id: number;
           fileName: string;
           filePath: string;
+          createTime: string;
         }>
       >([]);
       const request = async () => {
@@ -136,11 +143,11 @@
     align-items: center;
 
     .aaa {
-      width: 240px;
+      width: 200px;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
-      margin-right: 20px;
+      margin-right: 10px;
     }
   }
 </style>

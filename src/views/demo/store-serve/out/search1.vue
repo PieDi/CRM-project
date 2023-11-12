@@ -206,24 +206,29 @@ import { RoleEnum } from '/@/enums/roleEnum';
 
       const columns: ColumnsType<MaterialsInfo> = [
         {
-          title: '材料名称',
-          dataIndex: 'materialsName',
-          width: '16%',
+          title: '出库日期',
+          dataIndex: 'productName',
+          width: 200,
         },
         {
-          title: '出库数量',
-          dataIndex: 'amount',
-          width: '16%',
+          title: '生产批次',
+          dataIndex: 'productName',
+          width: 200,
         },
         {
-          title: '其他',
+          title: '有效期',
+          dataIndex: 'productNumber',
+          width: 200,
+        },
+        {
+          title: '代理名称',
           dataIndex: 'remark',
-          width: '16%',
+          width: 200,
         },
         {
           title: '操作',
           dataIndex: 'operation',
-        },
+        }
       ];
       const pDataSource = ref<Array<MaterialsInfo>>([]);
       const productReq = async () => {

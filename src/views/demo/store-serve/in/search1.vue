@@ -34,15 +34,6 @@
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'operation'">
-          <!-- <Button
-            type="link"
-            @click="
-              () => {
-                scanStoreIn(record);
-              }
-            "
-            >查看</Button
-          > -->
           <Button
             type="link"
             @click="
@@ -67,31 +58,105 @@
       :visible="drawerInfo.visible"
     >
       <Form :labelCol="{ span: 4 }">
-        <FormItem label="材料名称" v-bind="validateInfos.materialsId">
-          <Select
-            :show-search="true"
-            :disabled="drawerInfo.type !== 'add'"
-            placeholder="请选择"
-            v-model:value="drawerInfo.item.materialsId"
-          >
-            <SelectOption
-              v-for="item of pDataSource"
-              :key="`${item.name}-${item.number}`"
-              :value="item.id"
-              >{{ item.name }}</SelectOption
-            >
-          </Select>
-        </FormItem>
-
-        <FormItem label="入库数量" v-bind="validateInfos.amount">
-          <InputNumber
+        <FormItem label="生产批号">
+          <Input
             placeholder="请输入"
             allowClear
-            v-model:value="drawerInfo.item.amount"
+            v-model:value="drawerInfo.item.remark"
             :disabled="drawerInfo.type === 'scan'"
           />
         </FormItem>
-        <FormItem label="其他">
+
+        <FormItem label="有效期">
+          <DatePicker
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.remark"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+
+        <FormItem label="代理商名称">
+          <Input
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.remark"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+
+        <FormItem label="入库日期">
+          <DatePicker
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.remark"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+
+        <FormItem label="货架号">
+          <Input
+            placeholder="请输入"
+            allowClear
+            v-model:value="drawerInfo.item.remark"
+            :disabled="drawerInfo.type === 'scan'"
+          />
+        </FormItem>
+
+        <!-- <FormItem label="入库材料" style="margin-bottom: 0">
+          <Button v-if="type === 'add'" style="float: right" type="link" @click="addProduct"
+            >新增</Button
+          >
+          <Space v-for="(p, i) of orderDrawerInfo.products" align="start">
+            <FormItem
+              label="材料名称"
+              :name="['products', i, 'productId']"
+              :rules="{
+                required: true,
+                message: '请选择产品名称',
+                trigger: 'change',
+              }"
+            >
+              <Select
+                :show-search="true"
+                :disabled="drawerInfo.type !== 'add'"
+                placeholder="请选择"
+                v-model:value="drawerInfo.item.materialsId"
+              >
+                <SelectOption
+                  v-for="item of pDataSource"
+                  :key="`${item.name}-${item.number}`"
+                  :value="item.id"
+                  >{{ item.name }}</SelectOption
+                >
+              </Select>
+            </FormItem>
+
+            <FormItem label="入库数量" :name="['products', i, 'sum']">
+              <InputNumber
+                placeholder="请输入"
+                allowClear
+                v-model:value="drawerInfo.item.amount"
+                :disabled="drawerInfo.type === 'scan'"
+              />
+            </FormItem>
+
+            <Button
+              v-if="type === 'add'"
+              style="float: right"
+              type="link"
+              @click="
+                () => {
+                  deleteProduct(i);
+                }
+              "
+            >
+              <template #icon> <DeleteOutlined /> </template
+            ></Button>
+          </Space>
+        </FormItem> -->
+
+        <FormItem label="备注">
           <TextArea
             placeholder="请输入"
             allowClear
@@ -106,7 +171,18 @@
 <script lang="ts">
   import { defineComponent, ref, onMounted, createVNode, reactive, toRaw, computed } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Modal, InputNumber, Select, message } from 'ant-design-vue';
+  import {
+    Table,
+    Space,
+    Form,
+    Input,
+    Button,
+    Modal,
+    InputNumber,
+    Select,
+    DatePicker,
+    message,
+  } from 'ant-design-vue';
   import { DrawerItemType, PageListInfo } from '/@/views/type';
   import {
     type MaterialsInfo,
@@ -121,6 +197,7 @@
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { useUserStore } from '/@/store/modules/user';
   import { RoleEnum } from '/@/enums/roleEnum';
+  import { DeleteOutlined } from '@ant-design/icons-vue';
 
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
@@ -131,15 +208,18 @@
     components: {
       PageWrapper,
       Table,
+      Space,
       Form,
       FormItem,
       Input,
       Button,
+      DatePicker,
       Modal,
       TextArea,
       Select,
       SelectOption,
       InputNumber,
+      DeleteOutlined,
     },
     setup() {
       const userStore = useUserStore();
@@ -208,19 +288,24 @@
 
       const columns: ColumnsType<MaterialsInfo> = [
         {
-          title: '材料名称',
-          dataIndex: 'materialsName',
-          width: '16%',
+          title: '入库日期',
+          dataIndex: 'productName',
+          width: 200,
         },
         {
-          title: '入库数量',
+          title: '生产批次',
+          dataIndex: 'productName',
+          width: 200,
+        },
+        {
+          title: '有效期',
           dataIndex: 'amount',
-          width: '16%',
+          width: 200,
         },
         {
-          title: '其他',
-          dataIndex: 'remark',
-          width: '16%',
+          title: '代理商名称',
+          dataIndex: 'artNo',
+          width: 200,
         },
         {
           title: '操作',

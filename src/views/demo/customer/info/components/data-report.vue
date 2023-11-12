@@ -26,7 +26,13 @@
       </div>
       <div class="content">
         <div class="item" v-for="item of diseaseObject.originalDataReports">
-          <span>{{ item.fileName }}</span>
+          <Tooltip :title="item.fileName">
+            <span class="i-span 1-1">{{ item.fileName }}</span></Tooltip
+          >
+          <Tooltip :title="item.createTime">
+            <span class="i-span 2-2">{{ item.createTime }}</span></Tooltip
+          >
+
           <div
             ><Button
               type="link"
@@ -58,6 +64,7 @@
         </div>
       </div>
     </div>
+
     <div class="2 block">
       <div class="header">
         <div
@@ -84,7 +91,12 @@
       </div>
       <div class="content">
         <div class="item" v-for="item of diseaseObject.otherDataReports">
-          <span>{{ item.fileName }}</span>
+          <Tooltip :title="item.fileName">
+            <span class="i-span 1-1">{{ item.fileName }}</span></Tooltip
+          >
+          <Tooltip :title="item.createTime">
+            <span class="i-span 2-2">{{ item.createTime }}</span></Tooltip
+          >
           <div
             ><Button
               type="link"
@@ -116,50 +128,69 @@
         </div>
       </div>
     </div>
+
     <div class="3 block">
       <div class="header">
         <div
           ><img src="/src/assets/images/report3.png" /><span
             :style="{ color: '#2E354F', fontSize: '16px' }"
             >数据分析</span
-          ><span :style="{ fontSize: '12px' }">（指标）</span>
-        </div>
-        <div style="display: flex"
-          ><img
-            @click="
-              () => {
-                scanFJAction(10);
-              }
-            "
-            src="/src/assets/images/report-more.png"
-        /></div>
-        <!-- <div style="display: flex">
+          ><span :style="{ fontSize: '12px' }">（指标） </span>
           <Popover trigger="click">
             <template #content>
               <Button type="link" @click="MSCAction">msc</Button>
               <br />
               <Button type="link" @click="NKAction">nk</Button>
             </template>
-            <Button type="link">编辑</Button>
+            <Button type="link">新增</Button>
           </Popover>
-          <Popover trigger="click">
-            <template #content>
-              <Button type="link" @click="MSCScan">msc</Button>
-              <br />
-              <Button type="link" @click="NKScan">nk</Button>
-            </template>
-            <Button type="link">查看</Button>
-          </Popover>
-          <Button type="link" @click="dataReportDownload">下载</Button>
-          <Popover trigger="click">
-            <template #content>
-              <Button type="link" @click="MSCDelete">msc</Button>
-              <br />
-              <Button type="link" @click="NKDelete">nk</Button>
-            </template>
-            <Button type="link" danger>删除</Button>
-          </Popover>
-        </div> -->
+        </div>
+        <div style="display: flex"
+          ><img @click="moreDRAction" src="/src/assets/images/report-more.png"
+        /></div>
+      </div>
+      <div class="content">
+        <div class="item" v-for="item of diseaseObject.dataAnalyzes">
+          <span class="i-span 2-2">{{ item.itemDate }}</span>
+          <span class="i-span 1-1">{{ item.name }}</span>
+          <div
+            ><Button
+              type="link"
+              @click="
+                () => {
+                  DREdit(item.id);
+                }
+              "
+              >编辑</Button
+            >
+            <Button
+              type="link"
+              @click="
+                () => {
+                  DRScan(item.id);
+                }
+              "
+              >查看</Button
+            ><Button
+              type="link"
+              @click="
+                () => {
+                  dataReportDownload(item.id);
+                }
+              "
+              >下载</Button
+            ><Button
+              type="link"
+              danger
+              @click="
+                () => {
+                  DRDelete(item.id);
+                }
+              "
+              >删除</Button
+            ></div
+          >
+        </div>
       </div>
     </div>
     <!-- 文件上传 -->
@@ -184,28 +215,36 @@
       @drawerOnClose="MSCClose"
       @submit="MSCSubmit"
     ></MscModal>
-     <!-- NK -->
-     <NkModal
+    <!-- NK -->
+    <NkModal
       v-if="NKDrawerInfo.visible"
       :customer-id="MSCDrawerInfo.customerId"
       :drawer-info="NKDrawerInfo"
       @drawerOnClose="NKClose"
       @submit="NKSubmit"
     ></NkModal>
+    <!-- 查看全部数据 -->
+    <MoreDr
+      v-if="moreDRDrawerInfo.id"
+      :drawer-info="moreDRDrawerInfo"
+      @drawerOnClose="moreDRClose"
+      @submit="moreDRSubmit"
+    ></MoreDr>
   </div>
 </template>
 
 <script lang="ts">
-  import { Popover, Button, message } from 'ant-design-vue';
+  import { Popover, Button, Tooltip, message } from 'ant-design-vue';
   import { defineComponent, PropType, ref, reactive, watch, onBeforeMount, createVNode } from 'vue';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import UploadModal from './upload-modal.vue';
   import MoreFj, { UploadAA } from './more-fj.vue';
-import MscModal from './msc-modal.vue';
+  import MscModal from './msc-modal.vue';
   import NkModal from './nk-modal.vue';
+  import MoreDr from './more-dr.vue';
   import { getCustomerFileView, getCustomerFileRemove } from '/@/api/demo/customer';
-import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
-  import { deleteDataReport } from '/@/api/demo/customer';
+  import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
+  import { deleteDataReport, getDataReport } from '/@/api/demo/customer';
   export default defineComponent({
     props: {
       customerId: {
@@ -221,10 +260,12 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
     components: {
       Button,
       Popover,
+      Tooltip,
       UploadModal,
       MoreFj,
       MscModal,
-      NkModal
+      NkModal,
+      MoreDr,
     },
     setup(props, { emit }) {
       onBeforeMount(() => {});
@@ -285,7 +326,9 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
       };
       const handleDownload = async (id: number) => {
         if (id)
-          window.open(`http://129.204.202.223:8001/basic-api/customer/file/downloadById?fileId=${id}`);
+          window.open(
+            `http://129.204.202.223:8001/basic-api/customer/file/downloadById?fileId=${id}`,
+          );
       };
       const deleteFile = (id: number) => {
         confirm(
@@ -303,35 +346,59 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
         );
       };
       // MSC
-      const MSCDrawerInfo =ref({
+      const MSCDrawerInfo = reactive({
         visible: false,
         type: undefined,
-        customerId: props.customerId,
+        itemDate: undefined,
         item: undefined,
+        customerId: props.customerId,
       });
       const MSCAction = () => {
-        MSCDrawerInfo.value.visible = true;
+        MSCDrawerInfo.visible = true;
         //@ts-ignore
-        MSCDrawerInfo.value.type = 'edit';
-        MSCDrawerInfo.value.item = props.disease.mscData.item;
+        MSCDrawerInfo.type = 'add';
+        // MSCDrawerInfo.item = props.disease.mscData?.item;
       };
-      const MSCScan  = () => {
-        MSCDrawerInfo.value.visible = true;
-        //@ts-ignore
-        MSCDrawerInfo.value.type = 'scan';
-        MSCDrawerInfo.value.item = props.disease.mscData.item;
-      }
       const MSCClose = () => {
-        MSCDrawerInfo.value.visible = false;
-        MSCDrawerInfo.value.item = undefined;
+        MSCDrawerInfo.visible = false;
+        MSCDrawerInfo.item = undefined;
+        MSCDrawerInfo.itemDate = undefined;
       };
-      const MSCDelete = () => {
+      const MSCSubmit = () => {
+        MSCClose();
+        emit('submit');
+      };
+      // NK
+      const NKDrawerInfo = reactive({
+        visible: false,
+        type: undefined,
+        itemDate: undefined,
+        item: undefined,
+        customerId: props.customerId,
+      });
+      const NKAction = () => {
+        NKDrawerInfo.visible = true;
+        //@ts-ignore
+        NKDrawerInfo.type = 'add';
+        // NKDrawerInfo.item = props.disease.nkData?.item;
+      };
+      const NKClose = () => {
+        NKDrawerInfo.visible = false;
+        NKDrawerInfo.item = undefined;
+        NKDrawerInfo.itemDate = undefined;
+      };
+      const NKSubmit = () => {
+        NKClose();
+        emit('submit');
+      };
+
+      const DRDelete = (id: number) => {
         confirm(
           withConfirm({
             icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
             content: '确定删除msc项',
             async onOk() {
-              const res = await deleteDataReport({name: 'msc', customerId: props.customerId});
+              const res = await deleteDataReport({ id });
               if (res) {
                 message.success('删除msc项成功');
                 emit('submit');
@@ -339,57 +406,60 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
             },
           }),
         );
-       }
-      const MSCSubmit = () => {
-        MSCClose();
-        emit('submit');
       };
-      // NK
-      const NKDrawerInfo = ref({
+      const DRScan = async (id: number) => {
+        const res = await getDataReport({ id });
+        if (res) {
+          if (res.name === 'msc') {
+            MSCDrawerInfo.visible = true;
+            //@ts-ignore
+            MSCDrawerInfo.type = 'scan';
+            MSCDrawerInfo.item = res?.item;
+            MSCDrawerInfo.itemDate = res?.itemDate;
+          }
+        } else {
+          NKDrawerInfo.visible = true;
+          //@ts-ignore
+          NKDrawerInfo.type = 'scan';
+          NKDrawerInfo.item = res?.item;
+          NKDrawerInfo.itemDate = res?.itemDate;
+        }
+      };
+      const DREdit = async (id: number) => {
+        const res = await getDataReport({ id });
+        if (res) {
+          if (res.name === 'msc') {
+            MSCDrawerInfo.visible = true;
+            //@ts-ignore
+            MSCDrawerInfo.type = 'edit';
+            MSCDrawerInfo.item = res?.item;
+            MSCDrawerInfo.itemDate = res?.itemDate;
+          }
+        } else {
+          NKDrawerInfo.visible = true;
+          //@ts-ignore
+          NKDrawerInfo.type = 'edit';
+          NKDrawerInfo.item = res?.item;
+          NKDrawerInfo.itemDate = res?.itemDate;
+        }
+      };
+      const moreDRDrawerInfo = reactive({
         visible: false,
-        type: undefined,
-        customerId: props.customerId,
-        item: undefined,
+        id: props.customerId,
       });
-      const NKAction = () => {
-        NKDrawerInfo.value.visible = true;
-        //@ts-ignore
-        NKDrawerInfo.value.type = 'edit';
-        NKDrawerInfo.value.item = props.disease.nkData.item;
+      const moreDRAction = () => {
+        moreDRDrawerInfo.visible = true;
       };
-      const NKScan  = () => {
-        NKDrawerInfo.value.visible = true;
-        //@ts-ignore
-        NKDrawerInfo.value.type = 'scan';
-        NKDrawerInfo.value.item = props.disease.nkData.item;
+      const moreDRClose = () => {
+        moreDRDrawerInfo.visible = false;
       };
-      const NKClose = () => {
-        NKDrawerInfo.value.visible = false;
-        NKDrawerInfo.value.item = undefined;
-      };
-      const NKDelete = () => {
-        confirm(
-          withConfirm({
-            icon: createVNode(ExclamationCircleOutlined, { style: { color: '#faad14' } }),
-            content: '确定删除nk项',
-            async onOk() {
-              const res = await deleteDataReport({name: 'nk', customerId: props.customerId});
-              if (res) {
-                message.success('删除nk项成功');
-                emit('submit');
-              }
-            },
-          }),
-        );
-       }
-      const NKSubmit = () => {
-        NKClose();
+      const moreDRSubmit = () => {
         emit('submit');
       };
 
       // 数据下载
-      const dataReportDownload =() => {
-        window.open(`http://129.204.202.223:8001/basic-api/customer/dataReport/export?customerId=${props.customerId}`); 
+      const dataReportDownload = (id: number) => {
+        window.open(`http://129.204.202.223:8001/basic-api/customer/dataReport/export?id=${id}`);
       };
       return {
         diseaseObject,
@@ -407,21 +477,25 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
         handlePreView,
         handleDownload,
         deleteFile,
+        //数据分析
+        DRScan,
+        DREdit,
+        DRDelete,
+        dataReportDownload,
+        moreDRDrawerInfo,
+        moreDRAction,
+        moreDRClose,
+        moreDRSubmit,
         //msc
         MSCDrawerInfo,
         MSCAction,
-        MSCScan,
         MSCClose,
-        MSCDelete,
         MSCSubmit,
         //nk
         NKDrawerInfo,
         NKAction,
-        NKScan,
         NKClose,
-        NKDelete,
         NKSubmit,
-        dataReportDownload
       };
     },
   });
@@ -429,6 +503,7 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
 <style lang="less" scoped>
   .eee {
     display: flex;
+
     .block {
       width: 33.33%;
       padding: 0px 20px 0 0;
@@ -456,6 +531,7 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
 
         .ant-btn {
           padding: 0 5px;
+          height: auto;
         }
       }
 
@@ -472,6 +548,13 @@ import confirm, { withConfirm } from 'ant-design-vue/es/modal/confirm';
           display: flex;
           justify-content: space-between;
           align-items: center;
+          .i-span {
+            display: inline-block;
+            width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            margin-right: 10px;
+          }
         }
       }
     }
