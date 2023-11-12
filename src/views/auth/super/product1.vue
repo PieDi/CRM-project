@@ -43,15 +43,6 @@
           >
         </template>
         <template v-if="column.dataIndex === 'operation'">
-          <!-- <Button
-            type="link"
-            @click="
-              () => {
-                scanProduct(record);
-              }
-            "
-            >查看</Button
-          > -->
           <Button
             type="link"
             @click="
@@ -83,7 +74,7 @@
       @cancel="drawerOnClose"
       @ok="submit"
       :visible="drawerInfo.visible"
-      width="60%"
+      :width="800"
     >
       <Form :labelCol="{ span: 4 }">
         <FormItem label="类别" v-bind="validateInfos.types">
@@ -195,7 +186,7 @@
       Tooltip,
     },
     setup() {
-      const drawerInfo = ref<DrawerItemType<MaterialsInfo>>({
+      const drawerInfo = reactive<DrawerItemType<MaterialsInfo>>({
         visible: false,
         title: '',
         item: {
@@ -302,18 +293,27 @@
       ];
 
       const addProduct = () => {
-        drawerInfo.value.visible = true;
-        drawerInfo.value.title = '新增材料';
-        drawerInfo.value.type = 'add';
+        drawerInfo.visible = true;
+        drawerInfo.title = '新增材料';
+        drawerInfo.type = 'add';
+        clearValidate()
       };
-
-      const editProduct = (item: MaterialsInfo) => {
-        drawerInfo.value.visible = true;
-        drawerInfo.value.type = 'edit';
-        drawerInfo.value.title = '编辑材料';
-        Object.keys(drawerInfo.value.item).forEach((key) => {
-          drawerInfo.value.item[key] = item[key];
+      const drawerOnClose = () => {
+        drawerInfo.visible = false;
+        drawerInfo.title = '';
+        drawerInfo.type = undefined;
+        Object.keys(drawerInfo.item).forEach((key) => {
+          drawerInfo.item[key] = undefined;
         });
+      };
+      const editProduct = (item: MaterialsInfo) => {
+        drawerInfo.visible = true;
+        drawerInfo.type = 'edit';
+        drawerInfo.title = '编辑材料';
+        Object.keys(drawerInfo.item).forEach((key) => {
+          drawerInfo.item[key] = item[key];
+        });
+        clearValidate()
       };
       const deleteProduct = (item: MaterialsInfo) => {
         confirm(
@@ -330,27 +330,19 @@
           }),
         );
       };
-      const drawerOnClose = () => {
-        drawerInfo.value.visible = false;
-        drawerInfo.value.title = '';
-        drawerInfo.value.type = undefined;
-        Object.keys(drawerInfo.value.item).forEach((key) => {
-          drawerInfo.value.item[key] = undefined;
-        });
-        clearValidate()
-      };
+      
       const submit = async () => {
         validate().then(async () => {
           let res;
-          if (drawerInfo.value.type === 'add') {
+          if (drawerInfo.type === 'add') {
             // 新增客服
-            res = await saveMaterials({ ...drawerInfo.value.item });
+            res = await saveMaterials({ ...drawerInfo.item });
           } else {
-            res = await updateMaterials({ ...drawerInfo.value.item });
+            res = await updateMaterials({ ...drawerInfo.item });
           }
           if (res) {
-            message.success(drawerInfo.value.type === 'add' ? '新增材料成功' : '修改材料成功');
-            productListReq(drawerInfo.value.type === 'add' ? 1 : pageInfo.value.current);
+            message.success(drawerInfo.type === 'add' ? '新增材料成功' : '修改材料成功');
+            productListReq(drawerInfo.type === 'add' ? 1 : pageInfo.value.current);
             drawerOnClose();
           }
         });
@@ -369,7 +361,7 @@
           },
         ],
       });
-      const { validate, validateInfos, clearValidate } = useForm(drawerInfo.value.item, rulesRef);
+      const { validate, validateInfos, clearValidate } = useForm(drawerInfo.item, rulesRef);
 
       return {
         columns,
