@@ -24,7 +24,7 @@
             <div class="disease">
               <div class="block-tip"></div>
               <div class="info-title" :style="{ marginLeft: '16px' }"
-                >客户病史信息<Button type="link" @click="addMHistory">新增</Button
+                >客户就诊信息<Button type="link" @click="addMHistory">新增</Button
                 ><Button type="link" @click="mmClick">查看全部</Button></div
               >
               <Disease
@@ -255,7 +255,7 @@
         },
       });
       const addMHistory = () => {
-        mRecordDrawerInfo.value.title = '新增客户病史';
+        mRecordDrawerInfo.value.title = '新增客户就诊';
         mRecordDrawerInfo.value.visible = true;
         mRecordDrawerInfo.value.type = 'add';
         mRecordDrawerInfo.value.item.customerId = boardInfo.value?.customerBasic.id;

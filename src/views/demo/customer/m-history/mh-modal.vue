@@ -2,7 +2,7 @@
   <Modal
     :mask-closable="false"
     :destroy-on-close="true"
-    title="更多病史"
+    title="更多就诊信息"
     @cancel="drawerOnClose"
     @ok="drawerOnClose"
     :visible="drawerInfo?.visible"
