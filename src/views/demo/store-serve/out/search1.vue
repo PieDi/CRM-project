@@ -66,25 +66,7 @@
       :width="900"
       :visible="drawerInfo.visible"
     >
-    <Form :labelCol="{ span: 4 }" ref="outFormRef" :model="drawerInfo.item">
-        <FormItem label="生产批号">
-          <Input
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.batchNumber"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
-
-        <FormItem label="有效期">
-          <DatePicker
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.validity"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
-
+      <Form :labelCol="{ span: 4 }" ref="outFormRef" :model="drawerInfo.item">
         <FormItem label="代理商名称">
           <Input
             placeholder="请输入"
@@ -111,15 +93,6 @@
           />
         </FormItem>
 
-        <FormItem label="货架号">
-          <Input
-            placeholder="请输入"
-            allowClear
-            v-model:value="drawerInfo.item.racksNumber"
-            :disabled="drawerInfo.type === 'scan'"
-          />
-        </FormItem>
-
         <FormItem label="出库材料" style="margin-bottom: 0">
           <Button
             v-if="drawerInfo.type === 'add'"
@@ -128,62 +101,94 @@
             @click="addProduct"
             >新增</Button
           >
-          <Space v-for="(p, i) of drawerInfo.item.materials" align="start">
-            <FormItem
-              label="材料名称"
-              :name="['materials', i, 'id']"
-              :rules="{
-                required: true,
-                message: '请选择产品名称',
-                trigger: 'change',
-              }"
-            >
-              <Select
-                :show-search="true"
-                :disabled="drawerInfo.type !== 'add'"
-                placeholder="请选择"
-                v-model:value="p.id"
-                :style="{ width: '180px' }"
+          <div v-for="(p, i) of drawerInfo.item.materials">
+            <Space align="start">
+              <FormItem
+                label="材料名称"
+                :name="['materials', i, 'id']"
+                :rules="{
+                  required: true,
+                  message: '请选择产品名称',
+                  trigger: 'change',
+                }"
               >
-                <SelectOption
-                  v-for="item of pDataSource"
-                  :key="`${item.name}-${item.number}`"
-                  :value="item.id"
-                  >{{ item.name }}</SelectOption
+                <Select
+                  :show-search="true"
+                  :disabled="drawerInfo.type !== 'add'"
+                  placeholder="请选择"
+                  v-model:value="p.id"
+                  :style="{ width: '180px' }"
                 >
-              </Select>
-            </FormItem>
+                  <SelectOption
+                    v-for="item of pDataSource"
+                    :key="`${item.name}-${item.number}`"
+                    :value="item.id"
+                    >{{ item.name }}</SelectOption
+                  >
+                </Select>
+              </FormItem>
 
-            <FormItem
-              label="入库数量"
-              :name="['materials', i, 'amount']"
-              :rules="{
-                required: true,
-                message: '请输入入库数量',
-                trigger: 'change',
-              }"
-            >
-              <InputNumber
-                placeholder="请输入"
-                allowClear
-                v-model:value="p.amount"
-                :disabled="drawerInfo.type === 'scan'"
-              />
-            </FormItem>
+              <FormItem
+                label="入库数量"
+                :name="['materials', i, 'amount']"
+                :rules="{
+                  required: true,
+                  message: '请输入入库数量',
+                  trigger: 'change',
+                }"
+              >
+                <InputNumber
+                  placeholder="请输入"
+                  allowClear
+                  v-model:value="p.amount"
+                  :disabled="drawerInfo.type === 'scan'"
+                />
+              </FormItem>
 
-            <Button
-              v-if="drawerInfo.type === 'add'"
-              style="float: right"
-              type="link"
-              @click="
-                () => {
-                  deleteProduct(i);
-                }
-              "
-            >
-              <template #icon> <DeleteOutlined /> </template
-            ></Button>
-          </Space>
+              <Button
+                v-if="drawerInfo.type === 'add'"
+                style="float: right"
+                type="link"
+                @click="
+                  () => {
+                    deleteProduct(i);
+                  }
+                "
+              >
+                <template #icon>
+                  <DeleteOutlined /> </template
+              ></Button>
+            </Space>
+            <Space align="start">
+              <FormItem label="生产批号">
+                <Input
+                  placeholder="请输入"
+                  allowClear
+                  v-model:value="p.batchNumber"
+                  :disabled="drawerInfo.type === 'scan'"
+                />
+              </FormItem>
+
+              <FormItem label="货架号">
+                <Input
+                  placeholder="请输入"
+                  allowClear
+                  v-model:value="p.racksNumber"
+                  :disabled="drawerInfo.type === 'scan'"
+                />
+              </FormItem>
+            </Space>
+            <Space align="start">
+              <FormItem label="有效期">
+                <DatePicker
+                  placeholder="请输入"
+                  allowClear
+                  v-model:value="p.validity"
+                  :disabled="drawerInfo.type === 'scan'"
+                />
+              </FormItem>
+            </Space>
+          </div>
         </FormItem>
 
         <FormItem label="备注">
@@ -201,26 +206,37 @@
 <script lang="ts">
   import { defineComponent, ref, computed, onBeforeMount, reactive, toRaw } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Table, Form, Input, Button, Modal, InputNumber, Select,DatePicker, Space,message } from 'ant-design-vue';
+  import {
+    Table,
+    Form,
+    Input,
+    Button,
+    Modal,
+    InputNumber,
+    Select,
+    DatePicker,
+    Space,
+    message,
+  } from 'ant-design-vue';
   import { PageListInfo } from '/@/views/type';
   import { type ColumnsType } from 'ant-design-vue/lib/table';
-import {
+  import {
     type MaterialsInfo,
     getMaterialsList,
     getMaterialsOutPage,
     saveMaterialsOut,
     updateMaterialsOut,
   } from '/@/api/demo/materials';
-import { useUserStore } from '/@/store/modules/user';
-import { RoleEnum } from '/@/enums/roleEnum';
-import type { FormInstance } from 'ant-design-vue';
-import dayjs from 'dayjs';
-import { DeleteOutlined } from '@ant-design/icons-vue';
+  import { useUserStore } from '/@/store/modules/user';
+  import { RoleEnum } from '/@/enums/roleEnum';
+  import type { FormInstance } from 'ant-design-vue';
+  import dayjs from 'dayjs';
+  import { DeleteOutlined } from '@ant-design/icons-vue';
 
   const FormItem = Form.Item;
   const TextArea = Input.TextArea;
-const SelectOption = Select.Option;
-  
+  const SelectOption = Select.Option;
+
   export default defineComponent({
     components: {
       PageWrapper,
@@ -236,7 +252,7 @@ const SelectOption = Select.Option;
       InputNumber,
       DeleteOutlined,
       DatePicker,
-      Space
+      Space,
     },
     setup() {
       const userStore = useUserStore();
@@ -250,11 +266,8 @@ const SelectOption = Select.Option;
         title: '',
         item: {
           id: undefined,
-          batchNumber: undefined,
           agentName: undefined,
           outDate: undefined,
-          validity: undefined,
-          racksNumber: undefined,
           materials: undefined,
           remark: undefined,
         },
@@ -269,12 +282,14 @@ const SelectOption = Select.Option;
         current: pageInfo.value.current,
         pageSize: 10,
         showTotal: (total: number) => `共${total}条`,
-        onChange: (page: number) => {pOutListReq(page)},
+        onChange: (page: number) => {
+          pOutListReq(page);
+        },
         showQuickJumper: false,
         showSizeChanger: false,
       }));
       const searchInfo = reactive({
-        materialsName: undefined
+        materialsName: undefined,
       });
       const pOutListReq = async (pageNum: number) => {
         const res = await getMaterialsOutPage({ ...searchInfo, pageNum });
@@ -303,24 +318,19 @@ const SelectOption = Select.Option;
           width: 200,
         },
         {
-          title: '生产批次',
-          dataIndex: 'batchNumber',
-          width: 200,
-        },
-        {
-          title: '有效期',
-          dataIndex: 'validity',
-          width: 200,
-        },
-        {
           title: '代理商名称',
           dataIndex: 'agentName',
           width: 200,
         },
         {
+          title: '备注',
+          dataIndex: 'remark',
+          width: 200,
+        },
+        {
           title: '操作',
           dataIndex: 'operation',
-        }
+        },
       ];
       const pDataSource = ref<Array<MaterialsInfo>>([]);
       const productReq = async () => {
@@ -334,6 +344,9 @@ const SelectOption = Select.Option;
         products?.push({
           productId: undefined,
           sum: undefined,
+          batchNumber: undefined,
+          validity: undefined,
+          racksNumber: undefined,
         });
         drawerInfo.value.item.materials = products;
       };
@@ -353,17 +366,13 @@ const SelectOption = Select.Option;
           {
             id: undefined,
             amount: undefined,
+            batchNumber: undefined,
+            validity: undefined,
+            racksNumber: undefined,
           },
         ];
       };
-      // const scanStoreOut = (item: MaterialsInfo) => {
-      //   drawerInfo.value.visible = true;
-      //   drawerInfo.value.type = 'scan';
-      //   drawerInfo.value.title = '查看出库';
-      //   Object.keys(drawerInfo.value.item).forEach((key) => {
-      //     drawerInfo.value.item[key] = item[key];
-      //   });
-      // };
+
       const editStoreOut = (item: any) => {
         drawerInfo.value.type = 'edit';
         drawerInfo.value.title = '编辑出库';
@@ -374,9 +383,10 @@ const SelectOption = Select.Option;
         if (item.outDate) {
           drawerInfo.value.item.outDate = dayjs(item.outDate, 'YYYY-MM-DD');
         }
-        if (item.validity) {
-          drawerInfo.value.item.validity = dayjs(item.validity, 'YYYY-MM-DD');
-        }
+        drawerInfo.value.item.materials = item?.materials?.map((m) => ({
+          ...m,
+          validity: m.validity ? dayjs(m.validity, 'YYYY-MM-DD') : undefined,
+        }));
       };
       const drawerOnClose = () => {
         drawerInfo.value.visible = false;
@@ -388,7 +398,14 @@ const SelectOption = Select.Option;
       };
       const submit = async () => {
         outFormRef.value?.validate().then(async () => {
-          const params = { ...drawerInfo.value.item };
+          const params = {
+            ...drawerInfo.value.item,
+            inDate: drawerInfo.value.item.inDate?.format('YYYY-MM-DD'),
+            materials: drawerInfo.value.item?.materials?.map((m) => ({
+              ...m,
+              validity: m.validity?.format('YYYY-MM-DD'),
+            })),
+          };
           let res;
           if (drawerInfo.value.type === 'add') {
             res = await saveMaterialsOut(params);
@@ -421,8 +438,7 @@ const SelectOption = Select.Option;
         authShow,
         outFormRef,
         addProduct,
-        deleteProduct
-
+        deleteProduct,
       };
     },
   });
