@@ -63,7 +63,7 @@
       :title="drawerInfo.title"
       @cancel="drawerOnClose"
       @ok="submit"
-      :width="900"
+      :width="1200"
       :visible="drawerInfo.visible"
     >
       <Form :labelCol="{ span: 4 }" ref="outFormRef" :model="drawerInfo.item">
@@ -105,6 +105,8 @@
             <Space align="start">
               <FormItem
                 label="材料名称"
+                :labelCol="{ span: 6 }"
+                :style="{ width: '360px' }"
                 :name="['materials', i, 'id']"
                 :rules="{
                   required: true,
@@ -117,7 +119,6 @@
                   :disabled="drawerInfo.type !== 'add'"
                   placeholder="请选择"
                   v-model:value="p.id"
-                  :style="{ width: '180px' }"
                 >
                   <SelectOption
                     v-for="item of pDataSource"
@@ -131,6 +132,8 @@
               <FormItem
                 label="入库数量"
                 :name="['materials', i, 'amount']"
+                :labelCol="{ span: 6 }"
+                :style="{ width: '360px' }"
                 :rules="{
                   required: true,
                   message: '请输入入库数量',
@@ -155,12 +158,11 @@
                   }
                 "
               >
-                <template #icon>
-                  <DeleteOutlined /> </template
+                <template #icon> <DeleteOutlined /> </template
               ></Button>
             </Space>
             <Space align="start">
-              <FormItem label="生产批号">
+              <FormItem label="生产批号" :labelCol="{ span: 6 }" :style="{ width: '360px' }">
                 <Input
                   placeholder="请输入"
                   allowClear
@@ -169,7 +171,7 @@
                 />
               </FormItem>
 
-              <FormItem label="货架号">
+              <FormItem label="货架号" :labelCol="{ span: 6 }" :style="{ width: '360px' }">
                 <Input
                   placeholder="请输入"
                   allowClear
@@ -179,7 +181,7 @@
               </FormItem>
             </Space>
             <Space align="start">
-              <FormItem label="有效期">
+              <FormItem label="有效期" :labelCol="{ span: 6 }" :style="{ width: '360px' }">
                 <DatePicker
                   placeholder="请输入"
                   allowClear

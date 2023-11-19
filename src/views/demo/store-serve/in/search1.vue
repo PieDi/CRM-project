@@ -46,7 +46,7 @@
       :title="drawerInfo.title"
       @cancel="drawerOnClose"
       @ok="submit"
-      :width="900"
+      :width="1200"
       :visible="drawerInfo.visible"
     >
       <Form :labelCol="{ span: 4 }" ref="inFormRef" :model="drawerInfo.item">
@@ -84,9 +84,11 @@
             @click="addProduct"
             >新增</Button
           >
-          <div v-for="(p, i) of drawerInfo.item.materials" align="start">
+          <div v-for="(p, i) of drawerInfo.item.materials">
             <Space align="start">
               <FormItem
+                :labelCol="{ span: 6 }"
+                :style="{ width: '360px' }"
                 label="材料名称"
                 :name="['materials', i, 'id']"
                 :rules="{
@@ -100,7 +102,6 @@
                   :disabled="drawerInfo.type !== 'add'"
                   placeholder="请选择"
                   v-model:value="p.id"
-                  :style="{ width: '260px' }"
                 >
                   <SelectOption
                     v-for="item of pDataSource"
@@ -113,6 +114,8 @@
 
               <FormItem
                 label="入库数量"
+                :labelCol="{ span: 6 }"
+                :style="{ width: '360px' }"
                 :name="['materials', i, 'amount']"
                 :rules="{
                   required: true,
@@ -138,11 +141,12 @@
                   }
                 "
               >
-                <template #icon> <DeleteOutlined /> </template
+                <template #icon>
+                  <DeleteOutlined /> </template
               ></Button>
             </Space>
             <Space align="start">
-              <FormItem label="生产批号">
+              <FormItem label="生产批号" :labelCol="{ span: 6 }" :style="{ width: '360px' }">
                 <Input
                   placeholder="请输入"
                   allowClear
@@ -150,7 +154,8 @@
                   :disabled="drawerInfo.type === 'scan'"
                 />
               </FormItem>
-              <FormItem label="货架号">
+              <FormItem label="货架号" :labelCol="{ span: 6 }"
+                :style="{ width: '360px' }">
                 <Input
                   placeholder="请输入"
                   allowClear
@@ -160,7 +165,8 @@
               </FormItem>
             </Space>
             <Space align="start">
-              <FormItem label="有效期">
+              <FormItem label="有效期" :labelCol="{ span: 6 }"
+                :style="{ width: '360px' }">
                 <DatePicker
                   placeholder="请输入"
                   allowClear
@@ -168,6 +174,7 @@
                   :disabled="drawerInfo.type === 'scan'"
                 />
               </FormItem>
+              <FormItem></FormItem>
             </Space>
           </div>
         </FormItem>
@@ -399,13 +406,13 @@
       const submit = async () => {
         inFormRef.value?.validate().then(async () => {
           const params = {
-              ...drawerInfo.value.item,
-              inDate: drawerInfo.value.item.inDate?.format('YYYY-MM-DD'),
-              materials: drawerInfo.value.item?.materials?.map((m) => ({
-                ...m,
-                validity: m.validity?.format('YYYY-MM-DD'),
-              })),
-            };
+            ...drawerInfo.value.item,
+            inDate: drawerInfo.value.item.inDate?.format('YYYY-MM-DD'),
+            materials: drawerInfo.value.item?.materials?.map((m) => ({
+              ...m,
+              validity: m.validity?.format('YYYY-MM-DD'),
+            })),
+          };
           let res;
           if (drawerInfo.value.type === 'add') {
             res = await saveMaterialsIn(params);
